@@ -10,6 +10,11 @@
       "StackName": "amplify-egmapp-staging-121532",
       "StackId": "arn:aws:cloudformation:eu-west-1:008360868121:stack/amplify-egmapp-staging-121532/85db2170-6645-11ec-9512-027c4f3c48d3",
       "AmplifyAppId": "d3vjf796p9kjms"
+    },
+    "categories": {
+      "auth": {
+        "egmapp": {}
+      }
     }
   }
 }
