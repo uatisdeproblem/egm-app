@@ -1,3 +1,6 @@
+import { Amplify } from 'aws-amplify';
+import awsConfig from './aws-exports';
+
 import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
@@ -36,6 +39,8 @@ import Map from './pages/Map';
 import Profile from './pages/Profile';
 
 setupIonicReact();
+awsConfig.aws_appsync_authenticationType = 'API_KEY'; // @temp prior authentication
+Amplify.configure(awsConfig);
 
 const App: React.FC = () => (
   <IonApp>

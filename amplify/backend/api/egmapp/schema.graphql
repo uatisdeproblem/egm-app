@@ -1,5 +1,6 @@
-type Todo @model @auth(rules: [{allow: private}, {allow: owner}]) {
+type Session @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
   id: ID!
   name: String!
   description: String
 }
+ 
