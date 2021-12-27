@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "github.vscode-pull-request-github",
+    "github.github-vscode-theme",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "burkeholland.simple-react-snippets"
+  ],
+  "unwantedRecommendations": []
+}

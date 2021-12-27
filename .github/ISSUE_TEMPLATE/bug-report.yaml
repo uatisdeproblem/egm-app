@@ -1,0 +1,90 @@
+name: 🐞 Bug Report
+description: File a bug report with the FACCE standard
+title: '[Bug]: <title>'
+labels: [bug]
+body:
+  - type: checkboxes
+    id: no-duplicate
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+        - label: I have searched the existing issues
+          required: true
+  - type: textarea
+    id: feature
+    attributes:
+      label: Feature
+      description: Describe how the feature should work without the bug
+      placeholder: 'Example: assign a user to an activity in the dashboard'
+    validations:
+      required: true
+  - type: textarea
+    id: anomaly
+    attributes:
+      label: Anomaly
+      description: Describe the bug
+      placeholder: "Example: I can't add new users to the assignees list"
+    validations:
+      required: true
+  - type: textarea
+    id: cause
+    attributes:
+      label: Cause
+      description: Event or trigger that make the bug happen.
+      placeholder: 'Example: Selection of a user after clicking the "Add assignee" button'
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Correction (suggestion)
+      description: Ideas on how you could solve the bug (optional).
+  - type: textarea
+    id: example
+    attributes:
+      label: Example
+      description: 'Example to reproduce the bug: step-by-step example to reproduce the bug; add screenshots, if applicable.'
+      placeholder: |
+        Example:
+          1. Sign-in with the team XYZ and a non-admin user.
+          2. Open the dasboard.
+          3. Select an activity not completed.
+          4. Enter in edit mode.
+          5. Try to add a new user as assignee of the activity.
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: What device are you seeing the problem on?
+      multiple: true
+      options:
+        - Desktop (Windows)
+        - Desktop (MacOS)
+        - Tablet (Android)
+        - Tablet (iOS)
+        - Smartphone (Android)
+        - Smartphone (iOS)
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+        - App
+        - Other
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## Thanks for taking the time to fill out this bug report!

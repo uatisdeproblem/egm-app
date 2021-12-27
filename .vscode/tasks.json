@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "inputs": [],
+  "tasks": [
+    {
+      "label": "Pull Amplify changes",
+      "type": "shell",
+      "command": "amplify pull",
+      "group": "build",
+      "options": { "cwd": "${workspaceRoot}" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]
+}

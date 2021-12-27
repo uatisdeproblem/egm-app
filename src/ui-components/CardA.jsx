@@ -56,7 +56,6 @@ export default function CardA(props) {
           alignSelf="stretch"
           position="relative"
           padding="0px 0px 0px 0px"
-          children="Classic Long Sleeve T-Shirt"
           {...getOverrideProps(overrides, "Flex.Flex[0].Text[0]")}
         ></Text>
         <Text
@@ -74,7 +73,6 @@ export default function CardA(props) {
           alignSelf="stretch"
           position="relative"
           padding="0px 0px 0px 0px"
-          children="$99"
           {...getOverrideProps(overrides, "Flex.Flex[0].Text[1]")}
         ></Text>
       </Flex>
