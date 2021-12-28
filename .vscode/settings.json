@@ -15,7 +15,8 @@
     "**/.git": true,
     "**/.DS_Store": true,
     "node_modules": true,
-    "npm-debug.log": true
+    "npm-debug.log": true,
+    "build": true
   },
   "files.trimTrailingWhitespace": true,
   "git.confirmSync": false,
