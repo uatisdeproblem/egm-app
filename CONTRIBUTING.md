@@ -146,3 +146,8 @@ When we are confident with the results, we can **commit our changes and create a
 We will **discuss together** whether we can fix any problem or improve the code; finally, we will merge the changes and publish the new feature in the app.
 
 Oh, [here you can find some best pratices](https://iter-idea.notion.site/Git-conventions-7f411b668d984eb3a05a03dfcae25d6f) about managing/committing/reviewing our code: it would be nice to follow them. 😉
+
+## Final notes
+
+So far, the app will only be accessible in our local environments.\
+Later on, I will configure the resources needed to publish it on the web and on mobile stores;I'll also add some more instructions here. ✌️
