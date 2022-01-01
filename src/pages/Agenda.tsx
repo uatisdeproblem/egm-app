@@ -15,7 +15,7 @@ import {
 
 import { Session } from '../models';
 
-const Agenda: React.FC = () => {
+const AgendaPage: React.FC = () => {
   const [sessions, setSessions] = useState(new Array<Session>());
 
   useEffect(() => {
@@ -63,4 +63,4 @@ const Agenda: React.FC = () => {
   );
 };
 
-export default Agenda;
+export default AgendaPage;

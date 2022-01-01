@@ -15,7 +15,7 @@ const Footer = () => (
   </Flex>
 );
 
-const Auth: React.FC = () => {
+const AuthPage: React.FC = () => {
   const reloadOnSignIn = (data: any) => data.payload.event === 'signIn' && window.location.assign('');
   Hub.listen('auth', reloadOnSignIn);
 
@@ -26,4 +26,4 @@ const Auth: React.FC = () => {
   );
 };
 
-export default Auth;
+export default AuthPage;

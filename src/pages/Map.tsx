@@ -1,8 +1,8 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 
-import ExploreContainer from '../components/ExploreContainer';
+import DummyContainer from '../components/DummyContainer';
 
-const Map: React.FC = () => {
+const MapPage: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
@@ -16,10 +16,10 @@ const Map: React.FC = () => {
             <IonTitle size="large">Map</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer name="Map page" />
+        <DummyContainer name="Map page" />
       </IonContent>
     </IonPage>
   );
 };
 
-export default Map;
+export default MapPage;

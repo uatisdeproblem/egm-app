@@ -30,10 +30,10 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import './theme/theme.css';
 
-import Auth from './pages/Auth';
-import Agenda from './pages/Agenda';
-import Map from './pages/Map';
-import Profile from './pages/Profile';
+import AuthPage from './pages/Auth';
+import AgendaPage from './pages/Agenda';
+import MapPage from './pages/Map';
+import ProfilePage from './pages/Profile';
 
 import { calendar, map, person } from 'ionicons/icons';
 
@@ -43,20 +43,20 @@ Amplify.configure(awsConfig);
 const App: React.FC = () => {
   const { user } = useAuthenticator();
 
-  if (!user) return <Auth />;
+  if (!user) return <AuthPage />;
   return (
     <IonApp>
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
             <Route exact path="/agenda">
-              <Agenda />
+              <AgendaPage />
             </Route>
             <Route exact path="/map">
-              <Map />
+              <MapPage />
             </Route>
             <Route path="/profile">
-              <Profile />
+              <ProfilePage />
             </Route>
             <Route exact path="/">
               <Redirect to="/agenda" />
