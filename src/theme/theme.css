@@ -1,9 +1,7 @@
-.aList {
-  background: transparent;
-}
-
-.aList h2 {
-  font-weight: 500;
+/* auth page */
+[data-indicator-position='top'] > .amplify-tabs-item {
+  border-top-width: 5px;
+  margin-top: -5px;
 }
 
 .flexBox {
@@ -13,4 +11,11 @@
   right: 0;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.appList {
+  background: transparent;
+}
+.appList h2 {
+  font-weight: 500;
 }

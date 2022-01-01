@@ -27,15 +27,15 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
-import './theme/variables.css';
-import './theme/theme.css';
-
 import AuthPage from './pages/Auth';
 import AgendaPage from './pages/Agenda';
 import MapPage from './pages/Map';
 import ProfilePage from './pages/Profile';
 
 import { calendar, map, person } from 'ionicons/icons';
+
+import './theme/variables.css';
+import './theme/theme.css';
 
 setupIonicReact();
 Amplify.configure(awsConfig);

@@ -35,7 +35,7 @@ const AgendaPage: React.FC = () => {
             <IonTitle size="large">Agenda</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonList className="aList">
+        <IonList className="appList">
           <IonListHeader>
             <IonLabel>
               <h2>Sessions available</h2>
