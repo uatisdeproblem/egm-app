@@ -87,7 +87,7 @@ You will spend 90% of your time working on the `src/components` and `src/pages` 
 - Pages: are the pages accessible in the app by a particular link (e.g. `/profile`).
 - Components: are the building blocks that compose a page (e.g. `<ProfileAvatar />`).
 
-Each component/page is represented by a `.tsx` file (containing structure and business logic, i.e. HTML and TypeScript) and a `.css` file (containing the presentation code, i.e. CSS).
+Each component/page is represented by a `.tsx` file (containing structure and business logic, i.e. HTML and TypeScript); sometimes, you may also find a `.css` file (containing the presentation code, i.e. CSS).
 
 ## Developer tools and first steps
 
