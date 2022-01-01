@@ -1,4 +1,3 @@
-import './Agenda.css';
 import { useEffect, useState } from 'react';
 import { DataStore } from 'aws-amplify';
 import {
