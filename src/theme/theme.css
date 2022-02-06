@@ -1,3 +1,13 @@
+*:not(ion-icon) {
+  font-family: 'Poppins', sans-serif !important;
+  letter-spacing: normal;
+}
+
+a {
+  text-decoration: underline var(--ion-color-step-100);
+  color: var(--ion-color-step-450);
+}
+
 /* auth page */
 [data-indicator-position='top'] > .amplify-tabs-item {
   border-top-width: 5px;
@@ -13,9 +23,20 @@
   transform: translateY(-50%);
 }
 
-.appList {
-  background: transparent;
+ion-toolbar ion-title {
+  text-align: center;
 }
-.appList h2 {
-  font-weight: 500;
+
+ion-tab-button.tab-selected ion-label {
+  font-weight: bold !important;
+}
+
+ion-list {
+  background: transparent !important;
+}
+ion-item ion-label p {
+  color: var(--ion-color-step-550) !important;
+}
+ion-searchbar {
+  --box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px !important;
 }

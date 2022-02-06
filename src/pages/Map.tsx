@@ -2,13 +2,19 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/rea
 
 import DummyContainer from '../components/DummyContainer';
 
+import { isMobileMode } from '../utils';
+
 const MapPage: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonTitle>Map</IonTitle>
-        </IonToolbar>
+        {isMobileMode() ? (
+          <IonToolbar color="ideaToolbar">
+            <IonTitle>Map</IonTitle>
+          </IonToolbar>
+        ) : (
+          ''
+        )}
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
