@@ -3,19 +3,19 @@
   "serviceConfiguration": {
     "apiName": "egmapp",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "/tmp/amplify-a9874d18-9dfd-474e-b073-6e7b0cfa201d/amplify/backend/api/egmapp/schema.graphql",
+    "gqlSchemaPath": "/tmp/amplify-ccb9f67f-6eba-4087-b211-b6eddd11e4a0/amplify/backend/api/egmapp/schema.graphql",
     "defaultAuthType": {
       "mode": "AMAZON_COGNITO_USER_POOLS",
       "cognitoUserPoolId": "authegmapp"
     },
     "additionalAuthTypes": [
       {
+        "mode": "AWS_IAM"
+      },
+      {
         "mode": "API_KEY",
         "keyDescription": "api key description",
         "expirationTime": 30
-      },
-      {
-        "mode": "AWS_IAM"
       }
     ],
     "conflictResolution": {
