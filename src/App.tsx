@@ -6,6 +6,7 @@ import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
+  IonImg,
   IonLabel,
   IonRouterOutlet,
   IonTabBar,
@@ -31,9 +32,13 @@ import AuthPage from './pages/Auth';
 import AgendaPage from './pages/Agenda';
 import MapPage from './pages/Map';
 import ProfilePage from './pages/Profile';
+import SessionPage from './pages/Session';
+
+import { isMobileMode } from './utils';
 
 import { calendar, map, person } from 'ionicons/icons';
 
+import 'typeface-poppins';
 import './theme/variables.css';
 import './theme/theme.css';
 
@@ -58,23 +63,38 @@ const App: React.FC = () => {
             <Route path="/profile">
               <ProfilePage />
             </Route>
+            <Route path="/session/:sessionId">
+              <SessionPage />
+            </Route>
             <Route exact path="/">
               <Redirect to="/agenda" />
             </Route>
           </IonRouterOutlet>
-          <IonTabBar slot="bottom">
+          <IonTabBar
+            color="ideaToolbar"
+            mode={isMobileMode() ? 'md' : 'ios'}
+            slot={isMobileMode() ? 'bottom' : 'top'}
+            style={isMobileMode() ? {} : { justifyContent: 'right', borderBottom: 'none' }}
+          >
             <IonTabButton tab="agenda" href="/agenda">
-              <IonIcon icon={calendar} />
+              {isMobileMode() ? <IonIcon icon={calendar} /> : ''}
               <IonLabel>Agenda</IonLabel>
             </IonTabButton>
             <IonTabButton tab="map" href="/map">
-              <IonIcon icon={map} />
+              {isMobileMode() ? <IonIcon icon={map} /> : ''}
               <IonLabel>Map</IonLabel>
             </IonTabButton>
             <IonTabButton tab="profile" href="/profile">
-              <IonIcon icon={person} />
+              {isMobileMode() ? <IonIcon icon={person} /> : ''}
               <IonLabel>Profile</IonLabel>
             </IonTabButton>
+            {isMobileMode() ? (
+              ''
+            ) : (
+              <IonTabButton>
+                <IonImg src="/assets/images/ESN-star-full-colour.png" style={{ height: 25 }}></IonImg>
+              </IonTabButton>
+            )}
           </IonTabBar>
         </IonTabs>
       </IonReactRouter>
