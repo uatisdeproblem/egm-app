@@ -164,7 +164,7 @@ const AgendaPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <div style={isMobileMode() ? {} : { width: '50%', float: 'left' }}>
-          <IonList>
+          <IonList style={{ padding: 0 }}>
             {segment || userFavoriteSessions.size > 0 ? (
               <IonSearchbar
                 color="white"
