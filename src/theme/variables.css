@@ -136,6 +136,8 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-step-950: #0d0d0d;
 
   --ion-background-color: var(--ion-color-white-shade);
+
+  --ion-border-color: #eee;
 }
 
 .ion-color-white {
@@ -199,15 +201,6 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-contrast-rgb: var(--ion-color-ESNdarkBlue-contrast-rgb) !important;
   --ion-color-shade: var(--ion-color-ESNdarkBlue-shade) !important;
   --ion-color-tint: var(--ion-color-ESNdarkBlue-tint) !important;
-}
-
-.ion-color-FacebookBlue {
-  --ion-color-base: var(--ion-color-FacebookBlue) !important;
-  --ion-color-base-rgb: var(--ion-color-FacebookBlue-rgb) !important;
-  --ion-color-contrast: var(--ion-color-FacebookBlue-contrast) !important;
-  --ion-color-contrast-rgb: var(--ion-color-FacebookBlue-contrast-rgb) !important;
-  --ion-color-shade: var(--ion-color-FacebookBlue-shade) !important;
-  --ion-color-tint: var(--ion-color-FacebookBlue-tint) !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -309,6 +302,8 @@ http://ionicframework.com/docs/theming/ */
     --ion-item-background: #000000;
 
     --ion-card-background: #1c1c1d;
+
+    --ion-border-color: #222222;
   }
 
   .ios ion-modal {
