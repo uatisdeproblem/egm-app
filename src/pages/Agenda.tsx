@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import {
   IonContent,
   IonHeader,
@@ -9,29 +9,18 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonSkeletonText,
-  IonBadge,
-  IonNote,
   IonSegment,
   IonSegmentButton,
   IonIcon,
   IonButton,
   useIonToast,
   IonSearchbar,
-  useIonViewDidEnter,
-  IonText
+  useIonViewDidEnter
 } from '@ionic/react';
-import { close, locationOutline, peopleOutline, star, starOutline } from 'ionicons/icons';
+import { close, star } from 'ionicons/icons';
 
 import { Session, Speaker } from '../models';
-import {
-  formatDateShort,
-  formatTime,
-  isMobileMode,
-  SessionTypeColor,
-  SessionTypeStr,
-  toastMessageDefaults
-} from '../utils';
+import { formatDateShort, isMobileMode, SessionTypeStr, toastMessageDefaults } from '../utils';
 import {
   addSessionToUserFavorites,
   getSessions,
@@ -42,13 +31,14 @@ import {
 } from '../utils/data';
 
 import SessionCard from '../components/SessionCard';
+import SessionItem from '../components/SessionItem';
 
 const AgendaPage: React.FC = () => {
   const history = useHistory();
   const [showMessage] = useIonToast();
   const [segment, setSegment] = useState('');
 
-  const [sessions, setSessions] = useState(new Array<Session>());
+  const [sessions, setSessions] = useState<Session[]>();
   const [speakersBySessionMap, setSpeakersBySessionMap] = useState(new Map<string, Speaker[]>());
   const [userFavoriteSessionsSet, setUserFavoriteSessionsSet] = useState(new Set<string>());
   const [sessionsDays, setSessionsDays] = useState(new Array<string>());
@@ -65,7 +55,7 @@ const AgendaPage: React.FC = () => {
   });
 
   const loadData = async (): Promise<void> => {
-    const sessions = await getSessions();
+    const sessions = (await getSessions()) || [];
     const userFavoriteSessions = await getUserFavoriteSessionsSet();
     const speakersBySessionMap = await getSessionsSpeakersMap();
     const sessionsDays = getSessionsDays(sessions);
@@ -80,8 +70,8 @@ const AgendaPage: React.FC = () => {
   const filterSessions = (segment = '', search = ''): void => {
     let filteredSessions: Session[];
 
-    if (!segment) filteredSessions = sessions.filter(s => isSessionUserFavorite(s));
-    else filteredSessions = sessions.filter(s => s.startsAt.startsWith(segment));
+    if (!segment) filteredSessions = sessions?.filter(s => isSessionUserFavorite(s)) || [];
+    else filteredSessions = sessions?.filter(s => s.startsAt.startsWith(segment)) || [];
 
     filteredSessions = filteredSessions.filter(x =>
       search
@@ -171,11 +161,7 @@ const AgendaPage: React.FC = () => {
               ''
             )}
             {!filteredSessions ? (
-              <IonItem>
-                <IonLabel>
-                  <IonSkeletonText animated style={{ width: '60%' }} />
-                </IonLabel>
-              </IonItem>
+              <SessionItem></SessionItem>
             ) : !filteredSessions.length ? (
               <p className="ion-padding">
                 <IonItem lines="none">
@@ -194,70 +180,14 @@ const AgendaPage: React.FC = () => {
               </p>
             ) : (
               filteredSessions.map(session => (
-                <IonItem
-                  lines="none"
-                  color="white"
-                  style={{
-                    boxShadow: '0 0 5px 3px rgba(0, 0, 0, 0.05)',
-                    borderRadius: 12,
-                    margin: 8
-                  }}
+                <SessionItem
                   key={session.id}
-                  button
-                  onClick={() => selectCurrentSession(session)}
-                >
-                  <IonNote slot="start" className="ion-text-center" style={{ marginTop: 4, lineHeight: 1.5 }}>
-                    <b style={{ display: 'block' }}>{formatTime(session.startsAt)}</b>
-                    <span style={{ display: 'block' }}>{formatTime(session.endsAt)}</span>
-                    <IonButton
-                      fill="clear"
-                      size="small"
-                      color="secondary"
-                      onClick={event => toggleUserFavoriteSession(session, event)}
-                    >
-                      <IonIcon icon={isSessionUserFavorite(session) ? star : starOutline}></IonIcon>
-                    </IonButton>
-                  </IonNote>
-                  <IonLabel className="ion-text-wrap">
-                    <IonText style={{ fontWeight: 500 }}>{session.name}</IonText>
-                    <p
-                      style={{
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical'
-                      }}
-                    >
-                      {session.description}
-                    </p>
-                    <p>
-                      <IonIcon icon={locationOutline} style={{ verticalAlign: 'middle', marginRight: 4 }}></IonIcon>
-                      {session.Venue ? (
-                        <Link onClick={(e: any) => e.stopPropagation()} to={'/venue/' + session.Venue.id}>
-                          {session.Venue.name}
-                        </Link>
-                      ) : (
-                        ''
-                      )}
-                      <br />
-                      <IonIcon icon={peopleOutline} style={{ verticalAlign: 'middle', marginRight: 4 }}></IonIcon>
-                      {getSpeakersOfSession(session).map(speaker => (
-                        <Link
-                          key={speaker.id}
-                          onClick={(e: any) => e.stopPropagation()}
-                          to={'/speaker/' + speaker.id}
-                          style={{ marginRight: 10 }}
-                        >
-                          {speaker.name}
-                        </Link>
-                      ))}
-                    </p>
-                  </IonLabel>
-                  <IonBadge slot="end" color={SessionTypeColor[session.type]}>
-                    {SessionTypeStr[session.type]}
-                  </IonBadge>
-                </IonItem>
+                  session={session}
+                  speakers={getSpeakersOfSession(session)}
+                  isUserFavorite={isSessionUserFavorite(session)}
+                  toggleUserFavorite={() => toggleUserFavoriteSession(session)}
+                  select={() => selectCurrentSession(session)}
+                ></SessionItem>
               ))
             )}
           </IonList>
