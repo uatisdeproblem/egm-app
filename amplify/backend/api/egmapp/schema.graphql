@@ -1,14 +1,24 @@
-type UserFavoriteSession @model @auth(rules: [{ allow: private }, { allow: owner }]) {
+type UserProfile @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  ESNCountry: String
+  ESNSection: String
+}
+
+type UserFavoriteSession @model @auth(rules: [{allow: private}, {allow: owner}]) {
   id: ID!
   sessionId: String!
 }
 
-type Venue @model @auth(rules: [{ allow: private }, { allow: public, operations: [read] }]) {
+type Venue @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
   id: ID!
   name: String!
+  latitude: Float
+  longitude: Float
 }
 
-type Speaker @model @auth(rules: [{ allow: private }, { allow: public, operations: [read] }]) {
+type Speaker @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
   id: ID!
   name: String!
   sessions: [Session] @manyToMany(relationName: "SessionSpeaker")
@@ -21,7 +31,7 @@ enum SessionType {
   KEYNOTE
 }
 
-type Session @model @auth(rules: [{ allow: private }, { allow: public, operations: [read] }]) {
+type Session @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
   id: ID!
   name: String!
   description: String
@@ -31,3 +41,4 @@ type Session @model @auth(rules: [{ allow: private }, { allow: public, operation
   Speakers: [Speaker] @manyToMany(relationName: "SessionSpeaker")
   Venue: Venue! @hasOne
 }
+ 

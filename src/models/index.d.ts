@@ -9,6 +9,10 @@ export enum SessionType {
 
 
 
+type UserProfileMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type UserFavoriteSessionMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -29,6 +33,18 @@ type SessionSpeakerMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
+export declare class UserProfile {
+  readonly id: string;
+  readonly firstName: string;
+  readonly lastName: string;
+  readonly ESNCountry?: string;
+  readonly ESNSection?: string;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
+  constructor(init: ModelInit<UserProfile, UserProfileMetaData>);
+  static copyOf(source: UserProfile, mutator: (draft: MutableModel<UserProfile, UserProfileMetaData>) => MutableModel<UserProfile, UserProfileMetaData> | void): UserProfile;
+}
+
 export declare class UserFavoriteSession {
   readonly id: string;
   readonly sessionId: string;
@@ -41,6 +57,8 @@ export declare class UserFavoriteSession {
 export declare class Venue {
   readonly id: string;
   readonly name: string;
+  readonly latitude?: number;
+  readonly longitude?: number;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Venue, VenueMetaData>);
