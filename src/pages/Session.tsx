@@ -81,12 +81,7 @@ const SessionPage: React.FC = () => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Session details</IonTitle>
-          </IonToolbar>
-        </IonHeader>
+      <IonContent>
         <SessionCard
           session={session}
           speakers={sessionSpeakers}

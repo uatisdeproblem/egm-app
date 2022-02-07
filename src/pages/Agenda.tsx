@@ -233,11 +233,22 @@ const AgendaPage: React.FC = () => {
                     </p>
                     <p>
                       <IonIcon icon={locationOutline} style={{ verticalAlign: 'middle', marginRight: 4 }}></IonIcon>
-                      {session.Venue ? <Link to={'/venues/' + session.Venue.id}>{session.Venue.name}</Link> : ''}
+                      {session.Venue ? (
+                        <Link onClick={(e: any) => e.stopPropagation()} to={'/venue/' + session.Venue.id}>
+                          {session.Venue.name}
+                        </Link>
+                      ) : (
+                        ''
+                      )}
                       <br />
                       <IonIcon icon={peopleOutline} style={{ verticalAlign: 'middle', marginRight: 4 }}></IonIcon>
                       {getSpeakersOfSession(session).map(speaker => (
-                        <Link key={speaker.id} to={'/speakers/' + speaker.id} style={{ marginRight: 10 }}>
+                        <Link
+                          key={speaker.id}
+                          onClick={(e: any) => e.stopPropagation()}
+                          to={'/speaker/' + speaker.id}
+                          style={{ marginRight: 10 }}
+                        >
                           {speaker.name}
                         </Link>
                       ))}

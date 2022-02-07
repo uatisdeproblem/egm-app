@@ -34,6 +34,8 @@ import AgendaPage from './pages/Agenda';
 import MapPage from './pages/Map';
 import ProfilePage from './pages/Profile';
 import SessionPage from './pages/Session';
+import VenuePage from './pages/Venue';
+import SpeakerPage from './pages/Speaker';
 
 import { isMobileMode } from './utils';
 
@@ -67,6 +69,12 @@ const App: React.FC = () => {
             </Route>
             <Route path="/session/:sessionId">
               <SessionPage />
+            </Route>
+            <Route path="/venue/:venueId">
+              <VenuePage />
+            </Route>
+            <Route path="/speaker/:speakerId">
+              <SpeakerPage />
             </Route>
             <Route exact path="/">
               <Redirect to="/agenda" />
