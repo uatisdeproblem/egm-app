@@ -7,6 +7,9 @@ a {
   text-decoration: underline var(--ion-color-step-100);
   color: var(--ion-color-step-450);
 }
+a:hover {
+  text-decoration: underline var(--ion-color-step-600);
+}
 
 /* auth page */
 [data-indicator-position='top'] > .amplify-tabs-item {
@@ -51,4 +54,8 @@ ion-item ion-label p {
 }
 ion-searchbar {
   --box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px !important;
+}
+
+.maplibregl-popup-content {
+  background: var(--ion-color-white);
 }
