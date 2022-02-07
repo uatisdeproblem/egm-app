@@ -1,6 +1,7 @@
 import { DataStore } from '@aws-amplify/datastore';
+import { Storage } from '@aws-amplify/storage';
 
-import { Session, Speaker, UserFavoriteSession, SessionSpeaker } from '../models';
+import { Session, Speaker, UserFavoriteSession, SessionSpeaker, UserProfile } from '../models';
 
 export const getSessions = async (): Promise<Session[]> => {
   const sessions = (await DataStore.query(Session)) || [];
@@ -45,3 +46,30 @@ export const addSessionToUserFavorites = async (session: Session): Promise<void>
 export const removeSessionFromUserFavorites = async (session: Session): Promise<void> => {
   await DataStore.delete(UserFavoriteSession, ufs => ufs.sessionId('eq', session.id));
 };
+
+export const getUserProfile = async (): Promise<UserProfile> => {
+  return (await DataStore.query(UserProfile))[0];
+};
+export const saveUserProfile = async (data: any): Promise<void> => {
+  let userProfile = await getUserProfile();
+  if (userProfile)
+    userProfile = UserProfile.copyOf(userProfile, updated => {
+      for (const prop in data) (updated as any)[prop] = data[prop];
+    });
+  else userProfile = new UserProfile(data);
+
+  await DataStore.save(userProfile);
+};
+
+export const updateUserAvatar = async (image: File): Promise<void> => {
+  const format = image.name.slice(image.name.lastIndexOf('.') + 1);
+  await Storage.put('avatar', image, { contentType: `image/${format}` });
+};
+export const getUserAvatarURL = async (): Promise<string> => {
+  try {
+    return await Storage.get('avatar');
+  } catch (notFound) {
+    return fallbackUserAvatar;
+  }
+};
+export const fallbackUserAvatar = '/assets/images/no-avatar.jpg';
