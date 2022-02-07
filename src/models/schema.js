@@ -168,15 +168,22 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "latitude": {
-                    "name": "latitude",
+                "description": {
+                    "name": "description",
                     "isArray": false,
-                    "type": "Float",
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
                 "longitude": {
                     "name": "longitude",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "latitude": {
+                    "name": "latitude",
                     "isArray": false,
                     "type": "Float",
                     "isRequired": false,
@@ -260,6 +267,13 @@ export const schema = {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "speaker"
                     }
+                },
+                "description": {
+                    "name": "description",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -514,5 +528,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "fcfec7e1241a8a01dea675f9df32227d"
+    "version": "846a06379f52948c1260a62ad0e0f3a1"
 };

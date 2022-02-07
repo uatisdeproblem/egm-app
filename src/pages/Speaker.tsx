@@ -12,7 +12,8 @@ import {
   useIonToast,
   IonCard,
   IonCardHeader,
-  IonCardTitle
+  IonCardTitle,
+  IonCardContent
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
 
@@ -54,11 +55,16 @@ const SpeakerPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonCard color="white" style={{ boxShadow: 'none', margin: '0', width: '100%' }}>
-          <IonCardHeader>
-            <IonCardTitle>{speaker?.name}</IonCardTitle>
-          </IonCardHeader>
-        </IonCard>
+        {speaker ? (
+          <IonCard color="white" style={{ boxShadow: 'none', margin: '0', width: '100%' }}>
+            <IonCardHeader>
+              <IonCardTitle>{speaker.name}</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>{speaker.description}</IonCardContent>
+          </IonCard>
+        ) : (
+          ''
+        )}
       </IonContent>
     </IonPage>
   );
