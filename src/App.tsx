@@ -1,4 +1,5 @@
 import { Amplify } from 'aws-amplify';
+import { Storage } from '@aws-amplify/storage';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import awsConfig from './aws-exports';
 
@@ -44,6 +45,7 @@ import './theme/theme.css';
 
 setupIonicReact();
 Amplify.configure(awsConfig);
+Storage.configure({ level: 'private' });
 
 const App: React.FC = () => {
   const { user } = useAuthenticator();
