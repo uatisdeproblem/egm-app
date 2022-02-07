@@ -1,5 +1,85 @@
 export const schema = {
     "models": {
+        "UserProfile": {
+            "name": "UserProfile",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "firstName": {
+                    "name": "firstName",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "lastName": {
+                    "name": "lastName",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "ESNCountry": {
+                    "name": "ESNCountry",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "ESNSection": {
+                    "name": "ESNSection",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "UserProfiles",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "UserFavoriteSession": {
             "name": "UserFavoriteSession",
             "fields": {
@@ -86,6 +166,20 @@ export const schema = {
                     "isArray": false,
                     "type": "String",
                     "isRequired": true,
+                    "attributes": []
+                },
+                "latitude": {
+                    "name": "latitude",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "longitude": {
+                    "name": "longitude",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -420,5 +514,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "9230a8d84297eef08e58e17e833092a3"
+    "version": "fcfec7e1241a8a01dea675f9df32227d"
 };

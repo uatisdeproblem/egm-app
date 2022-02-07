@@ -59,5 +59,12 @@
         }
       }
     }
+  },
+  "storage": {
+    "s3egmappstorage": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": []
+    }
   }
 }

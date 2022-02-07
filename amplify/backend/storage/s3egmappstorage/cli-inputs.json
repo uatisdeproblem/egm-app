@@ -1,0 +1,12 @@
+{
+  "resourceName": "s3egmappstorage",
+  "bucketName": "egm-app-storage",
+  "policyUUID": "69aa1f67",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}
