@@ -18,6 +18,8 @@
     "@types/react-router-dom": "^5.1.7",
     "aws-amplify": "^4.3.14",
     "ionicons": "^5.4.0",
+    "maplibre-gl": "^1.15.2",
+    "maplibre-gl-js-amplify": "^1.2.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-error-overlay": "^6.0.9",

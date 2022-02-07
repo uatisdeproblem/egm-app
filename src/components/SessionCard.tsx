@@ -78,7 +78,7 @@ const SessionCard: React.FC<ContainerProps> = ({ session, speakers, isUserFavori
           <IonItem color="transparent">
             <IonIcon slot="start" icon={locationOutline}></IonIcon>
             <IonLabel className="ion-text-wrap">
-              <Link to={'/venues/' + session.Venue.id}>{session.Venue.name}</Link>
+              <Link to={'/venue/' + session.Venue.id}>{session.Venue.name}</Link>
             </IonLabel>
           </IonItem>
           {speakers !== undefined ? (
@@ -86,7 +86,7 @@ const SessionCard: React.FC<ContainerProps> = ({ session, speakers, isUserFavori
               <IonIcon slot="start" icon={peopleOutline}></IonIcon>
               <IonLabel className="ion-text-wrap">
                 {speakers.map(speaker => (
-                  <Link key={speaker.id} to={'/speakers/' + speaker.id} style={{ display: 'block' }}>
+                  <Link key={speaker.id} to={'/speaker/' + speaker.id} style={{ display: 'block' }}>
                     {speaker.name}
                   </Link>
                 ))}

@@ -1,7 +1,7 @@
 import { DataStore } from '@aws-amplify/datastore';
 import { Storage } from '@aws-amplify/storage';
 
-import { Session, Speaker, UserFavoriteSession, SessionSpeaker, UserProfile } from '../models';
+import { Session, Speaker, UserFavoriteSession, SessionSpeaker, UserProfile, Venue } from '../models';
 
 export const getSessions = async (): Promise<Session[]> => {
   const sessions = (await DataStore.query(Session)) || [];
@@ -66,10 +66,20 @@ export const updateUserAvatar = async (image: File): Promise<void> => {
   await Storage.put('avatar', image, { contentType: `image/${format}` });
 };
 export const getUserAvatarURL = async (): Promise<string> => {
-  try {
-    return await Storage.get('avatar');
-  } catch (notFound) {
-    return fallbackUserAvatar;
-  }
+  return (await Storage.get('avatar')) || fallbackUserAvatar;
 };
 export const fallbackUserAvatar = '/assets/images/no-avatar.jpg';
+
+export const getVenues = async (): Promise<Venue[]> => {
+  return (await DataStore.query(Venue)) || [];
+};
+export const getVenue = async (venueId: string): Promise<Venue | undefined> => {
+  return await DataStore.query(Venue, venueId);
+};
+
+export const getSpeakers = async (): Promise<Speaker[]> => {
+  return (await DataStore.query(Speaker)) || [];
+};
+export const getSpeaker = async (speakerId: string): Promise<Speaker | undefined> => {
+  return await DataStore.query(Speaker, speakerId);
+};

@@ -3,7 +3,7 @@
   "serviceConfiguration": {
     "apiName": "egmapp",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "/tmp/amplify-6f917170-4ef8-43cd-b708-e017080371f7/amplify/backend/api/egmapp/schema.graphql",
+    "gqlSchemaPath": "/tmp/amplify-fd9028f5-d6af-4952-ba67-7381d8bcfe9c/amplify/backend/api/egmapp/schema.graphql",
     "defaultAuthType": {
       "mode": "AMAZON_COGNITO_USER_POOLS",
       "cognitoUserPoolId": "authegmapp"

@@ -66,5 +66,14 @@
       "providerPlugin": "awscloudformation",
       "dependsOn": []
     }
+  },
+  "geo": {
+    "egmVenuesMap": {
+      "isDefault": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Map",
+      "mapStyle": "VectorEsriLightGrayCanvas",
+      "accessType": "AuthorizedUsers"
+    }
   }
 }

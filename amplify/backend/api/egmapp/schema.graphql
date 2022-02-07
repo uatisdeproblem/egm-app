@@ -14,14 +14,16 @@ type UserFavoriteSession @model @auth(rules: [{allow: private}, {allow: owner}])
 type Venue @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
   id: ID!
   name: String!
-  latitude: Float
+  description: String
   longitude: Float
+  latitude: Float
 }
 
 type Speaker @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
   id: ID!
   name: String!
   sessions: [Session] @manyToMany(relationName: "SessionSpeaker")
+  description: String
 }
 
 enum SessionType {
