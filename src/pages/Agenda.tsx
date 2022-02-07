@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { DataStore } from '@aws-amplify/datastore';
 import {
   IonContent,
   IonHeader,
@@ -24,7 +23,7 @@ import {
 } from '@ionic/react';
 import { close, locationOutline, peopleOutline, star, starOutline } from 'ionicons/icons';
 
-import { Session, SessionSpeaker, Speaker } from '../models';
+import { Session, Speaker } from '../models';
 import {
   formatDateShort,
   formatTime,
@@ -33,7 +32,14 @@ import {
   SessionTypeStr,
   toastMessageDefaults
 } from '../utils';
-import { UserFavoriteSession } from '../models';
+import {
+  addSessionToUserFavorites,
+  getSessions,
+  getSessionsDays,
+  getSessionsSpeakersMap,
+  getUserFavoriteSessionsSet,
+  removeSessionFromUserFavorites
+} from '../utils/data';
 
 import SessionCard from '../components/SessionCard';
 
@@ -43,8 +49,8 @@ const AgendaPage: React.FC = () => {
   const [segment, setSegment] = useState('');
 
   const [sessions, setSessions] = useState(new Array<Session>());
-  const [speakersBySession, setSpeakersBySession] = useState(new Map<string, Speaker[]>());
-  const [userFavoriteSessions, setUserFavoriteSessions] = useState(new Set<string>());
+  const [speakersBySessionMap, setSpeakersBySessionMap] = useState(new Map<string, Speaker[]>());
+  const [userFavoriteSessionsSet, setUserFavoriteSessionsSet] = useState(new Set<string>());
   const [sessionsDays, setSessionsDays] = useState(new Array<string>());
   const [filteredSessions, setFilteredSessions] = useState(new Array<Session>());
   const [currentSession, setCurrentSession] = useState<Session>();
@@ -59,23 +65,15 @@ const AgendaPage: React.FC = () => {
   });
 
   const loadData = async (): Promise<void> => {
-    const sessions = (await DataStore.query(Session)).sort((a, b) => a.startsAt.localeCompare(b.startsAt));
-    const userFavoriteSessions = new Set((await DataStore.query(UserFavoriteSession)).map(s => s.sessionId));
-    const sessionsSpeakers = await DataStore.query(SessionSpeaker);
-
-    const speakersBySession = new Map<string, Speaker[]>();
-    sessionsSpeakers.forEach(ss => {
-      const sbs = speakersBySession.get(ss.session.id);
-      if (sbs) sbs.push(ss.speaker);
-      else speakersBySession.set(ss.session.id, [ss.speaker]);
-    });
-
-    const sessionsDays = Array.from(new Set(sessions.map(s => s.startsAt.slice(0, 10)))).sort();
+    const sessions = await getSessions();
+    const userFavoriteSessions = await getUserFavoriteSessionsSet();
+    const speakersBySessionMap = await getSessionsSpeakersMap();
+    const sessionsDays = getSessionsDays(sessions);
 
     setSessions(sessions);
-    setSpeakersBySession(speakersBySession);
+    setSpeakersBySessionMap(speakersBySessionMap);
     setSessionsDays(sessionsDays);
-    setUserFavoriteSessions(userFavoriteSessions);
+    setUserFavoriteSessionsSet(userFavoriteSessions);
     setFilteredSessions(sessions.filter(s => userFavoriteSessions.has(s.id)));
   };
 
@@ -103,21 +101,21 @@ const AgendaPage: React.FC = () => {
     setSegment(segment);
   };
 
-  const getSpeakersOfSession = (session: Session): Speaker[] => speakersBySession.get(session.id) || [];
+  const getSpeakersOfSession = (session: Session): Speaker[] => speakersBySessionMap.get(session.id) || [];
 
-  const isSessionUserFavorite = (session: Session): boolean => userFavoriteSessions.has(session.id);
+  const isSessionUserFavorite = (session: Session): boolean => userFavoriteSessionsSet.has(session.id);
   const toggleUserFavoriteSession = async (session: Session, event?: any): Promise<void> => {
     if (event) event.stopPropagation();
 
     try {
       if (isSessionUserFavorite(session)) {
-        await DataStore.delete(UserFavoriteSession, ufs => ufs.sessionId('eq', session.id));
-        userFavoriteSessions.delete(session.id);
+        await removeSessionFromUserFavorites(session);
+        userFavoriteSessionsSet.delete(session.id);
       } else {
-        await DataStore.save(new UserFavoriteSession({ sessionId: session.id }));
-        userFavoriteSessions.add(session.id);
+        await addSessionToUserFavorites(session);
+        userFavoriteSessionsSet.add(session.id);
       }
-      setUserFavoriteSessions(new Set(userFavoriteSessions));
+      setUserFavoriteSessionsSet(new Set(userFavoriteSessionsSet));
     } catch (err) {
       await showMessage({ ...toastMessageDefaults, message: 'Failed saving favorite session.', color: 'danger' });
     }
@@ -129,10 +127,8 @@ const AgendaPage: React.FC = () => {
     if (session && isMobileMode()) history.push('session/' + session.id);
   };
 
-  const refreshUserFavoriteSessions = async (): Promise<void> => {
-    const userFavoriteSessions = new Set((await DataStore.query(UserFavoriteSession)).map(s => s.sessionId));
-    setUserFavoriteSessions(userFavoriteSessions);
-  };
+  const refreshUserFavoriteSessions = async (): Promise<void> =>
+    setUserFavoriteSessionsSet(await getUserFavoriteSessionsSet());
 
   return (
     <IonPage>
@@ -165,7 +161,7 @@ const AgendaPage: React.FC = () => {
       <IonContent>
         <div style={isMobileMode() ? {} : { width: '50%', float: 'left' }}>
           <IonList style={{ padding: 0 }}>
-            {segment || userFavoriteSessions.size > 0 ? (
+            {segment || userFavoriteSessionsSet.size > 0 ? (
               <IonSearchbar
                 color="white"
                 placeholder="Filter by title, description, venue, speaker..."
@@ -184,7 +180,7 @@ const AgendaPage: React.FC = () => {
               <p className="ion-padding">
                 <IonItem lines="none">
                   <IonLabel className="ion-text-wrap ion-text-center">
-                    {!segment && userFavoriteSessions.size === 0 ? (
+                    {!segment && userFavoriteSessionsSet.size === 0 ? (
                       <>
                         You don't have any favorite session yet.
                         <br />

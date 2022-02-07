@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router';
-import { DataStore } from '@aws-amplify/datastore';
 import {
   IonContent,
   IonHeader,
@@ -16,8 +15,15 @@ import { close } from 'ionicons/icons';
 
 import SessionCard from '../components/SessionCard';
 
-import { Session, Speaker, SessionSpeaker, UserFavoriteSession } from '../models';
+import { Session, Speaker } from '../models';
 import { toastMessageDefaults } from '../utils';
+import {
+  addSessionToUserFavorites,
+  getSession,
+  getSessionSpeakers,
+  isSessionUserFavorite,
+  removeSessionFromUserFavorites
+} from '../utils/data';
 
 const SessionPage: React.FC = () => {
   const history = useHistory();
@@ -33,17 +39,14 @@ const SessionPage: React.FC = () => {
   }, []);
 
   const loadData = async (): Promise<void> => {
-    const session = (await DataStore.query(Session, sessionId)) as Session;
+    const session = await getSession(sessionId);
     if (!session) {
       await showMessage({ ...toastMessageDefaults, message: 'Session not found.' });
       return;
     }
 
-    const sessionSpeakers = (await DataStore.query(SessionSpeaker))
-      .filter(x => x.session.id === sessionId)
-      .map(s => s.speaker);
-
-    const isUserFavorite = (await DataStore.query(UserFavoriteSession)).some(s => s.sessionId === sessionId);
+    const sessionSpeakers = await getSessionSpeakers(sessionId);
+    const isUserFavorite = await isSessionUserFavorite(sessionId);
 
     setSession(session);
     setSessionSpeakers(sessionSpeakers);
@@ -55,10 +58,10 @@ const SessionPage: React.FC = () => {
 
     try {
       if (isUserFavorite) {
-        await DataStore.delete(UserFavoriteSession, ufs => ufs.sessionId('eq', session.id));
+        await removeSessionFromUserFavorites(session);
         setIsUserFavorite(false);
       } else {
-        await DataStore.save(new UserFavoriteSession({ sessionId: session.id }));
+        await addSessionToUserFavorites(session);
         setIsUserFavorite(true);
       }
     } catch (err) {
