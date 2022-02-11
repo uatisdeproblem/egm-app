@@ -60,6 +60,7 @@ export declare class Venue {
   readonly description?: string;
   readonly longitude?: number;
   readonly latitude?: number;
+  readonly imageURL?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Venue, VenueMetaData>);
@@ -70,7 +71,10 @@ export declare class Speaker {
   readonly id: string;
   readonly name: string;
   readonly sessions?: (SessionSpeaker | null)[];
+  readonly organization?: string;
+  readonly title?: string;
   readonly description?: string;
+  readonly imageURL?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Speaker, SpeakerMetaData>);

@@ -17,13 +17,17 @@ type Venue @model @auth(rules: [{allow: private}, {allow: public, operations: [r
   description: String
   longitude: Float
   latitude: Float
+  imageURL: AWSURL
 }
 
 type Speaker @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
   id: ID!
   name: String!
   sessions: [Session] @manyToMany(relationName: "SessionSpeaker")
+  organization: String
+  title: String
   description: String
+  imageURL: AWSURL
 }
 
 enum SessionType {

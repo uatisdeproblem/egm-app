@@ -189,6 +189,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "imageURL": {
+                    "name": "imageURL",
+                    "isArray": false,
+                    "type": "AWSURL",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -268,10 +275,31 @@ export const schema = {
                         "associatedWith": "speaker"
                     }
                 },
+                "organization": {
+                    "name": "organization",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "title": {
+                    "name": "title",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "description": {
                     "name": "description",
                     "isArray": false,
                     "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "imageURL": {
+                    "name": "imageURL",
+                    "isArray": false,
+                    "type": "AWSURL",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -528,5 +556,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "846a06379f52948c1260a62ad0e0f3a1"
+    "version": "b76b92483a1c6813499b12b66520c2a5"
 };
