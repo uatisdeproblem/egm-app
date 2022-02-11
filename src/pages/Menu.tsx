@@ -12,7 +12,7 @@ import {
   IonToolbar,
   useIonAlert
 } from '@ionic/react';
-import { calendar, informationCircle, logOut, map, people, person } from 'ionicons/icons';
+import { business, calendar, informationCircle, logOut, map, people, person } from 'ionicons/icons';
 
 import { isMobileMode } from '../utils';
 
@@ -60,6 +60,10 @@ const MenuPage: React.FC = () => {
           <IonItem button color="white" routerLink="/map">
             <IonIcon icon={map} slot="start"></IonIcon>
             <IonLabel>Map and venues</IonLabel>
+          </IonItem>
+          <IonItem button color="white" routerLink="/organizations">
+            <IonIcon icon={business} slot="start"></IonIcon>
+            <IonLabel>Organizations</IonLabel>
           </IonItem>
           <IonItem button color="white" routerLink="/speakers">
             <IonIcon icon={people} slot="start"></IonIcon>

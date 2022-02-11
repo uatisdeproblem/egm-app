@@ -1,7 +1,7 @@
 import { DataStore } from '@aws-amplify/datastore';
 import { Storage } from '@aws-amplify/storage';
 
-import { Session, Speaker, UserFavoriteSession, SessionSpeaker, UserProfile, Venue } from '../models';
+import { Session, Speaker, UserFavoriteSession, SessionSpeaker, UserProfile, Venue, Organization } from '../models';
 
 export const getSessions = async (): Promise<Session[]> => {
   const sessions = (await DataStore.query(Session)) || [];
@@ -11,7 +11,15 @@ export const getSession = async (sessionId: string): Promise<Session | undefined
   return await DataStore.query(Session, sessionId);
 };
 export const getSessionSpeakers = async (sessionId: string): Promise<Speaker[]> => {
-  return (await DataStore.query(SessionSpeaker)).filter(x => x.session.id === sessionId).map(s => s.speaker);
+  const speakersSummary = (await DataStore.query(SessionSpeaker))
+    .filter(x => x.session.id === sessionId)
+    .map(s => s.speaker);
+  const speakers = [];
+  for (const s of speakersSummary) {
+    const speaker = await getSpeaker(s.id);
+    if (speaker) speakers.push(speaker);
+  }
+  return speakers;
 };
 export const isSessionUserFavorite = async (sessionId: string): Promise<boolean> => {
   return (await DataStore.query(UserFavoriteSession)).some(s => s.sessionId === sessionId);
@@ -24,13 +32,16 @@ export const getUserFavoriteSessionsSet = async (): Promise<Set<string>> => {
 
 export const getSessionsSpeakersMap = async (): Promise<Map<string, Speaker[]>> => {
   const sessionsSpeakers = await DataStore.query(SessionSpeaker);
+  const speakers = await DataStore.query(Speaker);
 
   const speakersBySession = new Map<string, Speaker[]>();
 
   sessionsSpeakers.forEach(ss => {
+    const speaker = speakers.find(x => x.id === ss.speaker.id);
+    if (!speaker) return;
     const sbs = speakersBySession.get(ss.session.id);
-    if (sbs) sbs.push(ss.speaker);
-    else speakersBySession.set(ss.session.id, [ss.speaker]);
+    if (sbs) sbs.push(speaker);
+    else speakersBySession.set(ss.session.id, [speaker]);
   });
 
   return speakersBySession;
@@ -82,4 +93,16 @@ export const getSpeakers = async (): Promise<Speaker[]> => {
 };
 export const getSpeaker = async (speakerId: string): Promise<Speaker | undefined> => {
   return await DataStore.query(Speaker, speakerId);
+};
+export const getSpeakerRole = (speaker: Speaker): string => {
+  return speaker.Organization?.name || speaker.title
+    ? `${[speaker.Organization?.name, speaker.title].filter(x => x).join(', ')}`
+    : '';
+};
+
+export const getOrganizations = async (): Promise<Organization[]> => {
+  return (await DataStore.query(Organization)) || [];
+};
+export const getOrganization = async (organizationId: string): Promise<Organization | undefined> => {
+  return await DataStore.query(Organization, organizationId);
 };

@@ -19,6 +19,7 @@ import { calendarOutline, locationOutline, peopleOutline, star, starOutline } fr
 
 import { Session, Speaker } from '../models';
 import { SessionTypeStr, SessionTypeColor, formatTime, formatDateShort, isMobileMode } from '../utils';
+import { getSpeakerRole } from '../utils/data';
 
 interface ContainerProps {
   session?: Session;
@@ -88,9 +89,7 @@ const SessionCard: React.FC<ContainerProps> = ({ session, speakers, isUserFavori
                 {speakers.map(speaker => (
                   <Link key={speaker.id} to={'/speaker/' + speaker.id} style={{ display: 'block' }}>
                     {speaker.name}
-                    {speaker.organization || speaker.title
-                      ? ` (${[speaker.organization, speaker.title].filter(x => x).join(', ')})`
-                      : ''}
+                    {getSpeakerRole(speaker) ? ` (${getSpeakerRole(speaker)})` : ''}
                   </Link>
                 ))}
               </IonLabel>

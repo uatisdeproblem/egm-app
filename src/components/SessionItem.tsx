@@ -4,6 +4,7 @@ import { locationOutline, peopleOutline, star, starOutline } from 'ionicons/icon
 
 import { Session, Speaker } from '../models';
 import { SessionTypeStr, SessionTypeColor, formatTime } from '../utils';
+import { getSpeakerRole } from '../utils/data';
 
 interface ContainerProps {
   session?: Session;
@@ -61,9 +62,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, speakers, isUserFavori
                   style={{ marginRight: 10 }}
                 >
                   {speaker.name}
-                  {speaker.organization || speaker.title
-                    ? ` (${[speaker.organization, speaker.title].filter(x => x).join(', ')})`
-                    : ''}
+                  {getSpeakerRole(speaker) ? ` (${getSpeakerRole(speaker)})` : ''}
                 </Link>
               ))
             : ''}

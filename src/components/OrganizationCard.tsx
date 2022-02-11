@@ -7,24 +7,22 @@ import {
   IonSkeletonText,
   IonRow,
   IonCol,
-  IonAvatar,
   IonImg,
-  IonCardSubtitle
+  IonThumbnail
 } from '@ionic/react';
 
-import { Speaker } from '../models';
-import { getSpeakerRole } from '../utils/data';
+import { Organization } from '../models';
+
+const fallbackOrganizationLogo = '/assets/images/no-logo.jpg';
 
 interface ContainerProps {
-  speaker?: Speaker;
+  organization?: Organization;
   preview?: boolean;
   select?: () => void;
 }
 
-const fallbackSpeakerImg = '/assets/images/no-avatar.jpg';
-
-const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => {
-  return speaker ? (
+const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, select }) => {
+  return organization ? (
     <IonCard
       button={!!select}
       onClick={select}
@@ -38,43 +36,32 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
     >
       <IonCardHeader>
         <IonRow className="ion-align-items-center">
-          <IonCol size={preview ? '12' : '3'}>
-            <IonAvatar style={{ margin: '0 auto', width: 100, height: 100, marginBottom: 16 }}>
-              <IonImg
-                src={speaker.imageURL || fallbackSpeakerImg}
-                onIonError={(e: any) => (e.target.src = fallbackSpeakerImg)}
-              ></IonImg>
-            </IonAvatar>
+          <IonCol size={preview ? '12' : '3'} style={{ background: 'white', padding: 20, borderRadius: 10 }}>
+            <IonImg
+              src={organization.logoURL || fallbackOrganizationLogo}
+              onIonError={(e: any) => (e.target.src = fallbackOrganizationLogo)}
+              style={{ margin: '0 auto', maxWidth: 200, maxHeight: 80 }}
+            ></IonImg>
           </IonCol>
-          <IonCol size={preview ? '12' : '9'}>
-            {getSpeakerRole(speaker).length ? (
-              <IonCardSubtitle className={preview ? 'ion-text-center' : ''}>{getSpeakerRole(speaker)}</IonCardSubtitle>
-            ) : (
-              ''
-            )}
+          <IonCol size={preview ? '12' : '9'} style={{ paddingLeft: 20 }}>
             <IonCardTitle>
-              <h2 style={{ marginTop: 3 }} className={preview ? 'ion-text-center' : ''}>
-                {speaker.name}
-              </h2>
+              <h2 className={preview ? 'ion-text-center' : ''}>{organization.name}</h2>
             </IonCardTitle>
           </IonCol>
         </IonRow>
       </IonCardHeader>
-      <IonCardContent>{preview ? '' : speaker.description}</IonCardContent>
+      <IonCardContent>{preview ? '' : organization.description}</IonCardContent>
     </IonCard>
   ) : (
     <IonCard onClick={select}>
       <IonCardHeader>
         <IonRow>
           <IonCol>
-            <IonAvatar>
+            <IonThumbnail>
               <IonSkeletonText animated />
-            </IonAvatar>
+            </IonThumbnail>
           </IonCol>
           <IonCol>
-            <IonCardSubtitle>
-              <IonSkeletonText animated style={{ width: '40%' }} />
-            </IonCardSubtitle>
             <IonCardTitle>
               <IonSkeletonText animated style={{ width: '60%' }} />
             </IonCardTitle>
@@ -93,4 +80,4 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
   );
 };
 
-export default SpeakerCard;
+export default OrganizationCard;

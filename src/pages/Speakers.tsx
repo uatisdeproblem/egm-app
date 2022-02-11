@@ -44,7 +44,7 @@ const SpeakersPage: React.FC = () => {
       search
         .split(' ')
         .every(searchTerm =>
-          [x.name, x.organization || '', x.title || '', x.description || ''].some(f =>
+          [x.name, x.Organization.name, x.title || '', x.description || ''].some(f =>
             f.toLowerCase().includes(searchTerm)
           )
         )
