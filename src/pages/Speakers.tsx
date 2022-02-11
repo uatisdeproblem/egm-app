@@ -73,7 +73,7 @@ const SpeakersPage: React.FC = () => {
             onIonChange={e => filterSpeakers(e.detail.value!)}
           ></IonSearchbar>
 
-          <IonGrid className="ion-no-padding">
+          <IonGrid>
             <IonRow className="ion-justify-content-center">
               {!filteredSpeakers ? (
                 <IonCol>

@@ -15,7 +15,7 @@ interface ContainerProps {
 
 const SessionItem: React.FC<ContainerProps> = ({ session, speakers, isUserFavorite, toggleUserFavorite, select }) => {
   const toggleUserFavoriteWithPrevention = (e: any) => {
-    e.preventDefault();
+    e.stopPropagation();
     if (toggleUserFavorite) toggleUserFavorite();
   };
 

@@ -13,7 +13,6 @@ import {
 } from '@ionic/react';
 
 import { Speaker } from '../models';
-import { isMobileMode } from '../utils';
 
 interface ContainerProps {
   speaker?: Speaker;
@@ -31,11 +30,12 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
       button={!!select}
       onClick={select}
       color="white"
-      style={
-        isMobileMode()
-          ? { boxShadow: 'none', margin: '0', width: '100%', height: preview ? '90%' : 'auto' }
-          : { boxShadow: '0 0 5px 3px rgba(0, 0, 0, 0.05)', marginTop: 15, height: preview ? '90%' : 'auto' }
-      }
+      style={{
+        boxShadow: '0 0 5px 3px rgba(0, 0, 0, 0.05)',
+        margin: '0',
+        width: '100%',
+        height: preview ? '100%' : 'auto'
+      }}
     >
       <IonCardHeader>
         <IonRow className="ion-align-items-center">
