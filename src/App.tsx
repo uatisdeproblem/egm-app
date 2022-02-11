@@ -33,13 +33,15 @@ import AuthPage from './pages/Auth';
 import AgendaPage from './pages/Agenda';
 import MapPage from './pages/Map';
 import ProfilePage from './pages/Profile';
+import MenuPage from './pages/Menu';
 import SessionPage from './pages/Session';
 import VenuePage from './pages/Venue';
+import SpeakersPage from './pages/Speakers';
 import SpeakerPage from './pages/Speaker';
 
 import { isMobileMode } from './utils';
 
-import { calendar, map, person } from 'ionicons/icons';
+import { calendar, map, menu, person } from 'ionicons/icons';
 
 import 'typeface-poppins';
 import './theme/variables.css';
@@ -67,11 +69,17 @@ const App: React.FC = () => {
             <Route path="/profile">
               <ProfilePage />
             </Route>
+            <Route path="/menu">
+              <MenuPage />
+            </Route>
             <Route path="/session/:sessionId">
               <SessionPage />
             </Route>
             <Route path="/venue/:venueId">
               <VenuePage />
+            </Route>
+            <Route path="/speakers">
+              <SpeakersPage />
             </Route>
             <Route path="/speaker/:speakerId">
               <SpeakerPage />
@@ -97,6 +105,10 @@ const App: React.FC = () => {
             <IonTabButton tab="profile" href="/profile">
               {isMobileMode() ? <IonIcon icon={person} /> : ''}
               <IonLabel>Profile</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="menu" href="/menu">
+              {isMobileMode() ? <IonIcon icon={menu} /> : ''}
+              <IonLabel>Menu</IonLabel>
             </IonTabButton>
             {isMobileMode() ? (
               ''
