@@ -150,7 +150,7 @@ const AgendaPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <div style={isMobileMode() ? {} : { width: '50%', float: 'left' }}>
-          <IonList style={{ padding: 0 }}>
+          <IonList>
             {segment || userFavoriteSessionsSet.size > 0 ? (
               <IonSearchbar
                 color="white"
@@ -163,21 +163,19 @@ const AgendaPage: React.FC = () => {
             {!filteredSessions ? (
               <SessionItem></SessionItem>
             ) : !filteredSessions.length ? (
-              <p className="ion-padding">
-                <IonItem lines="none">
-                  <IonLabel className="ion-text-wrap ion-text-center">
-                    {!segment && userFavoriteSessionsSet.size === 0 ? (
-                      <>
-                        You don't have any favorite session yet.
-                        <br />
-                        <i>Select a day and start building your customized agenda.</i> 😉
-                      </>
-                    ) : (
-                      <>No elements found.</>
-                    )}
-                  </IonLabel>
-                </IonItem>
-              </p>
+              <IonItem lines="none">
+                <IonLabel className="ion-text-wrap ion-text-center">
+                  {!segment && userFavoriteSessionsSet.size === 0 ? (
+                    <>
+                      You don't have any favorite session yet.
+                      <br />
+                      <i>Select a day and start building your customized agenda.</i> 😉
+                    </>
+                  ) : (
+                    <>No elements found.</>
+                  )}
+                </IonLabel>
+              </IonItem>
             ) : (
               filteredSessions.map(session => (
                 <SessionItem
@@ -210,7 +208,7 @@ const AgendaPage: React.FC = () => {
               </p>
             </>
           ) : (
-            <p className="ion-padding">
+            <p>
               <IonItem lines="none">
                 <IonLabel className="ion-text-center">No session selected.</IonLabel>
               </IonItem>

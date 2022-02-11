@@ -115,15 +115,15 @@ const ProfilePage: React.FC = () => {
             <input type="file" accept="image/*" onChange={uploadNewAvatar} ref={fileInput as any} hidden={true} />
           </p>
           <form onSubmit={handleSubmit}>
-            <IonItem>
+            <IonItem color="white">
               <IonLabel position="floating">First name</IonLabel>
               <IonInput required value={firstName} onIonChange={e => setFirstName(e.detail.value || '')}></IonInput>
             </IonItem>
-            <IonItem>
+            <IonItem color="white">
               <IonLabel position="floating">Last name</IonLabel>
               <IonInput required value={lastName} onIonChange={e => setLastName(e.detail.value || '')}></IonInput>
             </IonItem>
-            <IonItem>
+            <IonItem color="white">
               <IonLabel position="floating">ESN Country</IonLabel>
               <IonSelect interface="popover" value={ESNCountry} onIonChange={e => setESNCountry(e.detail.value)}>
                 {ESNCountries.map(country => (
@@ -133,7 +133,7 @@ const ProfilePage: React.FC = () => {
                 ))}
               </IonSelect>
             </IonItem>
-            <IonItem>
+            <IonItem color="white">
               <IonLabel position="floating">ESN Section</IonLabel>
               <IonSelect
                 interface="popover"
