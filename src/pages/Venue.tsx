@@ -9,17 +9,15 @@ import {
   IonIcon,
   IonButtons,
   IonButton,
-  useIonToast,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent
+  useIonToast
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
 
 import { Venue } from '../models';
 import { toastMessageDefaults } from '../utils';
 import { getVenue } from '../utils/data';
+
+import VenueCard from '../components/VenueCard';
 
 const VenuePage: React.FC = () => {
   const history = useHistory();
@@ -55,16 +53,9 @@ const VenuePage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {venue ? (
-          <IonCard color="white" style={{ boxShadow: 'none', margin: '0', width: '100%' }}>
-            <IonCardHeader>
-              <IonCardTitle>{venue.name}</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>{venue.description}</IonCardContent>
-          </IonCard>
-        ) : (
-          ''
-        )}
+        <div style={{ maxWidth: 600, margin: '0 auto' }}>
+          <VenueCard venue={venue}></VenueCard>
+        </div>
       </IonContent>
     </IonPage>
   );
