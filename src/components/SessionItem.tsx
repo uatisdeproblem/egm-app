@@ -61,6 +61,9 @@ const SessionItem: React.FC<ContainerProps> = ({ session, speakers, isUserFavori
                   style={{ marginRight: 10 }}
                 >
                   {speaker.name}
+                  {speaker.organization || speaker.title
+                    ? ` (${[speaker.organization, speaker.title].filter(x => x).join(', ')})`
+                    : ''}
                 </Link>
               ))
             : ''}

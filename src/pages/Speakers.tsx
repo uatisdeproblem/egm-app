@@ -65,15 +65,16 @@ const SpeakersPage: React.FC = () => {
         )}
       </IonHeader>
       <IonContent>
-        <IonList style={{ padding: 0 }}>
+        <IonList>
           <IonSearchbar
             color="white"
+            style={{ maxWidth: 500, margin: '0 auto' }}
             placeholder="Filter by name, organization, title..."
             onIonChange={e => filterSpeakers(e.detail.value!)}
           ></IonSearchbar>
 
-          <IonGrid>
-            <IonRow>
+          <IonGrid className="ion-no-padding">
+            <IonRow className="ion-justify-content-center">
               {!filteredSpeakers ? (
                 <IonCol>
                   <SpeakerCard></SpeakerCard>
@@ -86,8 +87,12 @@ const SpeakersPage: React.FC = () => {
                 </IonCol>
               ) : (
                 filteredSpeakers.map(speaker => (
-                  <IonCol key={speaker.id}>
-                    <SpeakerCard speaker={speaker} select={() => history.push('speaker/' + speaker.id)}></SpeakerCard>
+                  <IonCol key={speaker.id} size="12" sizeSm="6" sizeMd="4" sizeLg="3" sizeXl="2">
+                    <SpeakerCard
+                      speaker={speaker}
+                      preview
+                      select={() => history.push('speaker/' + speaker.id)}
+                    ></SpeakerCard>
                   </IonCol>
                 ))
               )}

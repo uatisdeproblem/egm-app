@@ -88,6 +88,9 @@ const SessionCard: React.FC<ContainerProps> = ({ session, speakers, isUserFavori
                 {speakers.map(speaker => (
                   <Link key={speaker.id} to={'/speaker/' + speaker.id} style={{ display: 'block' }}>
                     {speaker.name}
+                    {speaker.organization || speaker.title
+                      ? ` (${[speaker.organization, speaker.title].filter(x => x).join(', ')})`
+                      : ''}
                   </Link>
                 ))}
               </IonLabel>
