@@ -1,4 +1,4 @@
-type UserProfile @model @auth(rules: [{allow: private}]) {
+type UserProfile @model @auth(rules: [{allow: owner}]) {
   id: ID!
   firstName: String!
   lastName: String!
@@ -6,12 +6,12 @@ type UserProfile @model @auth(rules: [{allow: private}]) {
   ESNSection: String
 }
 
-type UserFavoriteSession @model @auth(rules: [{allow: private}, {allow: owner}]) {
+type UserFavoriteSession @model @auth(rules: [{allow: owner}]) {
   id: ID!
   sessionId: String!
 }
 
-type Venue @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
+type Venue @model @auth(rules: [{allow: private, operations: [read]}]) {
   id: ID!
   name: String!
   description: String
@@ -20,7 +20,7 @@ type Venue @model @auth(rules: [{allow: private}, {allow: public, operations: [r
   imageURL: AWSURL
 }
 
-type Speaker @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
+type Speaker @model @auth(rules: [{allow: private, operations: [read]}]) {
   id: ID!
   name: String!
   sessions: [Session] @manyToMany(relationName: "SessionSpeaker")
@@ -37,7 +37,7 @@ enum SessionType {
   KEYNOTE
 }
 
-type Session @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
+type Session @model @auth(rules: [{allow: private, operations: [read]}]) {
   id: ID!
   name: String!
   description: String

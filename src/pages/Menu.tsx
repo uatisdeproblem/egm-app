@@ -1,4 +1,4 @@
-import { Auth } from 'aws-amplify';
+import { Auth, DataStore } from 'aws-amplify';
 import {
   IonContent,
   IonHeader,
@@ -29,6 +29,7 @@ const MenuPage: React.FC = () => {
     const header = 'Logout';
     const message = 'Are you sure?';
     const doLogout = async (): Promise<void> => {
+      await DataStore.clear();
       await Auth.signOut();
       window.location.assign('');
     };
