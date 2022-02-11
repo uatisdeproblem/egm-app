@@ -9,6 +9,10 @@ export enum SessionType {
 
 
 
+type OrganizationMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type UserProfileMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -33,12 +37,31 @@ type SessionSpeakerMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
+export declare class Organization {
+  readonly id: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly logoURL?: string;
+  readonly website?: string;
+  readonly contactEmail?: string;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
+  constructor(init: ModelInit<Organization, OrganizationMetaData>);
+  static copyOf(source: Organization, mutator: (draft: MutableModel<Organization, OrganizationMetaData>) => MutableModel<Organization, OrganizationMetaData> | void): Organization;
+}
+
 export declare class UserProfile {
   readonly id: string;
   readonly firstName: string;
   readonly lastName: string;
+  readonly languages?: (string | null)[];
+  readonly fieldOfExpertise?: string;
   readonly ESNCountry?: string;
   readonly ESNSection?: string;
+  readonly contactEmail?: string;
+  readonly contactPhone?: string;
+  readonly bio?: string;
+  readonly openToJob?: boolean;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<UserProfile, UserProfileMetaData>);
@@ -57,10 +80,12 @@ export declare class UserFavoriteSession {
 export declare class Venue {
   readonly id: string;
   readonly name: string;
+  readonly address?: string;
+  readonly longitude: number;
+  readonly latitude: number;
   readonly description?: string;
-  readonly longitude?: number;
-  readonly latitude?: number;
   readonly imageURL?: string;
+  readonly planImageURL?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Venue, VenueMetaData>);
@@ -70,13 +95,15 @@ export declare class Venue {
 export declare class Speaker {
   readonly id: string;
   readonly name: string;
-  readonly sessions?: (SessionSpeaker | null)[];
-  readonly organization?: string;
   readonly title?: string;
   readonly description?: string;
   readonly imageURL?: string;
+  readonly contactEmail?: string;
+  readonly Organization: Organization;
+  readonly Sessions?: (SessionSpeaker | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
+  readonly speakerOrganizationId: string;
   constructor(init: ModelInit<Speaker, SpeakerMetaData>);
   static copyOf(source: Speaker, mutator: (draft: MutableModel<Speaker, SpeakerMetaData>) => MutableModel<Speaker, SpeakerMetaData> | void): Speaker;
 }
@@ -88,8 +115,8 @@ export declare class Session {
   readonly type: SessionType | keyof typeof SessionType;
   readonly startsAt: string;
   readonly endsAt: string;
-  readonly Speakers?: (SessionSpeaker | null)[];
   readonly Venue: Venue;
+  readonly Speakers?: (SessionSpeaker | null)[];
   readonly createdAt?: string;
   readonly updatedAt?: string;
   readonly sessionVenueId: string;

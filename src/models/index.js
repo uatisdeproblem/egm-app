@@ -9,9 +9,10 @@ const SessionType = {
   "KEYNOTE": "KEYNOTE"
 };
 
-const { UserProfile, UserFavoriteSession, Venue, Speaker, Session, SessionSpeaker } = initSchema(schema);
+const { Organization, UserProfile, UserFavoriteSession, Venue, Speaker, Session, SessionSpeaker } = initSchema(schema);
 
 export {
+  Organization,
   UserProfile,
   UserFavoriteSession,
   Venue,

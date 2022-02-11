@@ -1,9 +1,24 @@
+type Organization @model @auth(rules: [{allow: private, operations: [read]}]) {
+  id: ID!
+  name: String!
+  description: String
+  logoURL: AWSURL
+  website: AWSURL
+  contactEmail: AWSEmail
+}
+
 type UserProfile @model @auth(rules: [{allow: owner}]) {
   id: ID!
   firstName: String!
   lastName: String!
+  languages: [String]
+  fieldOfExpertise: String
   ESNCountry: String
   ESNSection: String
+  contactEmail: AWSEmail
+  contactPhone: AWSPhone
+  bio: String
+  openToJob: Boolean
 }
 
 type UserFavoriteSession @model @auth(rules: [{allow: owner}]) {
@@ -14,20 +29,23 @@ type UserFavoriteSession @model @auth(rules: [{allow: owner}]) {
 type Venue @model @auth(rules: [{allow: private, operations: [read]}]) {
   id: ID!
   name: String!
+  address: String
+  longitude: Float!
+  latitude: Float!
   description: String
-  longitude: Float
-  latitude: Float
   imageURL: AWSURL
+  planImageURL: AWSURL
 }
 
 type Speaker @model @auth(rules: [{allow: private, operations: [read]}]) {
   id: ID!
   name: String!
-  sessions: [Session] @manyToMany(relationName: "SessionSpeaker")
-  organization: String
   title: String
   description: String
   imageURL: AWSURL
+  contactEmail: AWSEmail
+  Organization: Organization! @hasOne
+  Sessions: [Session] @manyToMany(relationName: "SessionSpeaker")
 }
 
 enum SessionType {
@@ -44,7 +62,7 @@ type Session @model @auth(rules: [{allow: private, operations: [read]}]) {
   type: SessionType!
   startsAt: AWSDateTime!
   endsAt: AWSDateTime!
-  Speakers: [Speaker] @manyToMany(relationName: "SessionSpeaker")
   Venue: Venue! @hasOne
+  Speakers: [Speaker] @manyToMany(relationName: "SessionSpeaker")
 }
  

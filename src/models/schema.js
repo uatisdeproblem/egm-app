@@ -1,5 +1,89 @@
 export const schema = {
     "models": {
+        "Organization": {
+            "name": "Organization",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "description": {
+                    "name": "description",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "logoURL": {
+                    "name": "logoURL",
+                    "isArray": false,
+                    "type": "AWSURL",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "website": {
+                    "name": "website",
+                    "isArray": false,
+                    "type": "AWSURL",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "contactEmail": {
+                    "name": "contactEmail",
+                    "isArray": false,
+                    "type": "AWSEmail",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Organizations",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "UserProfile": {
             "name": "UserProfile",
             "fields": {
@@ -24,6 +108,21 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "languages": {
+                    "name": "languages",
+                    "isArray": true,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true
+                },
+                "fieldOfExpertise": {
+                    "name": "fieldOfExpertise",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "ESNCountry": {
                     "name": "ESNCountry",
                     "isArray": false,
@@ -35,6 +134,34 @@ export const schema = {
                     "name": "ESNSection",
                     "isArray": false,
                     "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "contactEmail": {
+                    "name": "contactEmail",
+                    "isArray": false,
+                    "type": "AWSEmail",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "contactPhone": {
+                    "name": "contactPhone",
+                    "isArray": false,
+                    "type": "AWSPhone",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "bio": {
+                    "name": "bio",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "openToJob": {
+                    "name": "openToJob",
+                    "isArray": false,
+                    "type": "Boolean",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -162,8 +289,8 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "description": {
-                    "name": "description",
+                "address": {
+                    "name": "address",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -173,18 +300,32 @@ export const schema = {
                     "name": "longitude",
                     "isArray": false,
                     "type": "Float",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "latitude": {
                     "name": "latitude",
                     "isArray": false,
                     "type": "Float",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "description": {
+                    "name": "description",
+                    "isArray": false,
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
                 "imageURL": {
                     "name": "imageURL",
+                    "isArray": false,
+                    "type": "AWSURL",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "planImageURL": {
+                    "name": "planImageURL",
                     "isArray": false,
                     "type": "AWSURL",
                     "isRequired": false,
@@ -246,27 +387,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "sessions": {
-                    "name": "sessions",
-                    "isArray": true,
-                    "type": {
-                        "model": "SessionSpeaker"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "speaker"
-                    }
-                },
-                "organization": {
-                    "name": "organization",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "title": {
                     "name": "title",
                     "isArray": false,
@@ -288,6 +408,41 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "contactEmail": {
+                    "name": "contactEmail",
+                    "isArray": false,
+                    "type": "AWSEmail",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "Organization": {
+                    "name": "Organization",
+                    "isArray": false,
+                    "type": {
+                        "model": "Organization"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "speakerOrganizationId"
+                    }
+                },
+                "Sessions": {
+                    "name": "Sessions",
+                    "isArray": true,
+                    "type": {
+                        "model": "SessionSpeaker"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "speaker"
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -303,6 +458,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "speakerOrganizationId": {
+                    "name": "speakerOrganizationId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -374,20 +536,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "Speakers": {
-                    "name": "Speakers",
-                    "isArray": true,
-                    "type": {
-                        "model": "SessionSpeaker"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "session"
-                    }
-                },
                 "Venue": {
                     "name": "Venue",
                     "isArray": false,
@@ -400,6 +548,20 @@ export const schema = {
                         "connectionType": "HAS_ONE",
                         "associatedWith": "id",
                         "targetName": "sessionVenueId"
+                    }
+                },
+                "Speakers": {
+                    "name": "Speakers",
+                    "isArray": true,
+                    "type": {
+                        "model": "SessionSpeaker"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "session"
                     }
                 },
                 "createdAt": {
@@ -523,5 +685,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "b76b92483a1c6813499b12b66520c2a5"
+    "version": "2f3971e9110d52ca1fa0596e746af5c7"
 };
