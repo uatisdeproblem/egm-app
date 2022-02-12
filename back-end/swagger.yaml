@@ -1,0 +1,771 @@
+openapi: 3.0.3
+
+# heads-up: in this template you can't use shorcuts such has `!Sub`; use `Fn::Sub` instead.
+
+info:
+  title: EGM API
+  version: 2.1.0
+  contact:
+    name: ITER IDEA
+    email: help@iter-idea.com
+    url: https://iter-idea.com
+
+servers:
+  - url: https://api-egm.iter-idea.com/{environment}
+    variables:
+      environment:
+        enum: [dev, prod]
+        default: dev
+    x-amazon-apigateway-endpoint-configuration:
+      disableExecuteApiEndpoint: true
+
+externalDocs:
+  description: Models documentation
+  url: https://github.com/uatisdeproblem/egm/blob/main/back-end/src/models
+
+tags:
+  - name: Users
+    description: |
+      The users of the event; note: "me" is a shortcut to the real userId
+  - name: Organizations
+    description: The organizations of the event
+  - name: Speakers
+    description: The speakers of the event
+  - name: Venues
+    description: The venues of the event
+  - name: Sessions
+    description: The sessions of the event
+
+paths:
+  /users/{userId}:
+    get:
+      summary: Get your profile
+      tags: [Users]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/users'
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+    put:
+      summary: Edit your profile
+      tags: [Users]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: User
+        content:
+          application/json:
+            schema:
+              type: object
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/users'
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Patch your profile
+      tags: [Users]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [GET_IMAGE_UPLOAD_URL, ADD_FAVORITE_SESSION, REMOVE_FAVORITE_SESSION, GET_FAVORITE_SESSIONS]
+                sessionId:
+                  type: string
+                  description: (ADD_FAVORITE_SESSION, REMOVE_FAVORITE_SESSION)
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/users'
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete your account
+      tags: [Users]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/users'
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /organizations:
+    get:
+      summary: Get the organizations
+      tags: [Organizations]
+      security:
+        - CognitoUserPool: []
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
+      responses:
+        200:
+          $ref: '#/components/responses/Organizations'
+  /organizations/{organizationId}:
+    get:
+      summary: Get an organization
+      tags: [Organizations]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+    post:
+      summary: Insert a new organization
+      description: Requires to be Admin.
+      tags: [Organizations]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Organization
+        content:
+          application/json:
+            schema:
+              type: object
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit an organization
+      description: Requires to be Admin.
+      tags: [Organizations]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Organization
+        content:
+          application/json:
+            schema:
+              type: object
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Patch an organization
+      description: >
+        Requires to be Admin.
+      tags: [Organizations]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['GET_IMAGE_UPLOAD_URL']
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete an organization
+      description: Requires to be Admin.
+      tags: [Organizations]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /speakers:
+    get:
+      summary: Get the speakers
+      tags: [Speakers]
+      security:
+        - CognitoUserPool: []
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
+      responses:
+        200:
+          $ref: '#/components/responses/Speakers'
+  /speakers/{speakerId}:
+    get:
+      summary: Get a speaker
+      tags: [Speakers]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+    post:
+      summary: Insert a new speaker
+      description: Requires to be Admin.
+      tags: [Speakers]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Speaker
+        content:
+          application/json:
+            schema:
+              type: object
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit a speaker
+      description: Requires to be Admin.
+      tags: [Speakers]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Speaker
+        content:
+          application/json:
+            schema:
+              type: object
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Patch a speaker
+      description: >
+        Requires to be Admin.
+      tags: [Speakers]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['GET_IMAGE_UPLOAD_URL']
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a speaker
+      description: Requires to be Admin.
+      tags: [Speakers]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /venues:
+    get:
+      summary: Get the venues
+      tags: [Venues]
+      security:
+        - CognitoUserPool: []
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/venues'
+      responses:
+        200:
+          $ref: '#/components/responses/Venues'
+  /venues/{venueId}:
+    get:
+      summary: Get a venue
+      tags: [Venues]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/venues'
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+    post:
+      summary: Insert a new venue
+      description: Requires to be Admin.
+      tags: [Venues]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Venue
+        content:
+          application/json:
+            schema:
+              type: object
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/venues'
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit a venue
+      description: Requires to be Admin.
+      tags: [Venues]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Venue
+        content:
+          application/json:
+            schema:
+              type: object
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/venues'
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Patch a venue
+      description: >
+        Requires to be Admin.
+      tags: [Venues]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['GET_IMAGE_UPLOAD_URL']
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/venues'
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a venue
+      description: Requires to be Admin.
+      tags: [Venues]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/venues'
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /sessions:
+    get:
+      summary: Get the sessions
+      tags: [Sessions]
+      security:
+        - CognitoUserPool: []
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
+      responses:
+        200:
+          $ref: '#/components/responses/Sessions'
+  /sessions/{sessionId}:
+    get:
+      summary: Get a session
+      tags: [Sessions]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+    post:
+      summary: Insert a new session
+      description: Requires to be Admin.
+      tags: [Sessions]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Session
+        content:
+          application/json:
+            schema:
+              type: object
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit a session
+      description: Requires to be Admin.
+      tags: [Sessions]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Session
+        content:
+          application/json:
+            schema:
+              type: object
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Patch a session
+      description: >
+        Requires to be Admin.
+      tags: [Sessions]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['']
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a session
+      description: Requires to be Admin.
+      tags: [Sessions]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+
+components:
+  responses:
+    User:
+      description: User profile
+      content:
+        application/json:
+          schema:
+            type: object
+    Organization:
+      description: Organization
+      content:
+        application/json:
+          schema:
+            type: object
+    Organizations:
+      description: Organization[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+    Speaker:
+      description: Speaker
+      content:
+        application/json:
+          schema:
+            type: object
+    Speakers:
+      description: Speaker[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+    Venue:
+      description: Venue
+      content:
+        application/json:
+          schema:
+            type: object
+    Venues:
+      description: Venue[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+    Session:
+      description: Session
+      content:
+        application/json:
+          schema:
+            type: object
+    Sessions:
+      description: Session[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+    BadParameters:
+      description: Bad input parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: The request isn't valid
+    OperationCompleted:
+      description: Operation completed
+
+  x-amazon-apigateway-integrations:
+    users:
+      type: AWS_PROXY
+      httpMethod: POST
+      payloadFormatVersion: '2.0'
+      credentials:
+        Fn::Sub: ${ApiRole.Arn}
+      uri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UsersFunction.Arn}/invocations
+    organizations:
+      type: AWS_PROXY
+      httpMethod: POST
+      payloadFormatVersion: '2.0'
+      credentials:
+        Fn::Sub: ${ApiRole.Arn}
+      uri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrganizationsFunction.Arn}/invocations
+    speakers:
+      type: AWS_PROXY
+      httpMethod: POST
+      payloadFormatVersion: '2.0'
+      credentials:
+        Fn::Sub: ${ApiRole.Arn}
+      uri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SpeakersFunction.Arn}/invocations
+    venues:
+      type: AWS_PROXY
+      httpMethod: POST
+      payloadFormatVersion: '2.0'
+      credentials:
+        Fn::Sub: ${ApiRole.Arn}
+      uri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${VenuesFunction.Arn}/invocations
+    sessions:
+      type: AWS_PROXY
+      httpMethod: POST
+      payloadFormatVersion: '2.0'
+      credentials:
+        Fn::Sub: ${ApiRole.Arn}
+      uri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SessionsFunction.Arn}/invocations
+
+  securitySchemes:
+    CognitoUserPool:
+      type: apiKey
+      name: Authorization
+      in: header

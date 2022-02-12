@@ -1,0 +1,364 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: Back-end resources
+# NOTE WELL: before your first deploy, make sure you created the 'template-api-domain.yaml' resources
+# NOTE WELL: before your first deploy, make sure you created the 'template-cognito.yaml' resources
+# NOTE WELL: before your first deploy, make sure you created the 'template-resources.yaml' resources
+
+Parameters:
+  Project:
+    Type: String
+    Description: The code of the project; e.g. scarlett
+    AllowedPattern: (?!-)[a-zA-Z0-9-.]{1,63}(?<!-)
+  Environment:
+    Type: String
+    Description: The environment to deploy (dev|prod)
+    AllowedValues:
+      - dev
+      - prod
+    Default: dev
+  CognitoUserPoolRegion:
+    Type: String
+    Description: The region of the Cognito User Pool used for authorization
+  CognitoUserPoolId:
+    Type: String
+    Description: The ID of the Cognito User Pool used for authorization
+  CognitoUserPoolClientIdFrontEnd:
+    Type: String
+    Description: The ID of the Cognito User Pool client used as audience for the authorization (front-end)
+  CognitoUserPoolClientIdBackEnd:
+    Type: String
+    Description: The ID of the Cognito User Pool client used as audience for the authorization (back-end)
+
+Resources:
+  ### DDB tables
+
+  UsersProfileTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${Project}_${Environment}_usersProfile
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+  OrganizationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${Project}_${Environment}_organizations
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      AttributeDefinitions:
+        - AttributeName: organizationId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: organizationId
+          KeyType: HASH
+  SpeakersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${Project}_${Environment}_speakers
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      AttributeDefinitions:
+        - AttributeName: speakerId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: speakerId
+          KeyType: HASH
+  VenuesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${Project}_${Environment}_venues
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      AttributeDefinitions:
+        - AttributeName: venueId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: venueId
+          KeyType: HASH
+  SessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${Project}_${Environment}_sessions
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      AttributeDefinitions:
+        - AttributeName: sessionId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sessionId
+          KeyType: HASH
+  UsersFavoriteSessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${Project}_${Environment}_users_favoriteSessions
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: sessionId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: sessionId
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: inverted-index
+          KeySchema:
+            - AttributeName: sessionId
+              KeyType: HASH
+            - AttributeName: userId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  ### Lambda functions
+
+  UsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Manage the users
+      CodeUri: src/
+      Handler: handlers/users.handler
+      FunctionName: !Sub ${Project}_${Environment}_users
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersProfileTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersFavoriteSessionsTable
+        - S3CrudPolicy:
+            BucketName: !Ref MediaBucket
+        - Statement:
+            - Sid: !Sub ${Project}${Environment}Cognito
+              Effect: Allow
+              Action: [cognito-idp:*]
+              Resource: !Sub arn:aws:cognito-idp:${CognitoUserPoolRegion}:${AWS::AccountId}:userpool/${CognitoUserPoolId}
+  UsersFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${UsersFunction}
+      RetentionInDays: 14
+  OrganizationsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Manage the organizations
+      CodeUri: src/
+      Handler: handlers/organizations.handler
+      FunctionName: !Sub ${Project}_${Environment}_organizations
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref OrganizationsTable
+        - S3CrudPolicy:
+            BucketName: !Ref MediaBucket
+  OrganizationsFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${OrganizationsFunction}
+      RetentionInDays: 14
+  SpeakersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Manage the speakers
+      CodeUri: src/
+      Handler: handlers/speakers.handler
+      FunctionName: !Sub ${Project}_${Environment}_speakers
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SpeakersTable
+        - S3CrudPolicy:
+            BucketName: !Ref MediaBucket
+  SpeakersFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${SpeakersFunction}
+      RetentionInDays: 14
+  VenuesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Manage the venues
+      CodeUri: src/
+      Handler: handlers/venues.handler
+      FunctionName: !Sub ${Project}_${Environment}_venues
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VenuesTable
+        - S3CrudPolicy:
+            BucketName: !Ref MediaBucket
+  VenuesFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${VenuesFunction}
+      RetentionInDays: 14
+  SessionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Manage the sessions
+      CodeUri: src/
+      Handler: handlers/sessions.handler
+      FunctionName: !Sub ${Project}_${Environment}_sessions
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SessionsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersFavoriteSessionsTable
+  SessionsFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${SessionsFunction}
+      RetentionInDays: 14
+
+  ### API (see swagger for routes)
+
+  Api:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Description: !Sub ${Project}-${Environment}-api
+      FailOnWarnings: true
+      StageName: '1'
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: swagger.yaml
+      CorsConfiguration:
+        AllowOrigins: ['*']
+        AllowMethods: ['*']
+        AllowHeaders: ['Content-Type', 'Authorization']
+      DisableExecuteApiEndpoint: true
+      Auth:
+        Authorizers:
+          CognitoUserPool:
+            IdentitySource: $request.header.Authorization
+            JwtConfiguration:
+              issuer: !Sub https://cognito-idp.${CognitoUserPoolRegion}.amazonaws.com/${CognitoUserPoolId}
+              audience: [!Ref CognitoUserPoolClientIdFrontEnd, !Ref CognitoUserPoolClientIdBackEnd]
+  ApiMapping:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Properties:
+      DomainName: !ImportValue egm:ApiDomain
+      ApiId: !Ref Api
+      ApiMappingKey: !Ref Environment
+      Stage: !Ref Api.Stage
+  ApiRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: !Sub /${Project}/serviceRoles/
+      RoleName: !Sub ${Project}-${Environment}-api-execution-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [apigateway.amazonaws.com]
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub ${Project}-${Environment}-api-execution-role-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [lambda:InvokeFunction]
+                Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Project}_${Environment}_*
+
+  ### S3 buckets
+
+  MediaBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${Project}-${Environment}-media
+      AccessControl: PublicRead
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ['*']
+            AllowedMethods: [GET, PUT]
+            AllowedOrigins: ['*']
+            ExposedHeaders: []
+            MaxAge: 3000
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: 's3:ObjectCreated:*'
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: 'images/'
+            Function: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:idea_thumbnailer
+  MediaBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MediaBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal: '*'
+          Action: s3:GetObject
+          Resource: !Join ['', ['arn:aws:s3:::', !Ref MediaBucket, '/*']]
+  MediaBucketThumbnailerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:idea_thumbnailer
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !Sub 'arn:aws:s3:::${MediaBucket}'
+
+  ### Lambda layers
+
+  IDEALibsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub ${Project}-${Environment}_libs
+      Description: Base layer containing the project's shared libraries and utilities
+      ContentUri: ./
+      CompatibleRuntimes:
+        - nodejs14.x
+    Metadata:
+      BuildMethod: nodejs14.x
+  IDEALibsLayerPermission:
+    Type: AWS::Lambda::LayerVersionPermission
+    Properties:
+      Action: lambda:GetLayerVersion
+      LayerVersionArn: !Ref IDEALibsLayer
+      Principal: !Ref AWS::AccountId
+
+Globals:
+  Function:
+    Runtime: nodejs14.x
+    Timeout: 5
+    MemorySize: 1024
+    Layers:
+      - !Ref IDEALibsLayer
+    Environment:
+      Variables:
+        TABLE_PROFILES: !Ref UsersProfileTable
+        TABLE_ORGANIZATIONS: !Ref OrganizationsTable
+        TABLE_SPEAKERS: !Ref SpeakersTable
+        TABLE_VENUES: !Ref VenuesTable
+        TABLE_SESSIONS: !Ref SessionsTable
+        TABLE_USERS_FAVORITE_SESSIONS: !Ref UsersFavoriteSessionsTable
+        COGNITO_USER_POOL_ID: !Ref CognitoUserPoolId
+        S3_BUCKET_MEDIA: !Ref MediaBucket
+        S3_USERS_IMAGES_FOLDER: images/users
+        S3_ORGANIZATIONS_IMAGES_FOLDER: images/organizations
+        S3_SPEAKERS_IMAGES_FOLDER: images/speakers
+        S3_VENUES_IMAGES_FOLDER: images/venues
+
+Outputs:
+  ApiId:
+    Description: The ID of the API
+    Value: !Ref Api

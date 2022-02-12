@@ -1,0 +1,184 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: Cognito User Pool
+# it's a separated stack from the back-end's main one because eu-south-1 (our default region) donesn't support Cognito
+
+Parameters:
+  Project:
+    Type: String
+    Description: The code of the project; e.g. scarlett
+    AllowedPattern: (?!-)[a-zA-Z0-9-.]{1,63}(?<!-)
+  FirstAdminUserEmail:
+    Type: String
+    Description: The email address of the first admin of the project; e.g. matteo.carbone@iter-idea.com
+    AllowedPattern: (?!-)[^\s@]+@[^\s@]+\.[^\s@]+(?<!-)
+  FirstAdminUserName:
+    Type: String
+    Description: The fullname of the first admin of the project; e.g. Matteo Carbone
+    AllowedPattern: (?!-)[a-zA-Z0-9-\s.]{1,63}(?<!-)
+
+Resources:
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Ref Project
+      UsernameAttributes:
+        - email
+      UsernameConfiguration:
+        CaseSensitive: false
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: false
+          RequireNumbers: false
+          RequireSymbols: false
+          RequireUppercase: false
+          TemporaryPasswordValidityDays: 100
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      UserPoolTags:
+        project: !Ref Project
+
+  AdminsUserGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: admins
+      Description: Administrators
+      Precedence: 0
+      UserPoolId: !Ref CognitoUserPool
+  FirstAdminUser:
+    Type: AWS::Cognito::UserPoolUser
+    Properties:
+      Username: !Ref FirstAdminUserEmail
+      DesiredDeliveryMediums:
+        - EMAIL
+      ForceAliasCreation: true
+      UserAttributes:
+        - Name: email
+          Value: !Ref FirstAdminUserEmail
+        - Name: email_verified
+          Value: 'true'
+        - Name: name
+          Value: !Ref FirstAdminUserName
+      UserPoolId: !Ref CognitoUserPool
+  AddUserToGroup:
+    Type: AWS::Cognito::UserPoolUserToGroupAttachment
+    Properties:
+      GroupName: !Ref AdminsUserGroup
+      Username: !Ref FirstAdminUser
+      UserPoolId: !Ref CognitoUserPool
+  RobotsUserGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: robots
+      Description: Robot users (e.g. used for data-exchange)
+      Precedence: 1
+      UserPoolId: !Ref CognitoUserPool
+
+  CognitoUserPoolClientFrontEnd:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn:
+      - CognitoUserPool
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ClientName: !Sub ${CognitoUserPool}-front-end
+      GenerateSecret: false
+      PreventUserExistenceErrors: ENABLED
+      ExplicitAuthFlows:
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      WriteAttributes: [name]
+  CognitoUserPoolClientBackEnd:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn:
+      - CognitoUserPool
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ClientName: !Sub ${CognitoUserPool}-back-end
+      GenerateSecret: false
+      PreventUserExistenceErrors: ENABLED
+      ExplicitAuthFlows:
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  # required by Amplify (Location map)
+  CognitoIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName: !Sub ${CognitoUserPool}-identity
+      CognitoIdentityProviders:
+        - ClientId: !Ref CognitoUserPoolClientFrontEnd
+          ProviderName: !Sub cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPool}
+      AllowUnauthenticatedIdentities: false
+  CognitoIdentityPoolUnauthorizedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Action: [sts:AssumeRoleWithWebIdentity]
+            Condition:
+              StringEquals:
+                'cognito-identity.amazonaws.com:aud': !Ref CognitoIdentityPool
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr': unauthenticated
+  CognitoIdentityPoolAuthorizedRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Action: [sts:AssumeRoleWithWebIdentity]
+            Condition:
+              StringEquals:
+                'cognito-identity.amazonaws.com:aud': !Ref CognitoIdentityPool
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr': authenticated
+      Policies:
+        - PolicyName: AmplifyGeoMapLocation
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [geo:GetMap*]
+                Resource: !Sub arn:aws:geo:${AWS::Region}:${AWS::AccountId}:map/*
+  CognitoIdentityPoolRoleMapping:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId: !Ref CognitoIdentityPool
+      Roles:
+        authenticated: !GetAtt CognitoIdentityPoolAuthorizedRole.Arn
+        unauthenticated: !GetAtt CognitoIdentityPoolUnauthorizedRole.Arn
+
+Outputs:
+  CognitoUserPoolArn:
+    Description: Add this value to your configurations
+    Value: !GetAtt CognitoUserPool.Arn
+    Export:
+      Name: !Join [':', [!Ref Project, CognitoUserPool]]
+  CognitoUserPoolId:
+    Description: Add this value to your configurations
+    Value: !Ref CognitoUserPool
+  CognitoUserPoolClientFrontEnd:
+    Description: Add this value to your configurations
+    Value: !Ref CognitoUserPoolClientFrontEnd
+  CognitoUserPoolClientBackEnd:
+    Description: Add this value to your configurations
+    Value: !Ref CognitoUserPoolClientBackEnd
+  CognitoIdentityPoolId:
+    Description: Add this value to your configurations
+    Value: !Ref CognitoIdentityPool

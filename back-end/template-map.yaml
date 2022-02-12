@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: Location map
+
+Parameters:
+  Project:
+    Type: String
+
+Resources:
+  LocationMap:
+    Type: AWS::Location::Map
+    Properties:
+      MapName: !Sub ${Project}-map
+      Configuration:
+        Style: VectorEsriLightGrayCanvas
+
+Outputs:
+  IUNID:
+    Description: Location Map
+    Value: !Ref LocationMap

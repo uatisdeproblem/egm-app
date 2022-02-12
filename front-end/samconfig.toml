@@ -1,0 +1,24 @@
+version = 0.1
+[prod]
+[prod.deploy]
+[prod.deploy.parameters]
+stack_name = "egm-front-end-prod"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-72wec4gnuoop"
+s3_prefix = "egm-front-end-prod"
+region = "eu-south-1"
+profile = "egm"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "BucketName=\"egm-app-prod\" DomainName=\"egm.iter-idea.com\" CertificateArnForDistribution=\"arn:aws:acm:us-east-1:008360868121:certificate/9bee9de9-321f-4f5e-be35-3a225bd35c9a\""
+image_repositories = []
+
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "egm-front-end-dev"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-72wec4gnuoop"
+s3_prefix = "egm-front-end-dev"
+region = "eu-south-1"
+profile = "egm"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "BucketName=\"egm-app-dev\" DomainName=\"dev-egm.iter-idea.com\" CertificateArnForDistribution=\"arn:aws:acm:us-east-1:008360868121:certificate/a46f6878-cb75-4f0b-8a82-6aab1704b50d\""
+image_repositories = []
