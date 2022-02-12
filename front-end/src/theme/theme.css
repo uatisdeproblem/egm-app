@@ -59,3 +59,7 @@ ion-searchbar {
 .maplibregl-popup-content {
   background: var(--ion-color-white);
 }
+
+.fieldHasError {
+  border-bottom: 2px solid var(--ion-color-danger);
+}
