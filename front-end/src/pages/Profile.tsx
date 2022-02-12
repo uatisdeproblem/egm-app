@@ -52,7 +52,7 @@ const ProfilePage: React.FC = () => {
         setESNSection(profile.ESNSection || '');
       }
 
-      const avatar = await getUserAvatarURL();
+      const avatar = await getUserAvatarURL(profile);
       setAvatar(avatar);
     };
     loadData();
