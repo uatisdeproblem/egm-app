@@ -1,4 +1,4 @@
-import { Resource } from 'idea-toolbox';
+import { isEmpty, Resource } from 'idea-toolbox';
 
 export class UserProfile extends Resource {
   userId: string;
@@ -33,8 +33,8 @@ export class UserProfile extends Resource {
   }
   validate(): string[] {
     const e = super.validate();
-    if (this.iE(this.firstName)) e.push('firstName');
-    if (this.iE(this.lastName)) e.push('lastName');
+    if (isEmpty(this.firstName)) e.push('firstName');
+    if (isEmpty(this.lastName)) e.push('lastName');
     return e;
   }
 }

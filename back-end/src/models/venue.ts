@@ -1,4 +1,4 @@
-import { Resource } from 'idea-toolbox';
+import { isEmpty, Resource } from 'idea-toolbox';
 
 export type LngLat = [number, number];
 
@@ -24,9 +24,9 @@ export class Venue extends Resource {
   }
   validate(): string[] {
     const e = super.validate();
-    if (this.iE(this.name)) e.push('name');
-    if (this.iE(this.address)) e.push('address');
-    if (this.iE(this.coordinates[0]) || this.iE(this.coordinates[1])) e.push('coordinates');
+    if (isEmpty(this.name)) e.push('name');
+    if (isEmpty(this.address)) e.push('address');
+    if (isEmpty(this.coordinates[0]) || isEmpty(this.coordinates[1])) e.push('coordinates');
     return e;
   }
 }

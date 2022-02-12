@@ -1,4 +1,4 @@
-import { Resource } from 'idea-toolbox';
+import { isEmpty, Resource } from 'idea-toolbox';
 
 import { OrganizationLinked } from './organization';
 
@@ -31,8 +31,8 @@ export class Speaker extends Resource {
   }
   validate(): string[] {
     const e = super.validate();
-    if (this.iE(this.name)) e.push('name');
-    if (this.contactEmail && this.iE(this.contactEmail, 'email')) e.push('contactEmail');
+    if (isEmpty(this.name)) e.push('name');
+    if (this.contactEmail && isEmpty(this.contactEmail, 'email')) e.push('contactEmail');
     if (!this.organization.organizationId) e.push('organization');
     return e;
   }

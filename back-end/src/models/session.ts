@@ -1,4 +1,4 @@
-import { epochISOString, Resource } from 'idea-toolbox';
+import { epochISOString, isEmpty, Resource } from 'idea-toolbox';
 
 import { SpeakerLinked } from './speaker';
 import { VenueLinked } from './venue';
@@ -30,10 +30,10 @@ export class Session extends Resource {
   }
   validate(): string[] {
     const e = super.validate();
-    if (this.iE(this.name)) e.push('name');
+    if (isEmpty(this.name)) e.push('name');
     if (!Object.keys(SessionType).includes(this.type)) e.push('type');
-    if (this.iE(this.startsAt, 'date')) e.push('startsAt');
-    if (this.iE(this.endsAt, 'date')) e.push('endsAt');
+    if (isEmpty(this.startsAt, 'date')) e.push('startsAt');
+    if (isEmpty(this.endsAt, 'date')) e.push('endsAt');
     if (!this.venue.venueId) e.push('venue');
     return e;
   }

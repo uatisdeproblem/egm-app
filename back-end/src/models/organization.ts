@@ -1,4 +1,4 @@
-import { Resource } from 'idea-toolbox';
+import { isEmpty, Resource } from 'idea-toolbox';
 
 export class Organization extends Resource {
   organizationId: string;
@@ -21,9 +21,9 @@ export class Organization extends Resource {
   }
   validate(): string[] {
     const e = super.validate();
-    if (this.iE(this.name)) e.push('name');
-    if (this.website && this.iE(this.website, 'website')) e.push('website');
-    if (this.contactEmail && this.iE(this.contactEmail, 'email')) e.push('contactEmail');
+    if (isEmpty(this.name)) e.push('name');
+    if (this.website && isEmpty(this.website, 'website')) e.push('website');
+    if (this.contactEmail && isEmpty(this.contactEmail, 'email')) e.push('contactEmail');
     return e;
   }
 }
