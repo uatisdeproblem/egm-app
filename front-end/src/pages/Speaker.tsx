@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useHistory } from 'react-router';
 import {
   IonContent,
@@ -9,7 +9,8 @@ import {
   IonIcon,
   IonButtons,
   IonButton,
-  useIonToast
+  useIonToast,
+  useIonViewWillEnter
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
 
@@ -26,18 +27,17 @@ const SpeakerPage: React.FC = () => {
 
   const [speaker, setSpeaker] = useState<Speaker>();
 
-  useEffect(() => {
+  useIonViewWillEnter(() => {
     loadData();
   }, []);
 
   const loadData = async (): Promise<void> => {
-    const speaker = await getSpeaker(speakerId);
-    if (!speaker) {
+    try {
+      const speaker = await getSpeaker(speakerId);
+      setSpeaker(speaker);
+    } catch (err) {
       await showMessage({ ...toastMessageDefaults, message: 'Speaker not found.' });
-      return;
     }
-
-    setSpeaker(speaker);
   };
 
   return (

@@ -12,12 +12,33 @@ import {
   IonToolbar,
   useIonAlert
 } from '@ionic/react';
-import { business, calendar, informationCircle, logOut, map, people, person } from 'ionicons/icons';
+import {
+  business,
+  calendar,
+  informationCircle,
+  logOut,
+  map,
+  mapOutline,
+  people,
+  person,
+  refresh
+} from 'ionicons/icons';
+import { useEffect, useState } from 'react';
 
 import { isMobileMode } from '../utils';
+import { isUserAdmin } from '../utils/data';
 
 const MenuPage: React.FC = () => {
   const [showAlert] = useIonAlert();
+
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setUserIsAdmin(await isUserAdmin());
+    };
+    loadData();
+  }, []);
 
   const showAppInfo = async (): Promise<void> => {
     const header = 'App version';
@@ -30,11 +51,12 @@ const MenuPage: React.FC = () => {
     const message = 'Are you sure?';
     const doLogout = async (): Promise<void> => {
       await Auth.signOut();
-      window.location.assign('');
+      reloadApp();
     };
     const buttons = ['Cancel', { text: 'Confirm', handler: doLogout }];
     await showAlert({ header, message, buttons });
   };
+  const reloadApp = () => window.location.assign('');
 
   return (
     <IonPage>
@@ -49,7 +71,7 @@ const MenuPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonList style={{ maxWidth: 500, margin: '0 auto' }}>
-          <IonItemDivider style={{ borderBottom: 'none' }}>
+          <IonItemDivider>
             <IonLabel>Pages</IonLabel>
           </IonItemDivider>
           <IonItem button color="white" routerLink="/agenda">
@@ -72,9 +94,26 @@ const MenuPage: React.FC = () => {
             <IonIcon icon={person} slot="start"></IonIcon>
             <IonLabel>Profile</IonLabel>
           </IonItem>
-          <IonItemDivider style={{ borderBottom: 'none' }}>
+          {userIsAdmin ? (
+            <>
+              <IonItemDivider>
+                <IonLabel>Manage</IonLabel>
+              </IonItemDivider>
+              <IonItem button color="white" routerLink="/manage/venue/new">
+                <IonIcon icon={mapOutline} slot="start"></IonIcon>
+                <IonLabel>Add venue</IonLabel>
+              </IonItem>
+            </>
+          ) : (
+            ''
+          )}
+          <IonItemDivider>
             <IonLabel>Other actions</IonLabel>
           </IonItemDivider>
+          <IonItem button color="white" onClick={reloadApp}>
+            <IonIcon icon={refresh} slot="start"></IonIcon>
+            <IonLabel>Reload app</IonLabel>
+          </IonItem>
           <IonItem button color="white" onClick={showAppInfo}>
             <IonIcon icon={informationCircle} slot="start"></IonIcon>
             <IonLabel>App information</IonLabel>

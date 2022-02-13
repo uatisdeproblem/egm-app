@@ -39,6 +39,7 @@ import SpeakersPage from './pages/Speakers';
 import SpeakerPage from './pages/Speaker';
 import OrganizationsPage from './pages/Organizations';
 import OrganizationPage from './pages/Organization';
+import ManageEntityPage from './pages/ManageEntity';
 
 import { isMobileMode } from './utils';
 
@@ -104,6 +105,9 @@ const App: React.FC = () => (
                 </Route>
                 <Route path="/organization/:organizationId">
                   <OrganizationPage />
+                </Route>
+                <Route path="/manage/:type/:id">
+                  <ManageEntityPage />
                 </Route>
                 <Route exact path="/">
                   <Redirect to="/agenda" />

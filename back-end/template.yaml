@@ -162,6 +162,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref OrganizationsTable
+        - DynamoDBCrudPolicy:
+            TableName: !ImportValue idea:IUNID
         - S3CrudPolicy:
             BucketName: !Ref MediaBucket
   OrganizationsFunctionLogs:
@@ -179,6 +181,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref SpeakersTable
+        - DynamoDBCrudPolicy:
+            TableName: !ImportValue idea:IUNID
         - S3CrudPolicy:
             BucketName: !Ref MediaBucket
   SpeakersFunctionLogs:
@@ -196,6 +200,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref VenuesTable
+        - DynamoDBCrudPolicy:
+            TableName: !ImportValue idea:IUNID
         - S3CrudPolicy:
             BucketName: !Ref MediaBucket
   VenuesFunctionLogs:
@@ -213,6 +219,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref SessionsTable
+        - DynamoDBCrudPolicy:
+            TableName: !ImportValue idea:IUNID
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersFavoriteSessionsTable
   SessionsFunctionLogs:
@@ -345,6 +353,7 @@ Globals:
       - !Ref IDEALibsLayer
     Environment:
       Variables:
+        PROJECT: !Ref Project
         TABLE_PROFILES: !Ref UsersProfileTable
         TABLE_ORGANIZATIONS: !Ref OrganizationsTable
         TABLE_SPEAKERS: !Ref SpeakersTable

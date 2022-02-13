@@ -19,6 +19,14 @@ export const getSessions = async (): Promise<Session[]> => {
 export const getSession = async (sessionId: string): Promise<Session | undefined> => {
   return await apiRequest('GET', ['sessions', sessionId]);
 };
+export const saveSession = async (session: Session): Promise<Session> => {
+  if (session.sessionId) return await apiRequest('PUT', ['sessions', session.sessionId], session);
+  else return await apiRequest('POST', 'sessions', session);
+};
+export const deleteSession = async (session: Session): Promise<void> => {
+  return await apiRequest('DELETE', ['sessions', session.sessionId]);
+};
+
 export const isSessionUserFavorite = async (sessionId: string): Promise<boolean> => {
   return (await getUserFavoriteSessionsSet()).has(sessionId);
 };
@@ -44,7 +52,7 @@ export const removeSessionFromUserFavorites = async (session: Session): Promise<
 export const getUserProfile = async (): Promise<UserProfile> => {
   return await apiRequest('GET', ['users', 'me']);
 };
-export const saveUserProfile = async (userProfile: any): Promise<void> => {
+export const saveUserProfile = async (userProfile: UserProfile): Promise<void> => {
   return await apiRequest('PUT', ['users', 'me'], userProfile);
 };
 export const updateUserAvatar = async (image: File): Promise<void> => {
@@ -55,6 +63,13 @@ export const getUserAvatarURL = async ({ userId }: { userId: string }): Promise<
   return MEDIA_BASE_URL.concat('/users/', userId, '.png?v=', imageCacheRef);
 };
 export const usersFallbackImageURL = '/assets/images/no-avatar.jpg';
+
+export const isUserAdmin = async (): Promise<boolean> => {
+  const userData = await Auth.currentAuthenticatedUser();
+  if (!userData) return false;
+  const groups = userData.signInUserSession.accessToken.payload['cognito:groups'];
+  return groups?.includes('admins');
+};
 
 //
 // VENUES
@@ -70,6 +85,13 @@ export const getVenueImageURL = ({ venueId }: { venueId: string }): string => {
   return MEDIA_BASE_URL.concat('/venues/', venueId, '.png?v=', imageCacheRef);
 };
 export const venuesFallbackImageURL = '/assets/images/no-room.jpg';
+export const saveVenue = async (venue: Venue): Promise<Venue> => {
+  if (venue.venueId) return await apiRequest('PUT', ['venues', venue.venueId], venue);
+  else return await apiRequest('POST', 'venues', venue);
+};
+export const deleteVenue = async (venue: Venue): Promise<void> => {
+  return await apiRequest('DELETE', ['venues', venue.venueId]);
+};
 
 //
 // SPEAKERS
@@ -85,6 +107,13 @@ export const getSpeakerImageURL = ({ speakerId }: { speakerId: string }): string
   return MEDIA_BASE_URL.concat('/speakers/', speakerId, '.png?v=', imageCacheRef);
 };
 export const speakersFallbackImageURL = '/assets/images/no-avatar.jpg';
+export const saveSpeaker = async (speaker: Speaker): Promise<Speaker> => {
+  if (speaker.speakerId) return await apiRequest('PUT', ['speakers', speaker.speakerId], speaker);
+  else return await apiRequest('POST', 'speakers', speaker);
+};
+export const deleteSpeaker = async (speaker: Speaker): Promise<void> => {
+  return await apiRequest('DELETE', ['speakers', speaker.speakerId]);
+};
 
 //
 // ORGANIZATIONS
@@ -100,6 +129,14 @@ export const getOrganizationImageURL = ({ organizationId }: { organizationId: st
   return MEDIA_BASE_URL.concat('/organizations/', organizationId, '.png?v=', imageCacheRef);
 };
 export const organizationsFallbackImageURL = '/assets/images/no-logo.jpg';
+export const saveOrganization = async (organization: Organization): Promise<Organization> => {
+  if (organization.organizationId)
+    return await apiRequest('PUT', ['organizations', organization.organizationId], organization);
+  else return await apiRequest('POST', 'organizations', organization);
+};
+export const deleteOrganization = async (organization: Organization): Promise<void> => {
+  return await apiRequest('DELETE', ['organizations', organization.organizationId]);
+};
 
 //
 // HELPERS
@@ -118,7 +155,16 @@ const apiRequest = async (
   const headers = { Authorization: authSession.getAccessToken().getJwtToken() };
   let url = env.api.url.concat('/', env.api.stage, '/', Array.isArray(path) ? path.join('/') : path);
   const res = await fetch(url, { method, headers, body: JSON.stringify(body) });
-  return res.json();
+  if (res.status === 200) return res.json();
+  else {
+    let errMessage: string;
+    try {
+      errMessage = (res.json() as any).message;
+    } catch (err) {
+      errMessage = 'Operation failed';
+    }
+    throw new Error(errMessage);
+  }
 };
 
 const prepareImageCacheRef = () => {

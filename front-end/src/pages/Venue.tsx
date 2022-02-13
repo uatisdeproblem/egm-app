@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useHistory } from 'react-router';
 import {
   IonContent,
@@ -9,13 +9,14 @@ import {
   IonIcon,
   IonButtons,
   IonButton,
-  useIonToast
+  useIonToast,
+  useIonViewWillEnter
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
 
 import { Venue } from 'models/venue';
 import { toastMessageDefaults } from '../utils';
-import { getVenue } from '../utils/data';
+import { getVenue, isUserAdmin } from '../utils/data';
 
 import VenueCard from '../components/VenueCard';
 
@@ -24,20 +25,23 @@ const VenuePage: React.FC = () => {
   const { venueId }: { venueId: string } = useParams();
   const [showMessage] = useIonToast();
 
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+
   const [venue, setVenue] = useState<Venue>();
 
-  useEffect(() => {
+  useIonViewWillEnter(() => {
     loadData();
   }, []);
 
   const loadData = async (): Promise<void> => {
-    const venue = await getVenue(venueId);
-    if (!venue) {
-      await showMessage({ ...toastMessageDefaults, message: 'Venue not found.' });
-      return;
-    }
+    setUserIsAdmin(await isUserAdmin());
 
-    setVenue(venue);
+    try {
+      const venue = await getVenue(venueId);
+      setVenue(venue);
+    } catch (err) {
+      await showMessage({ ...toastMessageDefaults, message: 'Venue not found.' });
+    }
   };
 
   return (
@@ -54,6 +58,13 @@ const VenuePage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
+          {userIsAdmin ? (
+            <p className="ion-text-right">
+              <IonButton routerLink={'/manage/venue/' + venueId}>Manage</IonButton>
+            </p>
+          ) : (
+            ''
+          )}
           <VenueCard venue={venue}></VenueCard>
         </div>
       </IonContent>

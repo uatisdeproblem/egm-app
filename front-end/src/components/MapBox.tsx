@@ -19,7 +19,7 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
   useEffect(() => {
     const initializeMap = async (): Promise<void> => {
       const mapOptions = { container: id, zoom: 11, center: DEFAULT_MAP_CENTER };
-      if (venues.length) mapOptions.center = venues[0].coordinates;
+      if (venues.length) mapOptions.center = Venue.getCoordinates(venues[0]);
 
       const map = await createMap(mapOptions);
 
@@ -105,7 +105,7 @@ export default MapBox;
 
 const mapVenueToMaplibreFeature = (venue: Venue): any => ({
   type: 'Feature',
-  geometry: { type: 'Point', coordinates: venue.coordinates },
+  geometry: { type: 'Point', coordinates: Venue.getCoordinates(venue) },
   properties: { id: venue.venueId, name: venue.name, description: venue.description }
 });
 const mapVenuesToMaplibreFeatureCollection = (venues: Venue[]): any => {

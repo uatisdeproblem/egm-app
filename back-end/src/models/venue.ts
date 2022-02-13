@@ -1,13 +1,16 @@
 import { isEmpty, Resource } from 'idea-toolbox';
 
-export type LngLat = [number, number];
-
 export class Venue extends Resource {
   venueId: string;
   name: string;
   address: string;
   description: string;
-  coordinates: LngLat;
+  longitude: number;
+  latitude: number;
+
+  static getCoordinates(venue: Venue): [number, number] {
+    return [venue.longitude, venue.latitude];
+  }
 
   load(x: any): void {
     super.load(x);
@@ -15,8 +18,8 @@ export class Venue extends Resource {
     this.name = this.clean(x.name, String);
     this.address = this.clean(x.address, String);
     this.description = this.clean(x.description, String);
-    if (!x.coordinates) x.coordinates = [];
-    this.coordinates = [this.clean(x.coordinates[0], Number), this.clean(x.coordinates[1], Number)];
+    this.longitude = this.clean(x.longitude, Number);
+    this.latitude = this.clean(x.latitude, Number);
   }
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
@@ -26,7 +29,8 @@ export class Venue extends Resource {
     const e = super.validate();
     if (isEmpty(this.name)) e.push('name');
     if (isEmpty(this.address)) e.push('address');
-    if (isEmpty(this.coordinates[0]) || isEmpty(this.coordinates[1])) e.push('coordinates');
+    if (isEmpty(this.longitude)) e.push('longitude');
+    if (isEmpty(this.latitude)) e.push('latitude');
     return e;
   }
 }

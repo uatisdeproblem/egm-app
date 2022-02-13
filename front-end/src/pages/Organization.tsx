@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useHistory } from 'react-router';
 import {
   IonContent,
@@ -9,7 +9,8 @@ import {
   IonIcon,
   IonButtons,
   IonButton,
-  useIonToast
+  useIonToast,
+  useIonViewWillEnter
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
 
@@ -26,18 +27,17 @@ const OrganizationPage: React.FC = () => {
 
   const [organization, setOrganization] = useState<Organization>();
 
-  useEffect(() => {
+  useIonViewWillEnter(() => {
     loadData();
   }, []);
 
   const loadData = async (): Promise<void> => {
-    const organization = await getOrganization(organizationId);
-    if (!organization) {
+    try {
+      const organization = await getOrganization(organizationId);
+      setOrganization(organization);
+    } catch (err) {
       await showMessage({ ...toastMessageDefaults, message: 'Organization not found.' });
-      return;
     }
-
-    setOrganization(organization);
   };
 
   return (

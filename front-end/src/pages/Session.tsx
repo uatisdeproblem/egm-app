@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useHistory } from 'react-router';
 import {
   IonContent,
@@ -9,7 +9,8 @@ import {
   IonIcon,
   IonButtons,
   IonButton,
-  useIonToast
+  useIonToast,
+  useIonViewWillEnter
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
 
@@ -32,21 +33,20 @@ const SessionPage: React.FC = () => {
   const [session, setSession] = useState<Session>();
   const [isUserFavorite, setIsUserFavorite] = useState<boolean>();
 
-  useEffect(() => {
+  useIonViewWillEnter(() => {
     loadData();
   }, []);
 
   const loadData = async (): Promise<void> => {
-    const session = await getSession(sessionId);
-    if (!session) {
+    try {
+      const session = await getSession(sessionId);
+      const isUserFavorite = await isSessionUserFavorite(sessionId);
+
+      setSession(session);
+      setIsUserFavorite(isUserFavorite);
+    } catch (err) {
       await showMessage({ ...toastMessageDefaults, message: 'Session not found.' });
-      return;
     }
-
-    const isUserFavorite = await isSessionUserFavorite(sessionId);
-
-    setSession(session);
-    setIsUserFavorite(isUserFavorite);
   };
 
   const toggleUserFavoriteSession = async (): Promise<void> => {

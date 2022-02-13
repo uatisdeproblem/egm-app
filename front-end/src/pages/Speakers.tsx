@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import {
+  IonButton,
   IonCol,
   IonContent,
   IonGrid,
   IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
   IonList,
@@ -14,6 +16,7 @@ import {
   IonTitle,
   IonToolbar
 } from '@ionic/react';
+import { refresh } from 'ionicons/icons';
 
 import { isMobileMode } from '../utils';
 import { getSpeakers } from '../utils/data';
@@ -64,13 +67,22 @@ const SpeakersPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonList>
-          <IonSearchbar
-            color="white"
-            style={{ maxWidth: 500, margin: '0 auto' }}
-            placeholder="Filter by name, organization, title..."
-            onIonChange={e => filterSpeakers(e.detail.value!)}
-          ></IonSearchbar>
-
+          <div style={{ maxWidth: 500, margin: '0 auto' }}>
+            <IonRow className="ion-align-items-center">
+              <IonCol size="10">
+                <IonSearchbar
+                  color="white"
+                  placeholder="Filter by name, organization, title..."
+                  onIonChange={e => filterSpeakers(e.detail.value!)}
+                ></IonSearchbar>
+              </IonCol>
+              <IonCol size="2" className="ion-text-center">
+                <IonButton fill="clear" color="medium" onClick={loadData}>
+                  <IonIcon icon={refresh} slot="icon-only"></IonIcon>
+                </IonButton>
+              </IonCol>
+            </IonRow>
+          </div>
           <IonGrid>
             <IonRow className="ion-justify-content-center">
               {!filteredSpeakers ? (

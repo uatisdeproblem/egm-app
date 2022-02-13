@@ -86,7 +86,7 @@ const ProfilePage: React.FC = () => {
 
       if (avatarTempImageFile) await updateUserAvatar(avatarTempImageFile);
 
-      await saveUserProfile(userProfile);
+      await saveUserProfile(userProfile!);
       await showMessage({ ...toastMessageDefaults, message: 'Profile saved.', color: 'success' });
     } catch (err) {
       await showMessage({

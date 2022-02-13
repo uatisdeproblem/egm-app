@@ -15,9 +15,11 @@ import {
   IonButton,
   useIonToast,
   IonSearchbar,
-  useIonViewDidEnter
+  useIonViewDidEnter,
+  IonRow,
+  IonCol
 } from '@ionic/react';
-import { close, star } from 'ionicons/icons';
+import { close, refresh, star } from 'ionicons/icons';
 
 import { Session } from 'models/session';
 import { formatDateShort, isMobileMode, SessionTypeStr, toastMessageDefaults } from '../utils';
@@ -140,11 +142,20 @@ const AgendaPage: React.FC = () => {
         <div style={isMobileMode() ? {} : { width: '50%', float: 'left' }}>
           <IonList>
             {segment || userFavoriteSessionsSet.size > 0 ? (
-              <IonSearchbar
-                color="white"
-                placeholder="Filter by title, description, venue, speaker..."
-                onIonChange={e => filterSessions(segment, e.detail.value!)}
-              ></IonSearchbar>
+              <IonRow className="ion-align-items-center">
+                <IonCol size="10">
+                  <IonSearchbar
+                    color="white"
+                    placeholder="Filter by title, description, venue, speaker..."
+                    onIonChange={e => filterSessions(segment, e.detail.value!)}
+                  ></IonSearchbar>
+                </IonCol>
+                <IonCol size="2" className="ion-text-center">
+                  <IonButton fill="clear" color="medium" onClick={loadData}>
+                    <IonIcon icon={refresh} slot="icon-only"></IonIcon>
+                  </IonButton>
+                </IonCol>
+              </IonRow>
             ) : (
               ''
             )}
