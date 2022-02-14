@@ -13,6 +13,7 @@ import {
 } from '@ionic/react';
 
 import { Speaker } from 'models/speaker';
+import { getImageURLByURI } from '../utils/data';
 
 interface ContainerProps {
   speaker?: Speaker;
@@ -39,7 +40,10 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
         <IonRow className="ion-align-items-center">
           <IonCol size={preview ? '12' : '3'}>
             <IonAvatar style={{ margin: '0 auto', width: 100, height: 100, marginBottom: 16 }}>
-              <IonImg src={fallbackSpeakerImg} onIonError={(e: any) => (e.target.src = fallbackSpeakerImg)}></IonImg>
+              <IonImg
+                src={getImageURLByURI(speaker.imageURI)}
+                onIonError={(e: any) => (e.target.src = fallbackSpeakerImg)}
+              ></IonImg>
             </IonAvatar>
           </IonCol>
           <IonCol size={preview ? '12' : '9'}>

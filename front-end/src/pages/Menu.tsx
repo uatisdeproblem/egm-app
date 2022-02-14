@@ -102,6 +102,14 @@ const MenuPage: React.FC = () => {
               <IonItemDivider>
                 <IonLabel>Manage</IonLabel>
               </IonItemDivider>
+              <IonItem button color="white" routerLink="/manage/session/new">
+                <IonIcon icon={calendarOutline} slot="start"></IonIcon>
+                <IonLabel>Add session</IonLabel>
+              </IonItem>
+              <IonItem button color="white" routerLink="/manage/venue/new">
+                <IonIcon icon={mapOutline} slot="start"></IonIcon>
+                <IonLabel>Add venue</IonLabel>
+              </IonItem>
               <IonItem button color="white" routerLink="/manage/organization/new">
                 <IonIcon icon={businessOutline} slot="start"></IonIcon>
                 <IonLabel>Add organization</IonLabel>
@@ -109,14 +117,6 @@ const MenuPage: React.FC = () => {
               <IonItem button color="white" routerLink="/manage/speaker/new">
                 <IonIcon icon={peopleOutline} slot="start"></IonIcon>
                 <IonLabel>Add speaker</IonLabel>
-              </IonItem>
-              <IonItem button color="white" routerLink="/manage/venue/new">
-                <IonIcon icon={mapOutline} slot="start"></IonIcon>
-                <IonLabel>Add venue</IonLabel>
-              </IonItem>
-              <IonItem button color="white" routerLink="/manage/session/new">
-                <IonIcon icon={calendarOutline} slot="start"></IonIcon>
-                <IonLabel>Add session</IonLabel>
               </IonItem>
             </>
           ) : (

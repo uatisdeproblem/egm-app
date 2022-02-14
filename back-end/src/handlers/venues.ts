@@ -2,8 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
-import { SignedURL } from 'idea-toolbox';
+import { DynamoDB, RCError, ResourceController } from 'idea-aws';
 
 import { Venue } from '../models/venue';
 
@@ -13,13 +12,9 @@ import { Venue } from '../models/venue';
 
 const PROJECT = process.env.PROJECT;
 
-const S3_BUCKET_MEDIA = process.env.S3_BUCKET_MEDIA;
-const S3_VENUES_IMAGES_FOLDER = process.env.S3_VENUES_IMAGES_FOLDER;
-
 const DDB_TABLES = { venues: process.env.TABLE_VENUES };
 
 const ddb = new DynamoDB();
-const s3 = new S3();
 
 export const handler = (ev: any, _: any, cb: any) => new Venues(ev, cb).handleRequest();
 
@@ -69,21 +64,6 @@ class Venues extends ResourceController {
     } catch (err) {
       throw new RCError('Operation failed');
     }
-  }
-
-  protected async patchResource(): Promise<SignedURL> {
-    if (!this.cognitoUser.isAdmin()) throw new RCError('Unauthorized');
-
-    switch (this.body.action) {
-      case 'GET_IMAGE_UPLOAD_URL':
-        return this.getUploadImageURL();
-      default:
-        throw new RCError('Unsupported action');
-    }
-  }
-  private getUploadImageURL(): SignedURL {
-    const key = S3_VENUES_IMAGES_FOLDER.concat('/', this.resourceId, '.png');
-    return s3.signedURLPut(S3_BUCKET_MEDIA, key);
   }
 
   protected async deleteResource(): Promise<void> {

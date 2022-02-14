@@ -3,6 +3,7 @@ import { isEmpty, Resource } from 'idea-toolbox';
 export class Organization extends Resource {
   organizationId: string;
   name: string;
+  imageURI: string;
   description: string;
   website: string;
   contactEmail: string;
@@ -11,6 +12,7 @@ export class Organization extends Resource {
     super.load(x);
     this.organizationId = this.clean(x.organizationId, String);
     this.name = this.clean(x.name, String);
+    this.imageURI = this.clean(x.imageURI, String);
     this.description = this.clean(x.description, String);
     this.website = this.clean(x.website, String);
     this.contactEmail = this.clean(x.contactEmail, String);

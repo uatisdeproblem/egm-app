@@ -5,6 +5,7 @@ import { OrganizationLinked } from './organization';
 export class Speaker extends Resource {
   speakerId: string;
   name: string;
+  imageURI: string;
   title: string;
   description: string;
   contactEmail: string;
@@ -20,6 +21,7 @@ export class Speaker extends Resource {
     super.load(x);
     this.speakerId = this.clean(x.speakerId, String);
     this.name = this.clean(x.name, String);
+    this.imageURI = this.clean(x.imageURI, String);
     this.title = this.clean(x.title, String);
     this.description = this.clean(x.description, String);
     this.contactEmail = this.clean(x.contactEmail, String);

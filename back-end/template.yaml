@@ -140,6 +140,8 @@ Resources:
             TableName: !Ref UsersProfileTable
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersFavoriteSessionsTable
+        - DynamoDBCrudPolicy:
+            TableName: !ImportValue idea:IUNID
         - S3CrudPolicy:
             BucketName: !Ref MediaBucket
         - Statement:
@@ -164,8 +166,6 @@ Resources:
             TableName: !Ref OrganizationsTable
         - DynamoDBCrudPolicy:
             TableName: !ImportValue idea:IUNID
-        - S3CrudPolicy:
-            BucketName: !Ref MediaBucket
   OrganizationsFunctionLogs:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -185,8 +185,6 @@ Resources:
             TableName: !Ref OrganizationsTable
         - DynamoDBCrudPolicy:
             TableName: !ImportValue idea:IUNID
-        - S3CrudPolicy:
-            BucketName: !Ref MediaBucket
   SpeakersFunctionLogs:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -204,8 +202,6 @@ Resources:
             TableName: !Ref VenuesTable
         - DynamoDBCrudPolicy:
             TableName: !ImportValue idea:IUNID
-        - S3CrudPolicy:
-            BucketName: !Ref MediaBucket
   VenuesFunctionLogs:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -233,6 +229,23 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub /aws/lambda/${SessionsFunction}
+      RetentionInDays: 14
+  ImagesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Manage the images
+      CodeUri: src/
+      Handler: handlers/images.handler
+      FunctionName: !Sub ${Project}_${Environment}_images
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !ImportValue idea:IUNID
+        - S3CrudPolicy:
+            BucketName: !Ref MediaBucket
+  ImagesFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${ImagesFunction}
       RetentionInDays: 14
 
   ### API (see swagger for routes)
@@ -368,10 +381,7 @@ Globals:
         TABLE_USERS_FAVORITE_SESSIONS: !Ref UsersFavoriteSessionsTable
         COGNITO_USER_POOL_ID: !Ref CognitoUserPoolId
         S3_BUCKET_MEDIA: !Ref MediaBucket
-        S3_USERS_IMAGES_FOLDER: images/users
-        S3_ORGANIZATIONS_IMAGES_FOLDER: images/organizations
-        S3_SPEAKERS_IMAGES_FOLDER: images/speakers
-        S3_VENUES_IMAGES_FOLDER: images/venues
+        S3_IMAGES_FOLDER: images
 
 Outputs:
   ApiId:

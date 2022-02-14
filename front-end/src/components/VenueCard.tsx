@@ -1,7 +1,7 @@
 import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonSkeletonText, IonImg } from '@ionic/react';
 
 import { Venue } from 'models/venue';
-import { venuesFallbackImageURL, getVenueImageURL } from '../utils/data';
+import { getImageURLByURI, venuesFallbackImageURL } from '../utils/data';
 
 interface ContainerProps {
   venue?: Venue;
@@ -10,7 +10,10 @@ interface ContainerProps {
 const VenueCard: React.FC<ContainerProps> = ({ venue }) => {
   return venue ? (
     <IonCard color="white" style={cardStyle}>
-      <IonImg src={getVenueImageURL(venue)} onIonError={(e: any) => (e.target.src = venuesFallbackImageURL)}></IonImg>
+      <IonImg
+        src={getImageURLByURI(venue.imageURI)}
+        onIonError={(e: any) => (e.target.src = venuesFallbackImageURL)}
+      ></IonImg>
       <IonCardHeader>
         <IonCardTitle>{venue.name}</IonCardTitle>
       </IonCardHeader>

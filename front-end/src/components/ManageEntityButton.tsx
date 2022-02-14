@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { IonButton } from '@ionic/react';
+import { IonButton, IonIcon } from '@ionic/react';
+import { construct } from 'ionicons/icons';
 
 import { EntityType } from 'models/entity';
 
@@ -23,7 +24,9 @@ const ManageEntityButton: React.FC<ComponentProps> = ({ type, id }) => {
 
   return userIsAdmin ? (
     <p className="ion-text-right">
-      <IonButton routerLink={`/manage/${type}/${id}`}>Manage</IonButton>
+      <IonButton fill="clear" expand="block" routerLink={`/manage/${type}/${id}`}>
+        Manage <IonIcon icon={construct} slot="end"></IonIcon>
+      </IonButton>
     </p>
   ) : (
     <></>

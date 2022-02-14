@@ -1,5 +1,5 @@
 import { Auth } from 'aws-amplify';
-import { Storage } from '@ionic/storage';
+import { Browser } from '@capacitor/browser';
 
 import { UserProfile } from 'models/userProfile';
 import { Organization } from 'models/organization';
@@ -56,11 +56,9 @@ export const saveUserProfile = async (userProfile: UserProfile): Promise<void> =
   return await apiRequest('PUT', ['users', 'me'], userProfile);
 };
 export const updateUserAvatar = async (image: File): Promise<void> => {
-  const { url } = await apiRequest('PATCH', ['users', 'me'], { action: 'GET_IMAGE_UPLOAD_URL' });
+  const { url, id } = await apiRequest('PATCH', ['users', 'me'], { action: 'GET_IMAGE_UPLOAD_URL' });
   await fetch(url, { method: 'PUT', body: image, headers: { 'Content-Type': image.type } });
-};
-export const getUserAvatarURL = async ({ userId }: { userId: string }): Promise<string> => {
-  return MEDIA_BASE_URL.concat('/users/', userId, '.png?v=', imageCacheRef);
+  return id;
 };
 export const usersFallbackImageURL = '/assets/images/no-avatar.jpg';
 
@@ -81,9 +79,6 @@ export const getVenues = async (): Promise<Venue[]> => {
 export const getVenue = async (venueId: string): Promise<Venue> => {
   return await apiRequest('GET', ['venues', venueId]);
 };
-export const getVenueImageURL = ({ venueId }: { venueId: string }): string => {
-  return MEDIA_BASE_URL.concat('/venues/', venueId, '.png?v=', imageCacheRef);
-};
 export const venuesFallbackImageURL = '/assets/images/no-room.jpg';
 export const saveVenue = async (venue: Venue): Promise<Venue> => {
   if (venue.venueId) return await apiRequest('PUT', ['venues', venue.venueId], venue);
@@ -102,9 +97,6 @@ export const getSpeakers = async (): Promise<Speaker[]> => {
 };
 export const getSpeaker = async (speakerId: string): Promise<Speaker> => {
   return await apiRequest('GET', ['speakers', speakerId]);
-};
-export const getSpeakerImageURL = ({ speakerId }: { speakerId: string }): string => {
-  return MEDIA_BASE_URL.concat('/speakers/', speakerId, '.png?v=', imageCacheRef);
 };
 export const speakersFallbackImageURL = '/assets/images/no-avatar.jpg';
 export const saveSpeaker = async (speaker: Speaker): Promise<Speaker> => {
@@ -125,9 +117,6 @@ export const getOrganizations = async (): Promise<Organization[]> => {
 export const getOrganization = async (organizationId: string): Promise<Organization> => {
   return await apiRequest('GET', ['organizations', organizationId]);
 };
-export const getOrganizationImageURL = ({ organizationId }: { organizationId: string }): string => {
-  return MEDIA_BASE_URL.concat('/organizations/', organizationId, '.png?v=', imageCacheRef);
-};
 export const organizationsFallbackImageURL = '/assets/images/no-logo.jpg';
 export const saveOrganization = async (organization: Organization): Promise<Organization> => {
   if (organization.organizationId)
@@ -139,12 +128,26 @@ export const deleteOrganization = async (organization: Organization): Promise<vo
 };
 
 //
+// IMAGES
+//
+
+export const uploadImageAndGetURI = async (image: File): Promise<string> => {
+  const { url, id } = await apiRequest('POST', 'images');
+  await fetch(url, { method: 'PUT', body: image, headers: { 'Content-Type': image.type } });
+  return id;
+};
+export const getImageURLByURI = (imageURI: string): string => {
+  return MEDIA_BASE_URL.concat('/', imageURI, '.png');
+};
+export const openImage = async (imageURI: string): Promise<void> => {
+  await Browser.open({ url: getImageURLByURI(imageURI) });
+};
+
+//
 // HELPERS
 //
 
 const MEDIA_BASE_URL = env.app.mediaUrl.replace('#env#', env.api.stage);
-
-let imageCacheRef: string;
 
 const apiRequest = async (
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
@@ -166,13 +169,3 @@ const apiRequest = async (
     throw new Error(errMessage);
   }
 };
-
-const prepareImageCacheRef = () => {
-  const storage = new Storage();
-  storage.create().then(async (): Promise<void> => {
-    imageCacheRef = await storage.get('IMAGE_CACHE_REF');
-    if (!imageCacheRef) imageCacheRef = Date.now().toString();
-    await storage.set('IMAGE_CACHE_REF', imageCacheRef);
-  });
-};
-prepareImageCacheRef();

@@ -12,7 +12,7 @@ import {
 } from '@ionic/react';
 
 import { Organization } from 'models/organization';
-import { getOrganizationImageURL, organizationsFallbackImageURL } from '../utils/data';
+import { getImageURLByURI, organizationsFallbackImageURL } from '../utils/data';
 
 interface ContainerProps {
   organization?: Organization;
@@ -37,9 +37,9 @@ const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, sel
         <IonRow className="ion-align-items-center">
           <IonCol size={preview ? '12' : '3'} style={{ background: 'white', padding: 20, borderRadius: 10 }}>
             <IonImg
-              src={getOrganizationImageURL(organization)}
+              src={getImageURLByURI(organization.imageURI)}
               onIonError={(e: any) => (e.target.src = organizationsFallbackImageURL)}
-              style={{ margin: '0 auto', maxWidth: 200 }}
+              style={{ margin: '0 auto', maxWidth: 200, height: 100 }}
             ></IonImg>
           </IonCol>
           <IonCol size={preview ? '12' : '9'} style={{ paddingLeft: preview ? 0 : 20 }}>

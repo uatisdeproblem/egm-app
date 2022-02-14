@@ -3,6 +3,8 @@ import { isEmpty, Resource } from 'idea-toolbox';
 export class Venue extends Resource {
   venueId: string;
   name: string;
+  imageURI: string;
+  planImageURI: string;
   address: string;
   description: string;
   longitude: number;
@@ -16,6 +18,8 @@ export class Venue extends Resource {
     super.load(x);
     this.venueId = this.clean(x.venueId, String);
     this.name = this.clean(x.name, String);
+    this.imageURI = this.clean(x.imageURI, String);
+    this.planImageURI = this.clean(x.planImageURI, String);
     this.address = this.clean(x.address, String);
     this.description = this.clean(x.description, String);
     this.longitude = this.clean(x.longitude, Number);

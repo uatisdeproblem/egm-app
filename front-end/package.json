@@ -4,7 +4,8 @@
   "private": true,
   "dependencies": {
     "@aws-amplify/ui-react": "^2.3.0",
-    "@capacitor/core": "3.3.3",
+    "@capacitor/browser": "^1.0.7",
+    "@capacitor/core": "^3.3.3",
     "@ionic/react": "^6.0.0",
     "@ionic/react-router": "^6.0.0",
     "@ionic/storage": "^3.0.6",
@@ -67,7 +68,7 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "3.3.3"
+    "@capacitor/cli": "^3.3.3"
   },
   "overrides": {
     "react-error-overlay": "6.0.9"

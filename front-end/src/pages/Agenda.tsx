@@ -31,6 +31,7 @@ import {
 import SessionCard from '../components/SessionCard';
 import SessionItem from '../components/SessionItem';
 import Searchbar from '../components/Searchbar';
+import ManageEntityButton from '../components/ManageEntityButton';
 
 const AgendaPage: React.FC = () => {
   const history = useHistory();
@@ -194,6 +195,7 @@ const AgendaPage: React.FC = () => {
                 toggleUserFavoriteSession={() => toggleUserFavoriteSession(currentSession)}
               ></SessionCard>
               <p>
+                <ManageEntityButton type="session" id={currentSession.sessionId}></ManageEntityButton>
                 <IonButton fill="clear" color="medium" expand="full" onClick={() => selectCurrentSession()}>
                   <IonIcon icon={close} slot="start"></IonIcon> Close
                 </IonButton>

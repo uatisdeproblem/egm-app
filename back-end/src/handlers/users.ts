@@ -11,8 +11,10 @@ import { UserProfile } from '../models/userProfile';
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
 ///
 
+const PROJECT = process.env.PROJECT;
+
 const S3_BUCKET_MEDIA = process.env.S3_BUCKET_MEDIA;
-const S3_USERS_IMAGES_FOLDER = process.env.S3_USERS_IMAGES_FOLDER;
+const S3_IMAGES_FOLDER = process.env.S3_IMAGES_FOLDER;
 
 const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
 
@@ -92,7 +94,7 @@ class Users extends ResourceController {
   protected async patchResource(): Promise<SignedURL | string[] | void> {
     switch (this.body.action) {
       case 'GET_IMAGE_UPLOAD_URL':
-        return this.getUploadImageURL();
+        return await this.getUploadImageURL();
       case 'ADD_FAVORITE_SESSION':
         return await this.setFavoriteSession(this.body.sessionId, true);
       case 'REMOVE_FAVORITE_SESSION':
@@ -103,9 +105,14 @@ class Users extends ResourceController {
         throw new RCError('Unsupported action');
     }
   }
-  private getUploadImageURL(): SignedURL {
-    const key = S3_USERS_IMAGES_FOLDER.concat('/', this.resourceId, '.png');
-    return s3.signedURLPut(S3_BUCKET_MEDIA, key);
+  private async getUploadImageURL(): Promise<SignedURL> {
+    const id = await ddb.IUNID(PROJECT);
+
+    const key = S3_IMAGES_FOLDER.concat('/', id, '.png');
+    const signedURL = s3.signedURLPut(S3_BUCKET_MEDIA, key);
+    signedURL.id = id;
+
+    return signedURL;
   }
   private async setFavoriteSession(sessionId: string, isFavorite: boolean): Promise<void> {
     if (isFavorite)

@@ -21,7 +21,7 @@ import {
 
 import { isMobileMode, toastMessageDefaults } from '../utils';
 import {
-  getUserAvatarURL,
+  getImageURLByURI,
   getUserProfile,
   saveUserProfile,
   updateUserAvatar,
@@ -38,7 +38,6 @@ const ProfilePage: React.FC = () => {
   const [errors, setErrors] = useState(new Set<string>());
 
   const [avatar, setAvatar] = useState('');
-  const [avatarTempImageFile, setAvatarTempImageFile] = useState<File>();
   const fileInput = createRef<HTMLInputElement>();
 
   const handleFieldChange = (fieldName: string, value: any): void => {
@@ -52,7 +51,7 @@ const ProfilePage: React.FC = () => {
       const userProfile = await getUserProfile();
       setUserProfile(userProfile);
 
-      const avatar = await getUserAvatarURL(userProfile);
+      const avatar = getImageURLByURI(userProfile.imageURI);
       setAvatar(avatar);
     };
     loadData();
@@ -65,14 +64,20 @@ const ProfilePage: React.FC = () => {
     const file = e.target.files[0];
 
     try {
+      await showLoading();
       reader.readAsDataURL(file);
     } catch (err) {
       await showMessage({ ...toastMessageDefaults, message: 'Error uploading the avatar.', color: 'danger' });
     }
 
-    reader.onloadend = () => setAvatar(reader.result as string);
+    reader.onloadend = async (): Promise<void> => {
+      const newImageURI = await updateUserAvatar(file);
+      handleFieldChange('imageURI', newImageURI);
 
-    setAvatarTempImageFile(file);
+      setAvatar(reader.result as string);
+
+      await dismissLoading();
+    };
   };
 
   const handleSubmit = async (event: any): Promise<void> => {
@@ -83,8 +88,6 @@ const ProfilePage: React.FC = () => {
       const errors = new Set(userProfile?.validate());
       setErrors(errors);
       if (errors.size !== 0) throw new Error('Invalid fields');
-
-      if (avatarTempImageFile) await updateUserAvatar(avatarTempImageFile);
 
       await saveUserProfile(userProfile!);
       await showMessage({ ...toastMessageDefaults, message: 'Profile saved.', color: 'success' });

@@ -64,7 +64,8 @@ const ManageEntityPage: React.FC = () => {
         { type: 'text', name: 'name', value: x['name'], label: 'Name', required: true },
         { type: 'text', name: 'description', value: x['description'], label: 'Description' },
         { type: 'url', name: 'website', value: x['website'], label: 'Website' },
-        { type: 'email', name: 'contactEmail', value: x['contactEmail'], label: 'Contact email' }
+        { type: 'email', name: 'contactEmail', value: x['contactEmail'], label: 'Contact email' },
+        { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Logo' }
       ]
     },
     speaker: {
@@ -72,21 +73,26 @@ const ManageEntityPage: React.FC = () => {
       loadEntity: async id => await getSpeaker(id),
       saveEntity: async x => await saveSpeaker(x as Speaker),
       deleteEntity: async x => await deleteSpeaker(x as Speaker),
-      entityFields: (x, supportData: { organizations: Organization[] }): ManageEntityField[] => [
-        { type: 'hidden', name: 'speakerId', value: x['speakerId'] },
-        { type: 'text', name: 'name', value: x['name'], label: 'Name', required: true },
-        {
-          type: 'select',
-          name: 'organization',
-          value: x['organization'].organizationId,
-          required: true,
-          label: 'Organization',
-          options: supportData.organizations.map(o => ({ id: o.organizationId, label: o.name }))
-        },
-        { type: 'text', name: 'title', value: x['title'], label: 'Title' },
-        { type: 'text', name: 'description', value: x['description'], label: 'Description' },
-        { type: 'email', name: 'contactEmail', value: x['contactEmail'], label: 'Contact email' }
-      ],
+      entityFields: (x, supportData: { organizations: Organization[] }): ManageEntityField[] => {
+        const organizations = supportData.organizations.map(o => ({ id: o.organizationId, label: o.name }));
+        const required = true;
+        return [
+          { type: 'hidden', name: 'speakerId', value: x['speakerId'] },
+          { type: 'text', name: 'name', value: x['name'], label: 'Name', required },
+          {
+            type: 'select',
+            name: 'organization',
+            value: x['organization'].organizationId,
+            required,
+            label: 'Organization',
+            options: organizations
+          },
+          { type: 'text', name: 'title', value: x['title'], label: 'Title' },
+          { type: 'text', name: 'description', value: x['description'], label: 'Description' },
+          { type: 'email', name: 'contactEmail', value: x['contactEmail'], label: 'Contact email' },
+          { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Picture' }
+        ];
+      },
       entitySupportData: async (): Promise<any> => ({ organizations: await getOrganizations() })
     },
     venue: {
@@ -100,7 +106,9 @@ const ManageEntityPage: React.FC = () => {
         { type: 'text', name: 'address', value: x['address'], label: 'Address', required: true },
         { type: 'text', name: 'longitude', value: x['longitude'], label: 'Longitude', required: true },
         { type: 'text', name: 'latitude', value: x['latitude'], label: 'Latitude', required: true },
-        { type: 'text', name: 'description', value: x['description'], label: 'Description' }
+        { type: 'text', name: 'description', value: x['description'], label: 'Description' },
+        { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Image' },
+        { type: 'image', name: 'planImageURI', value: x['planImageURI'], label: 'Plan (internal building)' }
       ]
     },
     session: {
@@ -108,51 +116,34 @@ const ManageEntityPage: React.FC = () => {
       loadEntity: async id => await getSession(id),
       saveEntity: async x => await saveSession(x as Session),
       deleteEntity: async x => await deleteSession(x as Session),
-      entityFields: (x, supportData: { venues: Venue[]; speakers: Speaker[] }): ManageEntityField[] => [
-        { type: 'hidden', name: 'sessionId', value: x['sessionId'] },
-        { type: 'text', name: 'name', value: x['name'], label: 'Name', required: true },
-        { type: 'text', name: 'description', value: x['description'], label: 'Description' },
-        {
-          type: 'select',
-          name: 'type',
-          value: x['type'],
-          required: true,
-          label: 'Type',
-          options: Object.keys(SessionType).map(t => ({ id: t, label: (SessionTypeStr as any)[t] }))
-        },
-        { type: 'datetime-local', name: 'startsAt', value: x['startsAt'], label: 'Starts at' },
-        { type: 'datetime-local', name: 'endsAt', value: x['endsAt'], label: 'Ends at' },
-        {
-          type: 'select',
-          name: 'venue',
-          value: x['venue'].venueId,
-          required: true,
-          label: 'Venue',
-          options: supportData.venues.map(v => ({ id: v.venueId, label: v.name }))
-        },
-        {
-          type: 'select',
-          name: 'speaker1',
-          value: x['speaker1'].speakerId,
-          required: true,
-          label: 'Speaker 1',
-          options: supportData.speakers.map(s => ({ id: s.speakerId, label: s.name.concat(' ', Speaker.getRole(s)) }))
-        },
-        {
-          type: 'select',
-          name: 'speaker2',
-          value: x['speaker2'].speakerId,
-          label: 'Speaker 2',
-          options: supportData.speakers.map(s => ({ id: s.speakerId, label: s.name.concat(' ', Speaker.getRole(s)) }))
-        },
-        {
-          type: 'select',
-          name: 'speaker3',
-          value: x['speaker3'].speakerId,
-          label: 'Speaker 3',
-          options: supportData.speakers.map(s => ({ id: s.speakerId, label: s.name.concat(' ', Speaker.getRole(s)) }))
-        }
-      ],
+      entityFields: (x, supportData: { venues: Venue[]; speakers: Speaker[] }): ManageEntityField[] => {
+        const sessionTypes = Object.keys(SessionType).map(t => ({ id: t, label: (SessionTypeStr as any)[t] }));
+        const venues = supportData.venues.map(v => ({ id: v.venueId, label: v.name }));
+        const speakers = supportData.speakers.map(s => ({
+          id: s.speakerId,
+          label: s.name.concat(' ', Speaker.getRole(s))
+        }));
+        const required = true;
+        return [
+          { type: 'hidden', name: 'sessionId', value: x['sessionId'] },
+          { type: 'text', name: 'name', value: x['name'], label: 'Name', required },
+          { type: 'text', name: 'description', value: x['description'], label: 'Description' },
+          { type: 'select', name: 'type', value: x['type'], required, label: 'Type', options: sessionTypes },
+          { type: 'datetime-local', name: 'startsAt', value: x['startsAt'], label: 'Starts at' },
+          { type: 'datetime-local', name: 'endsAt', value: x['endsAt'], label: 'Ends at' },
+          { type: 'select', name: 'venue', value: x['venue'].venueId, required, label: 'Venue', options: venues },
+          {
+            type: 'select',
+            name: 'speaker1',
+            value: x['speaker1'].speakerId,
+            required,
+            label: 'Speaker 1',
+            options: speakers
+          },
+          { type: 'select', name: 'speaker2', value: x['speaker2'].speakerId, label: 'Speaker 2', options: speakers },
+          { type: 'select', name: 'speaker3', value: x['speaker3'].speakerId, label: 'Speaker 3', options: speakers }
+        ];
+      },
       entitySupportData: async (): Promise<any> => ({ speakers: await getSpeakers(), venues: await getVenues() })
     }
   };

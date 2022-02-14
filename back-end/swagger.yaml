@@ -202,36 +202,6 @@ paths:
           $ref: '#/components/responses/Organization'
         400:
           $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Patch an organization
-      description: >
-        Requires to be Admin.
-      tags: [Organizations]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: organizationId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: ['GET_IMAGE_UPLOAD_URL']
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
     delete:
       summary: Delete an organization
       description: Requires to be Admin.
@@ -323,36 +293,6 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Speaker'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Patch a speaker
-      description: >
-        Requires to be Admin.
-      tags: [Speakers]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: speakerId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: ['GET_IMAGE_UPLOAD_URL']
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
     delete:
@@ -448,36 +388,6 @@ paths:
           $ref: '#/components/responses/Venue'
         400:
           $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Patch a venue
-      description: >
-        Requires to be Admin.
-      tags: [Venues]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: venueId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: ['GET_IMAGE_UPLOAD_URL']
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/venues'
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
     delete:
       summary: Delete a venue
       description: Requires to be Admin.
@@ -571,36 +481,6 @@ paths:
           $ref: '#/components/responses/Session'
         400:
           $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Patch a session
-      description: >
-        Requires to be Admin.
-      tags: [Sessions]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: sessionId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: ['']
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
     delete:
       summary: Delete a session
       description: Requires to be Admin.
@@ -618,6 +498,20 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /images:
+    post:
+      summary: Request the signed URL to upload a new image
+      description: Requires to be Admin.
+      tags: [Users, Organizations, Speakers, Venues, Sessions]
+      security:
+        - CognitoUserPool: []
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/images'
+      responses:
+        200:
+          $ref: '#/components/responses/SignedURL'
         400:
           $ref: '#/components/responses/BadParameters'
 
@@ -685,6 +579,12 @@ components:
             type: array
             items:
               type: object
+    SignedURL:
+      description: Signed URL
+      content:
+        application/json:
+          schema:
+            type: object
     BadParameters:
       description: Bad input parameters
       content:
@@ -739,6 +639,14 @@ components:
         Fn::Sub: ${ApiRole.Arn}
       uri:
         Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SessionsFunction.Arn}/invocations
+    images:
+      type: AWS_PROXY
+      httpMethod: POST
+      payloadFormatVersion: '2.0'
+      credentials:
+        Fn::Sub: ${ApiRole.Arn}
+      uri:
+        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ImagesFunction.Arn}/invocations
 
   securitySchemes:
     CognitoUserPool:
