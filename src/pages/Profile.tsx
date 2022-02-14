@@ -6,7 +6,7 @@ import {
   IonHeader,
   IonImg,
   IonInput,
-  IonItem,
+  IonItem, IonItemDivider,
   IonLabel,
   IonList,
   IonPage,
@@ -115,6 +115,11 @@ const ProfilePage: React.FC = () => {
             <input type="file" accept="image/*" onChange={uploadNewAvatar} ref={fileInput as any} hidden={true} />
           </p>
           <form onSubmit={handleSubmit}>
+            <IonItemDivider>
+              <IonLabel>
+                Basic Information
+              </IonLabel>
+            </IonItemDivider>
             <IonItem color="white">
               <IonLabel position="floating">First name</IonLabel>
               <IonInput required value={firstName} onIonChange={e => setFirstName(e.detail.value || '')}></IonInput>
@@ -123,6 +128,21 @@ const ProfilePage: React.FC = () => {
               <IonLabel position="floating">Last name</IonLabel>
               <IonInput required value={lastName} onIonChange={e => setLastName(e.detail.value || '')}></IonInput>
             </IonItem>
+            <IonItemDivider>
+              <IonLabel>
+                Contacts
+              </IonLabel>
+            </IonItemDivider>
+            <IonItemDivider>
+              <IonLabel>
+                Skills
+              </IonLabel>
+            </IonItemDivider>
+            <IonItemDivider>
+              <IonLabel>
+                ESN
+              </IonLabel>
+            </IonItemDivider>
             <IonItem color="white">
               <IonLabel position="floating">ESN Country</IonLabel>
               <IonSelect interface="popover" value={ESNCountry} onIonChange={e => setESNCountry(e.detail.value)}>
@@ -148,6 +168,11 @@ const ProfilePage: React.FC = () => {
                 ))}
               </IonSelect>
             </IonItem>
+            <IonItemDivider>
+              <IonLabel>
+                Extra
+              </IonLabel>
+            </IonItemDivider>
             <IonButton type="submit" expand="block" style={{ marginTop: 20 }}>
               Save changes
             </IonButton>
