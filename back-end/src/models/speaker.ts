@@ -23,7 +23,10 @@ export class Speaker extends Resource {
     this.title = this.clean(x.title, String);
     this.description = this.clean(x.description, String);
     this.contactEmail = this.clean(x.contactEmail, String);
-    this.organization = new OrganizationLinked(x.organization);
+    this.organization =
+      typeof x.organization === 'string'
+        ? new OrganizationLinked({ organizationId: x.organization })
+        : new OrganizationLinked(x.organization);
   }
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);

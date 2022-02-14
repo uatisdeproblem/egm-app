@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router';
 import {
   IonContent,
@@ -9,158 +8,152 @@ import {
   IonIcon,
   IonButtons,
   IonButton,
-  useIonToast,
-  IonList,
-  IonLabel,
-  IonItem,
-  IonInput,
-  useIonLoading,
-  IonRow,
-  IonCol,
-  useIonAlert
+  IonList
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
 
-import { Venue } from 'models/venue';
-import { toastMessageDefaults } from '../utils';
-import { deleteVenue, getVenue, saveVenue } from '../utils/data';
-import { Speaker } from 'models/speaker';
+import {
+  deleteOrganization,
+  deleteSession,
+  deleteSpeaker,
+  deleteVenue,
+  getOrganization,
+  getOrganizations,
+  getSession,
+  getSpeaker,
+  getSpeakers,
+  getVenue,
+  getVenues,
+  saveOrganization,
+  saveSession,
+  saveSpeaker,
+  saveVenue
+} from '../utils/data';
+import { Entity } from 'models/entity';
 import { Organization } from 'models/organization';
-import { Session } from 'models/session';
+import { Speaker } from 'models/speaker';
+import { Venue } from 'models/venue';
+import { Session, SessionType } from 'models/session';
 
-type Entity = Venue | Speaker | Organization | Session;
+import ManageEntityForm, { ManageEntityField } from '../components/ManageEntityForm';
+import { SessionTypeStr } from '../utils';
+
+interface ManageEntityProps {
+  initEntity: (entityData?: any) => Entity;
+  loadEntity: (entityId: string) => Promise<Entity>;
+  saveEntity: (entity: Entity) => Promise<Entity>;
+  deleteEntity: (entity: Entity) => Promise<void>;
+  entityFields: (entityFields: any, supportData?: any) => ManageEntityField[];
+  entitySupportData?: () => Promise<any>;
+}
 
 const ManageEntityPage: React.FC = () => {
   const history = useHistory();
-  const [showMessage] = useIonToast();
-  const [showLoading, dismissLoading] = useIonLoading();
-  const [showAlert] = useIonAlert();
 
   const { type, id }: { type: string; id: string } = useParams();
+  const entityId = id && id !== 'new' ? id : undefined;
 
-  const [entity, setEntity] = useState<Entity>();
-  const [fields, setFields] = useState<any>();
-  const [errors, setErrors] = useState(new Set<string>());
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async (): Promise<void> => {
-    let entity: any;
-    if (id && id !== 'new') {
-      try {
-        entity = await loadEntity(type, id);
-      } catch (err) {
-        await showMessage({ ...toastMessageDefaults, message: 'Entity not found.' });
-        return;
-      }
-    } else entity = initEntity(type);
-
-    setEntity(entity);
-    setFields(getEntityFields(type, entity));
-  };
-
-  const initEntity = (type: string, data: any = {}): Venue => {
-    switch (type) {
-      case 'venue':
-        return new Venue(data);
-      default:
-        throw new Error('Unknown entity');
-    }
-  };
-  const loadEntity = async (type: string, id: string): Promise<Venue> => {
-    switch (type) {
-      case 'venue':
-        return await getVenue(id);
-      default:
-        throw new Error('Unknown entity');
-    }
-  };
-  const getEntityFields = (type: string, entity: Entity): any[] => {
-    switch (type) {
-      case 'venue':
-        return [
-          { type: 'hidden', name: 'venueId', value: getFieldValue(entity, 'venueId') },
-          { type: 'text', name: 'name', value: getFieldValue(entity, 'name'), label: 'Name' },
-          { type: 'text', name: 'address', value: getFieldValue(entity, 'address'), label: 'Address' },
-          { type: 'text', name: 'description', value: getFieldValue(entity, 'description'), label: 'Description' },
-          { type: 'text', name: 'longitude', value: getFieldValue(entity, 'longitude'), label: 'Longitude' },
-          { type: 'text', name: 'latitude', value: getFieldValue(entity, 'latitude'), label: 'Latitude' }
-        ];
-      default:
-        throw new Error('Unknown entity');
-    }
-  };
-  const getFieldValue = (entity: Entity, fieldName: string): any => (entity as any)[fieldName];
-  const saveEntity = async (type: string, entity: Entity): Promise<Entity> => {
-    switch (type) {
-      case 'venue':
-        return await saveVenue(entity as Venue);
-      default:
-        throw new Error('Unknown entity');
-    }
-  };
-
-  const deleteEntity = async (type: string, entity: Entity): Promise<void> => {
-    switch (type) {
-      case 'venue':
-        return await deleteVenue(entity as Venue);
-      default:
-        throw new Error('Unknown entity');
-    }
-  };
-  const askAndDeleteEntity = async (): Promise<void> => {
-    const header = 'Delete entity';
-    const message = 'Are you sure? The operation is irreversible.';
-    const handleDelete = async (): Promise<void> => {
-      await showLoading();
-      try {
-        deleteEntity(type, entity!);
-        await showMessage({ ...toastMessageDefaults, message: 'Entity removed.' });
-        history.push('/menu');
-      } catch (err) {
-        await showMessage({
-          ...toastMessageDefaults,
-          message: 'Operation failed; please try again.',
-          color: 'warning'
-        });
-      } finally {
-        await dismissLoading();
-      }
-    };
-    const buttons = ['Cancel', { text: 'Delete', handler: handleDelete }];
-    await showAlert({ header, message, buttons });
-  };
-
-  const fieldHasErrors = (fieldName: string): boolean => errors.has(fieldName);
-
-  const handleSubmit = async (event: any): Promise<void> => {
-    event.preventDefault();
-
-    const formData = new FormData(event.currentTarget);
-    const entity = initEntity(type, Object.fromEntries(formData.entries()));
-
-    setEntity(entity);
-    setFields(getEntityFields(type, entity));
-
-    await showLoading();
-    try {
-      const errors = new Set(entity?.validate());
-      setErrors(errors);
-      if (errors.size !== 0) throw new Error('Invalid fields');
-
-      await saveEntity(type, entity!);
-      await showMessage({ ...toastMessageDefaults, message: 'Entity saved.', color: 'success' });
-      history.goBack();
-    } catch (err) {
-      await showMessage({
-        ...toastMessageDefaults,
-        message: 'Please, check the form and try again.',
-        color: 'warning'
-      });
-    } finally {
-      await dismissLoading();
+  const manageEntity: { [entityType: string]: ManageEntityProps } = {
+    organization: {
+      initEntity: data => new Organization(data),
+      loadEntity: async id => await getOrganization(id),
+      saveEntity: async x => await saveOrganization(x as Organization),
+      deleteEntity: async x => await deleteOrganization(x as Organization),
+      entityFields: (x): ManageEntityField[] => [
+        { type: 'hidden', name: 'organizationId', value: x['organizationId'] },
+        { type: 'text', name: 'name', value: x['name'], label: 'Name', required: true },
+        { type: 'text', name: 'description', value: x['description'], label: 'Description' },
+        { type: 'url', name: 'website', value: x['website'], label: 'Website' },
+        { type: 'email', name: 'contactEmail', value: x['contactEmail'], label: 'Contact email' }
+      ]
+    },
+    speaker: {
+      initEntity: data => new Speaker(data),
+      loadEntity: async id => await getSpeaker(id),
+      saveEntity: async x => await saveSpeaker(x as Speaker),
+      deleteEntity: async x => await deleteSpeaker(x as Speaker),
+      entityFields: (x, supportData: { organizations: Organization[] }): ManageEntityField[] => [
+        { type: 'hidden', name: 'speakerId', value: x['speakerId'] },
+        { type: 'text', name: 'name', value: x['name'], label: 'Name', required: true },
+        {
+          type: 'select',
+          name: 'organization',
+          value: x['organization'].organizationId,
+          required: true,
+          label: 'Organization',
+          options: supportData.organizations.map(o => ({ id: o.organizationId, label: o.name }))
+        },
+        { type: 'text', name: 'title', value: x['title'], label: 'Title' },
+        { type: 'text', name: 'description', value: x['description'], label: 'Description' },
+        { type: 'email', name: 'contactEmail', value: x['contactEmail'], label: 'Contact email' }
+      ],
+      entitySupportData: async (): Promise<any> => ({ organizations: await getOrganizations() })
+    },
+    venue: {
+      initEntity: data => new Venue(data),
+      loadEntity: async id => await getVenue(id),
+      saveEntity: async x => await saveVenue(x as Venue),
+      deleteEntity: async x => await deleteVenue(x as Venue),
+      entityFields: (x): ManageEntityField[] => [
+        { type: 'hidden', name: 'venueId', value: x['venueId'] },
+        { type: 'text', name: 'name', value: x['name'], label: 'Name', required: true },
+        { type: 'text', name: 'address', value: x['address'], label: 'Address', required: true },
+        { type: 'text', name: 'longitude', value: x['longitude'], label: 'Longitude', required: true },
+        { type: 'text', name: 'latitude', value: x['latitude'], label: 'Latitude', required: true },
+        { type: 'text', name: 'description', value: x['description'], label: 'Description' }
+      ]
+    },
+    session: {
+      initEntity: data => new Session(data),
+      loadEntity: async id => await getSession(id),
+      saveEntity: async x => await saveSession(x as Session),
+      deleteEntity: async x => await deleteSession(x as Session),
+      entityFields: (x, supportData: { venues: Venue[]; speakers: Speaker[] }): ManageEntityField[] => [
+        { type: 'hidden', name: 'sessionId', value: x['sessionId'] },
+        { type: 'text', name: 'name', value: x['name'], label: 'Name', required: true },
+        { type: 'text', name: 'description', value: x['description'], label: 'Description' },
+        {
+          type: 'select',
+          name: 'type',
+          value: x['type'],
+          required: true,
+          label: 'Type',
+          options: Object.keys(SessionType).map(t => ({ id: t, label: (SessionTypeStr as any)[t] }))
+        },
+        { type: 'datetime-local', name: 'startsAt', value: x['startsAt'], label: 'Starts at' },
+        { type: 'datetime-local', name: 'endsAt', value: x['endsAt'], label: 'Ends at' },
+        {
+          type: 'select',
+          name: 'venue',
+          value: x['venue'].venueId,
+          required: true,
+          label: 'Venue',
+          options: supportData.venues.map(v => ({ id: v.venueId, label: v.name }))
+        },
+        {
+          type: 'select',
+          name: 'speaker1',
+          value: x['speaker1'].speakerId,
+          required: true,
+          label: 'Speaker 1',
+          options: supportData.speakers.map(s => ({ id: s.speakerId, label: s.name.concat(' ', Speaker.getRole(s)) }))
+        },
+        {
+          type: 'select',
+          name: 'speaker2',
+          value: x['speaker2'].speakerId,
+          label: 'Speaker 2',
+          options: supportData.speakers.map(s => ({ id: s.speakerId, label: s.name.concat(' ', Speaker.getRole(s)) }))
+        },
+        {
+          type: 'select',
+          name: 'speaker3',
+          value: x['speaker3'].speakerId,
+          label: 'Speaker 3',
+          options: supportData.speakers.map(s => ({ id: s.speakerId, label: s.name.concat(' ', Speaker.getRole(s)) }))
+        }
+      ],
+      entitySupportData: async (): Promise<any> => ({ speakers: await getSpeakers(), venues: await getVenues() })
     }
   };
 
@@ -179,45 +172,19 @@ const ManageEntityPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {entity ? (
-          <IonList style={{ maxWidth: 500, margin: '0 auto' }}>
-            <form onSubmit={handleSubmit}>
-              {fields?.map((f: any) => {
-                if (f.type === 'hidden') return <input type="hidden" name={f.name} value={f.value}></input>;
-                else
-                  return (
-                    <IonItem key={f.name}>
-                      <IonLabel position="stacked">{f.label}</IonLabel>
-                      <IonInput
-                        type={f.type}
-                        name={f.name}
-                        value={f.value}
-                        className={fieldHasErrors(f.name) ? 'fieldHasError' : ''}
-                      ></IonInput>
-                    </IonItem>
-                  );
-              })}
-              <IonRow style={{ marginTop: 20 }}>
-                <IonCol>
-                  <IonButton type="submit" expand="block">
-                    Save
-                  </IonButton>
-                </IonCol>
-                {id && id !== 'new' ? (
-                  <IonCol className="ion-text-right">
-                    <IonButton color="danger" onClick={askAndDeleteEntity}>
-                      Delete
-                    </IonButton>
-                  </IonCol>
-                ) : (
-                  ''
-                )}
-              </IonRow>
-            </form>
-          </IonList>
-        ) : (
-          ''
-        )}
+        <IonList style={{ maxWidth: 500, margin: '0 auto' }}>
+          <ManageEntityForm
+            entityId={entityId}
+            initEntity={manageEntity[type].initEntity}
+            loadEntity={manageEntity[type].loadEntity}
+            saveEntity={manageEntity[type].saveEntity}
+            deleteEntity={manageEntity[type].deleteEntity}
+            entityFields={manageEntity[type].entityFields}
+            entitySupportData={manageEntity[type].entitySupportData}
+            onSave={() => history.goBack()}
+            onDelete={() => history.push('/menu')}
+          ></ManageEntityForm>
+        </IonList>
       </IonContent>
     </IonPage>
   );

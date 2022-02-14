@@ -25,6 +25,8 @@ import {
   removeSessionFromUserFavorites
 } from '../utils/data';
 
+import ManageEntityButton from '../components/ManageEntityButton';
+
 const SessionPage: React.FC = () => {
   const history = useHistory();
   const { sessionId }: { sessionId: string } = useParams();
@@ -78,6 +80,7 @@ const SessionPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        <ManageEntityButton type="session" id={sessionId}></ManageEntityButton>
         <SessionCard
           session={session}
           isUserFavorite={isUserFavorite}

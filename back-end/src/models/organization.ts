@@ -22,7 +22,7 @@ export class Organization extends Resource {
   validate(): string[] {
     const e = super.validate();
     if (isEmpty(this.name)) e.push('name');
-    if (this.website && isEmpty(this.website, 'website')) e.push('website');
+    if (this.website && isEmpty(this.website, 'url')) e.push('website');
     if (this.contactEmail && isEmpty(this.contactEmail, 'email')) e.push('contactEmail');
     return e;
   }

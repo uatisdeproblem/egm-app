@@ -16,16 +16,15 @@ import { close } from 'ionicons/icons';
 
 import { Venue } from 'models/venue';
 import { toastMessageDefaults } from '../utils';
-import { getVenue, isUserAdmin } from '../utils/data';
+import { getVenue } from '../utils/data';
 
 import VenueCard from '../components/VenueCard';
+import ManageEntityButton from '../components/ManageEntityButton';
 
 const VenuePage: React.FC = () => {
   const history = useHistory();
   const { venueId }: { venueId: string } = useParams();
   const [showMessage] = useIonToast();
-
-  const [userIsAdmin, setUserIsAdmin] = useState(false);
 
   const [venue, setVenue] = useState<Venue>();
 
@@ -34,8 +33,6 @@ const VenuePage: React.FC = () => {
   }, []);
 
   const loadData = async (): Promise<void> => {
-    setUserIsAdmin(await isUserAdmin());
-
     try {
       const venue = await getVenue(venueId);
       setVenue(venue);
@@ -58,13 +55,7 @@ const VenuePage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
-          {userIsAdmin ? (
-            <p className="ion-text-right">
-              <IonButton routerLink={'/manage/venue/' + venueId}>Manage</IonButton>
-            </p>
-          ) : (
-            ''
-          )}
+          <ManageEntityButton type="venue" id={venueId}></ManageEntityButton>
           <VenueCard venue={venue}></VenueCard>
         </div>
       </IonContent>

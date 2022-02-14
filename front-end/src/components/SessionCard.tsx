@@ -84,12 +84,38 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
           <IonItem color="transparent">
             <IonIcon slot="start" icon={peopleOutline}></IonIcon>
             <IonLabel className="ion-text-wrap">
-              {session.speakers.map(speaker => (
-                <Link key={speaker.speakerId} to={'/speaker/' + speaker.speakerId} style={{ display: 'block' }}>
-                  {speaker.name}
-                  {Speaker.getRole(speaker) ? ` (${Speaker.getRole(speaker)})` : ''}
+              <Link
+                key={session.speaker1.speakerId}
+                to={'/speaker/' + session.speaker1.speakerId}
+                style={{ display: 'block' }}
+              >
+                {session.speaker1.name}
+                {Speaker.getRole(session.speaker1) ? ` (${Speaker.getRole(session.speaker1)})` : ''}
+              </Link>
+              {session.speaker2.speakerId ? (
+                <Link
+                  key={session.speaker2.speakerId}
+                  to={'/speaker/' + session.speaker2.speakerId}
+                  style={{ display: 'block' }}
+                >
+                  {session.speaker2.name}
+                  {Speaker.getRole(session.speaker2) ? ` (${Speaker.getRole(session.speaker2)})` : ''}
                 </Link>
-              ))}
+              ) : (
+                ''
+              )}
+              {session.speaker3.speakerId ? (
+                <Link
+                  key={session.speaker3.speakerId}
+                  to={'/speaker/' + session.speaker3.speakerId}
+                  style={{ display: 'block' }}
+                >
+                  {session.speaker3.name}
+                  {Speaker.getRole(session.speaker3) ? ` (${Speaker.getRole(session.speaker3)})` : ''}
+                </Link>
+              ) : (
+                ''
+              )}
             </IonLabel>
           </IonItem>
 

@@ -19,6 +19,7 @@ import { toastMessageDefaults } from '../utils';
 import { getOrganization } from '../utils/data';
 
 import OrganizationCard from '../components/OrganizationCard';
+import ManageEntityButton from '../components/ManageEntityButton';
 
 const OrganizationPage: React.FC = () => {
   const history = useHistory();
@@ -54,6 +55,7 @@ const OrganizationPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
+          <ManageEntityButton type="organization" id={organizationId}></ManageEntityButton>
           <OrganizationCard organization={organization}></OrganizationCard>
         </div>
       </IonContent>

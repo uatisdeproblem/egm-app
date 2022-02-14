@@ -181,6 +181,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref SpeakersTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref OrganizationsTable
         - DynamoDBCrudPolicy:
             TableName: !ImportValue idea:IUNID
         - S3CrudPolicy:
@@ -219,6 +221,10 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref SessionsTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref VenuesTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref SpeakersTable
         - DynamoDBCrudPolicy:
             TableName: !ImportValue idea:IUNID
         - DynamoDBCrudPolicy:

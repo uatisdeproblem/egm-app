@@ -19,6 +19,7 @@ import { toastMessageDefaults } from '../utils';
 import { getSpeaker } from '../utils/data';
 
 import SpeakerCard from '../components/SpeakerCard';
+import ManageEntityButton from '../components/ManageEntityButton';
 
 const SpeakerPage: React.FC = () => {
   const history = useHistory();
@@ -54,6 +55,7 @@ const SpeakerPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
+          <ManageEntityButton type="speaker" id={speakerId}></ManageEntityButton>
           <SpeakerCard speaker={speaker}></SpeakerCard>
         </div>
       </IonContent>

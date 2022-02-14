@@ -6,6 +6,7 @@ import { DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
 import { SignedURL } from 'idea-toolbox';
 
 import { Speaker } from '../models/speaker';
+import { OrganizationLinked } from '../models/organization';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -16,7 +17,7 @@ const PROJECT = process.env.PROJECT;
 const S3_BUCKET_MEDIA = process.env.S3_BUCKET_MEDIA;
 const S3_SPEAKERS_IMAGES_FOLDER = process.env.S3_SPEAKERS_IMAGES_FOLDER;
 
-const DDB_TABLES = { speakers: process.env.TABLE_SPEAKERS };
+const DDB_TABLES = { speakers: process.env.TABLE_SPEAKERS, organizations: process.env.TABLE_ORGANIZATIONS };
 
 const ddb = new DynamoDB();
 const s3 = new S3();
@@ -61,6 +62,13 @@ class Speakers extends ResourceController {
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Speaker> {
     const errors = this.speaker.validate();
     if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+
+    this.speaker.organization = new OrganizationLinked(
+      await ddb.get({
+        TableName: DDB_TABLES.organizations,
+        Key: { organizationId: this.speaker.organization.organizationId }
+      })
+    );
 
     try {
       const putParams: any = { TableName: DDB_TABLES.speakers, Item: this.speaker };

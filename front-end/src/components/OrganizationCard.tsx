@@ -42,7 +42,7 @@ const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, sel
               style={{ margin: '0 auto', maxWidth: 200 }}
             ></IonImg>
           </IonCol>
-          <IonCol size={preview ? '12' : '9'} style={{ paddingLeft: 20 }}>
+          <IonCol size={preview ? '12' : '9'} style={{ paddingLeft: preview ? 0 : 20 }}>
             <IonCardTitle>
               <h2 className={preview ? 'ion-text-center' : ''}>{organization.name}</h2>
             </IonCardTitle>

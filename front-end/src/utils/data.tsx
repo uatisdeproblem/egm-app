@@ -16,7 +16,7 @@ import { environment as env } from '../environment';
 export const getSessions = async (): Promise<Session[]> => {
   return await apiRequest('GET', 'sessions');
 };
-export const getSession = async (sessionId: string): Promise<Session | undefined> => {
+export const getSession = async (sessionId: string): Promise<Session> => {
   return await apiRequest('GET', ['sessions', sessionId]);
 };
 export const saveSession = async (session: Session): Promise<Session> => {

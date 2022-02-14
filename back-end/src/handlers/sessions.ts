@@ -6,6 +6,8 @@ import { DynamoDB, RCError, ResourceController } from 'idea-aws';
 import { SignedURL } from 'idea-toolbox';
 
 import { Session } from '../models/session';
+import { SpeakerLinked } from '../models/speaker';
+import { VenueLinked } from '../models/venue';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -13,7 +15,11 @@ import { Session } from '../models/session';
 
 const PROJECT = process.env.PROJECT;
 
-const DDB_TABLES = { sessions: process.env.TABLE_SESSIONS };
+const DDB_TABLES = {
+  sessions: process.env.TABLE_SESSIONS,
+  venues: process.env.TABLE_VENUES,
+  speakers: process.env.TABLE_SPEAKERS
+};
 
 const ddb = new DynamoDB();
 
@@ -57,6 +63,21 @@ class Sessions extends ResourceController {
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Session> {
     const errors = this.session.validate();
     if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+
+    this.session.venue = new VenueLinked(
+      await ddb.get({ TableName: DDB_TABLES.venues, Key: { venueId: this.session.venue.venueId } })
+    );
+    this.session.speaker1 = new SpeakerLinked(
+      await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker1.speakerId } })
+    );
+    if (this.session.speaker2.speakerId)
+      this.session.speaker2 = new SpeakerLinked(
+        await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker2.speakerId } })
+      );
+    if (this.session.speaker3.speakerId)
+      this.session.speaker3 = new SpeakerLinked(
+        await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker3.speakerId } })
+      );
 
     try {
       const putParams: any = { TableName: DDB_TABLES.sessions, Item: this.session };

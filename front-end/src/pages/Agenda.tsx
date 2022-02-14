@@ -74,9 +74,15 @@ const AgendaPage: React.FC = () => {
       search
         .split(' ')
         .every(searchTerm =>
-          [x.name, x.description || '', SessionTypeStr[x.type], x.venue.name, ...x.speakers.map(sp => sp.name)].some(
-            f => f.toLowerCase().includes(searchTerm)
-          )
+          [
+            x.name,
+            x.description || '',
+            SessionTypeStr[x.type],
+            x.venue.name,
+            x.speaker1.name,
+            x.speaker2.name,
+            x.speaker3.name
+          ].some(f => f.toLowerCase().includes(searchTerm))
         )
     );
 
