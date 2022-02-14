@@ -31,6 +31,8 @@ const ProfilePage: React.FC = () => {
   const [lastName, setLastName] = useState('');
   const [ESNCountry, setESNCountry] = useState('');
   const [ESNSection, setESNSection] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
 
   const [avatar, setAvatar] = useState('');
   const [avatarTempImageFile, setAvatarTempImageFile] = useState<File>();
@@ -44,6 +46,8 @@ const ProfilePage: React.FC = () => {
         setLastName(profile.lastName);
         setESNCountry(profile.ESNCountry || '');
         setESNSection(profile.ESNSection || '');
+        setContactEmail(profile.contactEmail || '');
+        setContactPhone(profile.contactPhone || '');
       }
 
       const avatar = await getUserAvatarURL();
@@ -75,7 +79,7 @@ const ProfilePage: React.FC = () => {
     await showLoading();
     try {
       if (avatarTempImageFile) await updateUserAvatar(avatarTempImageFile);
-      await saveUserProfile({ firstName, lastName, ESNCountry, ESNSection });
+      await saveUserProfile({ firstName, lastName, ESNCountry, ESNSection, contactEmail, contactPhone });
       await showMessage({ ...toastMessageDefaults, message: 'Profile saved.', color: 'success' });
     } catch (err) {
       await showMessage({
@@ -133,6 +137,14 @@ const ProfilePage: React.FC = () => {
                 Contacts
               </IonLabel>
             </IonItemDivider>
+            <IonItem color="white">
+              <IonLabel position="floating">Email</IonLabel>
+              <IonInput value={contactEmail} onIonChange={e => setContactEmail(e.detail.value || '')}></IonInput>
+            </IonItem>
+            <IonItem color="white">
+              <IonLabel position="floating">Phone</IonLabel>
+              <IonInput value={contactPhone} onIonChange={e => setContactPhone(e.detail.value || '')}></IonInput>
+            </IonItem>
             <IonItemDivider>
               <IonLabel>
                 Skills
