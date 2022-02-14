@@ -63,38 +63,42 @@ const SpeakersPage: React.FC = () => {
         )}
       </IonHeader>
       <IonContent>
-        <IonList>
-          <Searchbar
-            placeholder="Filter by name, organization, title..."
-            filterFn={filterSpeakers}
-            refreshFn={loadData}
-          ></Searchbar>
-          <IonGrid>
-            <IonRow className="ion-justify-content-center">
-              {!filteredSpeakers ? (
-                <IonCol>
-                  <SpeakerCard></SpeakerCard>
-                </IonCol>
-              ) : !filteredSpeakers.length ? (
-                <IonCol>
-                  <IonItem lines="none">
-                    <IonLabel className="ion-text-center">No elements found.</IonLabel>
-                  </IonItem>
-                </IonCol>
-              ) : (
-                filteredSpeakers.map(speaker => (
-                  <IonCol key={speaker.speakerId} size="12" sizeSm="6" sizeMd="4" sizeLg="3" sizeXl="2">
-                    <SpeakerCard
-                      speaker={speaker}
-                      preview
-                      select={() => history.push('speaker/' + speaker.speakerId)}
-                    ></SpeakerCard>
+        {speakers ? (
+          <IonList>
+            <Searchbar
+              placeholder="Filter by name, organization, title..."
+              filterFn={filterSpeakers}
+              refreshFn={loadData}
+            ></Searchbar>
+            <IonGrid>
+              <IonRow className="ion-justify-content-center">
+                {!filteredSpeakers ? (
+                  <IonCol>
+                    <SpeakerCard></SpeakerCard>
                   </IonCol>
-                ))
-              )}
-            </IonRow>
-          </IonGrid>
-        </IonList>
+                ) : !filteredSpeakers.length ? (
+                  <IonCol>
+                    <IonItem lines="none">
+                      <IonLabel className="ion-text-center">No elements found.</IonLabel>
+                    </IonItem>
+                  </IonCol>
+                ) : (
+                  filteredSpeakers.map(speaker => (
+                    <IonCol key={speaker.speakerId} size="12" sizeSm="6" sizeMd="4" sizeLg="3" sizeXl="2">
+                      <SpeakerCard
+                        speaker={speaker}
+                        preview
+                        select={() => history.push('speaker/' + speaker.speakerId)}
+                      ></SpeakerCard>
+                    </IonCol>
+                  ))
+                )}
+              </IonRow>
+            </IonGrid>
+          </IonList>
+        ) : (
+          ''
+        )}
       </IonContent>
     </IonPage>
   );

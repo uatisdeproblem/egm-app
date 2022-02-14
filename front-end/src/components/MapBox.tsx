@@ -82,13 +82,13 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
     <>
       <div id={id} className="fullheight-map" />
       <IonPopover isOpen={showPopover} onDidDismiss={() => map.fire('dismissPopover')}>
-        <IonCard color="white" style={{ boxShadow: 'none' }}>
+        <IonCard color="white" style={{ boxShadow: 'none', margin: 0, padding: 10, width: '100%' }}>
           <IonCardHeader>
             <IonCardTitle class="ion-text-center">{selectedVenue?.name}</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <p className="ion-text-center ion-padding">{selectedVenue?.description}</p>
-            <IonButton fill="clear" expand="block" href={`/venue/${selectedVenue?.venueId}`}>
+            <IonButton fill="clear" expand="block" color="tertiary" href={`/venue/${selectedVenue?.venueId}`}>
               See details
             </IonButton>
             <IonButton fill="clear" expand="block" color="medium" onClick={() => setShowPopover(false)}>

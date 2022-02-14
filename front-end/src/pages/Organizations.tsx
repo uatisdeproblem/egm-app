@@ -61,34 +61,38 @@ const OrganizationsPage: React.FC = () => {
         )}
       </IonHeader>
       <IonContent>
-        <IonList>
-          <Searchbar placeholder="Filter by name..." filterFn={filterOrganizations} refreshFn={loadData}></Searchbar>
-          <IonGrid>
-            <IonRow className="ion-justify-content-center">
-              {!filteredOrganizations ? (
-                <IonCol>
-                  <OrganizationCard></OrganizationCard>
-                </IonCol>
-              ) : !filteredOrganizations.length ? (
-                <IonCol>
-                  <IonItem lines="none">
-                    <IonLabel className="ion-text-center">No elements found.</IonLabel>
-                  </IonItem>
-                </IonCol>
-              ) : (
-                filteredOrganizations.map(organization => (
-                  <IonCol key={organization.organizationId} size="12" sizeSm="6" sizeMd="4" sizeLg="3" sizeXl="2">
-                    <OrganizationCard
-                      organization={organization}
-                      preview
-                      select={() => history.push('organization/' + organization.organizationId)}
-                    ></OrganizationCard>
+        {organizations ? (
+          <IonList>
+            <Searchbar placeholder="Filter by name..." filterFn={filterOrganizations} refreshFn={loadData}></Searchbar>
+            <IonGrid className="ion-no-padding">
+              <IonRow className="ion-justify-content-center">
+                {!filteredOrganizations ? (
+                  <IonCol>
+                    <OrganizationCard></OrganizationCard>
                   </IonCol>
-                ))
-              )}
-            </IonRow>
-          </IonGrid>
-        </IonList>
+                ) : !filteredOrganizations.length ? (
+                  <IonCol>
+                    <IonItem lines="none">
+                      <IonLabel className="ion-text-center">No elements found.</IonLabel>
+                    </IonItem>
+                  </IonCol>
+                ) : (
+                  filteredOrganizations.map(organization => (
+                    <IonCol key={organization.organizationId} size="12" sizeSm="6" sizeMd="4" sizeLg="3" sizeXl="2">
+                      <OrganizationCard
+                        organization={organization}
+                        preview
+                        select={() => history.push('organization/' + organization.organizationId)}
+                      ></OrganizationCard>
+                    </IonCol>
+                  ))
+                )}
+              </IonRow>
+            </IonGrid>
+          </IonList>
+        ) : (
+          ''
+        )}
       </IonContent>
     </IonPage>
   );

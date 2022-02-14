@@ -1,28 +1,15 @@
 import { useState } from 'react';
-import { useParams, useHistory } from 'react-router';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonIcon,
-  IonButtons,
-  IonButton,
-  useIonToast,
-  useIonViewWillEnter
-} from '@ionic/react';
-import { close } from 'ionicons/icons';
+import { useParams } from 'react-router';
+import { IonContent, IonPage, useIonToast, useIonViewWillEnter } from '@ionic/react';
 
 import { Organization } from 'models/organization';
 import { toastMessageDefaults } from '../utils';
 import { getOrganization } from '../utils/data';
 
 import OrganizationCard from '../components/OrganizationCard';
-import ManageEntityButton from '../components/ManageEntityButton';
+import EntityHeader from '../components/EntityHeader';
 
 const OrganizationPage: React.FC = () => {
-  const history = useHistory();
   const { organizationId }: { organizationId: string } = useParams();
   const [showMessage] = useIonToast();
 
@@ -43,19 +30,9 @@ const OrganizationPage: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="ideaToolbar">
-          <IonTitle className="ion-text-left">Organization details</IonTitle>
-          <IonButtons slot="start">
-            <IonButton onClick={() => history.goBack()}>
-              <IonIcon icon={close} slot="icon-only"></IonIcon>
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
+      <EntityHeader title="Organization details" type="organization" id={organizationId}></EntityHeader>
       <IonContent>
-        <div style={{ maxWidth: 800, margin: '0 auto' }}>
-          <ManageEntityButton type="organization" id={organizationId}></ManageEntityButton>
+        <div className="cardContainer">
           <OrganizationCard organization={organization}></OrganizationCard>
         </div>
       </IonContent>

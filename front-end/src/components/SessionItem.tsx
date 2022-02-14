@@ -90,7 +90,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
           )}
         </p>
       </IonLabel>
-      <IonBadge slot="end" color={SessionTypeColor[session.type]}>
+      <IonBadge slot="end" color={SessionTypeColor[session.type]} className="ion-hide-sm-down">
         {SessionTypeStr[session.type]}
       </IonBadge>
     </IonItem>

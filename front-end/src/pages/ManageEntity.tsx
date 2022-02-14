@@ -152,13 +152,16 @@ const ManageEntityPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="ideaToolbar">
-          <IonTitle className="ion-text-left">
+          <IonTitle>
             {id && id !== 'new' ? 'Manage' : 'New'} {type}
           </IonTitle>
           <IonButtons slot="start">
             <IonButton onClick={() => history.goBack()}>
               <IonIcon icon={close} slot="icon-only"></IonIcon>
             </IonButton>
+          </IonButtons>
+          <IonButtons slot="end">
+            <IonButton></IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>

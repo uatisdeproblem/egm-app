@@ -19,7 +19,7 @@ import { calendarOutline, locationOutline, peopleOutline, star, starOutline } fr
 
 import { Session } from 'models/session';
 import { Speaker } from 'models/speaker';
-import { SessionTypeStr, SessionTypeColor, formatTime, formatDateShort, isMobileMode } from '../utils';
+import { SessionTypeStr, SessionTypeColor, formatTime, formatDateShort } from '../utils';
 
 interface ContainerProps {
   session?: Session;
@@ -29,14 +29,7 @@ interface ContainerProps {
 
 const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggleUserFavoriteSession }) => {
   return session ? (
-    <IonCard
-      color="white"
-      style={
-        isMobileMode()
-          ? { boxShadow: 'none', margin: '0', width: '100%' }
-          : { boxShadow: '0 0 5px 3px rgba(0, 0, 0, 0.05)', marginTop: 15 }
-      }
-    >
+    <IonCard color="white">
       <IonCardHeader>
         <IonRow className="ion-no-padding">
           <IonCol size="10">
@@ -118,8 +111,7 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
               )}
             </IonLabel>
           </IonItem>
-
-          <p className="ion-padding">
+          <p style={{ marginTop: 12 }}>
             <IonItem color="light">
               <IonLabel className="ion-text-wrap">{session.description}</IonLabel>
             </IonItem>
@@ -128,7 +120,7 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
       </IonCardContent>
     </IonCard>
   ) : (
-    <IonCard>
+    <IonCard color="white">
       <IonCardHeader>
         <IonCardTitle>
           <IonLabel>

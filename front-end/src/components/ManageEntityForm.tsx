@@ -235,7 +235,7 @@ const ManageEntityForm: React.FC<ComponentProps> = ({
           );
         else
           return (
-            <IonItem key={f.name}>
+            <IonItem key={f.name} color="white">
               <IonLabel position="stacked">
                 {f.label} {f.required ? <IonText color="danger">*</IonText> : ''}
               </IonLabel>

@@ -9,9 +9,10 @@ import { isUserAdmin } from '../utils/data';
 interface ComponentProps {
   type: EntityType;
   id: string;
+  full?: boolean;
 }
 
-const ManageEntityButton: React.FC<ComponentProps> = ({ type, id }) => {
+const ManageEntityButton: React.FC<ComponentProps> = ({ type, id, full }) => {
   const [userIsAdmin, setUserIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -23,11 +24,9 @@ const ManageEntityButton: React.FC<ComponentProps> = ({ type, id }) => {
   };
 
   return userIsAdmin ? (
-    <p className="ion-text-right">
-      <IonButton fill="clear" expand="block" routerLink={`/manage/${type}/${id}`}>
-        Manage <IonIcon icon={construct} slot="end"></IonIcon>
-      </IonButton>
-    </p>
+    <IonButton fill="clear" expand="block" routerLink={`/manage/${type}/${id}`}>
+      <IonIcon icon={construct} slot={full ? 'start' : 'icon-only'}></IonIcon> {full ? 'Manage' : ''}
+    </IonButton>
   ) : (
     <></>
   );

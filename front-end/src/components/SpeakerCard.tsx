@@ -9,7 +9,8 @@ import {
   IonCol,
   IonAvatar,
   IonImg,
-  IonCardSubtitle
+  IonCardSubtitle,
+  IonItem
 } from '@ionic/react';
 
 import { Speaker } from 'models/speaker';
@@ -25,20 +26,10 @@ const fallbackSpeakerImg = '/assets/images/no-avatar.jpg';
 
 const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => {
   return speaker ? (
-    <IonCard
-      button={!!select}
-      onClick={select}
-      color="white"
-      style={{
-        boxShadow: '0 0 5px 3px rgba(0, 0, 0, 0.05)',
-        margin: '0',
-        width: '100%',
-        height: preview ? '100%' : 'auto'
-      }}
-    >
+    <IonCard button={!!select} onClick={select} color="white" style={{ height: preview ? '100%' : 'auto' }}>
       <IonCardHeader>
         <IonRow className="ion-align-items-center">
-          <IonCol size={preview ? '12' : '3'}>
+          <IonCol size="12" sizeSm={preview ? '12' : '3'}>
             <IonAvatar style={{ margin: '0 auto', width: 100, height: 100, marginBottom: 16 }}>
               <IonImg
                 src={getImageURLByURI(speaker.imageURI)}
@@ -46,7 +37,7 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
               ></IonImg>
             </IonAvatar>
           </IonCol>
-          <IonCol size={preview ? '12' : '9'}>
+          <IonCol size="12" sizeSm={preview ? '12' : '9'}>
             {Speaker.getRole(speaker).length ? (
               <IonCardSubtitle className={preview ? 'ion-text-center' : ''}>{Speaker.getRole(speaker)}</IonCardSubtitle>
             ) : (
@@ -60,18 +51,26 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
           </IonCol>
         </IonRow>
       </IonCardHeader>
-      <IonCardContent>{preview ? '' : speaker.description}</IonCardContent>
+      {preview ? (
+        ''
+      ) : (
+        <IonCardContent>
+          <IonItem color="light" lines="none">
+            <IonLabel className="ion-text-wrap">{speaker.description}</IonLabel>
+          </IonItem>
+        </IonCardContent>
+      )}
     </IonCard>
   ) : (
-    <IonCard onClick={select}>
+    <IonCard color="white">
       <IonCardHeader>
         <IonRow>
-          <IonCol>
+          <IonCol size="12" sizeSm={preview ? '12' : '3'}>
             <IonAvatar>
               <IonSkeletonText animated />
             </IonAvatar>
           </IonCol>
-          <IonCol>
+          <IonCol size="12" sizeSm={preview ? '12' : '9'}>
             <IonCardSubtitle>
               <IonSkeletonText animated style={{ width: '40%' }} />
             </IonCardSubtitle>

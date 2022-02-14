@@ -1,18 +1,6 @@
 import { useState } from 'react';
-import { useParams, useHistory } from 'react-router';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonIcon,
-  IonButtons,
-  IonButton,
-  useIonToast,
-  useIonViewWillEnter
-} from '@ionic/react';
-import { close } from 'ionicons/icons';
+import { useParams } from 'react-router';
+import { IonContent, IonPage, useIonToast, useIonViewWillEnter } from '@ionic/react';
 
 import SessionCard from '../components/SessionCard';
 
@@ -25,10 +13,9 @@ import {
   removeSessionFromUserFavorites
 } from '../utils/data';
 
-import ManageEntityButton from '../components/ManageEntityButton';
+import EntityHeader from '../components/EntityHeader';
 
 const SessionPage: React.FC = () => {
-  const history = useHistory();
   const { sessionId }: { sessionId: string } = useParams();
   const [showMessage] = useIonToast();
 
@@ -69,23 +56,15 @@ const SessionPage: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="ideaToolbar">
-          <IonTitle className="ion-text-left">Session details</IonTitle>
-          <IonButtons slot="start">
-            <IonButton onClick={() => history.goBack()}>
-              <IonIcon icon={close} slot="icon-only"></IonIcon>
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
+      <EntityHeader title="Session details" type="session" id={sessionId}></EntityHeader>
       <IonContent>
-        <ManageEntityButton type="session" id={sessionId}></ManageEntityButton>
-        <SessionCard
-          session={session}
-          isUserFavorite={isUserFavorite}
-          toggleUserFavoriteSession={toggleUserFavoriteSession}
-        ></SessionCard>
+        <div className="cardContainer">
+          <SessionCard
+            session={session}
+            isUserFavorite={isUserFavorite}
+            toggleUserFavoriteSession={toggleUserFavoriteSession}
+          ></SessionCard>
+        </div>
       </IonContent>
     </IonPage>
   );

@@ -1,28 +1,15 @@
 import { useState } from 'react';
-import { useParams, useHistory } from 'react-router';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonIcon,
-  IonButtons,
-  IonButton,
-  useIonToast,
-  useIonViewWillEnter
-} from '@ionic/react';
-import { close } from 'ionicons/icons';
+import { useParams } from 'react-router';
+import { IonContent, IonPage, useIonToast, useIonViewWillEnter } from '@ionic/react';
 
 import { Speaker } from 'models/speaker';
 import { toastMessageDefaults } from '../utils';
 import { getSpeaker } from '../utils/data';
 
 import SpeakerCard from '../components/SpeakerCard';
-import ManageEntityButton from '../components/ManageEntityButton';
+import EntityHeader from '../components/EntityHeader';
 
 const SpeakerPage: React.FC = () => {
-  const history = useHistory();
   const { speakerId }: { speakerId: string } = useParams();
   const [showMessage] = useIonToast();
 
@@ -43,19 +30,9 @@ const SpeakerPage: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="ideaToolbar">
-          <IonTitle className="ion-text-left">Speaker details</IonTitle>
-          <IonButtons slot="start">
-            <IonButton onClick={() => history.goBack()}>
-              <IonIcon icon={close} slot="icon-only"></IonIcon>
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
+      <EntityHeader title="Speaker details" type="speaker" id={speakerId}></EntityHeader>
       <IonContent>
-        <div style={{ maxWidth: 800, margin: '0 auto' }}>
-          <ManageEntityButton type="speaker" id={speakerId}></ManageEntityButton>
+        <div className="cardContainer">
           <SpeakerCard speaker={speaker}></SpeakerCard>
         </div>
       </IonContent>

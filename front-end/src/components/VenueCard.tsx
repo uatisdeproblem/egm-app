@@ -1,4 +1,13 @@
-import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonSkeletonText, IonImg } from '@ionic/react';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonSkeletonText,
+  IonImg,
+  IonItem,
+  IonLabel
+} from '@ionic/react';
 
 import { Venue } from 'models/venue';
 import { getImageURLByURI, venuesFallbackImageURL } from '../utils/data';
@@ -9,7 +18,7 @@ interface ContainerProps {
 
 const VenueCard: React.FC<ContainerProps> = ({ venue }) => {
   return venue ? (
-    <IonCard color="white" style={cardStyle}>
+    <IonCard color="white">
       <IonImg
         src={getImageURLByURI(venue.imageURI)}
         onIonError={(e: any) => (e.target.src = venuesFallbackImageURL)}
@@ -17,10 +26,14 @@ const VenueCard: React.FC<ContainerProps> = ({ venue }) => {
       <IonCardHeader>
         <IonCardTitle>{venue.name}</IonCardTitle>
       </IonCardHeader>
-      <IonCardContent>{venue.description}</IonCardContent>
+      <IonCardContent>
+        <IonItem color="light" lines="none">
+          <IonLabel className="ion-text-wrap">{venue.description}</IonLabel>
+        </IonItem>
+      </IonCardContent>
     </IonCard>
   ) : (
-    <IonCard color="white" style={cardStyle}>
+    <IonCard color="white">
       <IonSkeletonText animated style={{ height: 200 }} />
       <IonCardHeader>
         <IonCardTitle>
@@ -37,5 +50,3 @@ const VenueCard: React.FC<ContainerProps> = ({ venue }) => {
 };
 
 export default VenueCard;
-
-const cardStyle = { boxShadow: 'none', margin: '0', width: '100%' };

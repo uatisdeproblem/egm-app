@@ -5,10 +5,9 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonSkeletonText,
-  IonRow,
-  IonCol,
   IonImg,
-  IonThumbnail
+  IonItem,
+  IonTitle
 } from '@ionic/react';
 
 import { Organization } from 'models/organization';
@@ -22,59 +21,57 @@ interface ContainerProps {
 
 const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, select }) => {
   return organization ? (
-    <IonCard
-      button={!!select}
-      onClick={select}
-      color="white"
-      style={{
-        boxShadow: '0 0 5px 3px rgba(0, 0, 0, 0.05)',
-        margin: '0',
-        width: '100%',
-        height: preview ? '100%' : 'auto'
-      }}
-    >
+    <IonCard button={!!select} onClick={select} color="white" style={{ height: preview ? '120px' : 'auto' }}>
       <IonCardHeader>
-        <IonRow className="ion-align-items-center">
-          <IonCol size={preview ? '12' : '3'} style={{ background: 'white', padding: 20, borderRadius: 10 }}>
-            <IonImg
-              src={getImageURLByURI(organization.imageURI)}
-              onIonError={(e: any) => (e.target.src = organizationsFallbackImageURL)}
-              style={{ margin: '0 auto', maxWidth: 200, height: 100 }}
-            ></IonImg>
-          </IonCol>
-          <IonCol size={preview ? '12' : '9'} style={{ paddingLeft: preview ? 0 : 20 }}>
-            <IonCardTitle>
-              <h2 className={preview ? 'ion-text-center' : ''}>{organization.name}</h2>
-            </IonCardTitle>
-          </IonCol>
-        </IonRow>
+        {organization.imageURI ? (
+          <IonImg
+            src={getImageURLByURI(organization.imageURI)}
+            onIonError={(e: any) => (e.target.src = organizationsFallbackImageURL)}
+            style={{ margin: '0 auto', maxWidth: preview ? 150 : 250, height: preview ? 90 : 'auto' }}
+          ></IonImg>
+        ) : (
+          <IonTitle>
+            <h2 className="ion-text-center">{organization.name}</h2>
+          </IonTitle>
+        )}
       </IonCardHeader>
-      <IonCardContent>{preview ? '' : organization.description}</IonCardContent>
+      {preview ? (
+        ''
+      ) : (
+        <IonCardContent>
+          <>
+            {organization.imageURI ? (
+              <IonItem color="white" lines="none">
+                <IonLabel className="ion-text-center">
+                  <b>{organization.name}</b>
+                </IonLabel>
+              </IonItem>
+            ) : (
+              ''
+            )}
+            <IonItem color="light" lines="none">
+              <IonLabel className="ion-text-wrap">{organization.description}</IonLabel>
+            </IonItem>
+          </>
+        </IonCardContent>
+      )}
     </IonCard>
   ) : (
-    <IonCard onClick={select}>
+    <IonCard color="white">
       <IonCardHeader>
-        <IonRow>
-          <IonCol>
-            <IonThumbnail>
-              <IonSkeletonText animated />
-            </IonThumbnail>
-          </IonCol>
-          <IonCol>
-            <IonCardTitle>
-              <IonSkeletonText animated style={{ width: '60%' }} />
-            </IonCardTitle>
-          </IonCol>
-        </IonRow>
         <IonCardTitle>
-          <IonLabel></IonLabel>
+          <IonSkeletonText animated style={{ height: 90 }} />
         </IonCardTitle>
       </IonCardHeader>
-      <IonCardContent>
-        <IonSkeletonText animated style={{ width: '80%' }} />
-        <IonSkeletonText animated style={{ width: '70%' }} />
-        <IonSkeletonText animated style={{ width: '60%' }} />
-      </IonCardContent>
+      {preview ? (
+        ''
+      ) : (
+        <IonCardContent>
+          <IonSkeletonText animated style={{ width: '80%' }} />
+          <IonSkeletonText animated style={{ width: '70%' }} />
+          <IonSkeletonText animated style={{ width: '60%' }} />
+        </IonCardContent>
+      )}
     </IonCard>
   );
 };

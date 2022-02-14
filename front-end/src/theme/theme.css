@@ -39,7 +39,8 @@ a:hover {
 }
 
 ion-toolbar ion-title {
-  text-align: center;
+  text-align: center !important;
+  padding: 0 !important;
 }
 
 ion-tab-button.tab-selected ion-label {
@@ -55,9 +56,20 @@ ion-item ion-label p {
 ion-item-divider {
   border-bottom: none !important;
   margin-top: 10px !important;
+  font-weight: 500 !important;
+  color: var(--ion-color-step-650) !important;
 }
+
 ion-searchbar {
   --box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px !important;
+}
+
+ion-card {
+  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+ion-button.button-solid {
+  --box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
 }
 
 .maplibregl-popup-content {
@@ -66,4 +78,10 @@ ion-searchbar {
 
 .fieldHasError {
   border-bottom: 2px solid var(--ion-color-danger);
+}
+
+div.cardContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  margin-top: 15px;
 }

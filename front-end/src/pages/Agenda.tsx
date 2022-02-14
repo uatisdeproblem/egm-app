@@ -144,71 +144,79 @@ const AgendaPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <div style={isMobileMode() ? {} : { width: '50%', float: 'left' }}>
-          <IonList>
-            {segment || userFavoriteSessionsSet.size > 0 ? (
-              <Searchbar
-                placeholder="Filter by title, description, venue, speaker..."
-                filterFn={filterSessions}
-                refreshFn={loadData}
-              ></Searchbar>
-            ) : (
-              ''
-            )}
-            {!filteredSessions ? (
-              <SessionItem></SessionItem>
-            ) : !filteredSessions.length ? (
-              <IonItem lines="none">
-                <IonLabel className="ion-text-wrap ion-text-center">
-                  {!segment && userFavoriteSessionsSet.size === 0 ? (
-                    <>
-                      You don't have any favorite session yet.
-                      <br />
-                      <i>Select a day and start building your customized agenda.</i> 😉
-                    </>
-                  ) : (
-                    <>No elements found.</>
-                  )}
-                </IonLabel>
-              </IonItem>
-            ) : (
-              filteredSessions.map(session => (
-                <SessionItem
-                  key={session.sessionId}
-                  session={session}
-                  isUserFavorite={isSessionUserFavorite(session)}
-                  toggleUserFavorite={() => toggleUserFavoriteSession(session)}
-                  select={() => selectCurrentSession(session)}
-                ></SessionItem>
-              ))
-            )}
-          </IonList>
-        </div>
-        <div
-          style={isMobileMode() ? { display: 'none' } : { width: '50%', float: 'right', right: 0, position: 'fixed' }}
-        >
-          {currentSession ? (
-            <>
-              <SessionCard
-                session={currentSession}
-                isUserFavorite={isSessionUserFavorite(currentSession)}
-                toggleUserFavoriteSession={() => toggleUserFavoriteSession(currentSession)}
-              ></SessionCard>
-              <p>
-                <ManageEntityButton type="session" id={currentSession.sessionId}></ManageEntityButton>
-                <IonButton fill="clear" color="medium" expand="full" onClick={() => selectCurrentSession()}>
-                  <IonIcon icon={close} slot="start"></IonIcon> Close
-                </IonButton>
-              </p>
-            </>
-          ) : (
-            <p>
-              <IonItem lines="none">
-                <IonLabel className="ion-text-center">No session selected.</IonLabel>
-              </IonItem>
-            </p>
-          )}
-        </div>
+        {sessions ? (
+          <>
+            <div style={isMobileMode() ? {} : { width: '50%', float: 'left' }}>
+              <IonList>
+                {segment || userFavoriteSessionsSet.size > 0 ? (
+                  <Searchbar
+                    placeholder="Filter by title, venue, speaker..."
+                    filterFn={filterSessions}
+                    refreshFn={loadData}
+                  ></Searchbar>
+                ) : (
+                  ''
+                )}
+                {!filteredSessions ? (
+                  <SessionItem></SessionItem>
+                ) : !filteredSessions.length ? (
+                  <IonItem lines="none">
+                    <IonLabel className="ion-text-wrap ion-text-center">
+                      {!segment && userFavoriteSessionsSet.size === 0 ? (
+                        <>
+                          You don't have any favorite session yet.
+                          <br />
+                          <i>Select a day and start building your customized agenda.</i> 😉
+                        </>
+                      ) : (
+                        <>No elements found.</>
+                      )}
+                    </IonLabel>
+                  </IonItem>
+                ) : (
+                  filteredSessions.map(session => (
+                    <SessionItem
+                      key={session.sessionId}
+                      session={session}
+                      isUserFavorite={isSessionUserFavorite(session)}
+                      toggleUserFavorite={() => toggleUserFavoriteSession(session)}
+                      select={() => selectCurrentSession(session)}
+                    ></SessionItem>
+                  ))
+                )}
+              </IonList>
+            </div>
+            <div
+              style={
+                isMobileMode() ? { display: 'none' } : { width: '50%', float: 'right', right: 0, position: 'fixed' }
+              }
+            >
+              {currentSession ? (
+                <>
+                  <SessionCard
+                    session={currentSession}
+                    isUserFavorite={isSessionUserFavorite(currentSession)}
+                    toggleUserFavoriteSession={() => toggleUserFavoriteSession(currentSession)}
+                  ></SessionCard>
+                  <p>
+                    <ManageEntityButton type="session" id={currentSession.sessionId} full></ManageEntityButton>
+                    <IonButton fill="clear" color="medium" expand="full" onClick={() => selectCurrentSession()}>
+                      <IonIcon icon={close} slot="start"></IonIcon> Close
+                    </IonButton>
+                  </p>
+                </>
+              ) : (
+                <p>
+                  <IonItem lines="none">
+                    <IonLabel className="ion-text-center">No session selected.</IonLabel>
+                  </IonItem>
+                </p>
+              )}
+            </div>
+          </>
+        ) : (
+          ''
+        )}
       </IonContent>
     </IonPage>
   );

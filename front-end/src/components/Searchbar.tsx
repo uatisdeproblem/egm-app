@@ -24,7 +24,7 @@ const Searchbar: React.FC<ComponentProps> = ({ placeholder, filterFn, refreshFn 
   return (
     <div style={{ maxWidth: 500, margin: '0 auto' }}>
       <IonRow className="ion-align-items-center">
-        <IonCol size={userIsAdmin ? '10' : '12'}>
+        <IonCol size="12">
           <IonSearchbar
             color="white"
             placeholder={placeholder}
@@ -32,7 +32,7 @@ const Searchbar: React.FC<ComponentProps> = ({ placeholder, filterFn, refreshFn 
           ></IonSearchbar>
         </IonCol>
         {userIsAdmin ? (
-          <IonCol size="2">
+          <IonCol size="12">
             <IonButton fill="clear" color="medium" expand="block" onClick={refreshFn}>
               <IonIcon icon={refresh} slot="icon-only"></IonIcon>
             </IonButton>
