@@ -139,11 +139,11 @@ const ProfilePage: React.FC = () => {
             </IonItemDivider>
             <IonItem color="white">
               <IonLabel position="floating">Email</IonLabel>
-              <IonInput value={contactEmail} onIonChange={e => setContactEmail(e.detail.value || '')}></IonInput>
+              <IonInput value={contactEmail} onIonChange={e => setContactEmail(e.detail.value || '')}/>
             </IonItem>
             <IonItem color="white">
               <IonLabel position="floating">Phone</IonLabel>
-              <IonInput value={contactPhone} onIonChange={e => setContactPhone(e.detail.value || '')}></IonInput>
+              <IonInput value={contactPhone} onIonChange={e => setContactPhone(e.detail.value || '')}/>
             </IonItem>
             <IonItemDivider>
               <IonLabel>
