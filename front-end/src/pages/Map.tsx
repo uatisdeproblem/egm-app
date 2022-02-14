@@ -63,7 +63,7 @@ const MapPage: React.FC = () => {
       <IonHeader>
         {isMobileMode() ? (
           <IonToolbar color="ideaToolbar">
-            <IonSegment scrollable value={segment}>
+            <IonSegment value={segment}>
               <IonSegmentButton value="map" onClick={() => setSegment('map')}>
                 Map
               </IonSegmentButton>
@@ -82,7 +82,7 @@ const MapPage: React.FC = () => {
             isMobileMode() ? { display: segment !== 'list' ? 'none' : 'inherit' } : { width: '30%', float: 'left' }
           }
         >
-          <IonList style={{ padding: 0 }}>
+          <IonList style={{ padding: 0, maxWidth: 500, margin: '0 auto' }}>
             <Searchbar placeholder="Filter venues..." filterFn={filterVenues} refreshFn={loadData}></Searchbar>
             {!filteredVenues ? (
               <IonItem color="white">

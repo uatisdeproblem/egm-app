@@ -49,7 +49,7 @@ import './theme/theme.css';
 
 import { environment as env } from './environment';
 
-setupIonicReact();
+setupIonicReact({ mode: 'md' });
 
 Amplify.configure({
   Auth: {
