@@ -1,29 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import {
-  IonButton,
-  IonCol,
   IonContent,
   IonHeader,
-  IonIcon,
   IonItem,
   IonLabel,
   IonList,
   IonPage,
-  IonRow,
-  IonSearchbar,
   IonSegment,
   IonSegmentButton,
   IonSkeletonText,
   IonToolbar
 } from '@ionic/react';
-import { refresh } from 'ionicons/icons';
 
 import { isMobileMode } from '../utils';
 import { getVenues } from '../utils/data';
 import { Venue } from 'models/venue';
 
 import MapBox from '../components/MapBox';
+import Searchbar from '../components/Searchbar';
 
 const MapPage: React.FC = () => {
   const history = useHistory();
@@ -88,20 +83,7 @@ const MapPage: React.FC = () => {
           }
         >
           <IonList style={{ padding: 0 }}>
-            <IonRow className="ion-align-items-center">
-              <IonCol size="10">
-                <IonSearchbar
-                  color="white"
-                  placeholder="Filter venues..."
-                  onIonChange={e => filterVenues(e.detail.value!)}
-                ></IonSearchbar>
-              </IonCol>
-              <IonCol size="2" className="ion-text-center">
-                <IonButton fill="clear" color="medium" onClick={loadData}>
-                  <IonIcon icon={refresh} slot="icon-only"></IonIcon>
-                </IonButton>
-              </IonCol>
-            </IonRow>
+            <Searchbar placeholder="Filter venues..." filterFn={filterVenues} refreshFn={loadData}></Searchbar>
             {!filteredVenues ? (
               <IonItem color="white">
                 <IonLabel>

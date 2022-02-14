@@ -1,28 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import {
-  IonButton,
   IonCol,
   IonContent,
   IonGrid,
   IonHeader,
-  IonIcon,
   IonItem,
   IonLabel,
   IonList,
   IonPage,
   IonRow,
-  IonSearchbar,
   IonTitle,
   IonToolbar
 } from '@ionic/react';
-import { refresh } from 'ionicons/icons';
 
 import { isMobileMode } from '../utils';
 import { getOrganizations } from '../utils/data';
 import { Organization } from 'models/organization';
 
 import OrganizationCard from '../components/OrganizationCard';
+import Searchbar from '../components/Searchbar';
 
 const OrganizationsPage: React.FC = () => {
   const history = useHistory();
@@ -65,22 +62,7 @@ const OrganizationsPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonList>
-          <div style={{ maxWidth: 500, margin: '0 auto' }}>
-            <IonRow className="ion-align-items-center">
-              <IonCol size="10">
-                <IonSearchbar
-                  color="white"
-                  placeholder="Filter by name..."
-                  onIonChange={e => filterOrganizations(e.detail.value!)}
-                ></IonSearchbar>
-              </IonCol>
-              <IonCol size="2" className="ion-text-center">
-                <IonButton fill="clear" color="medium" onClick={loadData}>
-                  <IonIcon icon={refresh} slot="icon-only"></IonIcon>
-                </IonButton>
-              </IonCol>
-            </IonRow>
-          </div>
+          <Searchbar placeholder="Filter by name..." filterFn={filterOrganizations} refreshFn={loadData}></Searchbar>
           <IonGrid>
             <IonRow className="ion-justify-content-center">
               {!filteredOrganizations ? (

@@ -14,12 +14,9 @@ import {
   IonIcon,
   IonButton,
   useIonToast,
-  IonSearchbar,
-  useIonViewDidEnter,
-  IonRow,
-  IonCol
+  useIonViewDidEnter
 } from '@ionic/react';
-import { close, refresh, star } from 'ionicons/icons';
+import { close, star } from 'ionicons/icons';
 
 import { Session } from 'models/session';
 import { formatDateShort, isMobileMode, SessionTypeStr, toastMessageDefaults } from '../utils';
@@ -33,6 +30,7 @@ import {
 
 import SessionCard from '../components/SessionCard';
 import SessionItem from '../components/SessionItem';
+import Searchbar from '../components/Searchbar';
 
 const AgendaPage: React.FC = () => {
   const history = useHistory();
@@ -64,7 +62,7 @@ const AgendaPage: React.FC = () => {
     setFilteredSessions(sessions.filter(s => userFavoriteSessions.has(s.sessionId)));
   };
 
-  const filterSessions = (segment = '', search = ''): void => {
+  const filterSessions = (search = '', segment = ''): void => {
     let filteredSessions: Session[];
 
     if (!segment) filteredSessions = sessions?.filter(s => isSessionUserFavorite(s)) || [];
@@ -135,7 +133,7 @@ const AgendaPage: React.FC = () => {
               <IonSegmentButton
                 key={day}
                 value={day}
-                onClick={() => filterSessions(day)}
+                onClick={() => filterSessions('', day)}
                 style={{ maxWidth: 120, textTransform: 'none' }}
               >
                 {formatDateShort(day)}
@@ -148,20 +146,11 @@ const AgendaPage: React.FC = () => {
         <div style={isMobileMode() ? {} : { width: '50%', float: 'left' }}>
           <IonList>
             {segment || userFavoriteSessionsSet.size > 0 ? (
-              <IonRow className="ion-align-items-center">
-                <IonCol size="10">
-                  <IonSearchbar
-                    color="white"
-                    placeholder="Filter by title, description, venue, speaker..."
-                    onIonChange={e => filterSessions(segment, e.detail.value!)}
-                  ></IonSearchbar>
-                </IonCol>
-                <IonCol size="2" className="ion-text-center">
-                  <IonButton fill="clear" color="medium" onClick={loadData}>
-                    <IonIcon icon={refresh} slot="icon-only"></IonIcon>
-                  </IonButton>
-                </IonCol>
-              </IonRow>
+              <Searchbar
+                placeholder="Filter by title, description, venue, speaker..."
+                filterFn={filterSessions}
+                refreshFn={loadData}
+              ></Searchbar>
             ) : (
               ''
             )}
