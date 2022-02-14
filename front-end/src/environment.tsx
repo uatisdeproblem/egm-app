@@ -5,7 +5,7 @@ export const environment = {
   },
   api: {
     url: 'https://api-egm.iter-idea.com',
-    stage: 'dev'
+    stage: 'prod'
   },
   cognito: {
     region: 'eu-west-1',
