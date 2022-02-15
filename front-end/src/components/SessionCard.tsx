@@ -45,13 +45,7 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
           {isUserFavorite !== undefined ? (
             <IonCol size="2" className="ion-text-right">
               <IonButton fill="clear" color="secondary" onClick={toggleUserFavoriteSession}>
-                {isUserFavorite ? (
-                  <IonIcon icon={star}></IonIcon>
-                ) : (
-                  <>
-                    <b>Star</b> <IonIcon icon={starOutline} slot="end"></IonIcon>
-                  </>
-                )}
+                <IonIcon icon={isUserFavorite ? star : starOutline}></IonIcon>
               </IonButton>
             </IonCol>
           ) : (
