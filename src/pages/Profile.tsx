@@ -1,7 +1,7 @@
 import { createRef, useEffect, useState } from 'react';
 import {
   IonAvatar,
-  IonButton,
+  IonButton, IonCheckbox,
   IonContent,
   IonHeader,
   IonImg,
@@ -12,7 +12,7 @@ import {
   IonPage,
   IonSelect,
   IonSelectOption,
-  IonSkeletonText,
+  IonSkeletonText, IonTextarea,
   IonTitle,
   IonToolbar,
   useIonLoading,
@@ -33,6 +33,8 @@ const ProfilePage: React.FC = () => {
   const [ESNSection, setESNSection] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
+  const [bio, setBio] = useState('');
+  const [openToJob, setOpenToJob] = useState(false);
 
   const [avatar, setAvatar] = useState('');
   const [avatarTempImageFile, setAvatarTempImageFile] = useState<File>();
@@ -48,6 +50,8 @@ const ProfilePage: React.FC = () => {
         setESNSection(profile.ESNSection || '');
         setContactEmail(profile.contactEmail || '');
         setContactPhone(profile.contactPhone || '');
+        setBio(profile.bio || '');
+        setOpenToJob(profile.openToJob || false);
       }
 
       const avatar = await getUserAvatarURL();
@@ -79,7 +83,7 @@ const ProfilePage: React.FC = () => {
     await showLoading();
     try {
       if (avatarTempImageFile) await updateUserAvatar(avatarTempImageFile);
-      await saveUserProfile({ firstName, lastName, ESNCountry, ESNSection, contactEmail, contactPhone });
+      await saveUserProfile({ firstName, lastName, ESNCountry, ESNSection, contactEmail, contactPhone, bio, openToJob });
       await showMessage({ ...toastMessageDefaults, message: 'Profile saved.', color: 'success' });
     } catch (err) {
       await showMessage({
@@ -185,6 +189,14 @@ const ProfilePage: React.FC = () => {
                 Extra
               </IonLabel>
             </IonItemDivider>
+            <IonItem color='white'>
+              <IonLabel position="floating">About me</IonLabel>
+              <IonTextarea placeholder="Write something about you" value={bio} onIonChange={e => setBio(e.detail.value || '')}/>
+            </IonItem>
+            <IonItem color='white'>
+              <IonLabel>Open to job: </IonLabel>
+              <IonCheckbox checked={openToJob} onIonChange={e => setOpenToJob(e.detail.checked)} />
+            </IonItem>
             <IonButton type="submit" expand="block" style={{ marginTop: 20 }}>
               Save changes
             </IonButton>
