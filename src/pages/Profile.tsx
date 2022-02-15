@@ -22,6 +22,8 @@ import {
 import { isMobileMode, toastMessageDefaults } from '../utils';
 import { getUserAvatarURL, getUserProfile, saveUserProfile, updateUserAvatar, fallbackUserAvatar } from '../utils/data';
 import { ESNCountries, ESNSections } from '../utils/ESNSections';
+import { Languages } from "../utils/languages";
+import { FieldsOfStudy } from "../utils/fieldsOfStudy";
 
 const ProfilePage: React.FC = () => {
   const [showMessage] = useIonToast();
@@ -35,6 +37,8 @@ const ProfilePage: React.FC = () => {
   const [contactPhone, setContactPhone] = useState('');
   const [bio, setBio] = useState('');
   const [openToJob, setOpenToJob] = useState(false);
+  const [languages, setLanguages] = useState<Array<string | null>| null>([]);
+  const [fieldOfExpertise, setFieldOfExpertise] = useState('');
 
   const [avatar, setAvatar] = useState('');
   const [avatarTempImageFile, setAvatarTempImageFile] = useState<File>();
@@ -52,6 +56,8 @@ const ProfilePage: React.FC = () => {
         setContactPhone(profile.contactPhone || '');
         setBio(profile.bio || '');
         setOpenToJob(profile.openToJob || false);
+        setLanguages(profile.languages || null);
+        setFieldOfExpertise(profile.fieldOfExpertise || '');
       }
 
       const avatar = await getUserAvatarURL();
@@ -83,7 +89,7 @@ const ProfilePage: React.FC = () => {
     await showLoading();
     try {
       if (avatarTempImageFile) await updateUserAvatar(avatarTempImageFile);
-      await saveUserProfile({ firstName, lastName, ESNCountry, ESNSection, contactEmail, contactPhone, bio, openToJob });
+      await saveUserProfile({ firstName, lastName, ESNCountry, ESNSection, contactEmail, contactPhone, bio, openToJob, languages, fieldOfExpertise });
       await showMessage({ ...toastMessageDefaults, message: 'Profile saved.', color: 'success' });
     } catch (err) {
       await showMessage({
@@ -117,7 +123,7 @@ const ProfilePage: React.FC = () => {
               {avatar ? (
                 <IonImg src={avatar} onIonError={(e: any) => (e.target.src = fallbackUserAvatar)} />
               ) : (
-                <IonSkeletonText animated></IonSkeletonText>
+                <IonSkeletonText animated/>
               )}
             </IonAvatar>
             <input type="file" accept="image/*" onChange={uploadNewAvatar} ref={fileInput as any} hidden={true} />
@@ -130,11 +136,11 @@ const ProfilePage: React.FC = () => {
             </IonItemDivider>
             <IonItem color="white">
               <IonLabel position="floating">First name</IonLabel>
-              <IonInput required value={firstName} onIonChange={e => setFirstName(e.detail.value || '')}></IonInput>
+              <IonInput required value={firstName} onIonChange={e => setFirstName(e.detail.value || '')}/>
             </IonItem>
             <IonItem color="white">
               <IonLabel position="floating">Last name</IonLabel>
-              <IonInput required value={lastName} onIonChange={e => setLastName(e.detail.value || '')}></IonInput>
+              <IonInput required value={lastName} onIonChange={e => setLastName(e.detail.value || '')}/>
             </IonItem>
             <IonItemDivider>
               <IonLabel>
@@ -154,6 +160,26 @@ const ProfilePage: React.FC = () => {
                 Skills
               </IonLabel>
             </IonItemDivider>
+            <IonItem color="white">
+              <IonLabel position="floating">Languages</IonLabel>
+              <IonSelect multiple value={languages} onIonChange={e => setLanguages(e.detail.value)}>
+                {Languages.map(lang => (
+                    <IonSelectOption key={lang} value={lang}>
+                      {lang}
+                    </IonSelectOption>
+                ))}
+              </IonSelect>
+            </IonItem>
+            <IonItem color="white">
+              <IonLabel position="floating">Fields of expertise</IonLabel>
+              <IonSelect value={fieldOfExpertise} onIonChange={e => setFieldOfExpertise(e.detail.value)}>
+                {Object.keys(FieldsOfStudy).map(field => (
+                    <IonSelectOption key={field} value={field}>
+                      {field}
+                    </IonSelectOption>
+                ))}
+              </IonSelect>
+            </IonItem>
             <IonItemDivider>
               <IonLabel>
                 ESN
