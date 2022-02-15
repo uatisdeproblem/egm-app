@@ -24,8 +24,8 @@ import Searchbar from '../components/Searchbar';
 const OrganizationsPage: React.FC = () => {
   const history = useHistory();
 
-  const [organizations, setOrganizations] = useState(new Array<Organization>());
-  const [filteredOrganizations, setFilteredOrganizations] = useState(new Array<Organization>());
+  const [organizations, setOrganizations] = useState<Array<Organization>>();
+  const [filteredOrganizations, setFilteredOrganizations] = useState<Array<Organization>>();
 
   useEffect(() => {
     loadData();
@@ -40,7 +40,7 @@ const OrganizationsPage: React.FC = () => {
   const filterOrganizations = (search = ''): void => {
     let filteredOrganizations: Organization[];
 
-    filteredOrganizations = organizations.filter(x =>
+    filteredOrganizations = (organizations || []).filter(x =>
       search
         .split(' ')
         .every(searchTerm => [x.name, x.description || ''].some(f => f.toLowerCase().includes(searchTerm)))
@@ -70,7 +70,7 @@ const OrganizationsPage: React.FC = () => {
                   <IonCol>
                     <OrganizationCard></OrganizationCard>
                   </IonCol>
-                ) : !filteredOrganizations.length ? (
+                ) : filteredOrganizations && filteredOrganizations.length === 0 ? (
                   <IonCol>
                     <IonItem lines="none">
                       <IonLabel className="ion-text-center">No elements found.</IonLabel>

@@ -41,7 +41,7 @@ const AgendaPage: React.FC = () => {
   const [sessions, setSessions] = useState<Session[]>();
   const [userFavoriteSessionsSet, setUserFavoriteSessionsSet] = useState(new Set<string>());
   const [sessionsDays, setSessionsDays] = useState(new Array<string>());
-  const [filteredSessions, setFilteredSessions] = useState(new Array<Session>());
+  const [filteredSessions, setFilteredSessions] = useState<Array<Session>>();
   const [currentSession, setCurrentSession] = useState<Session>();
 
   useEffect(() => {
@@ -212,7 +212,7 @@ const AgendaPage: React.FC = () => {
                     </IonButton>
                   </p>
                 </>
-              ) : filteredSessions.length > 0 ? (
+              ) : filteredSessions && filteredSessions.length > 0 ? (
                 <p>
                   <IonItem lines="none">
                     <IonLabel className="ion-text-center">No session selected.</IonLabel>

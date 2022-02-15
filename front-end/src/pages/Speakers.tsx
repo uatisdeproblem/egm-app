@@ -24,8 +24,8 @@ import Searchbar from '../components/Searchbar';
 const SpeakersPage: React.FC = () => {
   const history = useHistory();
 
-  const [speakers, setSpeakers] = useState(new Array<Speaker>());
-  const [filteredSpeakers, setFilteredSpeakers] = useState(new Array<Speaker>());
+  const [speakers, setSpeakers] = useState<Array<Speaker>>();
+  const [filteredSpeakers, setFilteredSpeakers] = useState<Array<Speaker>>();
 
   useEffect(() => {
     loadData();
@@ -40,7 +40,7 @@ const SpeakersPage: React.FC = () => {
   const filterSpeakers = (search = ''): void => {
     let filteredSpeakers: Speaker[];
 
-    filteredSpeakers = speakers.filter(x =>
+    filteredSpeakers = (speakers || []).filter(x =>
       search
         .split(' ')
         .every(searchTerm =>
@@ -76,7 +76,7 @@ const SpeakersPage: React.FC = () => {
                   <IonCol>
                     <SpeakerCard></SpeakerCard>
                   </IonCol>
-                ) : !filteredSpeakers.length ? (
+                ) : filteredSpeakers && filteredSpeakers.length === 0 ? (
                   <IonCol>
                     <IonItem lines="none">
                       <IonLabel className="ion-text-center">No elements found.</IonLabel>
