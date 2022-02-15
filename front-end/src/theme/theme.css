@@ -17,16 +17,16 @@ a:hover {
   margin-top: -5px;
 }
 [data-amplify-theme] {
-  --amplify-colors-brand-primary-10: rgba(var(--ion-color-tertiary-rgb), 0.1) !important;
-  --amplify-colors-brand-primary-20: rgba(var(--ion-color-tertiary-rgb), 0.2) !important;
-  --amplify-colors-brand-primary-30: rgba(var(--ion-color-tertiary-rgb), 0.3) !important;
-  --amplify-colors-brand-primary-40: rgba(var(--ion-color-tertiary-rgb), 0.4) !important;
-  --amplify-colors-brand-primary-50: rgba(var(--ion-color-tertiary-rgb), 0.5) !important;
-  --amplify-colors-brand-primary-60: rgba(var(--ion-color-tertiary-rgb), 0.6) !important;
-  --amplify-colors-brand-primary-70: rgba(var(--ion-color-tertiary-rgb), 0.7) !important;
-  --amplify-colors-brand-primary-80: rgba(var(--ion-color-tertiary-rgb), 1) !important;
-  --amplify-colors-brand-primary-90: rgba(var(--ion-color-tertiary-rgb), 0.9) !important;
-  --amplify-colors-brand-primary-100: rgba(var(--ion-color-tertiary-rgb), 0.9) !important;
+  --amplify-colors-brand-primary-10: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.1) !important;
+  --amplify-colors-brand-primary-20: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.2) !important;
+  --amplify-colors-brand-primary-30: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.3) !important;
+  --amplify-colors-brand-primary-40: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.4) !important;
+  --amplify-colors-brand-primary-50: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.5) !important;
+  --amplify-colors-brand-primary-60: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.6) !important;
+  --amplify-colors-brand-primary-70: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.7) !important;
+  --amplify-colors-brand-primary-80: rgba(var(--ion-color-ESNdarkBlue-rgb), 1) !important;
+  --amplify-colors-brand-primary-90: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.9) !important;
+  --amplify-colors-brand-primary-100: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.9) !important;
 }
 
 .flexBox {

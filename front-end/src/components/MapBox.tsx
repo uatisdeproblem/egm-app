@@ -25,7 +25,8 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
 
       map.on('load', () => {
         const style = getComputedStyle(document.documentElement);
-        const primaryColor = style.getPropertyValue('--ion-color-primary');
+        const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const primaryColor = style.getPropertyValue(isDarkMode ? '--ion-color-tertiary' : '--ion-color-primary');
         const secondaryColor = style.getPropertyValue('--ion-color-secondary');
 
         const inactiveMarker = createMapMarker(primaryColor);
@@ -88,7 +89,7 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
           </IonCardHeader>
           <IonCardContent>
             <p className="ion-text-center ion-padding">{selectedVenue?.description}</p>
-            <IonButton fill="clear" expand="block" color="tertiary" href={`/venue/${selectedVenue?.venueId}`}>
+            <IonButton fill="clear" expand="block" href={`/venue/${selectedVenue?.venueId}`}>
               See details
             </IonButton>
             <IonButton fill="clear" expand="block" color="medium" onClick={() => setShowPopover(false)}>
