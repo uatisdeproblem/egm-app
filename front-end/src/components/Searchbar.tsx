@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { IonButton, IonCol, IonIcon, IonRow, IonSearchbar } from '@ionic/react';
-import { refresh } from 'ionicons/icons';
+import { IonCol, IonRefresher, IonRefresherContent, IonRow, IonSearchbar, RefresherEventDetail } from '@ionic/react';
 
 import { isUserAdmin } from '../utils/data';
+import { isMobileMode } from '../utils';
 
 interface ComponentProps {
   placeholder: string;
@@ -21,8 +21,22 @@ const Searchbar: React.FC<ComponentProps> = ({ placeholder, filterFn, refreshFn 
     setUserIsAdmin(await isUserAdmin());
   };
 
+  const refreshFnWithRefresherWrapper = (event: CustomEvent<RefresherEventDetail>): void => {
+    setTimeout((): void => {
+      event.detail.complete();
+      refreshFn();
+    }, 2000);
+  };
+
   return (
     <div style={{ maxWidth: 500, margin: '0 auto' }}>
+      {userIsAdmin && isMobileMode() ? (
+        <IonRefresher slot="fixed" onIonRefresh={refreshFnWithRefresherWrapper}>
+          <IonRefresherContent></IonRefresherContent>
+        </IonRefresher>
+      ) : (
+        ''
+      )}
       <IonRow className="ion-align-items-center">
         <IonCol size="12">
           <IonSearchbar
@@ -31,15 +45,6 @@ const Searchbar: React.FC<ComponentProps> = ({ placeholder, filterFn, refreshFn 
             onIonChange={e => filterFn(e.detail.value!)}
           ></IonSearchbar>
         </IonCol>
-        {userIsAdmin ? (
-          <IonCol size="12">
-            <IonButton fill="clear" color="medium" expand="block" onClick={refreshFn}>
-              <IonIcon icon={refresh} slot="icon-only"></IonIcon>
-            </IonButton>
-          </IonCol>
-        ) : (
-          ''
-        )}
       </IonRow>
     </div>
   );

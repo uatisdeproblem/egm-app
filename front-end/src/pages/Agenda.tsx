@@ -63,11 +63,17 @@ const AgendaPage: React.FC = () => {
     setFilteredSessions(sessions.filter(s => userFavoriteSessions.has(s.sessionId)));
   };
 
-  const filterSessions = (search = '', segment = ''): void => {
+  const changeSegment = (segment: string): void => {
+    setSegment(segment);
+    filterSessions('', segment);
+  };
+  const filterSessions = (search = '', forceSegment?: string): void => {
     let filteredSessions: Session[];
 
-    if (!segment) filteredSessions = sessions?.filter(s => isSessionUserFavorite(s)) || [];
-    else filteredSessions = sessions?.filter(s => s.startsAt.startsWith(segment)) || [];
+    const useSegment = forceSegment !== undefined ? forceSegment : segment;
+
+    if (!useSegment) filteredSessions = sessions?.filter(s => isSessionUserFavorite(s)) || [];
+    else filteredSessions = sessions?.filter(s => s.startsAt.startsWith(useSegment)) || [];
 
     filteredSessions = filteredSessions.filter(x =>
       search
@@ -81,12 +87,13 @@ const AgendaPage: React.FC = () => {
             x.speaker1.name,
             x.speaker2.name,
             x.speaker3.name
-          ].some(f => f.toLowerCase().includes(searchTerm))
+          ]
+            .filter(x => x)
+            .some(f => f.toLowerCase().includes(searchTerm))
         )
     );
 
     setFilteredSessions(filteredSessions);
-    setSegment(segment);
   };
 
   const isSessionUserFavorite = (session: Session): boolean => userFavoriteSessionsSet.has(session.sessionId);
@@ -127,14 +134,14 @@ const AgendaPage: React.FC = () => {
         )}
         <IonToolbar color="ideaToolbar" style={{ '--min-height': 'auto' }}>
           <IonSegment scrollable value={segment}>
-            <IonSegmentButton value="" onClick={() => filterSessions()} style={{ maxWidth: 80 }}>
+            <IonSegmentButton value="" onClick={() => changeSegment('')} style={{ maxWidth: 80 }}>
               <IonIcon icon={star} />
             </IonSegmentButton>
             {sessionsDays.map(day => (
               <IonSegmentButton
                 key={day}
                 value={day}
-                onClick={() => filterSessions('', day)}
+                onClick={() => changeSegment(day)}
                 style={{ maxWidth: 120, textTransform: 'none' }}
               >
                 {formatDateShort(day)}
@@ -159,7 +166,7 @@ const AgendaPage: React.FC = () => {
                 )}
                 {!filteredSessions ? (
                   <SessionItem></SessionItem>
-                ) : !filteredSessions.length ? (
+                ) : filteredSessions.length === 0 ? (
                   <IonItem lines="none">
                     <IonLabel className="ion-text-wrap ion-text-center">
                       {!segment && userFavoriteSessionsSet.size === 0 ? (
@@ -205,12 +212,14 @@ const AgendaPage: React.FC = () => {
                     </IonButton>
                   </p>
                 </>
-              ) : (
+              ) : filteredSessions.length > 0 ? (
                 <p>
                   <IonItem lines="none">
                     <IonLabel className="ion-text-center">No session selected.</IonLabel>
                   </IonItem>
                 </p>
+              ) : (
+                ''
               )}
             </div>
           </>
