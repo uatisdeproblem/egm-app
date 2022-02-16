@@ -17,6 +17,7 @@ import {
   businessOutline,
   calendar,
   calendarOutline,
+  helpBuoy,
   informationCircle,
   logOut,
   map,
@@ -30,6 +31,7 @@ import { useEffect, useState } from 'react';
 
 import { isMobileMode } from '../utils';
 import { isUserAdmin } from '../utils/data';
+import { environment as env } from '../environment';
 
 const MenuPage: React.FC = () => {
   const [showAlert] = useIonAlert();
@@ -60,6 +62,8 @@ const MenuPage: React.FC = () => {
     await showAlert({ header, message, buttons });
   };
   const reloadApp = () => window.location.assign('');
+
+  const openEmailComposerForFeedback = () => `mailto:${env.app.supportEmail}?subject=EGM app`;
 
   return (
     <IonPage>
@@ -132,6 +136,10 @@ const MenuPage: React.FC = () => {
           <IonItem button color="white" onClick={showAppInfo}>
             <IonIcon icon={informationCircle} slot="start"></IonIcon>
             <IonLabel>App information</IonLabel>
+          </IonItem>
+          <IonItem button color="white" href={openEmailComposerForFeedback()} target="_blank">
+            <IonIcon icon={helpBuoy} slot="start"></IonIcon>
+            <IonLabel>Feedback/ask for help</IonLabel>
           </IonItem>
           <IonItem button color="white" onClick={logout}>
             <IonIcon icon={logOut} slot="start"></IonIcon>

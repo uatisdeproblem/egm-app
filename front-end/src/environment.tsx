@@ -1,7 +1,8 @@
 export const environment = {
   app: {
     url: 'https://egm.iter-idea.com',
-    mediaUrl: 'https://egm-#env#-media.s3.eu-south-1.amazonaws.com/thumbnails/images'
+    mediaUrl: 'https://egm-#env#-media.s3.eu-south-1.amazonaws.com/thumbnails/images',
+    supportEmail: 'egm.it@esnportugal.org'
   },
   api: {
     url: 'https://api-egm.iter-idea.com',
