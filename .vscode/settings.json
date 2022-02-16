@@ -14,7 +14,7 @@
     "npm-debug.log": true,
     "back-end/**/node_modules": true,
     "back-end/src/**/*.js": true,
-    "back-end/.aws-sam": true,
+    "back-end/cdk.out": true,
     "front-end/**/node_modules": true,
     "front-end/npm-debug.log": true,
     "front-end/www": true,

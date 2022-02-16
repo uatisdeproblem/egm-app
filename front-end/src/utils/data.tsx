@@ -7,17 +7,17 @@ import { Venue } from 'models/venue';
 import { Speaker } from 'models/speaker';
 import { Session } from 'models/session';
 
-import { environment as env } from '../environment';
+import { getEnv } from '../environment';
 
 //
 // SESSIONS
 //
 
 export const getSessions = async (): Promise<Session[]> => {
-  return await apiRequest('GET', 'sessions');
+  return (await apiRequest('GET', 'sessions')).map((x: Session) => new Session(x));
 };
 export const getSession = async (sessionId: string): Promise<Session> => {
-  return await apiRequest('GET', ['sessions', sessionId]);
+  return new Session(await apiRequest('GET', ['sessions', sessionId]));
 };
 export const saveSession = async (session: Session): Promise<Session> => {
   if (session.sessionId) return await apiRequest('PUT', ['sessions', session.sessionId], session);
@@ -50,7 +50,7 @@ export const removeSessionFromUserFavorites = async (session: Session): Promise<
 //
 
 export const getUserProfile = async (): Promise<UserProfile> => {
-  return await apiRequest('GET', ['users', 'me']);
+  return new UserProfile(await apiRequest('GET', ['users', 'me']));
 };
 export const saveUserProfile = async (userProfile: UserProfile): Promise<void> => {
   return await apiRequest('PUT', ['users', 'me'], userProfile);
@@ -74,10 +74,10 @@ export const isUserAdmin = async (): Promise<boolean> => {
 //
 
 export const getVenues = async (): Promise<Venue[]> => {
-  return await apiRequest('GET', 'venues');
+  return (await apiRequest('GET', 'venues')).map((x: Venue) => new Venue(x));
 };
 export const getVenue = async (venueId: string): Promise<Venue> => {
-  return await apiRequest('GET', ['venues', venueId]);
+  return new Venue(await apiRequest('GET', ['venues', venueId]));
 };
 export const venuesFallbackImageURL = '/assets/images/no-room.jpg';
 export const saveVenue = async (venue: Venue): Promise<Venue> => {
@@ -93,10 +93,10 @@ export const deleteVenue = async (venue: Venue): Promise<void> => {
 //
 
 export const getSpeakers = async (): Promise<Speaker[]> => {
-  return await apiRequest('GET', 'speakers');
+  return (await apiRequest('GET', 'speakers')).map((x: Speaker) => new Speaker(x));
 };
 export const getSpeaker = async (speakerId: string): Promise<Speaker> => {
-  return await apiRequest('GET', ['speakers', speakerId]);
+  return new Speaker(await apiRequest('GET', ['speakers', speakerId]));
 };
 export const speakersFallbackImageURL = '/assets/images/no-avatar.jpg';
 export const saveSpeaker = async (speaker: Speaker): Promise<Speaker> => {
@@ -112,10 +112,10 @@ export const deleteSpeaker = async (speaker: Speaker): Promise<void> => {
 //
 
 export const getOrganizations = async (): Promise<Organization[]> => {
-  return await apiRequest('GET', 'organizations');
+  return (await apiRequest('GET', 'organizations')).map((x: Organization) => new Organization(x));
 };
 export const getOrganization = async (organizationId: string): Promise<Organization> => {
-  return await apiRequest('GET', ['organizations', organizationId]);
+  return new Organization(await apiRequest('GET', ['organizations', organizationId]));
 };
 export const organizationsFallbackImageURL = '/assets/images/no-logo.jpg';
 export const saveOrganization = async (organization: Organization): Promise<Organization> => {
@@ -137,7 +137,7 @@ export const uploadImageAndGetURI = async (image: File): Promise<string> => {
   return id;
 };
 export const getImageURLByURI = (imageURI: string): string => {
-  return MEDIA_BASE_URL.concat('/', imageURI, '.png');
+  return IMAGES_BASE_URL.concat('/', imageURI, '.png');
 };
 export const openImage = async (imageURI: string): Promise<void> => {
   await Browser.open({ url: getImageURLByURI(imageURI) });
@@ -147,7 +147,8 @@ export const openImage = async (imageURI: string): Promise<void> => {
 // HELPERS
 //
 
-const MEDIA_BASE_URL = env.app.mediaUrl.replace('#env#', env.api.stage);
+const env = getEnv();
+const IMAGES_BASE_URL = env.mediaUrl.concat('/', env.currentStage, '/thumbnails/images');
 
 const apiRequest = async (
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
@@ -156,7 +157,7 @@ const apiRequest = async (
 ): Promise<any> => {
   const authSession = await Auth.currentSession();
   const headers = { Authorization: authSession.getAccessToken().getJwtToken() };
-  let url = env.api.url.concat('/', env.api.stage, '/', Array.isArray(path) ? path.join('/') : path);
+  let url = env.apiUrl.concat('/', env.currentStage, '/', Array.isArray(path) ? path.join('/') : path);
   const res = await fetch(url, { method, headers, body: JSON.stringify(body) });
   if (res.status === 200) return res.json();
   else {

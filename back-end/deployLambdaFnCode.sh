@@ -40,7 +40,7 @@ npm run lint ${HANDLERS_PATH}/${HANDLER}.ts 1>/dev/null
 
 # compile the project's typescript code
 echo -e "${C}\tCompiling...${NC}"
-npm run compile 1>/dev/null
+npm run build -- ${HANDLERS_PATH}/${HANDLER}.ts 1>/dev/null
 
 # create a zip archive of the .js files of the build
 echo -e "${C}\tPacking...${NC}"

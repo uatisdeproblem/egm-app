@@ -2,17 +2,20 @@ import { createRef, useEffect, useState } from 'react';
 import {
   IonAvatar,
   IonButton,
+  IonCheckbox,
   IonContent,
   IonHeader,
   IonImg,
   IonInput,
   IonItem,
+  IonItemDivider,
   IonLabel,
   IonList,
   IonPage,
   IonSelect,
   IonSelectOption,
   IonSkeletonText,
+  IonTextarea,
   IonTitle,
   IonToolbar,
   useIonLoading,
@@ -27,8 +30,10 @@ import {
   updateUserAvatar,
   usersFallbackImageURL
 } from '../utils/data';
-import { ESNCountries, ESNSections } from '../utils/ESNSections';
 import { UserProfile } from 'models/userProfile';
+import { ESNCountries, ESNSections } from '../utils/ESNSections';
+import { Languages } from '../utils/languages';
+import { FieldsOfStudy } from '../utils/fieldsOfStudy';
 
 const ProfilePage: React.FC = () => {
   const [showMessage] = useIonToast();
@@ -36,6 +41,8 @@ const ProfilePage: React.FC = () => {
 
   const [userProfile, setUserProfile] = useState<UserProfile>();
   const [errors, setErrors] = useState(new Set<string>());
+  // if not set separately, it runs an infinite form loop
+  const [languages, setLanguages] = useState<string[]>([]);
 
   const [avatar, setAvatar] = useState('');
   const fileInput = createRef<HTMLInputElement>();
@@ -50,6 +57,7 @@ const ProfilePage: React.FC = () => {
     const loadData = async () => {
       const userProfile = await getUserProfile();
       setUserProfile(userProfile);
+      setLanguages(userProfile.languages);
 
       const avatar = getImageURLByURI(userProfile.imageURI);
       setAvatar(avatar);
@@ -83,13 +91,17 @@ const ProfilePage: React.FC = () => {
   const handleSubmit = async (event: any): Promise<void> => {
     event.preventDefault();
 
+    if (!userProfile) return;
+
+    userProfile.languages = languages;
+
     await showLoading();
     try {
-      const errors = new Set(userProfile?.validate());
+      const errors = new Set(userProfile.validate());
       setErrors(errors);
       if (errors.size !== 0) throw new Error('Invalid fields');
 
-      await saveUserProfile(userProfile!);
+      await saveUserProfile(userProfile);
       await showMessage({ ...toastMessageDefaults, message: 'Profile saved.', color: 'success' });
     } catch (err) {
       await showMessage({
@@ -130,6 +142,9 @@ const ProfilePage: React.FC = () => {
               <input type="file" accept="image/*" onChange={uploadNewAvatar} ref={fileInput as any} hidden={true} />
             </p>
             <form onSubmit={handleSubmit}>
+              <IonItemDivider>
+                <IonLabel>Basic Information</IonLabel>
+              </IonItemDivider>
               <IonItem color="white">
                 <IonLabel position="floating">First name</IonLabel>
                 <IonInput
@@ -148,8 +163,68 @@ const ProfilePage: React.FC = () => {
                   className={fieldHasErrors('lastName') ? 'fieldHasError' : ''}
                 ></IonInput>
               </IonItem>
+              <IonItemDivider>
+                <IonLabel>Contacts</IonLabel>
+              </IonItemDivider>
               <IonItem color="white">
-                <IonLabel position="floating">ESN Country</IonLabel>
+                <IonLabel position="floating">Email</IonLabel>
+                <IonInput
+                  required
+                  inputMode="email"
+                  value={userProfile.contactEmail}
+                  onIonChange={e => handleFieldChange('contactEmail', e.detail.value)}
+                  className={fieldHasErrors('contactEmail') ? 'fieldHasError' : ''}
+                ></IonInput>
+              </IonItem>
+              <IonItem color="white">
+                <IonLabel position="floating">Phone</IonLabel>
+                <IonInput
+                  required
+                  inputMode="tel"
+                  value={userProfile.contactPhone}
+                  onIonChange={e => handleFieldChange('contactPhone', e.detail.value)}
+                  className={fieldHasErrors('contactPhone') ? 'fieldHasError' : ''}
+                ></IonInput>
+              </IonItem>
+              <IonItemDivider>
+                <IonLabel>Skills</IonLabel>
+              </IonItemDivider>
+              <IonItem color="white">
+                <IonLabel position="stacked">Languages</IonLabel>
+                <IonSelect
+                  multiple
+                  interface="popover"
+                  value={languages}
+                  onIonChange={e => setLanguages(e.detail.value)}
+                  className={fieldHasErrors('languages') ? 'fieldHasError' : ''}
+                >
+                  {Languages.map(lang => (
+                    <IonSelectOption key={lang} value={lang}>
+                      {lang}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonItem>
+              <IonItem color="white">
+                <IonLabel position="stacked">Field of expertise</IonLabel>
+                <IonSelect
+                  interface="popover"
+                  value={userProfile.fieldOfExpertise}
+                  onIonChange={e => handleFieldChange('fieldOfExpertise', e.detail.value)}
+                  className={fieldHasErrors('fieldOfExpertise') ? 'fieldHasError' : ''}
+                >
+                  {Object.keys(FieldsOfStudy).map(field => (
+                    <IonSelectOption key={field} value={field}>
+                      {field}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonItem>
+              <IonItemDivider>
+                <IonLabel>ESN</IonLabel>
+              </IonItemDivider>
+              <IonItem color="white">
+                <IonLabel position="stacked">ESN Country</IonLabel>
                 <IonSelect
                   interface="popover"
                   value={userProfile.ESNCountry}
@@ -167,7 +242,7 @@ const ProfilePage: React.FC = () => {
                 </IonSelect>
               </IonItem>
               <IonItem color="white">
-                <IonLabel position="floating">ESN Section</IonLabel>
+                <IonLabel position="stacked">ESN Section</IonLabel>
                 <IonSelect
                   interface="popover"
                   value={userProfile.ESNSection}
@@ -181,6 +256,25 @@ const ProfilePage: React.FC = () => {
                     </IonSelectOption>
                   ))}
                 </IonSelect>
+              </IonItem>
+              <IonItemDivider>
+                <IonLabel>Extra</IonLabel>
+              </IonItemDivider>
+              <IonItem color="white">
+                <IonLabel position="stacked">About me</IonLabel>
+                <IonTextarea
+                  placeholder="Write something about you"
+                  value={userProfile.bio}
+                  onIonChange={e => handleFieldChange('bio', e.detail.value)}
+                  className={fieldHasErrors('bio') ? 'fieldHasError' : ''}
+                />
+              </IonItem>
+              <IonItem color="white">
+                <IonLabel>Open to job: </IonLabel>
+                <IonCheckbox
+                  checked={userProfile.openToJob}
+                  onIonChange={e => handleFieldChange('openToJob', e.detail.value)}
+                />
               </IonItem>
               <IonButton type="submit" expand="block" style={{ marginTop: 20 }}>
                 Save changes

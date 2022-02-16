@@ -10,9 +10,7 @@ The app will be available through the major browsers and, possibly, published on
 
 The project's architecture identifies two modular blocks: [**front-end** and **back-end**](https://www.indeed.com/career-advice/career-development/front-end-vs-back-end).
 
-The technologies we chose let us **focus on front-end development**, delegating to [AWS Amplify](https://aws.amazon.com/amplify) most of the back-end effort (read below for more info).
-
-<img alt="architecture comic" src="https://user-images.githubusercontent.com/3777036/147549605-6a309041-b092-4a43-9665-dda80f8c913c.jpg" width="400">
+We will focus on the front-end, since the back-end is already defined, based on what we need.
 
 ### Languages
 
@@ -42,31 +40,6 @@ Of course, we won't be reinventing the wheel and write code from scratch; we wil
 Here's an example of how the two frameworks affect the graphic result of our programming:
 
 <img width="1000" alt="frameworks" src="https://user-images.githubusercontent.com/3777036/147554832-c214dcaa-df03-49ef-8b4d-b06fc8ae428e.png">
-
-#### Amplify
-
-Additionally, to avoid the struggle of writing/implementing back-end logic, we will take advantage of [AWS Amplify](https://docs.amplify.aws) to access back-end features like authentication, database, storage, maps, push notifications, chat, etc.\
-The framework is built on [AWS (Amazon Web Services)](https://aws.amazon.com) cloud, which ensures the scalability, security and availability of our final product.
-Amplify offers a user interface ([Amplify Studio](https://docs.amplify.aws/console/)) from which you can enable and configure back-end features visually (to then use them in our application).
-
-Here's an example of how it simplifies our work.\
-When we want to store some data (e.g. our Agenda's sessions), instead of thinking about databases and related logic, we can visually add our data model in Amplify Studio:
-
-<img width="1000" alt="amplify data modeling" src="https://user-images.githubusercontent.com/3777036/147556583-942af177-2e35-43a4-9433-609ec6ec6286.png">
-
-optionally add some data right from Amplify Studio:
-
-<img width="1000" alt="amplify data insert" src="https://user-images.githubusercontent.com/3777036/147556657-4c24ccd2-c6d4-4a4d-a0d0-76bc0d6581cb.png">
-
-and finally query it from our front-end code with ease, without the need of writing any additional logic:
-
-<img width="500" alt="front-end datastore" src="https://user-images.githubusercontent.com/3777036/147556781-0905b532-2776-450f-9556-0d09e8465730.png">
-
-**While everything looks easy on the surface**, in reality (in the "backstage"), we've created a NoSQL database, a GraphQL API and automatically generated models and mutations to access and modify our data (Agenda's sessions) through a WebSocket (over HTTPS) connection. _Cool!_
-
-The same goes for **Authentication**, **Maps** and a couple of other features that we are probably going to need before the end of the project.
-
-**Note**: if you dive deep, the back-end/Amplify part can be the most challenging one to understand and learn. No worries: I work with the components underlying Amplify every day; hence, I can take care of this area, so that you can focus on front-end development without the need to deepen too much these technologies. Of course, if you instead want to know more about it, we can plan some specific learning sessions. 😉
 
 #### Capacitor
 
@@ -98,8 +71,6 @@ Each component/page is represented by a `.tsx` file (containing structure and bu
 - Have an account on [GitHub](https://github.com): where our code repository and issues (User Stories) are.
 - Have installed [Visual Studio Code](https://code.visualstudio.com): the IDE (Integrated Development Environment) that we use to write code. _Not mandatory_ — you can use the tool you prefer — but suggested, since it has some extensions that will help in your job.
 - Have installed [Node.js](https://nodejs.org/en/download/): we need to access the [NPM (Node Package Manager)](https://docs.npmjs.com/about-npm) to install all the libraries and dependencies of our source code.
-- Have an account to access Amplify Studio: _I will take care of it, and you'll receive an email with the credentials_.
-- Have installed and configured [Amplify CLI](https://docs.amplify.aws/console/adminui/extend-cli/): the Command Line Interface to manage Amplify resources — _even though you may not need it_.
 - If you use [Google Chrome](https://www.google.com/chrome/), you can install the [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension to access some specific React debug features.
 
 You probably have most of this stuff already on your dev computer, but if you need help in installing or configuring any tools, let me know!
@@ -146,8 +117,3 @@ When we are confident with the results, we can **commit our changes and create a
 We will **discuss together** whether we can fix any problem or improve the code; finally, we will merge the changes and publish the new feature in the app.
 
 Oh, [here you can find some best pratices](https://iter-idea.notion.site/Git-conventions-7f411b668d984eb3a05a03dfcae25d6f) about managing/committing/reviewing our code: it would be nice to follow them. 😉
-
-## Final notes
-
-So far, the app will only be accessible in our local environments.\
-Later on, I will configure the resources needed to publish it on the web and on mobile stores;I'll also add some more instructions here. ✌️

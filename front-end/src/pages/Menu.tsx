@@ -31,7 +31,7 @@ import { useEffect, useState } from 'react';
 
 import { isMobileMode } from '../utils';
 import { isUserAdmin } from '../utils/data';
-import { environment as env } from '../environment';
+import { getEnv } from '../environment';
 
 const MenuPage: React.FC = () => {
   const [showAlert] = useIonAlert();
@@ -63,7 +63,7 @@ const MenuPage: React.FC = () => {
   };
   const reloadApp = () => window.location.assign('');
 
-  const openEmailComposerForFeedback = () => `mailto:${env.app.supportEmail}?subject=EGM app`;
+  const openEmailComposerForFeedback = () => `mailto:${getEnv().supportEmail}?subject=EGM app`;
 
   return (
     <IonPage>

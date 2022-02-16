@@ -49,8 +49,6 @@ paths:
           required: true
           schema:
             type: string
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/users'
       responses:
         200:
           $ref: '#/components/responses/User'
@@ -72,8 +70,6 @@ paths:
           application/json:
             schema:
               type: object
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/users'
       responses:
         200:
           $ref: '#/components/responses/User'
@@ -103,8 +99,6 @@ paths:
                 sessionId:
                   type: string
                   description: (ADD_FAVORITE_SESSION, REMOVE_FAVORITE_SESSION)
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/users'
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
@@ -121,8 +115,6 @@ paths:
           required: true
           schema:
             type: string
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/users'
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
@@ -134,8 +126,6 @@ paths:
       tags: [Organizations]
       security:
         - CognitoUserPool: []
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
       responses:
         200:
           $ref: '#/components/responses/Organizations'
@@ -152,8 +142,6 @@ paths:
           application/json:
             schema:
               type: object
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
       responses:
         200:
           $ref: '#/components/responses/Organization'
@@ -171,8 +159,6 @@ paths:
           required: true
           schema:
             type: string
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
       responses:
         200:
           $ref: '#/components/responses/Organization'
@@ -195,8 +181,6 @@ paths:
           application/json:
             schema:
               type: object
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
       responses:
         200:
           $ref: '#/components/responses/Organization'
@@ -214,8 +198,6 @@ paths:
           required: true
           schema:
             type: string
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/organizations'
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
@@ -227,8 +209,6 @@ paths:
       tags: [Speakers]
       security:
         - CognitoUserPool: []
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
       responses:
         200:
           $ref: '#/components/responses/Speakers'
@@ -245,8 +225,6 @@ paths:
           application/json:
             schema:
               type: object
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
       responses:
         200:
           $ref: '#/components/responses/Speaker'
@@ -264,8 +242,6 @@ paths:
           required: true
           schema:
             type: string
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
       responses:
         200:
           $ref: '#/components/responses/Speaker'
@@ -288,8 +264,6 @@ paths:
           application/json:
             schema:
               type: object
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
       responses:
         200:
           $ref: '#/components/responses/Speaker'
@@ -307,8 +281,6 @@ paths:
           required: true
           schema:
             type: string
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/speakers'
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
@@ -320,8 +292,6 @@ paths:
       tags: [Venues]
       security:
         - CognitoUserPool: []
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/venues'
       responses:
         200:
           $ref: '#/components/responses/Venues'
@@ -338,8 +308,6 @@ paths:
           application/json:
             schema:
               type: object
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/venues'
       responses:
         200:
           $ref: '#/components/responses/Venue'
@@ -357,8 +325,6 @@ paths:
           required: true
           schema:
             type: string
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/venues'
       responses:
         200:
           $ref: '#/components/responses/Venue'
@@ -381,8 +347,6 @@ paths:
           application/json:
             schema:
               type: object
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/venues'
       responses:
         200:
           $ref: '#/components/responses/Venue'
@@ -400,8 +364,6 @@ paths:
           required: true
           schema:
             type: string
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/venues'
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
@@ -413,8 +375,6 @@ paths:
       tags: [Sessions]
       security:
         - CognitoUserPool: []
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
       responses:
         200:
           $ref: '#/components/responses/Sessions'
@@ -431,8 +391,6 @@ paths:
           application/json:
             schema:
               type: object
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
       responses:
         200:
           $ref: '#/components/responses/Session'
@@ -450,8 +408,6 @@ paths:
           required: true
           schema:
             type: string
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
       responses:
         200:
           $ref: '#/components/responses/Session'
@@ -474,8 +430,6 @@ paths:
           application/json:
             schema:
               type: object
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
       responses:
         200:
           $ref: '#/components/responses/Session'
@@ -493,8 +447,6 @@ paths:
           required: true
           schema:
             type: string
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/sessions'
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
@@ -507,8 +459,6 @@ paths:
       tags: [Users, Organizations, Speakers, Venues, Sessions]
       security:
         - CognitoUserPool: []
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/images'
       responses:
         200:
           $ref: '#/components/responses/SignedURL'
@@ -597,56 +547,6 @@ components:
                 example: The request isn't valid
     OperationCompleted:
       description: Operation completed
-
-  x-amazon-apigateway-integrations:
-    users:
-      type: AWS_PROXY
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      credentials:
-        Fn::Sub: ${ApiRole.Arn}
-      uri:
-        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UsersFunction.Arn}/invocations
-    organizations:
-      type: AWS_PROXY
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      credentials:
-        Fn::Sub: ${ApiRole.Arn}
-      uri:
-        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OrganizationsFunction.Arn}/invocations
-    speakers:
-      type: AWS_PROXY
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      credentials:
-        Fn::Sub: ${ApiRole.Arn}
-      uri:
-        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SpeakersFunction.Arn}/invocations
-    venues:
-      type: AWS_PROXY
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      credentials:
-        Fn::Sub: ${ApiRole.Arn}
-      uri:
-        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${VenuesFunction.Arn}/invocations
-    sessions:
-      type: AWS_PROXY
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      credentials:
-        Fn::Sub: ${ApiRole.Arn}
-      uri:
-        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SessionsFunction.Arn}/invocations
-    images:
-      type: AWS_PROXY
-      httpMethod: POST
-      payloadFormatVersion: '2.0'
-      credentials:
-        Fn::Sub: ${ApiRole.Arn}
-      uri:
-        Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ImagesFunction.Arn}/invocations
 
   securitySchemes:
     CognitoUserPool:

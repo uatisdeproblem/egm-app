@@ -1,22 +1,34 @@
-export const environment = {
-  app: {
-    url: 'https://egm.iter-idea.com',
-    mediaUrl: 'https://egm-#env#-media.s3.eu-south-1.amazonaws.com/thumbnails/images',
-    supportEmail: 'egm.it@esnportugal.org'
+const CURRENT_STAGE = 'prod';
+
+const environments = {
+  prod: {
+    url: 'https://egm-app.link'
   },
-  api: {
-    url: 'https://api-egm.iter-idea.com',
-    stage: 'prod'
-  },
+  dev: {
+    url: 'https://dev-egm-app.link'
+  }
+};
+
+const parameters = {
+  currentStage: CURRENT_STAGE,
+  stage: { url: 'placeholder' },
+  supportEmail: 'egm.it@esnportugal.org',
+  apiUrl: 'https://api.egm-app.link',
+  mediaUrl: 'https://media.egm-app.link',
   cognito: {
-    region: 'eu-west-1',
-    userPoolId: 'eu-west-1_W5470JQ4x',
-    clientId: 'b5cb9bombpe5a6i0qt68k1hop',
-    identityPoolId: 'eu-west-1:d73e72ca-a2eb-4212-94cd-7edf1c770080'
+    region: 'eu-central-1',
+    userPoolId: 'eu-central-1_SlQedanI2',
+    clientId: '79oefmmgrarj9to179mbcraqfn',
+    identityPoolId: 'eu-central-1:fb226784-32e8-4b54-a220-3f482ced6a16'
   },
   geo: {
-    region: 'eu-west-1',
+    region: 'eu-central-1',
     mapName: 'egm-map',
     mapStyle: 'VectorEsriLightGrayCanvas'
   }
+};
+
+export const getEnv = () => {
+  parameters.stage = environments[CURRENT_STAGE];
+  return parameters;
 };

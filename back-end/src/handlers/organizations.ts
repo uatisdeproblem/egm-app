@@ -12,7 +12,7 @@ import { Organization } from '../models/organization';
 
 const PROJECT = process.env.PROJECT;
 
-const DDB_TABLES = { organizations: process.env.TABLE_ORGANIZATIONS };
+const DDB_TABLES = { organizations: process.env.DDB_TABLE_organizations };
 
 const ddb = new DynamoDB();
 

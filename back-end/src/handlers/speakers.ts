@@ -13,7 +13,7 @@ import { OrganizationLinked } from '../models/organization';
 
 const PROJECT = process.env.PROJECT;
 
-const DDB_TABLES = { speakers: process.env.TABLE_SPEAKERS, organizations: process.env.TABLE_ORGANIZATIONS };
+const DDB_TABLES = { speakers: process.env.DDB_TABLE_speakers, organizations: process.env.DDB_TABLE_organizations };
 
 const ddb = new DynamoDB();
 

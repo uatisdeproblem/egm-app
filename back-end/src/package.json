@@ -1,9 +1,0 @@
-{
-  "//": "Don't insert any dependencies here: use package.json in the back-end's root instead",
-  "version": "0.0.1",
-  "name": "handlers",
-  "files": [
-    "**/*.js",
-    "**/*.js.map"
-  ]
-}

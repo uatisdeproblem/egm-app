@@ -2,8 +2,8 @@
 
 # project-specific parameters
 PROJECT='egm'
-AWS_PROFILE='egm'
-AWS_REGION='eu-south-1'
+AWS_PROFILE='egm' # leave empty if not used
+AWS_REGION='eu-central-1'
 
 # other parameters
 ACTION=$1
@@ -55,12 +55,6 @@ npm i --silent 1>/dev/null
 echo -e "${C}Linting...${NC}"
 npm run lint ${SRC_FOLDER} 1>/dev/null
 
-# compile the project's typescript code
-echo -e "${C}Compiling...${NC}"
-npm run compile 1>/dev/null
-
-# build and deploy with AWS SAM
-echo -e "${C}Building SAM package...${NC}"
-npm run build
-echo -e "${C}Deploying SAM package...${NC}"
-npm run deploy -- --config-env ${ACTION}
+# build and deploy with AWS CDK
+echo -e "${C}Deploying CDK stacks...${NC}"
+npm run deploy -- --context stage=${ACTION} --all --require-approval never --profile ${AWS_PROFILE}

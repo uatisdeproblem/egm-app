@@ -9,5 +9,6 @@
     "strictPropertyInitialization": false,
     "strictNullChecks": false
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "cdk.out"]
 }

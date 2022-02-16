@@ -12,7 +12,7 @@ import { Venue } from '../models/venue';
 
 const PROJECT = process.env.PROJECT;
 
-const DDB_TABLES = { venues: process.env.TABLE_VENUES };
+const DDB_TABLES = { venues: process.env.DDB_TABLE_venues };
 
 const ddb = new DynamoDB();
 

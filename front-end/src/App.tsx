@@ -47,7 +47,8 @@ import 'typeface-poppins';
 import './theme/variables.css';
 import './theme/theme.css';
 
-import { environment as env } from './environment';
+import { getEnv } from './environment';
+const env = getEnv();
 
 setupIonicReact({ mode: 'md' });
 

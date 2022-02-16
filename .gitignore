@@ -32,9 +32,12 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 
 # @idea custom
+back-end/.cdk.staging
+back-end/cdk.out
+back-end/cdk.context.json
+back-end/output-config.json
 back-end/src/**/*.js
 back-end/src/**/*.js.map
-back-end/**/.aws-sam
 front-end/build/
 front-end/dist/
 front-end/node_modules/

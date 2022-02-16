@@ -19,8 +19,8 @@ const S3_IMAGES_FOLDER = process.env.S3_IMAGES_FOLDER;
 const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
 
 const DDB_TABLES = {
-  profiles: process.env.TABLE_PROFILES,
-  usersFavoriteSessions: process.env.TABLE_USERS_FAVORITE_SESSIONS
+  profiles: process.env.DDB_TABLE_userProfiles,
+  usersFavoriteSessions: process.env.DDB_TABLE_usersFavoriteSessions
 };
 
 const ddb = new DynamoDB();

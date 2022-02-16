@@ -16,9 +16,9 @@ import { VenueLinked } from '../models/venue';
 const PROJECT = process.env.PROJECT;
 
 const DDB_TABLES = {
-  sessions: process.env.TABLE_SESSIONS,
-  venues: process.env.TABLE_VENUES,
-  speakers: process.env.TABLE_SPEAKERS
+  sessions: process.env.DDB_TABLE_sessions,
+  venues: process.env.DDB_TABLE_venues,
+  speakers: process.env.DDB_TABLE_speakers
 };
 
 const ddb = new DynamoDB();
