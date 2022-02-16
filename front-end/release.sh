@@ -5,8 +5,8 @@ S3_BUCKET_PROD='egm-prod-front-end'
 S3_BUCKET_DEV='egm-dev-front-end'
 CLOUDFRONT_DISTRIBUTION_PROD='E1DO69YVZ6U1LK'
 CLOUDFRONT_DISTRIBUTION_DEV='E30SNT48G01C6P'
-AWS_PROFILE='egm' # leave empty if not used
 AWS_REGION='eu-central-1'
+AWS_PROFILE='egm' # leave empty if not used
 
 # other parameters
 ACTION=$1

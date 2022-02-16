@@ -169,7 +169,6 @@ const ProfilePage: React.FC = () => {
               <IonItem color="white">
                 <IonLabel position="floating">Email</IonLabel>
                 <IonInput
-                  required
                   inputMode="email"
                   value={userProfile.contactEmail}
                   onIonChange={e => handleFieldChange('contactEmail', e.detail.value)}
@@ -179,7 +178,6 @@ const ProfilePage: React.FC = () => {
               <IonItem color="white">
                 <IonLabel position="floating">Phone</IonLabel>
                 <IonInput
-                  required
                   inputMode="tel"
                   value={userProfile.contactPhone}
                   onIonChange={e => handleFieldChange('contactPhone', e.detail.value)}

@@ -9,6 +9,7 @@ import * as Route53 from 'aws-cdk-lib/aws-route53';
 import * as Route53Targets from 'aws-cdk-lib/aws-route53-targets';
 import * as CloudFront from 'aws-cdk-lib/aws-cloudfront';
 import * as CloudFrontOrigins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as IAM from 'aws-cdk-lib/aws-iam';
 
 export interface MediaProps extends cdk.StackProps {
   mediaBucketName: string;
@@ -40,6 +41,15 @@ export class MediaStack extends cdk.Stack {
 
     const thumbnailerFn = createThumbnailer(this);
     s3MediaBucket.grantReadWrite(thumbnailerFn);
+    s3MediaBucket.addToResourcePolicy(
+      new IAM.PolicyStatement({
+        effect: IAM.Effect.ALLOW,
+        principals: [new IAM.ArnPrincipal(thumbnailerFn.role.roleArn)],
+        actions: ['s3:*'],
+        resources: [`arn:aws:s3:::${s3MediaBucket.bucketName}/*`]
+      })
+    );
+
     s3MediaBucket.addEventNotification(S3.EventType.OBJECT_CREATED, new S3N.LambdaDestination(thumbnailerFn), {
       prefix: 'images/'
     });
@@ -73,7 +83,7 @@ const createThumbnailer = (scope: Construct): Lambda.Function => {
   const thumbnailerFn = new Lambda.Function(scope, 'ThumbnailerFunction', {
     description: 'Convert an S3 uploaded media into a thumbnail',
     runtime: Lambda.Runtime.NODEJS_14_X,
-    memorySize: 1024,
+    memorySize: 1536,
     timeout: Duration.seconds(10),
     code: Lambda.Code.fromBucket(s3BucketIDEALambdaFn, 'fn-thumbnailer.zip'),
     handler: 'index.handler',

@@ -2,12 +2,12 @@
 
 # project-specific parameters
 PROJECT='egm'
-AWS_PROFILE='egm' # leave empty if not used
 AWS_REGION='eu-central-1'
+AWS_PROFILE='egm' # leave empty if not used
 
 # other parameters
 ACTION=$1
-HANDLER=$2
+STAGE=$2
 SRC_FOLDER='src/'
 C='\033[4;32m' # color
 NC='\033[0m'   # reset (no color)
@@ -38,12 +38,8 @@ fi
 # run the deploy-quick script and exit
 if [ "${ACTION}" == "quick" ]
 then
-  if [ "${HANDLER}" == "" ]
-  then
-    echo -e "${C}Specify the name of the Lambda function's handler to update:${NC}"
-    read HANDLER
-  fi
-  ./deployLambdaFnCode.sh ${AWS_PROFILE} ${AWS_REGION} ${PROJECT} ${HANDLER}
+  npm run deploy "${PROJECT}-${STAGE}-api" -- --context stage=${STAGE} --require-approval never \
+    --profile ${AWS_PROFILE}
   exit 0
 fi
 

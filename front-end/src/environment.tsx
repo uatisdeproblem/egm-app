@@ -5,7 +5,7 @@ const environments = {
     url: 'https://egm-app.link'
   },
   dev: {
-    url: 'https://dev-egm-app.link'
+    url: 'https://dev.egm-app.link'
   }
 };
 

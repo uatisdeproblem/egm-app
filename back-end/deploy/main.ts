@@ -22,7 +22,7 @@ const apiResources: ApiResourceController[] = [
   { name: 'speakers', paths: ['/speakers', '/speakers/{speakerId}'] },
   { name: 'venues', paths: ['/venues', '/venues/{venueId}'] },
   { name: 'sessions', paths: ['/sessions', '/sessions/{sessionId}'] },
-  { name: 'images', paths: ['/images'] }
+  { name: 'media', paths: ['/media'] }
 ];
 
 const tables: { [tableName: string]: ApiTable } = {

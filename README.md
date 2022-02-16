@@ -55,10 +55,14 @@ The suggested IDE is [Visual Studio Code](https://code.visualstudio.com/); we in
 1. _...it will take some time!_ If prompeted, confirm all the requests to create new resources.
 1. At the end of the deployment, identify the generated file `/back-end/output-config.json` to get some important configurations to set in a few support files:
 
-   - `/back-end/deploy.sh`:
-     - @todo
-   - `/front-end/deploy.sh`:
-     - @todo
+   - `/back-end/deploy.sh`: @todo
+     - `PROJECT`
+     - `AWS_REGION`
+     - `AWS_PROFILE`: only if you need to use named profiles to identify the AWS account.
+   - `/front-end/release.sh`: @todo
+     - `PROJECT`
+     - `AWS_REGION`
+     - `AWS_PROFILE`: only if you need to use named profiles to identify the AWS account.
    - `/front-end/src/environment.tsx`:
      - Set the current stage (`CURRENT_STAGE`), i.e. the stage to run when the app is started.
      - Change the `url` _for each of the desired stages_.

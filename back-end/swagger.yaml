@@ -452,9 +452,9 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
-  /images:
+  /media:
     post:
-      summary: Request the signed URL to upload a new image
+      summary: Request the signed URL to upload a new media
       description: Requires to be Admin.
       tags: [Users, Organizations, Speakers, Venues, Sessions]
       security:

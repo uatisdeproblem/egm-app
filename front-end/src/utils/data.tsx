@@ -132,7 +132,7 @@ export const deleteOrganization = async (organization: Organization): Promise<vo
 //
 
 export const uploadImageAndGetURI = async (image: File): Promise<string> => {
-  const { url, id } = await apiRequest('POST', 'images');
+  const { url, id } = await apiRequest('POST', 'media');
   await fetch(url, { method: 'PUT', body: image, headers: { 'Content-Type': image.type } });
   return id;
 };
@@ -148,7 +148,7 @@ export const openImage = async (imageURI: string): Promise<void> => {
 //
 
 const env = getEnv();
-const IMAGES_BASE_URL = env.mediaUrl.concat('/', env.currentStage, '/thumbnails/images');
+const IMAGES_BASE_URL = env.mediaUrl.concat('/thumbnails/images/', env.currentStage);
 
 const apiRequest = async (
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',

@@ -17,13 +17,13 @@ const S3_IMAGES_FOLDER = process.env.S3_IMAGES_FOLDER;
 const s3 = new S3();
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any) => new Images(ev, cb).handleRequest();
+export const handler = (ev: any, _: any, cb: any) => new Media(ev, cb).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
 ///
 
-class Images extends ResourceController {
+class Media extends ResourceController {
   protected async checkAuthBeforeRequest(): Promise<void> {
     if (!this.cognitoUser.isAdmin()) throw new RCError('Unauthorized');
   }
