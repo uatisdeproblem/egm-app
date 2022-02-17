@@ -1,0 +1,87 @@
+*:not(ion-icon) {
+  font-family: 'Poppins', sans-serif !important;
+  letter-spacing: normal;
+}
+
+a {
+  text-decoration: underline var(--ion-color-step-100);
+  color: var(--ion-color-step-450);
+}
+a:hover {
+  text-decoration: underline var(--ion-color-step-600);
+}
+
+/* auth page */
+[data-indicator-position='top'] > .amplify-tabs-item {
+  border-top-width: 5px;
+  margin-top: -5px;
+}
+[data-amplify-theme] {
+  --amplify-colors-brand-primary-10: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.1) !important;
+  --amplify-colors-brand-primary-20: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.2) !important;
+  --amplify-colors-brand-primary-30: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.3) !important;
+  --amplify-colors-brand-primary-40: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.4) !important;
+  --amplify-colors-brand-primary-50: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.5) !important;
+  --amplify-colors-brand-primary-60: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.6) !important;
+  --amplify-colors-brand-primary-70: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.7) !important;
+  --amplify-colors-brand-primary-80: rgba(var(--ion-color-ESNdarkBlue-rgb), 1) !important;
+  --amplify-colors-brand-primary-90: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.9) !important;
+  --amplify-colors-brand-primary-100: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.9) !important;
+}
+
+.flexBox {
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+ion-toolbar ion-title {
+  text-align: center !important;
+  padding: 0 !important;
+}
+
+ion-tab-button.tab-selected ion-label {
+  font-weight: bold !important;
+}
+
+ion-list {
+  background: transparent !important;
+}
+ion-item ion-label p {
+  color: var(--ion-color-step-550) !important;
+}
+ion-item-divider {
+  border-bottom: none !important;
+  margin-top: 10px !important;
+  font-weight: 500 !important;
+  color: var(--ion-color-step-650) !important;
+}
+
+ion-searchbar {
+  --box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px !important;
+}
+
+ion-card {
+  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+ion-button.button-solid {
+  --box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
+}
+
+.maplibregl-popup-content {
+  background: var(--ion-color-white);
+}
+
+.fieldHasError {
+  border-bottom: 2px solid var(--ion-color-danger);
+}
+
+div.cardContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  margin-top: 15px;
+}

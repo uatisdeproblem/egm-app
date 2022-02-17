@@ -7,7 +7,7 @@
       "name": "Start local app",
       "noDebug": true,
       "console": "integratedTerminal",
-      "cwd": "${workspaceRoot}",
+      "cwd": "${workspaceRoot}/front-end",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run-script", "start"]
     }

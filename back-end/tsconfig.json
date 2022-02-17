@@ -1,0 +1,14 @@
+{
+  "extends": "./node_modules/@tsconfig/node14/tsconfig.json",
+  "compilerOptions": {
+    "lib": ["es2020"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2020",
+    "sourceMap": true,
+    "strictPropertyInitialization": false,
+    "strictNullChecks": false
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "cdk.out"]
+}

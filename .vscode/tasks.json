@@ -1,13 +1,46 @@
 {
   "version": "2.0.0",
-  "inputs": [],
+  "inputs": [
+    {
+      "id": "environment",
+      "description": "The environment you target",
+      "type": "pickString",
+      "options": ["dev", "prod"],
+      "default": "dev"
+    }
+  ],
   "tasks": [
     {
-      "label": "Pull Amplify changes",
+      "label": "Quickly deploy a stage (back-end)",
       "type": "shell",
-      "command": "amplify pull",
+      "command": "./deploy.sh",
+      "args": ["quick", "${input:environment}"],
       "group": "build",
-      "options": { "cwd": "${workspaceRoot}" },
+      "options": { "cwd": "back-end" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Deploy a back-end environment",
+      "type": "shell",
+      "command": "./deploy.sh",
+      "args": ["${input:environment}"],
+      "group": "build",
+      "options": { "cwd": "back-end" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Release a front-end environment",
+      "type": "shell",
+      "command": "./release.sh",
+      "args": ["${input:environment}"],
+      "group": "build",
+      "options": { "cwd": "front-end" },
       "presentation": {
         "reveal": "always",
         "panel": "new"

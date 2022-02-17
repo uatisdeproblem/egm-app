@@ -4,7 +4,9 @@
     "github.github-vscode-theme",
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "burkeholland.simple-react-snippets"
+    "amazonwebservices.aws-toolkit-vscode",
+    "redhat.vscode-yaml",
+    "42crunch.vscode-openapi"
   ],
   "unwantedRecommendations": []
 }
