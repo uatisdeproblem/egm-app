@@ -23,14 +23,7 @@ import {
 } from '@ionic/react';
 
 import { isMobileMode, toastMessageDefaults } from '../utils';
-import {
-  getImageURLByURI,
-  getUserProfile,
-  saveUserProfile,
-  updateUserAvatar,
-  usersFallbackImageURL
-} from '../utils/data';
-import { UserProfile } from 'models/userProfile';
+import { getUserAvatarURL, getUserProfile, saveUserProfile, updateUserAvatar, fallbackUserAvatar } from '../utils/data';
 import { ESNCountries, ESNSections } from '../utils/ESNSections';
 import { Languages } from '../utils/languages';
 import { FieldsOfStudy } from '../utils/fieldsOfStudy';
@@ -39,27 +32,38 @@ const ProfilePage: React.FC = () => {
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
 
-  const [userProfile, setUserProfile] = useState<UserProfile>();
-  const [errors, setErrors] = useState(new Set<string>());
-  // if not set separately, it runs an infinite form loop
-  const [languages, setLanguages] = useState<string[]>([]);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [ESNCountry, setESNCountry] = useState('');
+  const [ESNSection, setESNSection] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [bio, setBio] = useState('');
+  const [openToJob, setOpenToJob] = useState(false);
+  const [languages, setLanguages] = useState<Array<string | null> | null>([]);
+  const [fieldOfExpertise, setFieldOfExpertise] = useState('');
 
   const [avatar, setAvatar] = useState('');
+  const [avatarTempImageFile, setAvatarTempImageFile] = useState<File>();
   const fileInput = createRef<HTMLInputElement>();
-
-  const handleFieldChange = (fieldName: string, value: any): void => {
-    (userProfile as any)[fieldName] = value;
-    setUserProfile(new UserProfile(userProfile));
-  };
-  const fieldHasErrors = (fieldName: string): boolean => errors.has(fieldName);
 
   useEffect(() => {
     const loadData = async () => {
-      const userProfile = await getUserProfile();
-      setUserProfile(userProfile);
-      setLanguages(userProfile.languages);
+      const profile = await getUserProfile();
+      if (profile) {
+        setFirstName(profile.firstName);
+        setLastName(profile.lastName);
+        setESNCountry(profile.ESNCountry || '');
+        setESNSection(profile.ESNSection || '');
+        setContactEmail(profile.contactEmail || '');
+        setContactPhone(profile.contactPhone || '');
+        setBio(profile.bio || '');
+        setOpenToJob(profile.openToJob || false);
+        setLanguages(profile.languages || null);
+        setFieldOfExpertise(profile.fieldOfExpertise || '');
+      }
 
-      const avatar = getImageURLByURI(userProfile.imageURI);
+      const avatar = await getUserAvatarURL();
       setAvatar(avatar);
     };
     loadData();
@@ -72,36 +76,34 @@ const ProfilePage: React.FC = () => {
     const file = e.target.files[0];
 
     try {
-      await showLoading();
       reader.readAsDataURL(file);
     } catch (err) {
       await showMessage({ ...toastMessageDefaults, message: 'Error uploading the avatar.', color: 'danger' });
     }
 
-    reader.onloadend = async (): Promise<void> => {
-      const newImageURI = await updateUserAvatar(file);
-      handleFieldChange('imageURI', newImageURI);
+    reader.onloadend = () => setAvatar(reader.result as string);
 
-      setAvatar(reader.result as string);
-
-      await dismissLoading();
-    };
+    setAvatarTempImageFile(file);
   };
 
   const handleSubmit = async (event: any): Promise<void> => {
     event.preventDefault();
 
-    if (!userProfile) return;
-
-    userProfile.languages = languages;
-
     await showLoading();
     try {
-      const errors = new Set(userProfile.validate());
-      setErrors(errors);
-      if (errors.size !== 0) throw new Error('Invalid fields');
-
-      await saveUserProfile(userProfile);
+      if (avatarTempImageFile) await updateUserAvatar(avatarTempImageFile);
+      await saveUserProfile({
+        firstName,
+        lastName,
+        ESNCountry,
+        ESNSection,
+        contactEmail,
+        contactPhone,
+        bio,
+        openToJob,
+        languages,
+        fieldOfExpertise
+      });
       await showMessage({ ...toastMessageDefaults, message: 'Profile saved.', color: 'success' });
     } catch (err) {
       await showMessage({
@@ -126,162 +128,114 @@ const ProfilePage: React.FC = () => {
         )}
       </IonHeader>
       <IonContent>
-        {userProfile ? (
-          <IonList style={{ maxWidth: 450, margin: '0 auto' }}>
-            <p>
-              <IonAvatar
-                style={{ margin: '0 auto', width: 100, height: 100, cursor: 'pointer' }}
-                onClick={() => fileInput.current?.click()}
+        <IonList style={{ maxWidth: 450, margin: '0 auto' }}>
+          <p>
+            <IonAvatar
+              style={{ margin: '0 auto', width: 100, height: 100, cursor: 'pointer' }}
+              onClick={() => fileInput.current?.click()}
+            >
+              {avatar ? (
+                <IonImg src={avatar} onIonError={(e: any) => (e.target.src = fallbackUserAvatar)} />
+              ) : (
+                <IonSkeletonText animated />
+              )}
+            </IonAvatar>
+            <input type="file" accept="image/*" onChange={uploadNewAvatar} ref={fileInput as any} hidden={true} />
+          </p>
+          <form onSubmit={handleSubmit}>
+            <IonItemDivider>
+              <IonLabel>Basic Information</IonLabel>
+            </IonItemDivider>
+            <IonItem color="white">
+              <IonLabel position="floating">First name</IonLabel>
+              <IonInput required value={firstName} onIonChange={e => setFirstName(e.detail.value || '')} />
+            </IonItem>
+            <IonItem color="white">
+              <IonLabel position="floating">Last name</IonLabel>
+              <IonInput required value={lastName} onIonChange={e => setLastName(e.detail.value || '')} />
+            </IonItem>
+            <IonItemDivider>
+              <IonLabel>Contacts</IonLabel>
+            </IonItemDivider>
+            <IonItem color="white">
+              <IonLabel position="floating">Email</IonLabel>
+              <IonInput value={contactEmail} onIonChange={e => setContactEmail(e.detail.value || '')} />
+            </IonItem>
+            <IonItem color="white">
+              <IonLabel position="floating">Phone</IonLabel>
+              <IonInput value={contactPhone} onIonChange={e => setContactPhone(e.detail.value || '')} />
+            </IonItem>
+            <IonItemDivider>
+              <IonLabel>Skills</IonLabel>
+            </IonItemDivider>
+            <IonItem color="white">
+              <IonLabel position="floating">Languages</IonLabel>
+              <IonSelect multiple value={languages} onIonChange={e => setLanguages(e.detail.value)}>
+                {Languages.map(lang => (
+                  <IonSelectOption key={lang} value={lang}>
+                    {lang}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
+            </IonItem>
+            <IonItem color="white">
+              <IonLabel position="floating">Fields of expertise</IonLabel>
+              <IonSelect value={fieldOfExpertise} onIonChange={e => setFieldOfExpertise(e.detail.value)}>
+                {Object.keys(FieldsOfStudy).map(field => (
+                  <IonSelectOption key={field} value={field}>
+                    {field}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
+            </IonItem>
+            <IonItemDivider>
+              <IonLabel>ESN</IonLabel>
+            </IonItemDivider>
+            <IonItem color="white">
+              <IonLabel position="floating">ESN Country</IonLabel>
+              <IonSelect interface="popover" value={ESNCountry} onIonChange={e => setESNCountry(e.detail.value)}>
+                {ESNCountries.map(country => (
+                  <IonSelectOption key={country} value={country}>
+                    {country}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
+            </IonItem>
+            <IonItem color="white">
+              <IonLabel position="floating">ESN Section</IonLabel>
+              <IonSelect
+                interface="popover"
+                value={ESNSection}
+                disabled={!ESNCountry}
+                onIonChange={e => setESNSection(e.detail.value)}
               >
-                {avatar ? (
-                  <IonImg src={avatar} onIonError={(e: any) => (e.target.src = usersFallbackImageURL)} />
-                ) : (
-                  <IonSkeletonText animated></IonSkeletonText>
-                )}
-              </IonAvatar>
-              <input type="file" accept="image/*" onChange={uploadNewAvatar} ref={fileInput as any} hidden={true} />
-            </p>
-            <form onSubmit={handleSubmit}>
-              <IonItemDivider>
-                <IonLabel>Basic Information</IonLabel>
-              </IonItemDivider>
-              <IonItem color="white">
-                <IonLabel position="floating">First name</IonLabel>
-                <IonInput
-                  required
-                  value={userProfile.firstName}
-                  onIonChange={e => handleFieldChange('firstName', e.detail.value)}
-                  className={fieldHasErrors('firstName') ? 'fieldHasError' : ''}
-                ></IonInput>
-              </IonItem>
-              <IonItem color="white">
-                <IonLabel position="floating">Last name</IonLabel>
-                <IonInput
-                  required
-                  value={userProfile.lastName}
-                  onIonChange={e => handleFieldChange('lastName', e.detail.value)}
-                  className={fieldHasErrors('lastName') ? 'fieldHasError' : ''}
-                ></IonInput>
-              </IonItem>
-              <IonItemDivider>
-                <IonLabel>Contacts</IonLabel>
-              </IonItemDivider>
-              <IonItem color="white">
-                <IonLabel position="floating">Email</IonLabel>
-                <IonInput
-                  inputMode="email"
-                  value={userProfile.contactEmail}
-                  onIonChange={e => handleFieldChange('contactEmail', e.detail.value)}
-                  className={fieldHasErrors('contactEmail') ? 'fieldHasError' : ''}
-                ></IonInput>
-              </IonItem>
-              <IonItem color="white">
-                <IonLabel position="floating">Phone</IonLabel>
-                <IonInput
-                  inputMode="tel"
-                  value={userProfile.contactPhone}
-                  onIonChange={e => handleFieldChange('contactPhone', e.detail.value)}
-                  className={fieldHasErrors('contactPhone') ? 'fieldHasError' : ''}
-                ></IonInput>
-              </IonItem>
-              <IonItemDivider>
-                <IonLabel>Skills</IonLabel>
-              </IonItemDivider>
-              <IonItem color="white">
-                <IonLabel position="stacked">Languages</IonLabel>
-                <IonSelect
-                  multiple
-                  interface="popover"
-                  value={languages}
-                  onIonChange={e => setLanguages(e.detail.value)}
-                  className={fieldHasErrors('languages') ? 'fieldHasError' : ''}
-                >
-                  {Languages.map(lang => (
-                    <IonSelectOption key={lang} value={lang}>
-                      {lang}
-                    </IonSelectOption>
-                  ))}
-                </IonSelect>
-              </IonItem>
-              <IonItem color="white">
-                <IonLabel position="stacked">Field of expertise</IonLabel>
-                <IonSelect
-                  interface="popover"
-                  value={userProfile.fieldOfExpertise}
-                  onIonChange={e => handleFieldChange('fieldOfExpertise', e.detail.value)}
-                  className={fieldHasErrors('fieldOfExpertise') ? 'fieldHasError' : ''}
-                >
-                  {Object.keys(FieldsOfStudy).map(field => (
-                    <IonSelectOption key={field} value={field}>
-                      {field}
-                    </IonSelectOption>
-                  ))}
-                </IonSelect>
-              </IonItem>
-              <IonItemDivider>
-                <IonLabel>ESN</IonLabel>
-              </IonItemDivider>
-              <IonItem color="white">
-                <IonLabel position="stacked">ESN Country</IonLabel>
-                <IonSelect
-                  interface="popover"
-                  value={userProfile.ESNCountry}
-                  onIonChange={e => {
-                    userProfile.ESNSection = '';
-                    handleFieldChange('ESNCountry', e.detail.value);
-                  }}
-                  className={fieldHasErrors('ESNCountry') ? 'fieldHasError' : ''}
-                >
-                  {ESNCountries.map(country => (
-                    <IonSelectOption key={country} value={country}>
-                      {country}
-                    </IonSelectOption>
-                  ))}
-                </IonSelect>
-              </IonItem>
-              <IonItem color="white">
-                <IonLabel position="stacked">ESN Section</IonLabel>
-                <IonSelect
-                  interface="popover"
-                  value={userProfile.ESNSection}
-                  disabled={!userProfile.ESNCountry}
-                  onIonChange={e => handleFieldChange('ESNSection', e.detail.value)}
-                  className={fieldHasErrors('ESNSection') ? 'fieldHasError' : ''}
-                >
-                  {ESNSections.filter(s => s.country === userProfile.ESNCountry).map(s => (
-                    <IonSelectOption key={s.section} value={s.section}>
-                      {s.section}
-                    </IonSelectOption>
-                  ))}
-                </IonSelect>
-              </IonItem>
-              <IonItemDivider>
-                <IonLabel>Extra</IonLabel>
-              </IonItemDivider>
-              <IonItem color="white">
-                <IonLabel position="stacked">About me</IonLabel>
-                <IonTextarea
-                  placeholder="Write something about you"
-                  value={userProfile.bio}
-                  onIonChange={e => handleFieldChange('bio', e.detail.value)}
-                  className={fieldHasErrors('bio') ? 'fieldHasError' : ''}
-                />
-              </IonItem>
-              <IonItem color="white">
-                <IonLabel>Open to job: </IonLabel>
-                <IonCheckbox
-                  checked={userProfile.openToJob}
-                  onIonChange={e => handleFieldChange('openToJob', e.detail.value)}
-                />
-              </IonItem>
-              <IonButton type="submit" expand="block" style={{ marginTop: 20 }}>
-                Save changes
-              </IonButton>
-            </form>
-          </IonList>
-        ) : (
-          ''
-        )}
+                {ESNSections.filter(s => s.country === ESNCountry).map(s => (
+                  <IonSelectOption key={s.section} value={s.section}>
+                    {s.section}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
+            </IonItem>
+            <IonItemDivider>
+              <IonLabel>Extra</IonLabel>
+            </IonItemDivider>
+            <IonItem color="white">
+              <IonLabel position="floating">About me</IonLabel>
+              <IonTextarea
+                placeholder="Write something about you"
+                value={bio}
+                onIonChange={e => setBio(e.detail.value || '')}
+              />
+            </IonItem>
+            <IonItem color="white">
+              <IonLabel>Open to job: </IonLabel>
+              <IonCheckbox checked={openToJob} onIonChange={e => setOpenToJob(e.detail.checked)} />
+            </IonItem>
+            <IonButton type="submit" expand="block" style={{ marginTop: 20 }}>
+              Save changes
+            </IonButton>
+          </form>
+        </IonList>
       </IonContent>
     </IonPage>
   );
