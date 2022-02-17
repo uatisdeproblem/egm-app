@@ -104,6 +104,8 @@ Any change that you make to the code will be automatically reloaded in the brows
 
 If you want to debug your code, you can open the [Developer Tools](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools) of your browser.
 
+⚠️⚠️ Since the app supports **development** and **production** stages, you need decide which to use when you run the front-end; in `/front-end/src/environment.tsx` you can switch between "dev" and "prod" with the variable `CURRENT_STAGE`. Note: _dev_ and _prod_ environment use the same user base (the accounts to log-in), but they have their own databases; this means that organizations, venues, speakers, sessions and user profiles will be different based on which environment you’re referring to with the variable `CURRENT_STAGE`.
+
 ### Tackle an issue, develop and commit changes
 
 _When you're ready to try tackling a User Story, let me know!_ 💪
