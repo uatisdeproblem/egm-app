@@ -39,6 +39,7 @@ export class UserProfile extends Resource {
     const e = super.validate();
     if (isEmpty(this.firstName)) e.push('firstName');
     if (isEmpty(this.lastName)) e.push('lastName');
+    if (isEmpty(this.contactEmail, 'email')) e.push('contactEmail');
     return e;
   }
 }

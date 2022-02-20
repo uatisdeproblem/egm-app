@@ -14,7 +14,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { calendar, map, menu, person } from 'ionicons/icons';
+import { calendar, map, menu, people } from 'ionicons/icons';
 
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
@@ -129,7 +129,7 @@ const App: React.FC = () => (
                   <IonLabel>Venues</IonLabel>
                 </IonTabButton>
                 <IonTabButton tab="user" href="/user">
-                  {isMobileMode() ? <IonIcon icon={person} /> : ''}
+                  {isMobileMode() ? <IonIcon icon={people} /> : ''}
                   <IonLabel>You</IonLabel>
                 </IonTabButton>
                 <IonTabButton tab="menu" href="/menu">

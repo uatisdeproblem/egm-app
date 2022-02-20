@@ -1,3 +1,4 @@
+import Auth from '@aws-amplify/auth';
 import { createRef, useEffect, useState } from 'react';
 import {
   IonAvatar,
@@ -13,18 +14,20 @@ import {
   IonLabel,
   IonList,
   IonPage,
+  IonSegment,
+  IonSegmentButton,
   IonSelect,
   IonSelectOption,
   IonSkeletonText,
+  IonText,
   IonTextarea,
-  IonTitle,
   IonToolbar,
   useIonLoading,
   useIonToast
 } from '@ionic/react';
 import { cloudUpload, open, trash } from 'ionicons/icons';
 
-import { isMobileMode, toastMessageDefaults } from '../utils';
+import { toastMessageDefaults } from '../utils';
 import {
   downloadUserCV,
   getImageURLByURI,
@@ -43,6 +46,8 @@ const UserPage: React.FC = () => {
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
 
+  const [segment, setSegment] = useState('friends');
+
   const [userProfile, setUserProfile] = useState<UserProfile>();
   const [errors, setErrors] = useState(new Set<string>());
   // if not set separately, it runs an infinite form loop
@@ -60,6 +65,10 @@ const UserPage: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       const userProfile = await getUserProfile();
+      if (!userProfile.contactEmail) {
+        const user = await Auth.currentAuthenticatedUser();
+        userProfile.contactEmail = user.attributes.email;
+      }
       setUserProfile(userProfile);
       setLanguages(userProfile.languages);
 
@@ -138,16 +147,28 @@ const UserPage: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        {isMobileMode() ? (
-          <IonToolbar color="ideaToolbar">
-            <IonTitle>Profile</IonTitle>
-          </IonToolbar>
-        ) : (
-          ''
-        )}
+        <IonToolbar color="ideaToolbar" style={{ '--min-height': 'auto' }}>
+          <IonSegment value={segment}>
+            <IonSegmentButton
+              value="friends"
+              style={{ textTransform: 'none', maxWidth: 150 }}
+              onClick={() => setSegment('friends')}
+            >
+              Friends
+            </IonSegmentButton>
+            <IonSegmentButton
+              value="profile"
+              style={{ textTransform: 'none', maxWidth: 150 }}
+              onClick={() => setSegment('profile')}
+            >
+              Profile
+            </IonSegmentButton>
+          </IonSegment>
+        </IonToolbar>
       </IonHeader>
       <IonContent>
-        {userProfile ? (
+        {segment === 'friends' ? <div></div> : ''}
+        {segment === 'profile' && userProfile ? (
           <IonList style={{ maxWidth: 450, margin: '0 auto' }}>
             <p>
               <IonAvatar
@@ -167,7 +188,9 @@ const UserPage: React.FC = () => {
                 <IonLabel>Basic Information</IonLabel>
               </IonItemDivider>
               <IonItem color="white">
-                <IonLabel position="floating">First name</IonLabel>
+                <IonLabel position="floating">
+                  First name <IonText color="danger">*</IonText>
+                </IonLabel>
                 <IonInput
                   required
                   value={userProfile.firstName}
@@ -176,7 +199,9 @@ const UserPage: React.FC = () => {
                 ></IonInput>
               </IonItem>
               <IonItem color="white">
-                <IonLabel position="floating">Last name</IonLabel>
+                <IonLabel position="floating">
+                  Last name <IonText color="danger">*</IonText>
+                </IonLabel>
                 <IonInput
                   required
                   value={userProfile.lastName}
@@ -188,7 +213,9 @@ const UserPage: React.FC = () => {
                 <IonLabel>Contacts</IonLabel>
               </IonItemDivider>
               <IonItem color="white">
-                <IonLabel position="floating">Email</IonLabel>
+                <IonLabel position="floating">
+                  Email <IonText color="danger">*</IonText>
+                </IonLabel>
                 <IonInput
                   inputMode="email"
                   value={userProfile.contactEmail}
