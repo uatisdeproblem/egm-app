@@ -21,10 +21,10 @@ interface ContainerProps {
 
 const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, select }) => {
   return organization ? (
-    <IonCard button={!!select} onClick={select} color="white" style={{ height: preview ? '130px' : 'auto' }}>
+    <IonCard button={!!select} onClick={select} color="white" style={{ height: preview ? '150px' : 'auto' }}>
       <IonCardHeader>
         {organization.imageURI ? (
-          <div style={{ background: 'white', borderRadius: 4, padding: 4 }}>
+          <div style={{ background: 'white', borderRadius: 4, padding: '20px 4px' }}>
             <IonImg
               src={getImageURLByURI(organization.imageURI)}
               onIonError={(e: any) => (e.target.src = organizationsFallbackImageURL)}
