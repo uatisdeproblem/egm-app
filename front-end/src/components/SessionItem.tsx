@@ -21,7 +21,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
 
   return session ? (
     <IonItem lines="none" color="white" style={itemStyle} key={session.sessionId} button onClick={select}>
-      <IonNote slot="start" className="ion-text-center" style={{ marginTop: 4, lineHeight: 1.5 }}>
+      <IonNote slot="start" className="ion-text-center" style={{ marginTop: 12, marginRight: 16, lineHeight: 1.5 }}>
         <b style={{ display: 'block' }}>{formatTime(session.startsAt)}</b>
         <span style={{ display: 'block' }}>{formatTime(session.endsAt)}</span>
         <IonButton fill="clear" size="small" color="secondary" onClick={toggleUserFavoriteWithPrevention}>
@@ -30,13 +30,17 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
       </IonNote>
       <IonLabel className="ion-text-wrap">
         <IonText style={{ fontWeight: 500 }}>{session.name}</IonText>
+        <p className="ion-hide-sm-up" style={{ marginTop: 2 }}>
+          <IonBadge color={SessionTypeColor[session.type]}>{SessionTypeStr[session.type]}</IonBadge>
+        </p>
         <p
           style={{
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
             WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical'
+            WebkitBoxOrient: 'vertical',
+            marginBottom: 6
           }}
         >
           {session.description}
@@ -52,14 +56,13 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
           )}
           <br />
           <IonIcon icon={peopleOutline} style={{ verticalAlign: 'middle', marginRight: 4 }}></IonIcon>
-
           <Link
             key={session.speaker1.speakerId}
             onClick={(e: any) => e.stopPropagation()}
             to={'/speaker/' + session.speaker1.speakerId}
             style={{ marginRight: 10 }}
           >
-            {session.speaker1.name}
+            {session.speaker1.name.trim()}
             {Speaker.getRole(session.speaker1) ? ` (${Speaker.getRole(session.speaker1)})` : ''}
           </Link>
           {session.speaker2.speakerId ? (

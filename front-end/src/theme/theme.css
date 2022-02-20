@@ -51,7 +51,10 @@ ion-list {
   background: transparent !important;
 }
 ion-item ion-label p {
-  color: var(--ion-color-step-550) !important;
+  color: var(--ion-color-step-450) !important;
+}
+ion-item ion-label p a {
+  color: var(--ion-color-step-350) !important;
 }
 ion-item-divider {
   border-bottom: none !important;
