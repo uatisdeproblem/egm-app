@@ -1,4 +1,5 @@
 import { Auth } from 'aws-amplify';
+import { isPlatform } from '@ionic/react';
 import { Browser } from '@capacitor/browser';
 
 import { UserProfile } from 'models/userProfile';
@@ -67,7 +68,8 @@ export const uploadUserCV = async (cvFile: File): Promise<void> => {
 };
 export const downloadUserCV = async (): Promise<void> => {
   const { url } = await apiRequest('PATCH', ['users', 'me'], { action: 'GET_CV_DOWNLOAD_URL' });
-  await Browser.open({ url });
+  const windowName = isPlatform('ios') ? '_parent' : '_blank';
+  await Browser.open({ url, windowName });
 };
 
 export const isUserAdmin = async (): Promise<boolean> => {
@@ -148,7 +150,8 @@ export const getImageURLByURI = (imageURI: string): string => {
   return IMAGES_BASE_URL.concat('/', imageURI, '.png');
 };
 export const openImage = async (imageURI: string): Promise<void> => {
-  await Browser.open({ url: getImageURLByURI(imageURI) });
+  const windowName = isPlatform('ios') ? '_parent' : '_blank';
+  await Browser.open({ url: getImageURLByURI(imageURI), windowName });
 };
 
 //
