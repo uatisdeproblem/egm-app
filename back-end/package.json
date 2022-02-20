@@ -3,7 +3,7 @@
   "name": "back-end",
   "scripts": {
     "lint": "eslint --ext .ts",
-    "build": "esbuild --platform=node --bundle --sourcemap",
+    "build": "tsc --build",
     "deploy": "cdk deploy",
     "cdk": "cdk"
   },
