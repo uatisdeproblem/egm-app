@@ -21,7 +21,7 @@ interface ContainerProps {
 
 const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, select }) => {
   return organization ? (
-    <IonCard button={!!select} onClick={select} color="white" style={{ height: preview ? '150px' : 'auto' }}>
+    <IonCard button={!!select} onClick={select} color="white" style={{ height: preview ? '160px' : 'auto' }}>
       <IonCardHeader>
         {organization.imageURI ? (
           <div style={{ background: 'white', borderRadius: 4, padding: '20px 4px' }}>
