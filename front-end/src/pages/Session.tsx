@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useParams } from 'react-router';
 import { IonContent, IonPage, useIonToast, useIonViewWillEnter } from '@ionic/react';
 
 import SessionCard from '../components/SessionCard';
@@ -9,6 +8,7 @@ import { toastMessageDefaults } from '../utils';
 import {
   addSessionToUserFavorites,
   getSession,
+  getURLPathResourceId,
   isSessionUserFavorite,
   removeSessionFromUserFavorites
 } from '../utils/data';
@@ -16,7 +16,6 @@ import {
 import EntityHeader from '../components/EntityHeader';
 
 const SessionPage: React.FC = () => {
-  const { sessionId }: { sessionId: string } = useParams();
   const [showMessage] = useIonToast();
 
   const [session, setSession] = useState<Session>();
@@ -28,6 +27,7 @@ const SessionPage: React.FC = () => {
 
   const loadData = async (): Promise<void> => {
     try {
+      const sessionId = getURLPathResourceId();
       const session = await getSession(sessionId);
       const isUserFavorite = await isSessionUserFavorite(sessionId);
 
@@ -56,7 +56,7 @@ const SessionPage: React.FC = () => {
 
   return (
     <IonPage>
-      <EntityHeader title="Session details" type="session" id={sessionId}></EntityHeader>
+      <EntityHeader title="Session details" type="session" id={session?.sessionId || ''}></EntityHeader>
       <IonContent>
         <div className="cardContainer">
           <SessionCard

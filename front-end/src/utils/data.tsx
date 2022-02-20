@@ -178,3 +178,6 @@ const apiRequest = async (
     throw new Error(errMessage);
   }
 };
+
+// to use instead of useParams, that in certain scenarios load old values
+export const getURLPathResourceId = () => document.location.pathname.split('/').slice(-1)[0];

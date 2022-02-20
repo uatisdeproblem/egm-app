@@ -1,16 +1,14 @@
 import { useState } from 'react';
-import { useParams } from 'react-router';
 import { IonContent, IonPage, useIonToast, useIonViewWillEnter } from '@ionic/react';
 
 import { Venue } from 'models/venue';
 import { toastMessageDefaults } from '../utils';
-import { getVenue } from '../utils/data';
+import { getURLPathResourceId, getVenue } from '../utils/data';
 
 import VenueCard from '../components/VenueCard';
 import EntityHeader from '../components/EntityHeader';
 
 const VenuePage: React.FC = () => {
-  const { venueId }: { venueId: string } = useParams();
   const [showMessage] = useIonToast();
 
   const [venue, setVenue] = useState<Venue>();
@@ -21,6 +19,7 @@ const VenuePage: React.FC = () => {
 
   const loadData = async (): Promise<void> => {
     try {
+      const venueId = getURLPathResourceId();
       const venue = await getVenue(venueId);
       setVenue(venue);
     } catch (err) {
@@ -30,7 +29,7 @@ const VenuePage: React.FC = () => {
 
   return (
     <IonPage>
-      <EntityHeader title="Venue details" type="venue" id={venueId}></EntityHeader>
+      <EntityHeader title="Venue details" type="venue" id={venue?.venueId || ''}></EntityHeader>
       <IonContent>
         <div className="cardContainer">
           <VenueCard venue={venue}></VenueCard>

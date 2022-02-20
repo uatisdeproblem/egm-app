@@ -1,4 +1,5 @@
-import { useParams, useHistory } from 'react-router';
+import { useHistory } from 'react-router';
+import { useState } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -8,7 +9,9 @@ import {
   IonIcon,
   IonButtons,
   IonButton,
-  IonList
+  IonList,
+  useIonViewWillEnter,
+  useIonViewWillLeave
 } from '@ionic/react';
 import { close } from 'ionicons/icons';
 
@@ -50,8 +53,18 @@ interface ManageEntityProps {
 const ManageEntityPage: React.FC = () => {
   const history = useHistory();
 
-  const { type, id }: { type: string; id: string } = useParams();
-  const entityId = id && id !== 'new' ? id : undefined;
+  const [type, setType] = useState<string>();
+  const [entityId, setEntityId] = useState<string>();
+
+  useIonViewWillEnter(() => {
+    const pathParams = document.location.pathname.split('/').slice(-2);
+    setEntityId(pathParams[1] && pathParams[1] !== 'new' ? pathParams[1] : '');
+    setType(pathParams[0]);
+  }, []);
+  useIonViewWillLeave(() => {
+    setEntityId('');
+    setType('');
+  }, []);
 
   const manageEntity: { [entityType: string]: ManageEntityProps } = {
     organization: {
@@ -153,7 +166,7 @@ const ManageEntityPage: React.FC = () => {
       <IonHeader>
         <IonToolbar color="ideaToolbar">
           <IonTitle>
-            {id && id !== 'new' ? 'Manage' : 'New'} {type}
+            {entityId ? 'Manage' : 'New'} {type}
           </IonTitle>
           <IonButtons slot="start">
             <IonButton onClick={() => history.goBack()}>
@@ -167,17 +180,21 @@ const ManageEntityPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonList style={{ maxWidth: 500, margin: '0 auto' }}>
-          <ManageEntityForm
-            entityId={entityId}
-            initEntity={manageEntity[type].initEntity}
-            loadEntity={manageEntity[type].loadEntity}
-            saveEntity={manageEntity[type].saveEntity}
-            deleteEntity={manageEntity[type].deleteEntity}
-            entityFields={manageEntity[type].entityFields}
-            entitySupportData={manageEntity[type].entitySupportData}
-            onSave={() => history.goBack()}
-            onDelete={() => history.push('/menu')}
-          ></ManageEntityForm>
+          {type ? (
+            <ManageEntityForm
+              entityId={entityId}
+              initEntity={manageEntity[type].initEntity}
+              loadEntity={manageEntity[type].loadEntity}
+              saveEntity={manageEntity[type].saveEntity}
+              deleteEntity={manageEntity[type].deleteEntity}
+              entityFields={manageEntity[type].entityFields}
+              entitySupportData={manageEntity[type].entitySupportData}
+              onSave={() => history.goBack()}
+              onDelete={() => history.push('/menu')}
+            ></ManageEntityForm>
+          ) : (
+            ''
+          )}
         </IonList>
       </IonContent>
     </IonPage>
