@@ -4,7 +4,7 @@ import '@aws-amplify/ui-react/styles.css';
 
 export const AuthHeader = () => {
   const { isPending } = useAuthenticator();
-  return isPending ? (
+  return isPending === undefined ? (
     <></>
   ) : (
     <Flex justifyContent="center" padding={30} style={{ marginTop: 30 }}>
@@ -15,7 +15,7 @@ export const AuthHeader = () => {
 
 export const AuthFooter = () => {
   const { isPending } = useAuthenticator();
-  return isPending ? (
+  return isPending === undefined ? (
     <></>
   ) : (
     <Flex justifyContent="center" padding={30}>
