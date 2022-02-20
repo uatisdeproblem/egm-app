@@ -33,7 +33,7 @@ import SessionItem from '../components/SessionItem';
 import Searchbar from '../components/Searchbar';
 import ManageEntityButton from '../components/ManageEntityButton';
 
-const AgendaPage: React.FC = () => {
+const SessionsPage: React.FC = () => {
   const history = useHistory();
   const [showMessage] = useIonToast();
   const [segment, setSegment] = useState('');
@@ -231,4 +231,4 @@ const AgendaPage: React.FC = () => {
   );
 };
 
-export default AgendaPage;
+export default SessionsPage;

@@ -20,7 +20,7 @@ import { Venue } from 'models/venue';
 import MapBox from '../components/MapBox';
 import Searchbar from '../components/Searchbar';
 
-const MapPage: React.FC = () => {
+const VenuesPage: React.FC = () => {
   const history = useHistory();
   const [segment, setSegment] = useState('map');
   const mapRef = useRef();
@@ -68,7 +68,7 @@ const MapPage: React.FC = () => {
                 Map
               </IonSegmentButton>
               <IonSegmentButton value="list" onClick={() => setSegment('list')}>
-                Venues
+                List
               </IonSegmentButton>
             </IonSegment>
           </IonToolbar>
@@ -129,4 +129,4 @@ const MapPage: React.FC = () => {
   );
 };
 
-export default MapPage;
+export default VenuesPage;

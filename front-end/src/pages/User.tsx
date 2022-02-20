@@ -39,7 +39,7 @@ import { ESNCountries, ESNSections } from '../utils/ESNSections';
 import { Languages } from '../utils/languages';
 import { FieldsOfStudy } from '../utils/fieldsOfStudy';
 
-const ProfilePage: React.FC = () => {
+const UserPage: React.FC = () => {
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
 
@@ -346,4 +346,4 @@ const ProfilePage: React.FC = () => {
   );
 };
 
-export default ProfilePage;
+export default UserPage;

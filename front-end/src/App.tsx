@@ -29,9 +29,9 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
 import { AuthFooter, AuthHeader } from './components/Auth';
-import AgendaPage from './pages/Agenda';
-import MapPage from './pages/Map';
-import ProfilePage from './pages/Profile';
+import SessionsPage from './pages/Sessions';
+import VenuesPage from './pages/Venues';
+import UserPage from './pages/User';
 import MenuPage from './pages/Menu';
 import SessionPage from './pages/Session';
 import VenuePage from './pages/Venue';
@@ -77,20 +77,20 @@ const App: React.FC = () => (
           <IonReactRouter>
             <IonTabs>
               <IonRouterOutlet>
-                <Route exact path="/agenda">
-                  <AgendaPage />
-                </Route>
-                <Route exact path="/map">
-                  <MapPage />
-                </Route>
-                <Route path="/profile">
-                  <ProfilePage />
+                <Route path="/user">
+                  <UserPage />
                 </Route>
                 <Route path="/menu">
                   <MenuPage />
                 </Route>
+                <Route path="/sessions">
+                  <SessionsPage />
+                </Route>
                 <Route path="/session/:sessionId">
                   <SessionPage />
+                </Route>
+                <Route path="/venues">
+                  <VenuesPage />
                 </Route>
                 <Route path="/venue/:venueId">
                   <VenuePage />
@@ -111,7 +111,7 @@ const App: React.FC = () => (
                   <ManageEntityPage />
                 </Route>
                 <Route exact path="/">
-                  <Redirect to="/agenda" />
+                  <Redirect to="/sessions" />
                 </Route>
               </IonRouterOutlet>
               <IonTabBar
@@ -120,17 +120,17 @@ const App: React.FC = () => (
                 slot={isMobileMode() ? 'bottom' : 'top'}
                 style={isMobileMode() ? {} : { justifyContent: 'right', borderBottom: 'none' }}
               >
-                <IonTabButton tab="agenda" href="/agenda">
+                <IonTabButton tab="sessions" href="/sessions">
                   {isMobileMode() ? <IonIcon icon={calendar} /> : ''}
                   <IonLabel>Agenda</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="map" href="/map">
+                <IonTabButton tab="venues" href="/venues">
                   {isMobileMode() ? <IonIcon icon={map} /> : ''}
-                  <IonLabel>Map</IonLabel>
+                  <IonLabel>Venues</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="profile" href="/profile">
+                <IonTabButton tab="user" href="/user">
                   {isMobileMode() ? <IonIcon icon={person} /> : ''}
-                  <IonLabel>Profile</IonLabel>
+                  <IonLabel>You</IonLabel>
                 </IonTabButton>
                 <IonTabButton tab="menu" href="/menu">
                   {isMobileMode() ? <IonIcon icon={menu} /> : ''}

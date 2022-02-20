@@ -81,13 +81,13 @@ const MenuPage: React.FC = () => {
           <IonItemDivider>
             <IonLabel>Pages</IonLabel>
           </IonItemDivider>
-          <IonItem button color="white" routerLink="/agenda">
+          <IonItem button color="white" routerLink="/sessions">
             <IonIcon icon={calendar} slot="start"></IonIcon>
             <IonLabel>Agenda</IonLabel>
           </IonItem>
-          <IonItem button color="white" routerLink="/map">
+          <IonItem button color="white" routerLink="/venues">
             <IonIcon icon={map} slot="start"></IonIcon>
-            <IonLabel>Map and venues</IonLabel>
+            <IonLabel>Venues</IonLabel>
           </IonItem>
           <IonItem button color="white" routerLink="/organizations">
             <IonIcon icon={business} slot="start"></IonIcon>
