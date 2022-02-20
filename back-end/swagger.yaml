@@ -95,7 +95,13 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: [GET_IMAGE_UPLOAD_URL, ADD_FAVORITE_SESSION, REMOVE_FAVORITE_SESSION, GET_FAVORITE_SESSIONS]
+                  enum:
+                    - GET_IMAGE_UPLOAD_URL
+                    - GET_CV_UPLOAD_URL
+                    - GET_CV_DOWNLOAD_URL
+                    - ADD_FAVORITE_SESSION
+                    - REMOVE_FAVORITE_SESSION
+                    - GET_FAVORITE_SESSIONS
                 sessionId:
                   type: string
                   description: (ADD_FAVORITE_SESSION, REMOVE_FAVORITE_SESSION)
@@ -459,6 +465,17 @@ paths:
       tags: [Users, Organizations, Speakers, Venues, Sessions]
       security:
         - CognitoUserPool: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [IMAGE, DOCUMENT]
+                  description: 'Default: IMAGE'
       responses:
         200:
           $ref: '#/components/responses/SignedURL'

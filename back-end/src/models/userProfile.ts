@@ -7,6 +7,7 @@ export class UserProfile extends Resource {
   imageURI: string;
   languages: string[];
   fieldOfExpertise: string;
+  hasUploadedCV: boolean;
   ESNCountry: string;
   ESNSection: string;
   contactEmail: string;
@@ -22,6 +23,7 @@ export class UserProfile extends Resource {
     this.imageURI = this.clean(x.imageURI, String);
     this.languages = this.cleanArray(x.languages, String);
     this.fieldOfExpertise = this.clean(x.fieldOfExpertise, String);
+    this.hasUploadedCV = this.clean(x.hasUploadedCV, Boolean);
     this.ESNCountry = this.clean(x.ESNCountry, String);
     this.ESNSection = this.clean(x.ESNSection, String);
     this.contactEmail = this.clean(x.contactEmail, String);

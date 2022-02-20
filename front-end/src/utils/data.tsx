@@ -61,6 +61,14 @@ export const updateUserAvatar = async (image: File): Promise<void> => {
   return id;
 };
 export const usersFallbackImageURL = '/assets/images/no-avatar.jpg';
+export const uploadUserCV = async (cvFile: File): Promise<void> => {
+  const { url } = await apiRequest('PATCH', ['users', 'me'], { action: 'GET_CV_UPLOAD_URL' });
+  await fetch(url, { method: 'PUT', body: cvFile, headers: { 'Content-Type': cvFile.type } });
+};
+export const downloadUserCV = async (): Promise<void> => {
+  const { url } = await apiRequest('PATCH', ['users', 'me'], { action: 'GET_CV_DOWNLOAD_URL' });
+  await Browser.open({ url });
+};
 
 export const isUserAdmin = async (): Promise<boolean> => {
   const userData = await Auth.currentAuthenticatedUser();
@@ -131,9 +139,9 @@ export const deleteOrganization = async (organization: Organization): Promise<vo
 // IMAGES
 //
 
-export const uploadImageAndGetURI = async (image: File): Promise<string> => {
-  const { url, id } = await apiRequest('POST', 'media');
-  await fetch(url, { method: 'PUT', body: image, headers: { 'Content-Type': image.type } });
+export const uploadMediaAndGetURI = async (mediaFile: File, type: 'IMAGE' | 'DOCUMENT' = 'IMAGE'): Promise<string> => {
+  const { url, id } = await apiRequest('POST', 'media', { type });
+  await fetch(url, { method: 'PUT', body: mediaFile, headers: { 'Content-Type': mediaFile.type } });
   return id;
 };
 export const getImageURLByURI = (imageURI: string): string => {
@@ -148,7 +156,7 @@ export const openImage = async (imageURI: string): Promise<void> => {
 //
 
 const env = getEnv();
-const IMAGES_BASE_URL = env.mediaUrl.concat('/thumbnails/images/', env.currentStage);
+const IMAGES_BASE_URL = env.mediaUrl.concat('/images/', env.currentStage);
 
 const apiRequest = async (
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',

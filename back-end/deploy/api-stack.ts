@@ -157,7 +157,11 @@ export class ApiStack extends cdk.Stack {
           new IAM.PolicyStatement({
             effect: IAM.Effect.ALLOW,
             actions: ['s3:Get*', 's3:Put*', 's3:Delete*'],
-            resources: [`arn:aws:s3:::${s3MediaBucket.bucketName}/images/${props.stage}/*`]
+            resources: [
+              `arn:aws:s3:::${s3MediaBucket.bucketName}/images/${props.stage}/*`,
+              `arn:aws:s3:::${s3MediaBucket.bucketName}/documents/${props.stage}/*`,
+              `arn:aws:s3:::${s3MediaBucket.bucketName}/usersCV/${props.stage}/*`
+            ]
           })
         ]
       });
@@ -165,6 +169,8 @@ export class ApiStack extends cdk.Stack {
         lambdaFn.role.attachInlinePolicy(accessMediaBucketPolicy);
         lambdaFn.addEnvironment('S3_BUCKET_MEDIA', s3MediaBucket.bucketName);
         lambdaFn.addEnvironment('S3_IMAGES_FOLDER', 'images'.concat('/', props.stage));
+        lambdaFn.addEnvironment('S3_DOCUMENTS_FOLDER', 'documents'.concat('/', props.stage));
+        lambdaFn.addEnvironment('S3_USERS_CV_FOLDER', 'usersCV'.concat('/', props.stage));
       });
 
       // set metadata to recognize the API in the API Gateway console

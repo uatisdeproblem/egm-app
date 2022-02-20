@@ -5,6 +5,7 @@ import {
   IonCheckbox,
   IonContent,
   IonHeader,
+  IonIcon,
   IonImg,
   IonInput,
   IonItem,
@@ -21,13 +22,16 @@ import {
   useIonLoading,
   useIonToast
 } from '@ionic/react';
+import { cloudUpload, open, trash } from 'ionicons/icons';
 
 import { isMobileMode, toastMessageDefaults } from '../utils';
 import {
+  downloadUserCV,
   getImageURLByURI,
   getUserProfile,
   saveUserProfile,
   updateUserAvatar,
+  uploadUserCV,
   usersFallbackImageURL
 } from '../utils/data';
 import { UserProfile } from 'models/userProfile';
@@ -86,6 +90,23 @@ const ProfilePage: React.FC = () => {
 
       await dismissLoading();
     };
+  };
+
+  const uploadAndSetCV = async (event: any): Promise<void> => {
+    event.preventDefault();
+
+    const file = event.target.files[0];
+
+    try {
+      await showLoading();
+      await uploadUserCV(file);
+
+      handleFieldChange('hasUploadedCV', true);
+    } catch (err) {
+      await showMessage({ ...toastMessageDefaults, message: 'Error uploading the document.', color: 'danger' });
+    } finally {
+      await dismissLoading();
+    }
   };
 
   const handleSubmit = async (event: any): Promise<void> => {
@@ -218,6 +239,44 @@ const ProfilePage: React.FC = () => {
                   ))}
                 </IonSelect>
               </IonItem>
+              <IonItem color="white">
+                <IonLabel position="stacked">Curriculum vitae</IonLabel>
+                <IonInput readonly value={userProfile.hasUploadedCV ? 'PDF document' : ''}></IonInput>
+                <input type="hidden" name="hasUploadedCV" value={userProfile.hasUploadedCV ? 'true' : ''}></input>
+                <input type="file" accept="application/pdf" onChange={uploadAndSetCV} id="cv-input" hidden={true} />
+                {userProfile.hasUploadedCV ? (
+                  <>
+                    <IonButton
+                      slot="end"
+                      fill="clear"
+                      color="medium"
+                      style={{ marginTop: 16 }}
+                      onClick={() => handleFieldChange('hasUploadedCV', false)}
+                    >
+                      <IonIcon icon={trash} slot="icon-only"></IonIcon>
+                    </IonButton>
+                    <IonButton
+                      slot="end"
+                      fill="clear"
+                      color="medium"
+                      style={{ marginTop: 16 }}
+                      onClick={downloadUserCV}
+                    >
+                      <IonIcon icon={open} slot="icon-only"></IonIcon>
+                    </IonButton>
+                  </>
+                ) : (
+                  <IonButton
+                    slot="end"
+                    fill="clear"
+                    color="medium"
+                    style={{ marginTop: 16 }}
+                    onClick={() => document.getElementById('cv-input')?.click()}
+                  >
+                    <IonIcon icon={cloudUpload} slot="icon-only"></IonIcon>
+                  </IonButton>
+                )}
+              </IonItem>
               <IonItemDivider>
                 <IonLabel>ESN</IonLabel>
               </IonItemDivider>
@@ -268,10 +327,10 @@ const ProfilePage: React.FC = () => {
                 />
               </IonItem>
               <IonItem color="white">
-                <IonLabel>Open to job: </IonLabel>
+                <IonLabel>Open to job:</IonLabel>
                 <IonCheckbox
                   checked={userProfile.openToJob}
-                  onIonChange={e => handleFieldChange('openToJob', e.detail.value)}
+                  onIonChange={e => handleFieldChange('openToJob', e.detail.checked)}
                 />
               </IonItem>
               <IonButton type="submit" expand="block" style={{ marginTop: 20 }}>

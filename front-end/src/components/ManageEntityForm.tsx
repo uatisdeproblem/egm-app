@@ -20,7 +20,7 @@ import { toastMessageDefaults } from '../utils';
 
 import { Entity } from 'models/entity';
 
-import { openImage, uploadImageAndGetURI } from '../utils/data';
+import { openImage, uploadMediaAndGetURI } from '../utils/data';
 
 export interface ManageEntityField {
   type: 'hidden' | 'text' | 'number' | 'url' | 'email' | 'datetime-local' | 'select' | 'image';
@@ -151,7 +151,7 @@ const ManageEntityForm: React.FC<ComponentProps> = ({
 
     try {
       await showLoading();
-      const newImageURI = await uploadImageAndGetURI(file);
+      const newImageURI = await uploadMediaAndGetURI(file);
 
       const entityData = acquireEntityDataFromForm() as any;
       entityData[fieldName] = newImageURI;
