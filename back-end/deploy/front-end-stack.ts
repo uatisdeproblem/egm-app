@@ -37,7 +37,7 @@ export class FrontEndStack extends cdk.Stack {
       region: 'us-east-1'
     });
 
-    const frontEndDistributionOAI = new CloudFront.OriginAccessIdentity(this, 'cloudfront-OAI', {
+    const frontEndDistributionOAI = new CloudFront.OriginAccessIdentity(this, 'DistributionOAI', {
       comment: `OAI for https://${props.domain}`
     });
 

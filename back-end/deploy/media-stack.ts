@@ -22,10 +22,10 @@ export class MediaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: MediaProps) {
     super(scope, id, props);
 
-    // create the media bucket, attach a thumbnailer function and allow the Lambda functions to access the bucket
     const s3MediaBucket = new S3.Bucket(this, 'MediaBucket', {
       bucketName: props.mediaBucketName,
-      accessControl: S3.BucketAccessControl.PUBLIC_READ,
+      publicReadAccess: false,
+      blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL,
       cors: [
         {
           allowedHeaders: ['*'],
@@ -46,7 +46,10 @@ export class MediaStack extends cdk.Stack {
         effect: IAM.Effect.ALLOW,
         principals: [new IAM.ArnPrincipal(thumbnailerFn.role.roleArn)],
         actions: ['s3:*'],
-        resources: [`arn:aws:s3:::${s3MediaBucket.bucketName}/*`]
+        resources: [
+          `arn:aws:s3:::${s3MediaBucket.bucketName}/images/*`,
+          `arn:aws:s3:::${s3MediaBucket.bucketName}/thumbnails/*`
+        ]
       })
     );
 
@@ -110,9 +113,16 @@ const createCloudFrontDistributionForMediaBucket = (scope: Construct, mediaBucke
     region: 'us-east-1'
   });
 
-  const frontEndDistribution = new CloudFront.Distribution(scope, 'MediaDistribution', {
+  const mediaDistributionOAI = new CloudFront.OriginAccessIdentity(scope, 'DistributionOAI', {
+    comment: `OAI for https://${mediaDomain}`
+  });
+
+  const mediaDistribution = new CloudFront.Distribution(scope, 'MediaDistribution', {
     defaultBehavior: {
-      origin: new CloudFrontOrigins.S3Origin(mediaBucket),
+      origin: new CloudFrontOrigins.S3Origin(mediaBucket, {
+        originAccessIdentity: mediaDistributionOAI,
+        originPath: '/thumbnails'
+      }),
       compress: true,
       viewerProtocolPolicy: CloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
     },
@@ -124,6 +134,6 @@ const createCloudFrontDistributionForMediaBucket = (scope: Construct, mediaBucke
   new Route53.ARecord(scope, 'MediaDomainRecord', {
     zone: zone,
     recordName: mediaDomain,
-    target: Route53.RecordTarget.fromAlias(new Route53Targets.CloudFrontTarget(frontEndDistribution))
+    target: Route53.RecordTarget.fromAlias(new Route53Targets.CloudFrontTarget(mediaDistribution))
   });
 };
