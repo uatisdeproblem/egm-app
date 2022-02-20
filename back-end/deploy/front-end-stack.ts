@@ -3,11 +3,10 @@ import { Construct } from 'constructs';
 import * as S3 from 'aws-cdk-lib/aws-s3';
 import * as IAM from 'aws-cdk-lib/aws-iam';
 import * as CloudFront from 'aws-cdk-lib/aws-cloudfront';
-import * as CloudFrontOrigins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as ACM from 'aws-cdk-lib/aws-certificatemanager';
 import * as Route53 from 'aws-cdk-lib/aws-route53';
 import * as Route53Targets from 'aws-cdk-lib/aws-route53-targets';
-import { Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { RemovalPolicy } from 'aws-cdk-lib';
 
 export interface FrontEndProps extends cdk.StackProps {
   project: string;
@@ -21,18 +20,12 @@ export class FrontEndStack extends cdk.Stack {
 
     const frontEndBucket = new S3.Bucket(this, 'Bucket', {
       bucketName: props.project.concat('-', props.stage, '-front-end'),
-      accessControl: S3.BucketAccessControl.PUBLIC_READ,
+      publicReadAccess: false,
+      blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL,
       websiteIndexDocument: 'index.html',
+      websiteErrorDocument: 'index.html',
       removalPolicy: RemovalPolicy.DESTROY
     });
-    frontEndBucket.addToResourcePolicy(
-      new IAM.PolicyStatement({
-        effect: IAM.Effect.ALLOW,
-        principals: [new IAM.AnyPrincipal()],
-        actions: ['s3:GetObject'],
-        resources: [`arn:aws:s3:::${frontEndBucket.bucketName}/*`]
-      })
-    );
 
     const zone = Route53.HostedZone.fromLookup(this, 'HostedZone', {
       domainName: props.domain.split('.').slice(-2).join('.')
@@ -44,21 +37,34 @@ export class FrontEndStack extends cdk.Stack {
       region: 'us-east-1'
     });
 
-    const frontEndDistribution = new CloudFront.Distribution(this, 'Distribution', {
-      defaultBehavior: {
-        origin: new CloudFrontOrigins.S3Origin(frontEndBucket),
-        compress: true,
-        viewerProtocolPolicy: CloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
-      },
-      defaultRootObject: 'index.html',
-      domainNames: [props.domain],
-      priceClass: CloudFront.PriceClass.PRICE_CLASS_100,
-      errorResponses: [
-        { ttl: Duration.seconds(0), httpStatus: 403, responseHttpStatus: 200, responsePagePath: '/index.html' },
-        { ttl: Duration.seconds(0), httpStatus: 404, responseHttpStatus: 200, responsePagePath: '/index.html' }
-      ],
-      certificate: ACM.Certificate.fromCertificateArn(this, 'CloudFrontCertificate', certificate.certificateArn)
+    const frontEndDistributionOAI = new CloudFront.OriginAccessIdentity(this, 'cloudfront-OAI', {
+      comment: `OAI for https://${props.domain}`
     });
+
+    const frontEndDistribution = new CloudFront.CloudFrontWebDistribution(this, 'Distribution', {
+      originConfigs: [
+        {
+          s3OriginSource: { s3BucketSource: frontEndBucket, originAccessIdentity: frontEndDistributionOAI },
+          behaviors: [{ isDefaultBehavior: true }]
+        }
+      ],
+      viewerProtocolPolicy: CloudFront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      priceClass: CloudFront.PriceClass.PRICE_CLASS_100,
+      errorConfigurations: [
+        { errorCachingMinTtl: 0, errorCode: 403, responseCode: 200, responsePagePath: '/index.html' },
+        { errorCachingMinTtl: 0, errorCode: 404, responseCode: 200, responsePagePath: '/index.html' }
+      ],
+      viewerCertificate: CloudFront.ViewerCertificate.fromAcmCertificate(certificate, { aliases: [props.domain] })
+    });
+    frontEndBucket.addToResourcePolicy(
+      new IAM.PolicyStatement({
+        actions: ['s3:GetObject'],
+        resources: [frontEndBucket.arnForObjects('*')],
+        principals: [
+          new IAM.CanonicalUserPrincipal(frontEndDistributionOAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)
+        ]
+      })
+    );
 
     new Route53.ARecord(this, 'DomainRecord', {
       zone: zone,
