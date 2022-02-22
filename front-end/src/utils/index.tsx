@@ -1,6 +1,6 @@
-import MarkdownIt from 'markdown-it';
-
 import { SessionType } from 'models/session';
+// @ts-ignore
+import MarkdownIt from 'markdown-it';
 
 export const SessionTypeStr = {
   [SessionType.KEYNOTE]: 'Keynote',

@@ -70,8 +70,7 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "^3.3.3",
-    "@types/markdown-it": "^12.2.3"
+    "@capacitor/cli": "^3.3.3"
   },
   "overrides": {
     "react-error-overlay": "6.0.9"
