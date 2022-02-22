@@ -149,18 +149,10 @@ const UserPage: React.FC = () => {
       <IonHeader>
         <IonToolbar color="ideaToolbar" style={{ '--min-height': 'auto' }}>
           <IonSegment value={segment}>
-            <IonSegmentButton
-              value="friends"
-              style={{ textTransform: 'none', maxWidth: 150 }}
-              onClick={() => setSegment('friends')}
-            >
+            <IonSegmentButton value="friends" style={{ maxWidth: 150 }} onClick={() => setSegment('friends')}>
               Friends
             </IonSegmentButton>
-            <IonSegmentButton
-              value="profile"
-              style={{ textTransform: 'none', maxWidth: 150 }}
-              onClick={() => setSegment('profile')}
-            >
+            <IonSegmentButton value="profile" style={{ maxWidth: 150 }} onClick={() => setSegment('profile')}>
               Profile
             </IonSegmentButton>
           </IonSegment>

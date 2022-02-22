@@ -16,14 +16,15 @@ import {
 } from '@ionic/react';
 import { cloudUpload, open, trash } from 'ionicons/icons';
 
-import { toastMessageDefaults } from '../utils';
+import MdEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
 
 import { Entity } from 'models/entity';
-
+import { mdParser, toastMessageDefaults } from '../utils';
 import { openImage, uploadMediaAndGetURI } from '../utils/data';
 
 export interface ManageEntityField {
-  type: 'hidden' | 'text' | 'number' | 'url' | 'email' | 'datetime-local' | 'select' | 'image';
+  type: 'hidden' | 'text' | 'number' | 'url' | 'email' | 'datetime-local' | 'select' | 'image' | 'textarea';
   name: string;
   value: string | number | boolean;
   required?: boolean;
@@ -57,6 +58,9 @@ const ManageEntityForm: React.FC<ComponentProps> = ({
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
   const [showAlert] = useIonAlert();
+
+  const mdPlugins = ['font-bold', 'font-italic', 'list-ordered', 'list-unordered', 'link', 'mode-toggle'];
+  const mdDefaultConfig = { view: { html: false } };
 
   const [entity, setEntity] = useState<Entity>();
   const [supportData, setSupportData] = useState<any>();
@@ -232,6 +236,29 @@ const ManageEntityForm: React.FC<ComponentProps> = ({
                 </IonButton>
               )}
             </IonItem>
+          );
+        else if (f.type === 'textarea')
+          return (
+            <div key={f.name}>
+              <IonItem key={f.name} color="white" lines="none">
+                <IonLabel position="stacked" style={{ marginBottom: 14 }}>
+                  {f.label} {f.required ? <IonText color="danger">*</IonText> : ''}
+                </IonLabel>
+                <input type="hidden" name={f.name} id={'textarea-source-' + f.name} value={f.value || ''}></input>
+              </IonItem>
+              <MdEditor
+                id={'textarea-editor-' + f.name}
+                defaultValue={f.value}
+                style={{ height: 300 }}
+                plugins={mdPlugins}
+                config={mdDefaultConfig}
+                renderHTML={text => mdParser.render(text)}
+                onChange={res => {
+                  const source = document.getElementById('textarea-source-' + f.name) as HTMLInputElement;
+                  if (source) source.value = res.text;
+                }}
+              />
+            </div>
           );
         else
           return (

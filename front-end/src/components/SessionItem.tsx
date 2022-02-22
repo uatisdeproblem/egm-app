@@ -43,7 +43,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
             marginBottom: 6
           }}
         >
-          {session.description}
+          {session.abstract}
         </p>
         <p>
           <IonIcon icon={locationOutline} style={{ verticalAlign: 'middle', marginRight: 4 }}></IonIcon>

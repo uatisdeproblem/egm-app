@@ -75,6 +75,10 @@ ion-button.button-solid {
   --box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
 }
 
+ion-segment-button {
+  text-transform: none !important;
+}
+
 .maplibregl-popup-content {
   background: var(--ion-color-white);
 }
@@ -87,4 +91,37 @@ div.cardContainer {
   max-width: 600px;
   margin: 0 auto;
   margin-top: 15px;
+}
+
+.rc-md-editor {
+  background-color: var(--ion-color-white);
+  border: none;
+  border-bottom: 1px solid var(--ion-border-color);
+}
+.rc-md-editor .rc-md-navigation,
+.rc-md-editor .editor-container .sec-md .input {
+  background: transparent;
+  border-bottom-color: var(--ion-border-color);
+  color: var(--ion-text-color);
+}
+.rc-md-editor .rc-md-navigation {
+  padding: 0 16px;
+}
+.rc-md-editor .rc-md-navigation .button-wrap .button {
+  color: var(--ion-color-white-contrast);
+}
+.rc-md-editor .rc-md-navigation .button-wrap .button:hover {
+  color: rgba(var(--ion-color-dark-rgb, 0.6));
+}
+.custom-html-style {
+  color: var(--ion-text-color);
+}
+
+.divDescription {
+  padding: 20px;
+  background-color: var(--ion-color-light);
+}
+.divDescription p {
+  margin-bottom: 16px;
+  text-align: justify;
 }

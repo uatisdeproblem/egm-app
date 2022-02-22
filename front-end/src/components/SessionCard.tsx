@@ -19,7 +19,7 @@ import { calendarOutline, locationOutline, peopleOutline, star, starOutline } fr
 
 import { Session } from 'models/session';
 import { Speaker } from 'models/speaker';
-import { SessionTypeStr, SessionTypeColor, formatTime, formatDateShort } from '../utils';
+import { SessionTypeStr, SessionTypeColor, formatTime, formatDateShort, mdParser } from '../utils';
 
 interface ContainerProps {
   session?: Session;
@@ -39,6 +39,7 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
             <IonCardTitle>
               <IonLabel>
                 <h1>{session.name}</h1>
+                <p>{session.abstract}</p>
               </IonLabel>
             </IonCardTitle>
           </IonCol>
@@ -105,11 +106,13 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
               )}
             </IonLabel>
           </IonItem>
-          <p style={{ marginTop: 12 }}>
-            <IonItem color="light">
-              <IonLabel className="ion-text-wrap">{session.description}</IonLabel>
-            </IonItem>
-          </p>
+          <div className="divDescription" style={{ marginTop: 12 }}>
+            {session.description ? (
+              <span dangerouslySetInnerHTML={{ __html: mdParser.render(session.description) }}></span>
+            ) : (
+              ''
+            )}
+          </div>
         </IonList>
       </IonCardContent>
     </IonCard>

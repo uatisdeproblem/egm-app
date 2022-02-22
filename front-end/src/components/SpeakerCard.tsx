@@ -9,11 +9,11 @@ import {
   IonCol,
   IonAvatar,
   IonImg,
-  IonCardSubtitle,
-  IonItem
+  IonCardSubtitle
 } from '@ionic/react';
 
 import { Speaker } from 'models/speaker';
+import { mdParser } from '../utils';
 import { getImageURLByURI } from '../utils/data';
 
 interface ContainerProps {
@@ -55,9 +55,13 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
         ''
       ) : (
         <IonCardContent>
-          <IonItem color="light" lines="none">
-            <IonLabel className="ion-text-wrap">{speaker.description}</IonLabel>
-          </IonItem>
+          <div className="divDescription">
+            {speaker.description ? (
+              <span dangerouslySetInnerHTML={{ __html: mdParser.render(speaker.description) }}></span>
+            ) : (
+              ''
+            )}
+          </div>
         </IonCardContent>
       )}
     </IonCard>

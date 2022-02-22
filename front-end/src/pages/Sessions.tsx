@@ -138,12 +138,7 @@ const SessionsPage: React.FC = () => {
               <IonIcon icon={star} />
             </IonSegmentButton>
             {sessionsDays.map(day => (
-              <IonSegmentButton
-                key={day}
-                value={day}
-                onClick={() => changeSegment(day)}
-                style={{ maxWidth: 120, textTransform: 'none' }}
-              >
+              <IonSegmentButton key={day} value={day} onClick={() => changeSegment(day)} style={{ maxWidth: 120 }}>
                 {formatDateShort(day)}
               </IonSegmentButton>
             ))}

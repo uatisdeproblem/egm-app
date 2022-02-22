@@ -51,6 +51,10 @@ npm i --silent 1>/dev/null
 echo -e "${C}Linting...${NC}"
 npm run lint ${SRC_FOLDER} 1>/dev/null
 
+# compiling models
+echo -e "${C}Compiling...${NC}"
+npm run compile 1>/dev/null
+
 # build and deploy with AWS CDK
 echo -e "${C}Deploying CDK stacks...${NC}"
 npm run deploy -- --context stage=${ACTION} --all --require-approval never --profile ${AWS_PROFILE}

@@ -11,6 +11,7 @@ import {
 } from '@ionic/react';
 
 import { Organization } from 'models/organization';
+import { mdParser } from '../utils';
 import { getImageURLByURI, organizationsFallbackImageURL } from '../utils/data';
 
 interface ContainerProps {
@@ -55,9 +56,13 @@ const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, sel
             ) : (
               ''
             )}
-            <IonItem color="light" lines="none">
-              <IonLabel className="ion-text-wrap">{organization.description}</IonLabel>
-            </IonItem>
+            <div className="divDescription">
+              {organization.description ? (
+                <span dangerouslySetInnerHTML={{ __html: mdParser.render(organization.description) }}></span>
+              ) : (
+                ''
+              )}
+            </div>
           </>
         </IonCardContent>
       )}

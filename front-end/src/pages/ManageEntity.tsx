@@ -75,7 +75,7 @@ const ManageEntityPage: React.FC = () => {
       entityFields: (x): ManageEntityField[] => [
         { type: 'hidden', name: 'organizationId', value: x['organizationId'] },
         { type: 'text', name: 'name', value: x['name'], label: 'Name', required: true },
-        { type: 'text', name: 'description', value: x['description'], label: 'Description' },
+        { type: 'textarea', name: 'description', value: x['description'], label: 'Description' },
         { type: 'url', name: 'website', value: x['website'], label: 'Website' },
         { type: 'email', name: 'contactEmail', value: x['contactEmail'], label: 'Contact email' },
         { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Logo' }
@@ -101,7 +101,7 @@ const ManageEntityPage: React.FC = () => {
             options: organizations
           },
           { type: 'text', name: 'title', value: x['title'], label: 'Title' },
-          { type: 'text', name: 'description', value: x['description'], label: 'Description' },
+          { type: 'textarea', name: 'description', value: x['description'], label: 'Description' },
           { type: 'email', name: 'contactEmail', value: x['contactEmail'], label: 'Contact email' },
           { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Picture' }
         ];
@@ -119,7 +119,7 @@ const ManageEntityPage: React.FC = () => {
         { type: 'text', name: 'address', value: x['address'], label: 'Address', required: true },
         { type: 'text', name: 'longitude', value: x['longitude'], label: 'Longitude', required: true },
         { type: 'text', name: 'latitude', value: x['latitude'], label: 'Latitude', required: true },
-        { type: 'text', name: 'description', value: x['description'], label: 'Description' },
+        { type: 'textarea', name: 'description', value: x['description'], label: 'Description' },
         { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Image' },
         { type: 'image', name: 'planImageURI', value: x['planImageURI'], label: 'Plan (internal building)' }
       ]
@@ -140,7 +140,8 @@ const ManageEntityPage: React.FC = () => {
         return [
           { type: 'hidden', name: 'sessionId', value: x['sessionId'] },
           { type: 'text', name: 'name', value: x['name'], label: 'Name', required },
-          { type: 'text', name: 'description', value: x['description'], label: 'Description' },
+          { type: 'text', name: 'abstract', value: x['abstract'], label: 'Abstract' },
+          { type: 'textarea', name: 'description', value: x['description'], label: 'Description' },
           { type: 'select', name: 'type', value: x['type'], required, label: 'Type', options: sessionTypes },
           { type: 'datetime-local', name: 'startsAt', value: x['startsAt'], label: 'Starts at' },
           { type: 'datetime-local', name: 'endsAt', value: x['endsAt'], label: 'Ends at' },

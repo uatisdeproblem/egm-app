@@ -6,6 +6,7 @@ import { VenueLinked } from './venue';
 export class Session extends Resource {
   sessionId: string;
   name: string;
+  abstract: string;
   description: string;
   type: SessionType;
   startsAt: epochISOString;
@@ -19,6 +20,7 @@ export class Session extends Resource {
     super.load(x);
     this.sessionId = this.clean(x.sessionId, String);
     this.name = this.clean(x.name, String);
+    this.abstract = this.clean(x.abstract, String);
     this.description = this.clean(x.description, String);
     this.type = this.clean(x.type, String) as SessionType;
     this.startsAt = this.clean(x.startsAt, String) as epochISOString;

@@ -1,3 +1,5 @@
+import MarkdownIt from 'markdown-it';
+
 import { SessionType } from 'models/session';
 
 export const SessionTypeStr = {
@@ -25,6 +27,8 @@ export const formatDateShort = (date: string | Date): string => {
 export const toastMessageDefaults = { duration: 3000, buttons: ['X'] };
 
 export const isMobileMode = () => window.innerWidth < 992;
+
+export const mdParser = new MarkdownIt({ linkify: true, breaks: true, typographer: true });
 
 export const createMapMarker = (color: string): any => {
   const fillColor = color;

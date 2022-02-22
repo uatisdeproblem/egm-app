@@ -88,7 +88,7 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
             <IonCardTitle class="ion-text-center">{selectedVenue?.name}</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
-            <p className="ion-text-center ion-padding">{selectedVenue?.description}</p>
+            <p className="ion-text-center ion-padding">{selectedVenue?.address}</p>
             <IonButton fill="clear" expand="block" href={`/venue/${selectedVenue?.venueId}`}>
               See details
             </IonButton>
@@ -107,7 +107,7 @@ export default MapBox;
 const mapVenueToMaplibreFeature = (venue: Venue): any => ({
   type: 'Feature',
   geometry: { type: 'Point', coordinates: Venue.getCoordinates(venue) },
-  properties: { id: venue.venueId, name: venue.name, description: venue.description }
+  properties: { id: venue.venueId, name: venue.name, address: venue.address }
 });
 const mapVenuesToMaplibreFeatureCollection = (venues: Venue[]): any => {
   return {

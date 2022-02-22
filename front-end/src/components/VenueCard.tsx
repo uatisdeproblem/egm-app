@@ -1,15 +1,7 @@
-import {
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonSkeletonText,
-  IonImg,
-  IonItem,
-  IonLabel
-} from '@ionic/react';
+import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonSkeletonText, IonImg } from '@ionic/react';
 
 import { Venue } from 'models/venue';
+import { mdParser } from '../utils';
 import { getImageURLByURI, venuesFallbackImageURL } from '../utils/data';
 
 interface ContainerProps {
@@ -27,9 +19,13 @@ const VenueCard: React.FC<ContainerProps> = ({ venue }) => {
         <IonCardTitle>{venue.name}</IonCardTitle>
       </IonCardHeader>
       <IonCardContent>
-        <IonItem color="light" lines="none">
-          <IonLabel className="ion-text-wrap">{venue.description}</IonLabel>
-        </IonItem>
+        <div className="divDescription">
+          {venue.description ? (
+            <span dangerouslySetInnerHTML={{ __html: mdParser.render(venue.description) }}></span>
+          ) : (
+            ''
+          )}
+        </div>
       </IonCardContent>
     </IonCard>
   ) : (
