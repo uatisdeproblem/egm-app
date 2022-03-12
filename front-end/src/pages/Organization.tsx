@@ -62,8 +62,8 @@ const OrganizationPage: React.FC = () => {
       <IonContent>
         <div className="cardContainer">
           <OrganizationCard organization={organization}></OrganizationCard>
+          <IonButton onClick={() => setShowAlert(true)} expand="block" style={{ marginTop: 20 }}>I'd like to get in contact</IonButton>
         </div>
-        <IonButton onClick={() => setShowAlert(true)} expand="block">I'd like to get in contact</IonButton>
         <IonAlert
           isOpen={showAlert}
           onDidDismiss={() => setShowAlert(false)}
