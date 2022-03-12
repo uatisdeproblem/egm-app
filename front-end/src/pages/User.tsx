@@ -3,8 +3,11 @@ import { createRef, useEffect, useState } from 'react';
 import {
   IonAvatar,
   IonButton,
+  IonButtons,
   IonCheckbox,
+  IonCol,
   IonContent,
+  IonGrid,
   IonHeader,
   IonIcon,
   IonImg,
@@ -13,7 +16,9 @@ import {
   IonItemDivider,
   IonLabel,
   IonList,
+  IonModal,
   IonPage,
+  IonRow,
   IonSegment,
   IonSegmentButton,
   IonSelect,
@@ -21,6 +26,7 @@ import {
   IonSkeletonText,
   IonText,
   IonTextarea,
+  IonTitle,
   IonToolbar,
   useIonLoading,
   useIonToast
@@ -53,6 +59,8 @@ const UserPage: React.FC = () => {
   const [errors, setErrors] = useState(new Set<string>());
   // if not set separately, it runs an infinite form loop
   const [languages, setLanguages] = useState<string[]>([]);
+
+  const [test, setTest] = useState(false);
 
   const [avatar, setAvatar] = useState('');
   const fileInput = createRef<HTMLInputElement>();
@@ -160,7 +168,79 @@ const UserPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {segment === 'friends' ? <div></div> : ''}
+        {segment === 'friends' && userProfile ? 
+        <IonList style={{ maxWidth: 450, margin: '0 auto', textAlign: 'center' }}>
+            <IonButton id="trigger-button" onClick={()=>setTest(true)}>Click to connect with someone!</IonButton>
+            <IonModal isOpen={test} trigger="trigger-button">
+              <IonContent>
+                <IonHeader translucent>
+                  <IonToolbar>
+                    <IonTitle slot={'start'}>
+                      Placeholder Title
+                    </IonTitle>
+                    <IonButtons slot={'end'}>
+                      <IonButton onClick={() => setTest(false)}>
+                        Close
+                      </IonButton>
+                    </IonButtons>
+                  </IonToolbar>
+                </IonHeader>
+                <IonList style={{ maxWidth: 450, margin: '0 auto' }}>
+                  <IonAvatar
+                    style={{ margin: '0 auto', width: 100, height: 100, cursor: 'pointer' }}
+                  >
+                    {avatar ? (
+                      <IonImg src={avatar} onIonError={(e: any) => (e.target.src = usersFallbackImageURL)} />
+                    ) : (
+                      <IonSkeletonText animated></IonSkeletonText>
+                    )}
+                  </IonAvatar>
+                  <IonItem color="white" style={{ marginTop: 10 }}>
+                    {`${userProfile.firstName} ${userProfile.lastName}`|| 'Name'}
+                  </IonItem>
+                  <IonItem color="white">
+                    {`${userProfile.ESNCountry || 'ESN Country'}`}
+                  </IonItem>
+                  <IonItem color="white">
+                    {`${userProfile.ESNSection || 'ESN Section'}`}
+                  </IonItem>
+                  <IonButtons>
+                    <IonGrid>
+                      <IonRow style={{ display: 'flex', textAlign: 'center' }}>
+                        <IonCol>
+                          <IonButton disabled={!userProfile.facebook}>
+                            <IonIcon icon={logoFacebook} />
+                          </IonButton>
+                        </IonCol>
+                        <IonCol>
+                          <IonButton disabled={!userProfile.instagram}>
+                            <IonIcon icon={logoInstagram} />
+                          </IonButton>
+                        </IonCol>
+                        <IonCol>
+                          <IonButton disabled={!userProfile.twitter}>
+                            <IonIcon icon={logoTwitter} />
+                          </IonButton>
+                        </IonCol>
+                        <IonCol>
+                          <IonButton disabled={!userProfile.tiktok}>
+                            <IonIcon icon={logoTiktok} />
+                          </IonButton>
+                        </IonCol>
+                        <IonCol>
+                          <IonButton disabled={!userProfile.linkedin}>
+                            <IonIcon icon={logoLinkedin} />
+                          </IonButton>
+                        </IonCol>
+                      </IonRow>
+                    </IonGrid>
+                  </IonButtons>
+                </IonList>
+              </IonContent>
+            </IonModal>
+        </IonList>
+        
+        : ''}
         {segment === 'profile' && userProfile ? (
           <IonList style={{ maxWidth: 450, margin: '0 auto' }}>
             <p>
