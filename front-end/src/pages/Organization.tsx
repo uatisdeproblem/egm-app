@@ -30,10 +30,9 @@ const OrganizationPage: React.FC = () => {
     }
   };
 
-  const submitContactInfo = async (event: any): Promise<void> => {
+  const submitContactInfo = async (options: Array<boolean>): Promise<void> => {
     // add loading
     // add toast messages
-    event.preventDefault();
 
     if (!organization) return;
 
