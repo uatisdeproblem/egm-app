@@ -26,6 +26,7 @@ import {
   useIonToast
 } from '@ionic/react';
 import { cloudUpload, open, trash } from 'ionicons/icons';
+import { logoFacebook, logoInstagram, logoTwitter, logoTiktok, logoLinkedin } from "ionicons/icons";
 
 import { toastMessageDefaults } from '../utils';
 import {
@@ -356,54 +357,54 @@ const UserPage: React.FC = () => {
                 <IonLabel>Social</IonLabel>
               </IonItemDivider>
               <IonItem color="white">
-                <IonLabel position="stacked">Facebook</IonLabel>
+                <IonLabel>Facebook:</IonLabel>
                 <IonInput
                     inputMode="url"
                     value={userProfile.facebook}
                     onIonChange={e => handleFieldChange('facebook', e.detail.value)}
                     className={fieldHasErrors('facebook') ? 'fieldHasError' : ''}
                 />
-                <IonIcon name='logo-facebook' />
+                <IonIcon icon={logoFacebook} />
               </IonItem>
               <IonItem color="white">
-                <IonLabel>Instagram</IonLabel>
+                <IonLabel>Instagram:</IonLabel>
                 <IonInput
                     inputMode="url"
                     value={userProfile.instagram}
                     onIonChange={e => handleFieldChange('instagram', e.detail.value)}
                     className={fieldHasErrors('instagram') ? 'fieldHasError' : ''}
                 />
-                <IonIcon name='logo-instagram' />
+                <IonIcon icon={logoInstagram} />
               </IonItem>
               <IonItem color="white">
-                <IonLabel>Twitter</IonLabel>
+                <IonLabel>Twitter:</IonLabel>
                 <IonInput
                     inputMode="url"
                     value={userProfile.twitter}
                     onIonChange={e => handleFieldChange('twitter', e.detail.value)}
                     className={fieldHasErrors('twitter') ? 'fieldHasError' : ''}
                 />
-                <IonIcon name='logo-twitter' />
+                <IonIcon icon={logoTwitter} />
               </IonItem>
               <IonItem color="white">
-                <IonLabel>TikTok</IonLabel>
+                <IonLabel>TikTok:</IonLabel>
                 <IonInput
                     inputMode="url"
                     value={userProfile.tiktok}
                     onIonChange={e => handleFieldChange('tiktok', e.detail.value)}
                     className={fieldHasErrors('tiktok') ? 'fieldHasError' : ''}
                 />
-                <IonIcon name='logo-tiktok' />
+                <IonIcon icon={logoTiktok} />
               </IonItem>
               <IonItem color="white">
-                <IonLabel>LinkedIn</IonLabel>
+                <IonLabel>LinkedIn:</IonLabel>
                 <IonInput
                     inputMode="url"
                     value={userProfile.linkedin}
                     onIonChange={e => handleFieldChange('linkedin', e.detail.value)}
                     className={fieldHasErrors('linkedin') ? 'fieldHasError' : ''}
                 />
-                <IonIcon name='logo-linkedin' />
+                <IonIcon icon={logoLinkedin} />
               </IonItem>
               <IonButton type="submit" expand="block" style={{ marginTop: 20 }}>
                 Save changes
