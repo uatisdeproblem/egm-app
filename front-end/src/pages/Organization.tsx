@@ -14,8 +14,6 @@ const OrganizationPage: React.FC = () => {
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
   const [showAlert, setShowAlert] = useState(false);
-  const [loadPhone, setLoadPhone] = useState(false);
-  const [loadCV, setLoadCV] = useState(false);
 
   const [organization, setOrganization] = useState<Organization>();
 
