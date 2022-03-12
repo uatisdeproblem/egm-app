@@ -3,11 +3,8 @@ import { createRef, useEffect, useState } from 'react';
 import {
   IonAvatar,
   IonButton,
-  IonButtons,
   IonCheckbox,
-  IonCol,
   IonContent,
-  IonGrid,
   IonHeader,
   IonIcon,
   IonImg,
@@ -18,7 +15,6 @@ import {
   IonList,
   IonModal,
   IonPage,
-  IonRow,
   IonSegment,
   IonSegmentButton,
   IonSelect,
@@ -26,13 +22,21 @@ import {
   IonSkeletonText,
   IonText,
   IonTextarea,
-  IonTitle,
   IonToolbar,
   useIonLoading,
   useIonToast
 } from '@ionic/react';
-import { cloudUpload, open, trash } from 'ionicons/icons';
-import { logoFacebook, logoInstagram, logoTwitter, logoTiktok, logoLinkedin } from "ionicons/icons";
+import { 
+  cloudUpload, 
+  open, 
+  trash, 
+  logoFacebook, 
+  logoInstagram, 
+  logoTwitter, 
+  logoTiktok, 
+  logoLinkedin 
+} from 'ionicons/icons';
+import SocialCard from '../components/SocialCard';
 
 import { toastMessageDefaults } from '../utils';
 import {
@@ -49,8 +53,6 @@ import { ESNCountries, ESNSections } from '../utils/ESNSections';
 import { Languages } from '../utils/languages';
 import { FieldsOfStudy } from '../utils/fieldsOfStudy';
 
-var QRCode = require('qrcode.react');
-
 const UserPage: React.FC = () => {
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
@@ -62,7 +64,7 @@ const UserPage: React.FC = () => {
   // if not set separately, it runs an infinite form loop
   const [languages, setLanguages] = useState<string[]>([]);
 
-  const [test, setTest] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const [avatar, setAvatar] = useState('');
   const fileInput = createRef<HTMLInputElement>();
@@ -172,77 +174,14 @@ const UserPage: React.FC = () => {
       <IonContent>
         {segment === 'friends' && userProfile ? 
         <IonList style={{ maxWidth: 450, margin: '0 auto', textAlign: 'center' }}>
-            <IonButton id="trigger-button" onClick={()=>setTest(true)}>Click to connect with someone!</IonButton>
-            <IonModal isOpen={test} trigger="trigger-button">
+            <IonButton id="trigger-button" onClick={()=>setShowModal(true)}>Click to connect with someone!</IonButton>
+            <IonModal isOpen={showModal} trigger="trigger-button">
               <IonContent>
-                <IonHeader translucent>
-                  <IonToolbar>
-                    <IonTitle slot={'start'}>
-                      Placeholder Title
-                    </IonTitle>
-                    <IonButtons slot={'end'}>
-                      <IonButton onClick={() => setTest(false)}>
-                        Close
-                      </IonButton>
-                    </IonButtons>
-                  </IonToolbar>
-                </IonHeader>
-                <IonList style={{ maxWidth: 450, margin: '0 auto' }}>
-                  <IonAvatar
-                    style={{ margin: '0 auto', width: 100, height: 100, cursor: 'pointer' }}
-                  >
-                    {avatar ? (
-                      <IonImg src={avatar} onIonError={(e: any) => (e.target.src = usersFallbackImageURL)} />
-                    ) : (
-                      <IonSkeletonText animated></IonSkeletonText>
-                    )}
-                  </IonAvatar>
-                  <IonItem color="white" style={{ marginTop: 10 }}>
-                    {`${userProfile.firstName} ${userProfile.lastName}`|| 'Name'}
-                  </IonItem>
-                  <IonItem color="white">
-                    {`${userProfile.ESNCountry || 'ESN Country'}`}
-                  </IonItem>
-                  <IonItem color="white">
-                    {`${userProfile.ESNSection || 'ESN Section'}`}
-                  </IonItem>
-                  <IonButtons>
-                    <IonGrid>
-                      <IonRow style={{ display: 'flex', textAlign: 'center' }}>
-                        <IonCol>
-                          <IonButton disabled={!userProfile.facebook}>
-                            <IonIcon icon={logoFacebook} />
-                          </IonButton>
-                        </IonCol>
-                        <IonCol>
-                          <IonButton disabled={!userProfile.instagram}>
-                            <IonIcon icon={logoInstagram} />
-                          </IonButton>
-                        </IonCol>
-                        <IonCol>
-                          <IonButton disabled={!userProfile.twitter}>
-                            <IonIcon icon={logoTwitter} />
-                          </IonButton>
-                        </IonCol>
-                        <IonCol>
-                          <IonButton disabled={!userProfile.tiktok}>
-                            <IonIcon icon={logoTiktok} />
-                          </IonButton>
-                        </IonCol>
-                        <IonCol>
-                          <IonButton disabled={!userProfile.linkedin}>
-                            <IonIcon icon={logoLinkedin} />
-                          </IonButton>
-                        </IonCol>
-                      </IonRow>
-                      <IonRow style={{ marginTop: 20, display: 'flex', textAlign: 'center' }}>
-                        <IonCol>
-                          <QRCode value="https://www.youtube.com/watch?v=dQw4w9WgXcQ"/>
-                        </IonCol>
-                      </IonRow>
-                    </IonGrid>
-                  </IonButtons>
-                </IonList>
+                <SocialCard 
+                  avatar={avatar}
+                  profile={userProfile}
+                  toggleModal={setShowModal}
+                />
               </IonContent>
             </IonModal>
         </IonList>
