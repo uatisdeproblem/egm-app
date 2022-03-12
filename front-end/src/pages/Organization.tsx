@@ -14,6 +14,8 @@ const OrganizationPage: React.FC = () => {
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
   const [showAlert, setShowAlert] = useState(false);
+  const [loadPhone, setLoadPhone] = useState(false);
+  const [loadCV, setLoadCV] = useState(false);
 
   const [organization, setOrganization] = useState<Organization>();
 
@@ -89,19 +91,13 @@ const OrganizationPage: React.FC = () => {
               name: 'Phone Nr.',
               type: 'checkbox',
               label: 'Phone Nr.',
-              handler: () => {
-                console.log('Phone Nr. selected');
-              },
-              value: false
+              value: true
             },
             {
               name: 'CV',
               type: 'checkbox',
               label: 'CV',
-              handler: () => {
-                console.log('CV selected');
-              },
-              value: false
+              value: true
             }
           ]}
           buttons={[
