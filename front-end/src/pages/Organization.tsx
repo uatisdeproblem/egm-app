@@ -106,9 +106,7 @@ const OrganizationPage: React.FC = () => {
             {
               text: 'Submit',
               handler: (inputData) => {
-                // change to the appropriate handler
-                // just to check if the checkboxes are passed this way
-                console.log('inputData', inputData);
+                submitContactInfo(inputData);
               }
             }
           ]}
