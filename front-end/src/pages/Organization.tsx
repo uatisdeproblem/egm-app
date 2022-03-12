@@ -75,14 +75,16 @@ const OrganizationPage: React.FC = () => {
               type: 'checkbox',
               label: 'Name',
               checked: true,
-              disabled: true
+              disabled: true,
+              value: true
             },
             {
               name: 'Email',
               type: 'checkbox',
               label: 'Email',
               checked: true,
-              disabled: true
+              disabled: true,
+              value: true
             },
             {
               name: 'Phone Nr.',
@@ -90,7 +92,8 @@ const OrganizationPage: React.FC = () => {
               label: 'Phone Nr.',
               handler: () => {
                 console.log('Phone Nr. selected');
-              }
+              },
+              value: false
             },
             {
               name: 'CV',
@@ -98,7 +101,8 @@ const OrganizationPage: React.FC = () => {
               label: 'CV',
               handler: () => {
                 console.log('CV selected');
-              }
+              },
+              value: false
             }
           ]}
           buttons={[
