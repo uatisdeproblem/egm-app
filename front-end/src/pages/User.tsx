@@ -49,6 +49,8 @@ import { ESNCountries, ESNSections } from '../utils/ESNSections';
 import { Languages } from '../utils/languages';
 import { FieldsOfStudy } from '../utils/fieldsOfStudy';
 
+var QRCode = require('qrcode.react');
+
 const UserPage: React.FC = () => {
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
@@ -231,6 +233,11 @@ const UserPage: React.FC = () => {
                           <IonButton disabled={!userProfile.linkedin}>
                             <IonIcon icon={logoLinkedin} />
                           </IonButton>
+                        </IonCol>
+                      </IonRow>
+                      <IonRow style={{ marginTop: 20, display: 'flex', textAlign: 'center' }}>
+                        <IonCol>
+                          <QRCode value="https://www.youtube.com/watch?v=dQw4w9WgXcQ"/>
                         </IonCol>
                       </IonRow>
                     </IonGrid>
