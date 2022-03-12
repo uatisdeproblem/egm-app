@@ -67,7 +67,6 @@ const OrganizationPage: React.FC = () => {
         <IonAlert
           isOpen={showAlert}
           onDidDismiss={() => setShowAlert(false)}
-          cssClass='my-custom-class'
           header={'Choose info to send'}
           inputs={[
             {
@@ -108,10 +107,6 @@ const OrganizationPage: React.FC = () => {
           buttons={[
             {
               text: 'Cancel',
-              handler: () => {
-                // return true to close the alert (is it needed?)
-                return true;
-              },
               role: 'cancel',
               cssClass: 'secondary'
             },
@@ -119,11 +114,8 @@ const OrganizationPage: React.FC = () => {
               text: 'Submit',
               handler: (inputData) => {
                 // change to the appropriate handler
-                alert('submit button pressed');
                 // just to check if the checkboxes are passed this way
-                console.log(inputData);
-                // return true to close the alert (is it needed?)
-                return true;
+                console.log('inputData', inputData);
               }
             }
           ]}
