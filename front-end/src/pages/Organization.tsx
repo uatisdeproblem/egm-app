@@ -74,7 +74,7 @@ const OrganizationPage: React.FC = () => {
               label: 'Name',
               checked: true,
               disabled: true,
-              value: true
+              value: 'name'
             },
             {
               name: 'Email',
@@ -82,19 +82,19 @@ const OrganizationPage: React.FC = () => {
               label: 'Email',
               checked: true,
               disabled: true,
-              value: true
+              value: 'email'
             },
             {
               name: 'Phone Nr.',
               type: 'checkbox',
               label: 'Phone Nr.',
-              value: true
+              value: 'phone'
             },
             {
               name: 'CV',
               type: 'checkbox',
               label: 'CV',
-              value: true
+              value: 'cv'
             }
           ]}
           buttons={[
