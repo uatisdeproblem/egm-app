@@ -30,25 +30,70 @@ const OrganizationPage: React.FC = () => {
     }
   };
 
-  const submitContactInfo = async (options: Array<boolean>): Promise<void> => {
-    // add loading
-    // add toast messages
+  const submitContactInfo = async (options: Array<string>): Promise<void> => {
+
+    let info: {
+      [key: string]: string | boolean | undefined;
+    } = {
+      name: undefined,
+      email: undefined,
+      phone: undefined,
+      hasCV: undefined
+    };
+
+    const optionMappers: {
+      [key: string]: Function;
+    } = {
+      name: (obj: any, profile: any): object => {
+        const { firstName, lastName} = profile;
+        obj.name = `${firstName} ${lastName}`;
+        return obj;
+      },
+      email: (obj: any, profile: any): object => {
+        const {contactEmail} = profile;
+        obj.email = contactEmail;
+        return obj;
+      },
+      phone: (obj: any, profile: any): object => {
+        const {contactPhone} = profile;
+        obj.phone = contactPhone;
+        return obj;
+      },
+      cv: (obj: any, profile: any): object => {
+        const {hasUploadedCV} = profile;
+        // if the field was checked we will check if the user has a CV before fetching it to avoid errors
+        obj.hasCV = hasUploadedCV;
+        return obj;
+      }
+    }
 
     if (!organization) return;
 
-    const userProfile = await getUserProfile();
+    await showLoading();
+    try {
+      const userProfile = await getUserProfile();
 
-    if (!userProfile) return;
+      if (!userProfile) return;
 
-    if (!userProfile.contactEmail) {
-      const user = await Auth.currentAuthenticatedUser();
-      userProfile.contactEmail = user.attributes.email;
+      if (!userProfile.contactEmail) {
+        const user = await Auth.currentAuthenticatedUser();
+        userProfile.contactEmail = user.attributes.email;
+      }
+
+      options.map(option => info = optionMappers[option](info, userProfile))
+      
+      if (info.hasCV) {
+        // if user has a CV how do we fetch it and attach it to the email?
+      }
+
+      // at confirmation an email will be sent to contactEmail
+
+      await showMessage({ ...toastMessageDefaults, message: 'Contact info submitted.', color: 'success' });
+    } catch (e) {
+      await showMessage({ ...toastMessageDefaults, message: 'Error submitting your info.', color: 'danger' });
+    } finally {
+      await dismissLoading();
     }
-
-    const { firstName, lastName, contactEmail, contactPhone, hasUploadedCV } = userProfile;
-
-    // at confirmation an email will be sent to contactEmail
-
   }
 
   return (
