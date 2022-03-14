@@ -192,6 +192,39 @@ paths:
           $ref: '#/components/responses/Organization'
         400:
           $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on an organization
+      tags: [Users]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum:
+                    - SEND_USER_CONTACTS
+                sendCV:
+                  type: boolean
+                  description: (SEND_USER_CONTACTS)
+                sendPhone:
+                  type: boolean
+                  description: (SEND_USER_CONTACTS)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
     delete:
       summary: Delete an organization
       description: Requires to be Admin.

@@ -7,6 +7,7 @@ import { MapStack } from './map-stack';
 import { CognitoStack } from './cognito-stack';
 import { MediaStack } from './media-stack';
 import { ApiDomainStack } from './api-domain-stack';
+import { SESStack } from './ses-stack';
 import { ApiResourceController, ApiStack, ApiTable } from './api-stack';
 import { FrontEndStack } from './front-end-stack';
 
@@ -91,6 +92,11 @@ const createApp = async (): Promise<void> => {
     domain: parameters.apiDomain
   });
 
+  const sesStack = new SESStack(app, `${parameters.project}-ses`, {
+    env,
+    domain: parameters.apiDomain
+  });
+
   //
   // STAGE-DEPENDANT RESOURCES
   //
@@ -105,11 +111,13 @@ const createApp = async (): Promise<void> => {
     tables,
     mediaBucketArn: mediaStack.mediaBucketArn,
     cognito: { userPoolId: cognitoStack.userPool.userPoolId, audience: [cognitoStack.clientFrontEnd.userPoolClientId] },
-    removalPolicy: ENV.destroyDataOnDelete ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN
+    removalPolicy: ENV.destroyDataOnDelete ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN,
+    sesIdentityARN: sesStack.identityARN
   });
   apiStack.addDependency(cognitoStack);
   apiStack.addDependency(mediaStack);
   apiStack.addDependency(apiDomainStack);
+  apiStack.addDependency(sesStack);
 
   new FrontEndStack(app, `${parameters.project}-${STAGE}-front-end`, {
     env,

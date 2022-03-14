@@ -20,6 +20,7 @@ export interface ApiProps extends cdk.StackProps {
   mediaBucketArn: string;
   cognito: { userPoolId: string; audience: string[] };
   removalPolicy: RemovalPolicy;
+  sesIdentityARN: string;
 }
 export interface ApiResourceController {
   name: string;
@@ -120,6 +121,27 @@ export class ApiStack extends cdk.Stack {
       lambdaFunctions.forEach(lambdaFn => {
         lambdaFn.role.attachInlinePolicy(accessCognitoPolicy);
         lambdaFn.addEnvironment('COGNITO_USER_POOL_ID', props.cognito.userPoolId);
+      });
+
+      // allow the Lambda functions to access the SES Identity
+      const accessSES = new IAM.Policy(this, 'ManageSES', {
+        statements: [
+          new IAM.PolicyStatement({
+            effect: IAM.Effect.ALLOW,
+            actions: ['ses:*'],
+            resources: [
+              props.sesIdentityARN,
+              `arn:aws:ses:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:configuration-set/ManageBounces`
+            ]
+          })
+        ]
+      });
+      lambdaFunctions.forEach(lambdaFn => {
+        lambdaFn.role.attachInlinePolicy(accessSES);
+        lambdaFn.addEnvironment('SES_IDENTITY_ARN', props.sesIdentityARN);
+        const domainName = props.apiDomain.split('.').slice(-2).join('.');
+        lambdaFn.addEnvironment('SES_SOURCE_ADDRESS', `no-reply@${domainName}`);
+        lambdaFn.addEnvironment('SES_REGION', cdk.Stack.of(this).region);
       });
 
       // create the tables and allow the Lambda functions to access them
