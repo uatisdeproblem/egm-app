@@ -97,7 +97,7 @@ const MenuPage: React.FC = () => {
             <IonIcon icon={people} slot="start"></IonIcon>
             <IonLabel>Speakers</IonLabel>
           </IonItem>
-          <IonItem button color="white" routerLink="/profile">
+          <IonItem button color="white" routerLink="/user">
             <IonIcon icon={person} slot="start"></IonIcon>
             <IonLabel>Profile</IonLabel>
           </IonItem>
