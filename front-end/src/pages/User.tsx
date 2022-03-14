@@ -29,12 +29,7 @@ import {
 import { 
   cloudUpload, 
   open, 
-  trash, 
-  logoFacebook, 
-  logoInstagram, 
-  logoTwitter, 
-  logoTiktok, 
-  logoLinkedin 
+  trash
 } from 'ionicons/icons';
 import SocialCard from '../components/SocialCard';
 
