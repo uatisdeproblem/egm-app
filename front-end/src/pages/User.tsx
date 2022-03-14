@@ -379,54 +379,6 @@ const UserPage: React.FC = () => {
                   onIonChange={e => handleFieldChange('openToJob', e.detail.checked)}
                 />
               </IonItem>
-              <IonItemDivider>
-                <IonLabel>Social</IonLabel>
-              </IonItemDivider>
-              <IonItem color="white">
-              <IonIcon icon={logoFacebook} />
-                <IonInput
-                    inputMode="url"
-                    value={userProfile.facebook}
-                    onIonChange={e => handleFieldChange('facebook', e.detail.value)}
-                    className={fieldHasErrors('facebook') ? 'fieldHasError' : ''}
-                />
-              </IonItem>
-              <IonItem color="white">
-                <IonIcon icon={logoInstagram} />
-                <IonInput
-                    inputMode="url"
-                    value={userProfile.instagram}
-                    onIonChange={e => handleFieldChange('instagram', e.detail.value)}
-                    className={fieldHasErrors('instagram') ? 'fieldHasError' : ''}
-                />
-              </IonItem>
-              <IonItem color="white">
-              <IonIcon icon={logoTwitter} />
-                <IonInput
-                    inputMode="url"
-                    value={userProfile.twitter}
-                    onIonChange={e => handleFieldChange('twitter', e.detail.value)}
-                    className={fieldHasErrors('twitter') ? 'fieldHasError' : ''}
-                />
-              </IonItem>
-              <IonItem color="white">
-              <IonIcon icon={logoTiktok} />
-                <IonInput
-                    inputMode="url"
-                    value={userProfile.tiktok}
-                    onIonChange={e => handleFieldChange('tiktok', e.detail.value)}
-                    className={fieldHasErrors('tiktok') ? 'fieldHasError' : ''}
-                />
-              </IonItem>
-              <IonItem color="white">
-                <IonIcon icon={logoLinkedin} />
-                <IonInput
-                    inputMode="url"
-                    value={userProfile.linkedin}
-                    onIonChange={e => handleFieldChange('linkedin', e.detail.value)}
-                    className={fieldHasErrors('linkedin') ? 'fieldHasError' : ''}
-                />
-              </IonItem>
               <IonButton type="submit" expand="block" style={{ marginTop: 20 }}>
                 Save changes
               </IonButton>
