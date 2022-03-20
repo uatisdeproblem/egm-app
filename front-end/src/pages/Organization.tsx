@@ -37,39 +37,12 @@ const OrganizationPage: React.FC = () => {
 
   const submitContactInfo = async (options: Array<string>): Promise<void> => {
 
-    let info: {
-      [key: string]: string | boolean | undefined;
+    const body: {
+      [key: string]: boolean | string;
     } = {
-      name: undefined,
-      email: undefined,
-      phone: undefined,
-      hasCV: undefined
-    };
-
-    const optionMappers: {
-      [key: string]: Function;
-    } = {
-      name: (obj: any, profile: any): object => {
-        const { firstName, lastName} = profile;
-        obj.name = `${firstName} ${lastName}`;
-        return obj;
-      },
-      email: (obj: any, profile: any): object => {
-        const {contactEmail} = profile;
-        obj.email = contactEmail;
-        return obj;
-      },
-      phone: (obj: any, profile: any): object => {
-        const {contactPhone} = profile;
-        obj.phone = contactPhone;
-        return obj;
-      },
-      cv: (obj: any, profile: any): object => {
-        const {hasUploadedCV} = profile;
-        // if the field was checked we will check if the user has a CV before fetching it to avoid errors
-        obj.hasCV = hasUploadedCV;
-        return obj;
-      }
+      action: 'SEND_USER_CONTACTS',
+      sendPhone: options.includes('phone'),
+      sendCV: options.includes('cv')
     }
 
     if (!organization) return;
@@ -83,13 +56,13 @@ const OrganizationPage: React.FC = () => {
         userProfile.contactEmail = user.attributes.email;
       }
 
-      options.map(option => info = optionMappers[option](info, userProfile))
-
-      if (info.hasCV) {
-        // if user has a CV how do we fetch it and attach it to the email?
-      }
-
-      // at confirmation an email will be sent to contactEmail
+      await fetch(`localhost:3000/organizations/${organization.organizationId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(body)
+      })
 
       await showMessage({ ...toastMessageDefaults, message: 'Contact info submitted.', color: 'success' });
     } catch (e) {
