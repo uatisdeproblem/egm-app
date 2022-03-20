@@ -4,6 +4,7 @@ import { getUserProfile } from '../utils/data';
 import Auth from '@aws-amplify/auth';
 
 import { Organization } from 'models/organization';
+import { UserProfile } from 'models/userProfile';
 import { toastMessageDefaults } from '../utils';
 import { getOrganization, getURLPathResourceId } from '../utils/data';
 
@@ -16,6 +17,7 @@ const OrganizationPage: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   const [organization, setOrganization] = useState<Organization>();
+  const [userProfile, setUserProfile] = useState<UserProfile>();
 
   useIonViewWillEnter(() => {
     loadData();
@@ -24,6 +26,9 @@ const OrganizationPage: React.FC = () => {
     try {
       const organizationId = getURLPathResourceId();
       const organization = await getOrganization(organizationId);
+      const userProfile = await getUserProfile();
+
+      setUserProfile(userProfile);
       setOrganization(organization);
     } catch (err) {
       await showMessage({ ...toastMessageDefaults, message: 'Organization not found.' });
@@ -71,8 +76,6 @@ const OrganizationPage: React.FC = () => {
 
     await showLoading();
     try {
-      const userProfile = await getUserProfile();
-
       if (!userProfile) return;
 
       if (!userProfile.contactEmail) {
@@ -81,7 +84,7 @@ const OrganizationPage: React.FC = () => {
       }
 
       options.map(option => info = optionMappers[option](info, userProfile))
-      
+
       if (info.hasCV) {
         // if user has a CV how do we fetch it and attach it to the email?
       }
@@ -133,13 +136,15 @@ const OrganizationPage: React.FC = () => {
               name: 'Phone Nr.',
               type: 'checkbox',
               label: 'Phone Nr.',
-              value: 'phone'
+              value: 'phone',
+              disabled: !userProfile?.contactPhone
             },
             {
               name: 'CV',
               type: 'checkbox',
               label: 'CV',
-              value: 'cv'
+              value: 'cv',
+              disabled: !userProfile?.hasUploadedCV
             }
           ]}
           buttons={[
