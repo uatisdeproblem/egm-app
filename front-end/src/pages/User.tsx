@@ -13,6 +13,7 @@ import {
   IonItemDivider,
   IonLabel,
   IonList,
+  IonModal,
   IonPage,
   IonSegment,
   IonSegmentButton,
@@ -25,7 +26,17 @@ import {
   useIonLoading,
   useIonToast
 } from '@ionic/react';
-import { cloudUpload, open, trash } from 'ionicons/icons';
+import {
+  cloudUpload,
+  open,
+  trash,
+  logoFacebook,
+  logoInstagram,
+  logoTwitter,
+  logoTiktok,
+  logoLinkedin
+} from 'ionicons/icons';
+import SocialCard from '../components/SocialCard';
 
 import { toastMessageDefaults } from '../utils';
 import {
@@ -52,6 +63,8 @@ const UserPage: React.FC = () => {
   const [errors, setErrors] = useState(new Set<string>());
   // if not set separately, it runs an infinite form loop
   const [languages, setLanguages] = useState<string[]>([]);
+
+  const [showModal, setShowModal] = useState(false);
 
   const [avatar, setAvatar] = useState('');
   const fileInput = createRef<HTMLInputElement>();
@@ -159,7 +172,20 @@ const UserPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {segment === 'friends' ? <div></div> : ''}
+        {segment === 'friends' && userProfile ? (
+          <IonList style={{ maxWidth: 450, margin: '0 auto', textAlign: 'center' }}>
+            <IonButton id="trigger-button" onClick={() => setShowModal(true)}>
+              Click to connect with someone!
+            </IonButton>
+            <IonModal isOpen={showModal} trigger="trigger-button">
+              <IonContent>
+                <SocialCard avatar={avatar} profile={userProfile} toggleModal={setShowModal} />
+              </IonContent>
+            </IonModal>
+          </IonList>
+        ) : (
+          ''
+        )}
         {segment === 'profile' && userProfile ? (
           <IonList style={{ maxWidth: 450, margin: '0 auto' }}>
             <p>
@@ -350,6 +376,54 @@ const UserPage: React.FC = () => {
                 <IonCheckbox
                   checked={userProfile.openToJob}
                   onIonChange={e => handleFieldChange('openToJob', e.detail.checked)}
+                />
+              </IonItem>
+              <IonItemDivider>
+                <IonLabel>Social</IonLabel>
+              </IonItemDivider>
+              <IonItem color="white">
+                <IonIcon icon={logoFacebook} slot="start" />
+                <IonInput
+                  inputMode="url"
+                  value={userProfile.facebook}
+                  onIonChange={e => handleFieldChange('facebook', e.detail.value)}
+                  className={fieldHasErrors('facebook') ? 'fieldHasError' : ''}
+                />
+              </IonItem>
+              <IonItem color="white">
+                <IonIcon icon={logoInstagram} slot="start" />
+                <IonInput
+                  inputMode="url"
+                  value={userProfile.instagram}
+                  onIonChange={e => handleFieldChange('instagram', e.detail.value)}
+                  className={fieldHasErrors('instagram') ? 'fieldHasError' : ''}
+                />
+              </IonItem>
+              <IonItem color="white">
+                <IonIcon icon={logoTwitter} slot="start" />
+                <IonInput
+                  inputMode="url"
+                  value={userProfile.twitter}
+                  onIonChange={e => handleFieldChange('twitter', e.detail.value)}
+                  className={fieldHasErrors('twitter') ? 'fieldHasError' : ''}
+                />
+              </IonItem>
+              <IonItem color="white">
+                <IonIcon icon={logoTiktok} slot="start" />
+                <IonInput
+                  inputMode="url"
+                  value={userProfile.tiktok}
+                  onIonChange={e => handleFieldChange('tiktok', e.detail.value)}
+                  className={fieldHasErrors('tiktok') ? 'fieldHasError' : ''}
+                />
+              </IonItem>
+              <IonItem color="white">
+                <IonIcon icon={logoLinkedin} slot="start" />
+                <IonInput
+                  inputMode="url"
+                  value={userProfile.linkedin}
+                  onIonChange={e => handleFieldChange('linkedin', e.detail.value)}
+                  className={fieldHasErrors('linkedin') ? 'fieldHasError' : ''}
                 />
               </IonItem>
               <IonButton type="submit" expand="block" style={{ marginTop: 20 }}>
