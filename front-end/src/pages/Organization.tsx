@@ -11,6 +11,8 @@ import { getOrganization, getURLPathResourceId } from '../utils/data';
 import OrganizationCard from '../components/OrganizationCard';
 import EntityHeader from '../components/EntityHeader';
 
+import { sendUserContactsToOrganization } from '../utils/data';
+
 const OrganizationPage: React.FC = () => {
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
@@ -37,14 +39,6 @@ const OrganizationPage: React.FC = () => {
 
   const submitContactInfo = async (options: Array<string>): Promise<void> => {
 
-    const body: {
-      [key: string]: boolean | string;
-    } = {
-      action: 'SEND_USER_CONTACTS',
-      sendPhone: options.includes('phone'),
-      sendCV: options.includes('cv')
-    }
-
     if (!organization) return;
 
     await showLoading();
@@ -56,13 +50,7 @@ const OrganizationPage: React.FC = () => {
         userProfile.contactEmail = user.attributes.email;
       }
 
-      await fetch(`localhost:3000/organizations/${organization.organizationId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-type": "application/json"
-        },
-        body: JSON.stringify(body)
-      })
+      sendUserContactsToOrganization(organization, options.includes('phone'), options.includes('cv'));
 
       await showMessage({ ...toastMessageDefaults, message: 'Contact info submitted.', color: 'success' });
     } catch (e) {
