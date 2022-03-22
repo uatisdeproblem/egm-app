@@ -8,6 +8,7 @@
     "cdk": "cdk"
   },
   "dependencies": {
+    "aws-cdk-ses-domain-identity": "^2.0.0",
     "idea-aws": "^3.10.4",
     "idea-toolbox": "^6.5.13"
   },

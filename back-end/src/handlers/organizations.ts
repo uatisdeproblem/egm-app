@@ -2,9 +2,10 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, RCError, ResourceController, SES, EmailData, S3 } from 'idea-aws';
 
 import { Organization } from '../models/organization';
+import { UserProfile } from '../models/userProfile';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -12,9 +13,29 @@ import { Organization } from '../models/organization';
 
 const PROJECT = process.env.PROJECT;
 
-const DDB_TABLES = { organizations: process.env.DDB_TABLE_organizations };
+const DDB_TABLES = { organizations: process.env.DDB_TABLE_organizations, profiles: process.env.DDB_TABLE_userProfiles };
+
+const SES_CONFIG = {
+  sourceName: 'EGM',
+  source: process.env.SES_SOURCE_ADDRESS,
+  sourceArn: process.env.SES_IDENTITY_ARN,
+  region: process.env.SES_REGION
+};
+
+const EMAIL_CONTENTS = {
+  subject: '[EGM] Contact request',
+  textHeader:
+    "Hi,\nthis is an automatic email from the EGM app.\n\nI'd like to get in touch with your organization; therefore, here is my contact information:\n\n",
+  textAttachment: '\nYou can find attached my CV.\n',
+  textFooter: '\n\nBest regards,\n'
+};
+
+const S3_BUCKET_MEDIA = process.env.S3_BUCKET_MEDIA;
+const S3_USERS_CV_FOLDER = process.env.S3_USERS_CV_FOLDER;
 
 const ddb = new DynamoDB();
+const ses = new SES();
+const s3 = new S3();
 
 export const handler = (ev: any, _: any, cb: any) => new Organizations(ev, cb).handleRequest();
 
@@ -66,6 +87,49 @@ class Organizations extends ResourceController {
     } catch (err) {
       throw new RCError('Operation failed');
     }
+  }
+
+  protected async patchResource(): Promise<void> {
+    switch (this.body.action) {
+      case 'SEND_USER_CONTACTS':
+        return await this.sendUserContacts();
+      default:
+        throw new RCError('Unsupported action');
+    }
+  }
+  private async sendUserContacts(): Promise<void> {
+    if (!this.organization.contactEmail) throw new Error('No target email address');
+
+    const userProfile: UserProfile = await ddb.get({
+      TableName: DDB_TABLES.profiles,
+      Key: { userId: this.cognitoUser.userId }
+    });
+
+    if (!userProfile.contactEmail) throw new Error('No source email address');
+
+    const emailData: EmailData = {
+      toAddresses: [this.organization.contactEmail],
+      replyToAddresses: [userProfile.contactEmail],
+      subject: EMAIL_CONTENTS.subject
+    };
+
+    let emailText = EMAIL_CONTENTS.textHeader;
+
+    const contactInfo = [`${userProfile.firstName} ${userProfile.lastName}`, userProfile.contactEmail];
+    if (this.body.sendPhone) contactInfo.push(userProfile.contactPhone);
+    emailText = emailText.concat(contactInfo.map(x => `- ${x}`).join('\n'));
+
+    if (this.body.sendCV && userProfile.hasUploadedCV) {
+      const key = S3_USERS_CV_FOLDER.concat('/', this.cognitoUser.userId, '.pdf');
+      const { url } = s3.signedURLGet(S3_BUCKET_MEDIA, key);
+      emailData.attachments = [{ path: url, filename: 'CV.pdf', contentType: 'application/pdf' }];
+      emailText = emailText.concat(EMAIL_CONTENTS.textAttachment);
+    }
+
+    emailText = emailText.concat(EMAIL_CONTENTS.textFooter, `${userProfile.firstName} ${userProfile.lastName}`);
+    emailData.text = emailText;
+
+    await ses.sendEmail(emailData, SES_CONFIG);
   }
 
   protected async deleteResource(): Promise<void> {

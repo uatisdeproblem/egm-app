@@ -1,17 +1,25 @@
 import { useState } from 'react';
-import { IonContent, IonPage, useIonToast, useIonViewWillEnter } from '@ionic/react';
+import { IonContent, IonPage, useIonToast, useIonViewWillEnter, useIonLoading, IonButton, IonAlert } from '@ionic/react';
+import { getUserProfile } from '../utils/data';
+import Auth from '@aws-amplify/auth';
 
 import { Organization } from 'models/organization';
+import { UserProfile } from 'models/userProfile';
 import { toastMessageDefaults } from '../utils';
 import { getOrganization, getURLPathResourceId } from '../utils/data';
 
 import OrganizationCard from '../components/OrganizationCard';
 import EntityHeader from '../components/EntityHeader';
 
+import { sendUserContactsToOrganization } from '../utils/data';
+
 const OrganizationPage: React.FC = () => {
   const [showMessage] = useIonToast();
+  const [showLoading, dismissLoading] = useIonLoading();
+  const [showAlert, setShowAlert] = useState(false);
 
   const [organization, setOrganization] = useState<Organization>();
+  const [userProfile, setUserProfile] = useState<UserProfile>();
 
   useIonViewWillEnter(() => {
     loadData();
@@ -20,11 +28,37 @@ const OrganizationPage: React.FC = () => {
     try {
       const organizationId = getURLPathResourceId();
       const organization = await getOrganization(organizationId);
+      const userProfile = await getUserProfile();
+
+      setUserProfile(userProfile);
       setOrganization(organization);
     } catch (err) {
       await showMessage({ ...toastMessageDefaults, message: 'Organization not found.' });
     }
   };
+
+  const submitContactInfo = async (options: Array<string>): Promise<void> => {
+
+    if (!organization) return;
+
+    await showLoading();
+    try {
+      if (!userProfile) return;
+
+      if (!userProfile.contactEmail) {
+        const user = await Auth.currentAuthenticatedUser();
+        userProfile.contactEmail = user.attributes.email;
+      }
+
+      sendUserContactsToOrganization(organization, options.includes('phone'), options.includes('cv'));
+
+      await showMessage({ ...toastMessageDefaults, message: 'Contact info submitted.', color: 'success' });
+    } catch (e) {
+      await showMessage({ ...toastMessageDefaults, message: 'Error submitting your info.', color: 'danger' });
+    } finally {
+      await dismissLoading();
+    }
+  }
 
   return (
     <IonPage>
@@ -36,7 +70,58 @@ const OrganizationPage: React.FC = () => {
       <IonContent>
         <div className="cardContainer">
           <OrganizationCard organization={organization}></OrganizationCard>
+          <IonButton onClick={() => setShowAlert(true)} expand="block" style={{ marginTop: 20 }}>I'd like to get in contact</IonButton>
         </div>
+        <IonAlert
+          isOpen={showAlert}
+          onDidDismiss={() => setShowAlert(false)}
+          header={'Choose info to send'}
+          inputs={[
+            {
+              name: 'Name',
+              type: 'checkbox',
+              label: 'Name',
+              checked: true,
+              disabled: true,
+              value: 'name'
+            },
+            {
+              name: 'Email',
+              type: 'checkbox',
+              label: 'Email',
+              checked: true,
+              disabled: true,
+              value: 'email'
+            },
+            {
+              name: 'Phone Nr.',
+              type: 'checkbox',
+              label: 'Phone Nr.',
+              value: 'phone',
+              disabled: !userProfile?.contactPhone
+            },
+            {
+              name: 'CV',
+              type: 'checkbox',
+              label: 'CV',
+              value: 'cv',
+              disabled: !userProfile?.hasUploadedCV
+            }
+          ]}
+          buttons={[
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              cssClass: 'secondary'
+            },
+            {
+              text: 'Submit',
+              handler: (inputData) => {
+                submitContactInfo(inputData);
+              }
+            }
+          ]}
+        />
       </IonContent>
     </IonPage>
   );

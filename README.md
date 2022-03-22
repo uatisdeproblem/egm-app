@@ -77,3 +77,15 @@ Note: some of the deployed resources are _stage-independant_ (i.e. they are in c
 - User DB (Cognito),
 - Media files (S3 Media Bucket),
 - Map resource (Location Map).
+
+_@todo: Document process to [request SES out-of-sandbox](https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html)._
+
+```
+aws sesv2 put-account-details \
+--production-access-enabled \
+--mail-type TRANSACTIONAL \
+--website-url https://LINK_TO_FRONTEND \
+--use-case-description "We send transactional emails following user-requested actions. All the target email addreses are verified. We implemented a mechanism to detect and manage bounces." \
+--additional-contact-email-addresses YOUR_EMAIL_ADDRESS \
+--contact-language EN
+```

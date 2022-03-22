@@ -136,6 +136,17 @@ export const saveOrganization = async (organization: Organization): Promise<Orga
 export const deleteOrganization = async (organization: Organization): Promise<void> => {
   return await apiRequest('DELETE', ['organizations', organization.organizationId]);
 };
+export const sendUserContactsToOrganization = async (
+  organization: Organization,
+  sendCV: boolean,
+  sendPhone: boolean
+): Promise<void> => {
+  return await apiRequest('PATCH', ['organizations', organization.organizationId], {
+    action: 'SEND_USER_CONTACTS',
+    sendCV,
+    sendPhone
+  });
+};
 
 //
 // IMAGES
