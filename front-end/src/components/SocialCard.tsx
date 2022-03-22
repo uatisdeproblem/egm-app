@@ -14,8 +14,10 @@ import {
     IonTitle,
     IonToolbar  } from '@ionic/react';
 
-import { logoFacebook, logoInstagram, logoTwitter, logoTiktok, logoLinkedin } from "ionicons/icons";
+import { logoFacebook, logoInstagram, logoTwitter, logoTiktok, logoLinkedin, cameraOutline } from "ionicons/icons";
 import { usersFallbackImageURL } from '../utils/data';
+
+import Html5QrcodePlugin from './HTML5QRCodeReader';
 
 import { UserProfile } from 'models/userProfile';
 
@@ -26,6 +28,9 @@ interface SocialCardProps {
 }
 
 var QRCode = require('qrcode.react');
+
+const qrCodeSuccessCallback = (data: any) => {console.log('much success', data)};
+const qrCodeErrorCallback = (error: any) => {console.log('oh no', error)};
 
 const SocialCard: React.FC<SocialCardProps> = ({ avatar, profile, toggleModal }) => {
 
@@ -94,8 +99,19 @@ const SocialCard: React.FC<SocialCardProps> = ({ avatar, profile, toggleModal })
                               <QRCode value="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
                           </IonCol>
                       </IonRow>
+                      <IonRow style={{ display: 'flex', textAlign: 'center' }}>
+                          <IonCol>
+                              <IonButton shape='round' color='primary' fill='solid'>
+                                <IonIcon size='large' icon={cameraOutline} />
+                              </IonButton>
+                          </IonCol>
+                      </IonRow>
                   </IonGrid>
               </IonButtons>
+              <Html5QrcodePlugin 
+                qrCodeSuccessCallback={qrCodeSuccessCallback} 
+                qrCodeErrorCallback={qrCodeErrorCallback} 
+              />
           </IonList></>
   );
 };
