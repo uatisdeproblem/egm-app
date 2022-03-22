@@ -64,27 +64,27 @@ const SocialCard: React.FC<SocialCardProps> = ({ avatar, profile, toggleModal })
                   <IonGrid>
                       <IonRow style={{ display: 'flex', textAlign: 'center' }}>
                           <IonCol>
-                              <IonButton disabled={!profile.facebook}>
+                              <IonButton target='_blank' href={profile.facebook} disabled={!profile.facebook}>
                                   <IonIcon icon={logoFacebook} />
                               </IonButton>
                           </IonCol>
                           <IonCol>
-                              <IonButton disabled={!profile.instagram}>
+                              <IonButton target='_blank' href={profile.instagram} disabled={!profile.instagram}>
                                   <IonIcon icon={logoInstagram} />
                               </IonButton>
                           </IonCol>
                           <IonCol>
-                              <IonButton disabled={!profile.twitter}>
+                              <IonButton target='_blank' href={profile.twitter} disabled={!profile.twitter}>
                                   <IonIcon icon={logoTwitter} />
                               </IonButton>
                           </IonCol>
                           <IonCol>
-                              <IonButton disabled={!profile.tiktok}>
+                              <IonButton target='_blank' href={profile.tiktok} disabled={!profile.tiktok}>
                                   <IonIcon icon={logoTiktok} />
                               </IonButton>
                           </IonCol>
                           <IonCol>
-                              <IonButton disabled={!profile.linkedin}>
+                              <IonButton target='_blank' href={profile.linkedin} disabled={!profile.linkedin}>
                                   <IonIcon icon={logoLinkedin} />
                               </IonButton>
                           </IonCol>
