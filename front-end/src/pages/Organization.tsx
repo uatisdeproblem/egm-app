@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { IonContent, IonPage, useIonToast, useIonViewWillEnter, useIonLoading, IonButton, IonAlert } from '@ionic/react';
+import {
+  IonContent,
+  IonPage,
+  useIonToast,
+  useIonViewWillEnter,
+  useIonLoading,
+  IonButton,
+  IonAlert
+} from '@ionic/react';
 import { getUserProfile } from '../utils/data';
 import Auth from '@aws-amplify/auth';
 
@@ -38,7 +46,6 @@ const OrganizationPage: React.FC = () => {
   };
 
   const submitContactInfo = async (options: Array<string>): Promise<void> => {
-
     if (!organization) return;
 
     await showLoading();
@@ -58,7 +65,7 @@ const OrganizationPage: React.FC = () => {
     } finally {
       await dismissLoading();
     }
-  }
+  };
 
   return (
     <IonPage>
@@ -70,7 +77,9 @@ const OrganizationPage: React.FC = () => {
       <IonContent>
         <div className="cardContainer">
           <OrganizationCard organization={organization}></OrganizationCard>
-          <IonButton onClick={() => setShowAlert(true)} expand="block" style={{ marginTop: 20 }}>I'd like to get in contact</IonButton>
+          <IonButton onClick={() => setShowAlert(true)} expand="block" style={{ marginTop: 20 }}>
+            I'd like to get in contact
+          </IonButton>
         </div>
         <IonAlert
           isOpen={showAlert}
@@ -116,7 +125,7 @@ const OrganizationPage: React.FC = () => {
             },
             {
               text: 'Submit',
-              handler: (inputData) => {
+              handler: inputData => {
                 submitContactInfo(inputData);
               }
             }
