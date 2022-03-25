@@ -100,10 +100,12 @@ class Organizations extends ResourceController {
   private async sendUserContacts(): Promise<void> {
     if (!this.organization.contactEmail) throw new Error('No target email address');
 
-    const userProfile: UserProfile = await ddb.get({
-      TableName: DDB_TABLES.profiles,
-      Key: { userId: this.cognitoUser.userId }
-    });
+    const userProfile = new UserProfile(
+      await ddb.get({
+        TableName: DDB_TABLES.profiles,
+        Key: { userId: this.cognitoUser.userId }
+      })
+    );
 
     if (!userProfile.contactEmail) throw new Error('No source email address');
 
@@ -115,7 +117,7 @@ class Organizations extends ResourceController {
 
     let emailText = EMAIL_CONTENTS.textHeader;
 
-    const contactInfo = [`${userProfile.firstName} ${userProfile.lastName}`, userProfile.contactEmail];
+    const contactInfo = [userProfile.getName(), userProfile.contactEmail];
     if (this.body.sendPhone) contactInfo.push(userProfile.contactPhone);
     emailText = emailText.concat(contactInfo.map(x => `- ${x}`).join('\n'));
 
@@ -126,7 +128,7 @@ class Organizations extends ResourceController {
       emailText = emailText.concat(EMAIL_CONTENTS.textAttachment);
     }
 
-    emailText = emailText.concat(EMAIL_CONTENTS.textFooter, `${userProfile.firstName} ${userProfile.lastName}`);
+    emailText = emailText.concat(EMAIL_CONTENTS.textFooter, userProfile.getName());
     emailData.text = emailText;
 
     await ses.sendEmail(emailData, SES_CONFIG);

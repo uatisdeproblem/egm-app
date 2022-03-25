@@ -57,7 +57,7 @@ const SocialCard: React.FC<SocialCardProps> = ({ avatar, profile, toggleModal })
           )}
         </IonAvatar>
         <IonItem color="white" style={{ marginTop: 10 }}>
-          {`${profile.firstName} ${profile.lastName}` || 'Name'}
+          {profile.getName() || 'Name'}
         </IonItem>
         <IonItem color="white">{`${profile.ESNCountry || 'ESN Country'}`}</IonItem>
         <IonItem color="white">{`${profile.ESNSection || 'ESN Section'}`}</IonItem>

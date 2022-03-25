@@ -66,6 +66,10 @@ export class UserProfile extends Resource {
     if (isEmpty(this.contactEmail, 'email')) e.push('contactEmail');
     return e;
   }
+
+  getName(): string {
+    return this.firstName.concat(' ', this.lastName);
+  }
 }
 
 export class UserFavoriteSession extends Resource {
