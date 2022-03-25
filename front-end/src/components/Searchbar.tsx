@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import { IonCol, IonRefresher, IonRefresherContent, IonRow, IonSearchbar, RefresherEventDetail } from '@ionic/react';
 
 import { isUserAdmin } from '../utils/data';
@@ -10,7 +10,7 @@ interface ComponentProps {
   refreshFn?: () => void;
 }
 
-const Searchbar: React.FC<ComponentProps> = ({ placeholder, filterFn, refreshFn }) => {
+const Searchbar = forwardRef(({ placeholder, filterFn, refreshFn }: ComponentProps, ref) => {
   const [userIsAdmin, setUserIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -43,6 +43,7 @@ const Searchbar: React.FC<ComponentProps> = ({ placeholder, filterFn, refreshFn 
         <IonCol size="12">
           <IonSearchbar
             color="white"
+            ref={ref as any}
             placeholder={placeholder}
             onIonChange={e => filterFn(e.detail.value!)}
           ></IonSearchbar>
@@ -50,6 +51,6 @@ const Searchbar: React.FC<ComponentProps> = ({ placeholder, filterFn, refreshFn 
       </IonRow>
     </div>
   );
-};
+});
 
 export default Searchbar;

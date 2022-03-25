@@ -5,15 +5,17 @@ export class UserProfile extends Resource {
   firstName: string;
   lastName: string;
   imageURI: string;
+
   languages: string[];
-  fieldOfExpertise: string;
   hasUploadedCV: boolean;
+
   ESNCountry: string;
   ESNSection: string;
+
   contactEmail: string;
   contactPhone: string;
+
   bio: string;
-  openToJob: boolean;
 
   facebook: string;
   instagram: string;
@@ -31,15 +33,18 @@ export class UserProfile extends Resource {
     this.firstName = this.clean(x.firstName, String);
     this.lastName = this.clean(x.lastName, String);
     this.imageURI = this.clean(x.imageURI, String);
+
     this.languages = this.cleanArray(x.languages, String);
-    this.fieldOfExpertise = this.clean(x.fieldOfExpertise, String);
     this.hasUploadedCV = this.clean(x.hasUploadedCV, Boolean);
+
     this.ESNCountry = this.clean(x.ESNCountry, String);
     this.ESNSection = this.clean(x.ESNSection, String);
+
     this.contactEmail = this.clean(x.contactEmail, String);
     this.contactPhone = this.clean(x.contactPhone, String);
+
     this.bio = this.clean(x.bio, String);
-    this.openToJob = this.clean(x.openToJob, Boolean);
+    if (this.bio) this.bio = this.bio.slice(0, 100);
 
     this.facebook = this.clean(x.facebook, String);
     this.instagram = this.clean(x.instagram, String);
@@ -68,7 +73,7 @@ export class UserProfile extends Resource {
   }
 
   getName(): string {
-    return this.firstName.concat(' ', this.lastName);
+    return `${this.firstName || ''} ${this.lastName || ''}`.trim();
   }
 }
 

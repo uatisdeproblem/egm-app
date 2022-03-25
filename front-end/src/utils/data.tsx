@@ -93,6 +93,14 @@ export const isUserAdmin = async (): Promise<boolean> => {
 };
 
 //
+// CONNECTIONS
+//
+
+export const getConnections = async (): Promise<UserProfile[]> => {
+  return (await apiRequest('GET', 'connections')).map((x: UserProfile) => new UserProfile(x));
+};
+
+//
 // VENUES
 //
 

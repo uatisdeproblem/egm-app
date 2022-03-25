@@ -72,3 +72,33 @@ export const openGeoLocationInMap = (latitude: number, longitude: number): void 
   if (isPlatform('ios')) window.open(`maps://maps.google.com/maps?daddr=${latitude},${longitude}&amp;ll=`);
   else window.open(`https://maps.google.com/maps?daddr=${latitude},${longitude}&amp;ll=`);
 };
+
+const isValidURL = (url: string): boolean => {
+  try {
+    const safeUrl = new URL(url);
+    return safeUrl.protocol === 'http:' || safeUrl.protocol === 'https:';
+  } catch (_) {
+    return false;
+  }
+};
+
+export const getFacebookProfileURL = (link: string): string => {
+  if (isValidURL(link)) return link;
+  return 'https://fb.com/'.concat(link);
+};
+export const getInstagramProfileURL = (link: string): string => {
+  if (isValidURL(link)) return link;
+  return 'https://instagram.com/'.concat(link);
+};
+export const getTwitterProfileURL = (link: string): string => {
+  if (isValidURL(link)) return link;
+  return 'https://twitter.com/'.concat(link);
+};
+export const getTikTokProfileURL = (link: string): string => {
+  if (isValidURL(link)) return link;
+  return 'https://tiktok.com/@'.concat(link);
+};
+export const getLinkedinProfileURL = (link: string): string => {
+  if (isValidURL(link)) return link;
+  return 'https://linkedin.com/in/'.concat(link);
+};

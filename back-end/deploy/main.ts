@@ -19,6 +19,7 @@ import { parameters, environments, Stage } from './environments';
 
 const apiResources: ApiResourceController[] = [
   { name: 'users', paths: ['/users/{userId}'] },
+  { name: 'connections', paths: ['/connections', '/connections/{userId}'] },
   { name: 'organizations', paths: ['/organizations', '/organizations/{organizationId}'] },
   { name: 'speakers', paths: ['/speakers', '/speakers/{speakerId}'] },
   { name: 'venues', paths: ['/venues', '/venues/{venueId}'] },
@@ -40,6 +41,23 @@ const tables: { [tableName: string]: ApiTable } = {
         indexName: 'inverted-index',
         partitionKey: { name: 'sessionId', type: DDB.AttributeType.STRING },
         sortKey: { name: 'userId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      }
+    ]
+  },
+  connections: {
+    PK: { name: 'connectionId', type: DDB.AttributeType.STRING },
+    indexes: [
+      {
+        indexName: 'requesterId-targetId-index',
+        partitionKey: { name: 'requesterId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'targetId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      },
+      {
+        indexName: 'targetId-requesterId-index',
+        partitionKey: { name: 'targetId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'requesterId', type: DDB.AttributeType.STRING },
         projectionType: DDB.ProjectionType.ALL
       }
     ]
