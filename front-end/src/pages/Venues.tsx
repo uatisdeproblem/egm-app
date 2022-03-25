@@ -17,6 +17,7 @@ import {
 import { navigate } from 'ionicons/icons';
 
 import { Venue } from 'models/venue';
+import { UserProfile } from 'models/userProfile';
 
 import { isMobileMode, openGeoLocationInMap } from '../utils';
 import { getUserProfile, getVenues } from '../utils/data';
@@ -32,6 +33,8 @@ const VenuesPage: React.FC = () => {
 
   const [venues, setVenues] = useState<Array<Venue>>();
   const [filteredVenues, setFilteredVenues] = useState<Array<Venue>>();
+
+  const [userProfile, setUserProfile] = useState<UserProfile>();
 
   useEffect(() => {
     loadData();
@@ -55,6 +58,7 @@ const VenuesPage: React.FC = () => {
 
     setVenues(venues);
     setFilteredVenues(venues);
+    setUserProfile(userProfile);
   };
 
   const filterVenues = (search = ''): void => {
@@ -72,9 +76,10 @@ const VenuesPage: React.FC = () => {
   };
 
   const selectVenue = (venue: Venue): void => {
-    if (isMobileMode()) {
-      if (venue.venueId !== 'home') history.push('venue/' + venue.venueId);
-    } else {
+    if (venue.venueId === 'home') return;
+
+    if (isMobileMode()) history.push('venue/' + venue.venueId);
+    else {
       const map = mapRef.current as any;
       map.selectVenue(venue);
     }
@@ -112,9 +117,16 @@ const VenuesPage: React.FC = () => {
               }
             >
               <IonList lines="inset" style={{ padding: 0, maxWidth: 500, margin: '0 auto' }}>
-                <div className="ion-text-right ion-padding">
-                  <SetUserHomeAddressButton setFn={() => window.location.reload()}></SetUserHomeAddressButton>
-                </div>
+                {userProfile && !userProfile.homeAddress ? (
+                  <div className="ion-padding">
+                    <SetUserHomeAddressButton
+                      userProfile={userProfile}
+                      setFn={() => window.location.reload()}
+                    ></SetUserHomeAddressButton>
+                  </div>
+                ) : (
+                  ''
+                )}
                 <Searchbar placeholder="Filter venues..." filterFn={filterVenues} refreshFn={loadData}></Searchbar>
                 {!filteredVenues ? (
                   <IonItem color="white">
@@ -131,13 +143,22 @@ const VenuesPage: React.FC = () => {
                     <IonItem
                       color="white"
                       key={venue.venueId}
-                      button={venue.venueId !== 'home' || !isMobileMode()}
+                      button={venue.venueId !== 'home'}
                       onClick={() => selectVenue(venue)}
                     >
                       <IonLabel class="ion-text-wrap">{venue.name}</IonLabel>
                       <IonButton slot="end" fill="clear" onClick={event => navigateToVenue(venue, event)}>
                         <IonIcon icon={navigate} slot="icon-only"></IonIcon>
                       </IonButton>
+                      {venue.venueId === 'home' && userProfile?.homeAddress ? (
+                        <SetUserHomeAddressButton
+                          mini={true}
+                          userProfile={userProfile}
+                          setFn={() => window.location.reload()}
+                        ></SetUserHomeAddressButton>
+                      ) : (
+                        ''
+                      )}
                     </IonItem>
                   ))
                 )}

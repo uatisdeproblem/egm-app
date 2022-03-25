@@ -1,37 +1,28 @@
-import { useEffect, useState } from 'react';
 import { IonButton, IonIcon, useIonAlert, useIonLoading, useIonToast } from '@ionic/react';
-import { home } from 'ionicons/icons';
+import { home, pencil } from 'ionicons/icons';
 
 import { UserProfile } from 'models/userProfile';
 
-import { getUserProfile, setUserHomeAddress } from '../utils/data';
+import { setUserHomeAddress } from '../utils/data';
 import { toastMessageDefaults } from '../utils';
 
 interface ContainerProps {
+  userProfile: UserProfile;
   setFn: () => void;
+  mini?: boolean;
 }
 
-const SetUserHomeAddressButton: React.FC<ContainerProps> = ({ setFn }) => {
+const SetUserHomeAddressButton: React.FC<ContainerProps> = ({ userProfile, setFn, mini }) => {
   const [showAlert] = useIonAlert();
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
-
-  const [userProfile, setUserProfile] = useState<UserProfile>();
-
-  useEffect(() => {
-    loadData();
-  }, []);
-  const loadData = async (): Promise<void> => {
-    const userProfile = await getUserProfile();
-    setUserProfile(userProfile);
-  };
 
   const chooseHomeAddress = async (): Promise<void> => {
     const header = 'Home address';
     const message =
       "You can set an address to quickly find your hotel, flat, etc. in the map, compared to the event's venues";
     const inputs: any = [
-      { name: 'address', placeholder: 'ABC Street, City XYZ, Country', value: userProfile?.homeAddress }
+      { name: 'address', placeholder: 'ABC Street, City XYZ, Country', value: userProfile.homeAddress }
     ];
     const buttons = [
       { text: 'Cancel', role: 'cancel' },
@@ -56,8 +47,14 @@ const SetUserHomeAddressButton: React.FC<ContainerProps> = ({ setFn }) => {
   };
 
   return userProfile ? (
-    <IonButton fill="clear" color="dark" onClick={chooseHomeAddress}>
-      Set your home address <IonIcon icon={home} slot="end"></IonIcon>
+    <IonButton fill="clear" color="dark" expand={mini ? undefined : 'block'} onClick={chooseHomeAddress}>
+      {mini ? (
+        <IonIcon icon={pencil} slot="icon-only"></IonIcon>
+      ) : (
+        <>
+          Set your home address <IonIcon icon={home} slot="end"></IonIcon>
+        </>
+      )}
     </IonButton>
   ) : (
     <></>
