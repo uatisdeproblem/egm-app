@@ -81,6 +81,9 @@ export const downloadUserCV = async (): Promise<void> => {
   const windowName = isPlatform('ios') ? '_parent' : '_blank';
   await Browser.open({ url, windowName });
 };
+export const setUserHomeAddress = async (address: string): Promise<void> => {
+  await apiRequest('PATCH', ['users', 'me'], { action: 'SET_HOME_ADDRESS', address });
+};
 
 export const isUserAdmin = async (): Promise<boolean> => {
   const userData = await Auth.currentAuthenticatedUser();

@@ -21,6 +21,7 @@ export interface ApiProps extends cdk.StackProps {
   cognito: { userPoolId: string; audience: string[] };
   removalPolicy: RemovalPolicy;
   sesIdentityARN: string;
+  mapPlaceIndexName: string;
 }
 export interface ApiResourceController {
   name: string;
@@ -121,6 +122,25 @@ export class ApiStack extends cdk.Stack {
       lambdaFunctions.forEach(lambdaFn => {
         lambdaFn.role.attachInlinePolicy(accessCognitoPolicy);
         lambdaFn.addEnvironment('COGNITO_USER_POOL_ID', props.cognito.userPoolId);
+      });
+
+      // allow the Lambda functions to access the Location Place Index
+      const accessLocationPlaceIndex = new IAM.Policy(this, 'ManageLocationPlaceIndex', {
+        statements: [
+          new IAM.PolicyStatement({
+            effect: IAM.Effect.ALLOW,
+            actions: ['geo:SearchPlaceIndexForText'],
+            resources: [
+              `arn:aws:geo:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:place-index/${
+                props.mapPlaceIndexName
+              }`
+            ]
+          })
+        ]
+      });
+      lambdaFunctions.forEach(lambdaFn => {
+        lambdaFn.role.attachInlinePolicy(accessLocationPlaceIndex);
+        lambdaFn.addEnvironment('LOCATION_PLACE_INDEX', props.mapPlaceIndexName);
       });
 
       // allow the Lambda functions to access the SES Identity

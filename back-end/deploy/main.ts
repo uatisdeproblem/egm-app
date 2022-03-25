@@ -112,12 +112,14 @@ const createApp = async (): Promise<void> => {
     mediaBucketArn: mediaStack.mediaBucketArn,
     cognito: { userPoolId: cognitoStack.userPool.userPoolId, audience: [cognitoStack.clientFrontEnd.userPoolClientId] },
     removalPolicy: ENV.destroyDataOnDelete ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN,
-    sesIdentityARN: sesStack.identityARN
+    sesIdentityARN: sesStack.identityARN,
+    mapPlaceIndexName: mapStack.placeIndex.indexName
   });
   apiStack.addDependency(cognitoStack);
   apiStack.addDependency(mediaStack);
   apiStack.addDependency(apiDomainStack);
   apiStack.addDependency(sesStack);
+  apiStack.addDependency(mapStack);
 
   new FrontEndStack(app, `${parameters.project}-${STAGE}-front-end`, {
     env,

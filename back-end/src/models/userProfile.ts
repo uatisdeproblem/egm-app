@@ -14,11 +14,16 @@ export class UserProfile extends Resource {
   contactPhone: string;
   bio: string;
   openToJob: boolean;
+
   facebook: string;
   instagram: string;
   twitter: string;
   tiktok: string;
   linkedin: string;
+
+  homeAddress: string;
+  homeLongitude: number;
+  homeLatitude: number;
 
   load(x: any): void {
     super.load(x);
@@ -35,15 +40,24 @@ export class UserProfile extends Resource {
     this.contactPhone = this.clean(x.contactPhone, String);
     this.bio = this.clean(x.bio, String);
     this.openToJob = this.clean(x.openToJob, Boolean);
+
     this.facebook = this.clean(x.facebook, String);
     this.instagram = this.clean(x.instagram, String);
     this.twitter = this.clean(x.twitter, String);
     this.tiktok = this.clean(x.tiktok, String);
     this.linkedin = this.clean(x.linkedin, String);
+
+    this.homeAddress = this.clean(x.homeAddress, String);
+    this.homeLongitude = this.clean(x.homeLongitude, Number);
+    this.homeLatitude = this.clean(x.homeLatitude, Number);
   }
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
     this.userId = safeData.userId;
+
+    this.homeAddress = safeData.homeAddress;
+    this.homeLongitude = safeData.homeLongitude;
+    this.homeLatitude = safeData.homeLatitude;
   }
   validate(): string[] {
     const e = super.validate();

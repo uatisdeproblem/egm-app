@@ -29,6 +29,7 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
         const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const primaryColor = style.getPropertyValue(isDarkMode ? '--ion-color-tertiary' : '--ion-color-primary');
         const secondaryColor = style.getPropertyValue('--ion-color-secondary');
+        const homeColor = style.getPropertyValue('--ion-color-ESNpink');
 
         const inactiveMarker = createMapMarker(primaryColor);
         const activeMarker = createMapMarker(secondaryColor);
@@ -40,6 +41,11 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
 
         map.on('mouseenter', 'venues', () => (map.getCanvas().style.cursor = 'pointer'));
         map.on('mouseleave', 'venues', () => (map.getCanvas().style.cursor = ''));
+
+        const homeMarker = createMapMarker(homeColor, true);
+        map.addImage('home-marker', homeMarker, { pixelRatio: 2 });
+        const setHomeMarker = ['match', ['get', 'id'], 'home', 'home-marker', 'inactive-marker'];
+        map.setLayoutProperty('venues', 'icon-image', setHomeMarker);
 
         map.on('click', 'venues', ({ point }: any) => {
           const markers = map.queryRenderedFeatures(point, { layers: ['venues'] });
@@ -59,7 +65,8 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
           setShowPopover(true);
         });
         map.on('dismissPopover', () => {
-          map.setLayoutProperty('venues', 'icon-image', 'inactive-marker');
+          const resetMarkers = ['match', ['get', 'id'], 'home', 'home-marker', 'inactive-marker'];
+          map.setLayoutProperty('venues', 'icon-image', resetMarkers);
           setSelectedVenue(null);
           setShowPopover(false);
         });
@@ -90,9 +97,13 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
           </IonCardHeader>
           <IonCardContent>
             <p className="ion-text-center ion-padding">{selectedVenue?.address}</p>
-            <IonButton fill="clear" expand="block" href={`/venue/${selectedVenue?.venueId}`}>
-              See details <IonIcon icon={eye} slot="end"></IonIcon>
-            </IonButton>
+            {selectedVenue?.venueId !== 'home' ? (
+              <IonButton fill="clear" expand="block" href={`/venue/${selectedVenue?.venueId}`}>
+                See details <IonIcon icon={eye} slot="end"></IonIcon>
+              </IonButton>
+            ) : (
+              ''
+            )}
             <IonButton
               fill="clear"
               expand="block"

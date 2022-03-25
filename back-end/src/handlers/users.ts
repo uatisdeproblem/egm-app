@@ -2,6 +2,7 @@
 /// IMPORTS
 ///
 
+import { Location } from 'aws-sdk';
 import { Cognito, DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
 import { SignedURL } from 'idea-toolbox';
 
@@ -24,9 +25,12 @@ const DDB_TABLES = {
   usersFavoriteSessions: process.env.DDB_TABLE_usersFavoriteSessions
 };
 
+const LOCATION_PLACE_INDEX = process.env.LOCATION_PLACE_INDEX;
+
 const ddb = new DynamoDB();
 const s3 = new S3();
 const cognito = new Cognito();
+const location = new Location();
 
 export const handler = (ev: any, _: any, cb: any) => new Users(ev, cb).handleRequest();
 
@@ -106,6 +110,8 @@ class Users extends ResourceController {
         return await this.setFavoriteSession(this.body.sessionId, false);
       case 'GET_FAVORITE_SESSIONS':
         return await this.getFavoriteSessions();
+      case 'SET_HOME_ADDRESS':
+        return await this.setHomeAddress(this.body.address);
       default:
         throw new RCError('Unsupported action');
     }
@@ -145,6 +151,22 @@ class Users extends ResourceController {
         ExpressionAttributeValues: { ':userId': this.principalId }
       })
     ).map((x: { sessionId: string }) => x.sessionId);
+  }
+  private async setHomeAddress(address: string): Promise<void> {
+    if (!address) throw new RCError('Missing address');
+
+    const results = (
+      await location.searchPlaceIndexForText({ IndexName: LOCATION_PLACE_INDEX, Text: address }).promise()
+    ).Results;
+
+    if (!results.length) throw new RCError('Not found');
+
+    const result = results[0].Place;
+    this.profile.homeAddress = address;
+    this.profile.homeLatitude = result.Geometry.Point[1];
+    this.profile.homeLongitude = result.Geometry.Point[0];
+
+    await this.putSafeResource();
   }
 
   protected async deleteResource(): Promise<void> {

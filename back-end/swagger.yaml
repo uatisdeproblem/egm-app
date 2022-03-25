@@ -102,9 +102,13 @@ paths:
                     - ADD_FAVORITE_SESSION
                     - REMOVE_FAVORITE_SESSION
                     - GET_FAVORITE_SESSIONS
+                    - SET_HOME_ADDRESS
                 sessionId:
                   type: string
                   description: (ADD_FAVORITE_SESSION, REMOVE_FAVORITE_SESSION)
+                address:
+                  type: string
+                  description: (SET_HOME_ADDRESS)
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
