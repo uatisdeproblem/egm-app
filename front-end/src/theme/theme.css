@@ -82,6 +82,16 @@ ion-segment-button {
   text-transform: none !important;
 }
 
+ion-label h1 {
+  font-size: 1.6rem !important;
+}
+ion-label h2 {
+  font-size: 1.4rem !important;
+}
+ion-label h3 {
+  font-size: 1.2rem !important;
+}
+
 .maplibregl-popup-content {
   background: var(--ion-color-white);
 }
@@ -90,10 +100,9 @@ ion-segment-button {
   border-bottom: 2px solid var(--ion-color-danger);
 }
 
-div.cardContainer {
-  max-width: 600px;
+ion-grid.contentGrid {
+  max-width: 1200px;
   margin: 0 auto;
-  margin-top: 15px;
 }
 
 .rc-md-editor {

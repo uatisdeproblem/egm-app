@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
-import { IonContent, IonLabel, IonList, IonListHeader, IonPage, useIonToast, useIonViewWillEnter } from '@ionic/react';
+import {
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonPage,
+  IonRow,
+  useIonToast,
+  useIonViewWillEnter
+} from '@ionic/react';
 
 import { Organization } from 'models/organization';
 import { Speaker } from 'models/speaker';
@@ -43,28 +54,34 @@ const OrganizationPage: React.FC = () => {
         id={organization?.organizationId || ''}
       ></EntityHeader>
       <IonContent>
-        <div className="cardContainer">
-          <OrganizationCard organization={organization}></OrganizationCard>
-        </div>
-        {speakers?.length ? (
-          <IonList style={{ maxWidth: 600, margin: '0 auto' }}>
-            <IonListHeader>
-              <IonLabel class="ion-text-center">
-                <h1>Speakers</h1>
-              </IonLabel>
-            </IonListHeader>
-            {speakers.map(speaker => (
-              <SpeakerCard
-                key={speaker.speakerId}
-                speaker={speaker}
-                preview
-                select={() => history.push('/speaker/' + speaker.speakerId)}
-              ></SpeakerCard>
-            ))}
-          </IonList>
-        ) : (
-          ''
-        )}
+        <IonGrid className="contentGrid">
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6">
+              <OrganizationCard organization={organization}></OrganizationCard>
+            </IonCol>
+            {speakers?.length ? (
+              <IonCol size="12" sizeMd="6">
+                <IonList>
+                  <IonListHeader>
+                    <IonLabel class="ion-text-center">
+                      <h2>Organization's speakers</h2>
+                    </IonLabel>
+                  </IonListHeader>
+                  {speakers.map(speaker => (
+                    <SpeakerCard
+                      key={speaker.speakerId}
+                      speaker={speaker}
+                      preview
+                      select={() => history.push('/speaker/' + speaker.speakerId)}
+                    ></SpeakerCard>
+                  ))}
+                </IonList>
+              </IonCol>
+            ) : (
+              ''
+            )}
+          </IonRow>
+        </IonGrid>
       </IonContent>
     </IonPage>
   );

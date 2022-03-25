@@ -44,7 +44,9 @@ const VenuesPage: React.FC = () => {
     filteredVenues = (venues || []).filter(x =>
       search
         .split(' ')
-        .every(searchTerm => [x.name, x.description, x.address].some(f => f.toLowerCase().includes(searchTerm)))
+        .every(searchTerm =>
+          [x.name, x.description, x.address].filter(x => x).some(f => f.toLowerCase().includes(searchTerm))
+        )
     );
 
     setFilteredVenues(filteredVenues);
@@ -94,7 +96,7 @@ const VenuesPage: React.FC = () => {
                   </IonItem>
                 ) : !filteredVenues.length ? (
                   <IonItem lines="none">
-                    <IonLabel className="ion-text-center">No elements found</IonLabel>
+                    <IonLabel className="ion-text-center">No venues found</IonLabel>
                   </IonItem>
                 ) : (
                   filteredVenues.map(venue => (

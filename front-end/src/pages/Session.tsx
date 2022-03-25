@@ -58,7 +58,7 @@ const SessionPage: React.FC = () => {
     <IonPage>
       <EntityHeader title="Session details" type="session" id={session?.sessionId || ''}></EntityHeader>
       <IonContent>
-        <div className="cardContainer">
+        <div style={{ maxWidth: 600, margin: '0 auto', marginTop: 15 }}>
           <SessionCard
             session={session}
             isUserFavorite={isUserFavorite}

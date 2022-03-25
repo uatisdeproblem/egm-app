@@ -1,11 +1,12 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonPopover } from '@ionic/react';
 import { createMap } from 'maplibre-gl-js-amplify';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import 'maplibre-gl-js-amplify/dist/public/amplify-map.css';
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonIcon, IonPopover } from '@ionic/react';
+import { eye, navigate } from 'ionicons/icons';
 
 import { Venue } from 'models/venue';
-import { createMapMarker } from '../utils';
+import { createMapMarker, openGeoLocationInMap } from '../utils';
 
 // ESN AISBL office
 const DEFAULT_MAP_CENTER: [number, number] = [4.378551, 50.844578];
@@ -90,7 +91,14 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
           <IonCardContent>
             <p className="ion-text-center ion-padding">{selectedVenue?.address}</p>
             <IonButton fill="clear" expand="block" href={`/venue/${selectedVenue?.venueId}`}>
-              See details
+              See details <IonIcon icon={eye} slot="end"></IonIcon>
+            </IonButton>
+            <IonButton
+              fill="clear"
+              expand="block"
+              onClick={() => openGeoLocationInMap(selectedVenue!.latitude, selectedVenue!.longitude)}
+            >
+              Start navigation <IonIcon icon={navigate} slot="end"></IonIcon>
             </IonButton>
             <IonButton fill="clear" expand="block" color="medium" onClick={() => setShowPopover(false)}>
               Dismiss

@@ -81,7 +81,7 @@ const SessionsPage: React.FC = () => {
         .every(searchTerm =>
           [
             x.name,
-            x.description || '',
+            x.description,
             SessionTypeStr[x.type],
             x.venue.name,
             x.speaker1.name,
@@ -171,7 +171,7 @@ const SessionsPage: React.FC = () => {
                           <i>Select a day and start building your customized agenda.</i> 😉
                         </>
                       ) : (
-                        <>No elements found.</>
+                        <>No sessions found.</>
                       )}
                     </IonLabel>
                   </IonItem>

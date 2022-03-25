@@ -44,7 +44,9 @@ const SpeakersPage: React.FC = () => {
       search
         .split(' ')
         .every(searchTerm =>
-          [x.name, x.organization.name, x.title, x.description].some(f => f.toLowerCase().includes(searchTerm))
+          [x.name, x.organization.name, x.title, x.description]
+            .filter(x => x)
+            .some(f => f.toLowerCase().includes(searchTerm))
         )
     );
 
@@ -79,7 +81,7 @@ const SpeakersPage: React.FC = () => {
                 ) : filteredSpeakers && filteredSpeakers.length === 0 ? (
                   <IonCol>
                     <IonItem lines="none">
-                      <IonLabel className="ion-text-center">No elements found.</IonLabel>
+                      <IonLabel className="ion-text-center">No speakers found.</IonLabel>
                     </IonItem>
                   </IonCol>
                 ) : (

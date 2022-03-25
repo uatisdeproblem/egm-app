@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
-import { IonContent, IonLabel, IonList, IonListHeader, IonPage, useIonToast, useIonViewWillEnter } from '@ionic/react';
+import {
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonPage,
+  IonRow,
+  useIonToast,
+  useIonViewWillEnter
+} from '@ionic/react';
 
 import { Speaker } from 'models/speaker';
 import { Session } from 'models/session';
@@ -40,27 +51,33 @@ const SpeakerPage: React.FC = () => {
     <IonPage>
       <EntityHeader title="Speaker details" type="speaker" id={speaker?.speakerId || ''}></EntityHeader>
       <IonContent>
-        <div className="cardContainer">
-          <SpeakerCard speaker={speaker}></SpeakerCard>
-        </div>
-        {sessions?.length ? (
-          <IonList style={{ maxWidth: 600, margin: '0 auto' }}>
-            <IonListHeader>
-              <IonLabel class="ion-text-center">
-                <h1>Sessions</h1>
-              </IonLabel>
-            </IonListHeader>
-            {sessions.map(session => (
-              <SessionItem
-                key={session.sessionId}
-                session={session}
-                select={() => history.push('/session/' + session.sessionId)}
-              ></SessionItem>
-            ))}
-          </IonList>
-        ) : (
-          ''
-        )}
+        <IonGrid className="contentGrid">
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6">
+              <SpeakerCard speaker={speaker}></SpeakerCard>
+            </IonCol>
+            {sessions?.length ? (
+              <IonCol size="12" sizeMd="6">
+                <IonList style={{ maxWidth: 600, margin: '0 auto' }}>
+                  <IonListHeader>
+                    <IonLabel class="ion-text-center">
+                      <h2>Speaker's sessions</h2>
+                    </IonLabel>
+                  </IonListHeader>
+                  {sessions.map(session => (
+                    <SessionItem
+                      key={session.sessionId}
+                      session={session}
+                      select={() => history.push('/session/' + session.sessionId)}
+                    ></SessionItem>
+                  ))}
+                </IonList>
+              </IonCol>
+            ) : (
+              ''
+            )}
+          </IonRow>
+        </IonGrid>
       </IonContent>
     </IonPage>
   );

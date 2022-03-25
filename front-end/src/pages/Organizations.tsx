@@ -43,7 +43,9 @@ const OrganizationsPage: React.FC = () => {
     filteredOrganizations = (organizations || []).filter(x =>
       search
         .split(' ')
-        .every(searchTerm => [x.name, x.description || ''].some(f => f.toLowerCase().includes(searchTerm)))
+        .every(searchTerm =>
+          [x.name, x.description || ''].filter(x => x).some(f => f.toLowerCase().includes(searchTerm))
+        )
     );
 
     setFilteredOrganizations(filteredOrganizations);
@@ -73,7 +75,7 @@ const OrganizationsPage: React.FC = () => {
                 ) : filteredOrganizations && filteredOrganizations.length === 0 ? (
                   <IonCol>
                     <IonItem lines="none">
-                      <IonLabel className="ion-text-center">No elements found.</IonLabel>
+                      <IonLabel className="ion-text-center">No organizations found.</IonLabel>
                     </IonItem>
                   </IonCol>
                 ) : (

@@ -1,7 +1,19 @@
-import { IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonSkeletonText, IonImg } from '@ionic/react';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonSkeletonText,
+  IonImg,
+  IonCardSubtitle,
+  IonButton,
+  IonIcon
+} from '@ionic/react';
+import { navigate } from 'ionicons/icons';
 
 import { Venue } from 'models/venue';
-import { mdParser } from '../utils';
+
+import { mdParser, openGeoLocationInMap } from '../utils';
 import { getImageURLByURI, venuesFallbackImageURL } from '../utils/data';
 
 interface ContainerProps {
@@ -17,8 +29,18 @@ const VenueCard: React.FC<ContainerProps> = ({ venue }) => {
       ></IonImg>
       <IonCardHeader>
         <IonCardTitle>{venue.name}</IonCardTitle>
+        <IonCardSubtitle>{venue.address}</IonCardSubtitle>
       </IonCardHeader>
       <IonCardContent>
+        {venue.address ? (
+          <div className="ion-text-right" style={{ marginBottom: 30 }}>
+            <IonButton onClick={() => openGeoLocationInMap(venue.latitude, venue.longitude)}>
+              Navigate to the venue <IonIcon icon={navigate} slot="end"></IonIcon>
+            </IonButton>
+          </div>
+        ) : (
+          ''
+        )}
         <div className="divDescription">
           {venue.description ? (
             <span dangerouslySetInnerHTML={{ __html: mdParser.render(venue.description) }}></span>

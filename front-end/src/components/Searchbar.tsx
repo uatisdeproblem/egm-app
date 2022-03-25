@@ -7,7 +7,7 @@ import { isMobileMode } from '../utils';
 interface ComponentProps {
   placeholder: string;
   filterFn: (searchStr: string) => void;
-  refreshFn: () => void;
+  refreshFn?: () => void;
 }
 
 const Searchbar: React.FC<ComponentProps> = ({ placeholder, filterFn, refreshFn }) => {
@@ -22,6 +22,8 @@ const Searchbar: React.FC<ComponentProps> = ({ placeholder, filterFn, refreshFn 
   };
 
   const refreshFnWithRefresherWrapper = (event: CustomEvent<RefresherEventDetail>): void => {
+    if (!refreshFn) return;
+
     setTimeout((): void => {
       event.detail.complete();
       refreshFn();
@@ -30,7 +32,7 @@ const Searchbar: React.FC<ComponentProps> = ({ placeholder, filterFn, refreshFn 
 
   return (
     <div style={{ maxWidth: 500, margin: '0 auto' }}>
-      {userIsAdmin && isMobileMode() ? (
+      {userIsAdmin && isMobileMode() && refreshFn ? (
         <IonRefresher slot="fixed" onIonRefresh={refreshFnWithRefresherWrapper}>
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
