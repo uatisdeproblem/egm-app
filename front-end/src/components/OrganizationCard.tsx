@@ -52,12 +52,24 @@ const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, sel
         ''
       ) : (
         <IonCardContent>
-          <div className="ion-text-center" style={{ marginBottom: 30 }}>
-            <IonButton fill="clear" color="dark" target="_blank" href={organization.website}>
-              Discover more <IonIcon icon={openOutline} slot="end"></IonIcon>
-            </IonButton>
-            <ContactOrganizationButton organization={organization}></ContactOrganizationButton>
-          </div>
+          {organization.contactEmail || organization.website ? (
+            <div className="ion-text-center" style={{ marginBottom: 30 }}>
+              {organization.website ? (
+                <IonButton fill="clear" color="dark" target="_blank" href={organization.website}>
+                  Discover more <IonIcon icon={openOutline} slot="end"></IonIcon>
+                </IonButton>
+              ) : (
+                ''
+              )}
+              {organization.contactEmail ? (
+                <ContactOrganizationButton organization={organization}></ContactOrganizationButton>
+              ) : (
+                ''
+              )}
+            </div>
+          ) : (
+            ''
+          )}
           <>
             {organization.imageURI ? (
               <IonItem color="white" lines="none">
