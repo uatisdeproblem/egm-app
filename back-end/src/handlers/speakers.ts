@@ -97,9 +97,15 @@ class Speakers extends ResourceController {
 
   protected async getResources(): Promise<Speaker[]> {
     try {
-      return (await ddb.scan({ TableName: DDB_TABLES.speakers }))
-        .map((x: Speaker) => new Speaker(x))
-        .sort((a, b) => a.name.localeCompare(b.name));
+      const speakers = (await ddb.scan({ TableName: DDB_TABLES.speakers })).map((x: Speaker) => new Speaker(x));
+
+      const filteredSpeakers = this.queryParams.organization
+        ? speakers.filter(x => x.organization.organizationId === this.queryParams.organization)
+        : speakers;
+
+      const sortedSpeakers = filteredSpeakers.sort((a, b) => a.name.localeCompare(b.name));
+
+      return sortedSpeakers;
     } catch (err) {
       throw new RCError('Operation failed');
     }

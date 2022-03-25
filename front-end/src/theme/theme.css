@@ -50,6 +50,9 @@ ion-tab-button.tab-selected ion-label {
 ion-list {
   background: transparent !important;
 }
+ion-list-header {
+  padding-left: 0;
+}
 ion-item ion-label p {
   color: var(--ion-color-step-600) !important;
 }

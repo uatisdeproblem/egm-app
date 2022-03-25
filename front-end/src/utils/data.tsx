@@ -102,8 +102,11 @@ export const deleteVenue = async (venue: Venue): Promise<void> => {
 // SPEAKERS
 //
 
-export const getSpeakers = async (): Promise<Speaker[]> => {
-  return (await apiRequest('GET', 'speakers')).map((x: Speaker) => new Speaker(x));
+export const getSpeakers = async (filterByOrganization?: Organization): Promise<Speaker[]> => {
+  const path = ['speakers'];
+  if (filterByOrganization) path.push('?organization='.concat(filterByOrganization.organizationId));
+
+  return (await apiRequest('GET', path)).map((x: Speaker) => new Speaker(x));
 };
 export const getSpeaker = async (speakerId: string): Promise<Speaker> => {
   return new Speaker(await apiRequest('GET', ['speakers', speakerId]));

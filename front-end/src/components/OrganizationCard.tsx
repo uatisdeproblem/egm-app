@@ -7,12 +7,18 @@ import {
   IonSkeletonText,
   IonImg,
   IonItem,
-  IonTitle
+  IonTitle,
+  IonButton,
+  IonIcon
 } from '@ionic/react';
+import { openOutline } from 'ionicons/icons';
 
 import { Organization } from 'models/organization';
+
 import { mdParser } from '../utils';
 import { getImageURLByURI, organizationsFallbackImageURL } from '../utils/data';
+
+import ContactOrganizationButton from './ContactOrganizationButton';
 
 interface ContainerProps {
   organization?: Organization;
@@ -46,16 +52,23 @@ const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, sel
         ''
       ) : (
         <IonCardContent>
+          <div className="ion-text-center" style={{ marginBottom: 30 }}>
+            <IonButton fill="clear" color="dark" target="_blank" href={organization.website}>
+              Discover more <IonIcon icon={openOutline} slot="end"></IonIcon>
+            </IonButton>
+            <ContactOrganizationButton organization={organization}></ContactOrganizationButton>
+          </div>
           <>
             {organization.imageURI ? (
               <IonItem color="white" lines="none">
                 <IonLabel className="ion-text-center">
-                  <b>{organization.name}</b>
+                  About <b>{organization.name}</b>
                 </IonLabel>
               </IonItem>
             ) : (
               ''
             )}
+
             <div className="divDescription">
               {organization.description ? (
                 <span dangerouslySetInnerHTML={{ __html: mdParser.render(organization.description) }}></span>

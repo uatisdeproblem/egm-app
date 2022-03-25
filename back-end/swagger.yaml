@@ -248,6 +248,11 @@ paths:
       tags: [Speakers]
       security:
         - CognitoUserPool: []
+      parameters:
+        - name: organization
+          in: query
+          schema:
+            type: string
       responses:
         200:
           $ref: '#/components/responses/Speakers'

@@ -26,7 +26,7 @@ const EMAIL_CONTENTS = {
   subject: '[EGM] Contact request',
   textHeader:
     "Hi,\nthis is an automatic email from the EGM app.\n\nI'd like to get in touch with your organization; therefore, here is my contact information:\n\n",
-  textAttachment: '\nYou can find attached my CV.\n',
+  textAttachment: '\n\nYou can find attached my CV.\n',
   textFooter: '\n\nBest regards,\n'
 };
 
