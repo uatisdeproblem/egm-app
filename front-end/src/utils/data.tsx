@@ -14,9 +14,19 @@ import { getEnv } from '../environment';
 // SESSIONS
 //
 
-export const getSessions = async (): Promise<Session[]> => {
-  return (await apiRequest('GET', 'sessions')).map((x: Session) => new Session(x));
+export const getSessions = async (filterBy?: { speaker?: Speaker; venue?: Venue }): Promise<Session[]> => {
+  let path = 'sessions';
+
+  if (filterBy) {
+    const queryParams = [];
+    if (filterBy.speaker?.speakerId) queryParams.push('speaker='.concat(filterBy.speaker.speakerId));
+    if (filterBy.venue?.venueId) queryParams.push('venue='.concat(filterBy.venue.venueId));
+    if (queryParams.length) path = path.concat('?', queryParams.join('&'));
+  }
+
+  return (await apiRequest('GET', path)).map((x: Session) => new Session(x));
 };
+
 export const getSession = async (sessionId: string): Promise<Session> => {
   return new Session(await apiRequest('GET', ['sessions', sessionId]));
 };
@@ -103,8 +113,8 @@ export const deleteVenue = async (venue: Venue): Promise<void> => {
 //
 
 export const getSpeakers = async (filterByOrganization?: Organization): Promise<Speaker[]> => {
-  const path = ['speakers'];
-  if (filterByOrganization) path.push('?organization='.concat(filterByOrganization.organizationId));
+  let path = 'speakers';
+  if (filterByOrganization) path = path.concat('?organization='.concat(filterByOrganization.organizationId));
 
   return (await apiRequest('GET', path)).map((x: Speaker) => new Speaker(x));
 };

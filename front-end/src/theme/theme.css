@@ -5,7 +5,7 @@
 
 a {
   text-decoration: underline var(--ion-color-step-100);
-  color: var(--ion-color-step-450);
+  color: var(--ion-color-step-600);
 }
 a:hover {
   text-decoration: underline var(--ion-color-step-600);

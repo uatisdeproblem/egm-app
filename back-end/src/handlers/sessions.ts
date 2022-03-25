@@ -120,9 +120,18 @@ class Sessions extends ResourceController {
 
   protected async getResources(): Promise<Session[]> {
     try {
-      return (await ddb.scan({ TableName: DDB_TABLES.sessions }))
-        .map((x: Session) => new Session(x))
-        .sort((a, b) => a.name.localeCompare(b.name));
+      const sessions = (await ddb.scan({ TableName: DDB_TABLES.sessions })).map((x: Session) => new Session(x));
+
+      const filtertedSessions = sessions.filter(
+        x =>
+          (!this.queryParams.speaker ||
+            [x.speaker1.speakerId, x.speaker2.speakerId, x.speaker3.speakerId].includes(this.queryParams.speaker)) &&
+          (!this.queryParams.venue || x.venue.venueId === this.queryParams.venue)
+      );
+
+      const sortedSessions = filtertedSessions.sort((a, b) => a.name.localeCompare(b.name));
+
+      return sortedSessions;
     } catch (err) {
       throw new RCError('Operation failed');
     }

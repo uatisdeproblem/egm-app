@@ -21,12 +21,16 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
 
   return session ? (
     <IonItem lines="none" color="white" style={itemStyle} key={session.sessionId} button onClick={select}>
-      <IonNote slot="start" className="ion-text-center" style={{ marginTop: 12, marginRight: 16, lineHeight: 1.5 }}>
+      <IonNote slot="start" className="ion-text-center" style={{ marginTop: 12, marginRight: 18, lineHeight: 1.5 }}>
         <b style={{ display: 'block' }}>{formatTime(session.startsAt)}</b>
         <span style={{ display: 'block' }}>{formatTime(session.endsAt)}</span>
-        <IonButton fill="clear" size="small" color="secondary" onClick={toggleUserFavoriteWithPrevention}>
-          <IonIcon icon={isUserFavorite ? star : starOutline}></IonIcon>
-        </IonButton>
+        {toggleUserFavorite ? (
+          <IonButton fill="clear" size="small" color="secondary" onClick={toggleUserFavoriteWithPrevention}>
+            <IonIcon icon={isUserFavorite ? star : starOutline}></IonIcon>
+          </IonButton>
+        ) : (
+          ''
+        )}
       </IonNote>
       <IonLabel className="ion-text-wrap">
         <IonText style={{ fontWeight: 500 }}>{session.name}</IonText>

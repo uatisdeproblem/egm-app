@@ -56,20 +56,20 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
       </IonCardHeader>
       <IonCardContent>
         <IonList lines="none" className="ion-no-padding">
-          <IonItem color="transparent">
+          <IonItem color="white">
             <IonIcon slot="start" icon={calendarOutline}></IonIcon>
             <IonLabel className="ion-text-wrap">
               {formatDateShort(session.startsAt)}
               <br /> {formatTime(session.startsAt)} {' - '} {formatTime(session.endsAt)}
             </IonLabel>
           </IonItem>
-          <IonItem color="transparent">
+          <IonItem color="white">
             <IonIcon slot="start" icon={locationOutline}></IonIcon>
             <IonLabel className="ion-text-wrap">
               <Link to={'/venue/' + session.venue.venueId}>{session.venue.name}</Link>
             </IonLabel>
           </IonItem>
-          <IonItem color="transparent">
+          <IonItem color="white">
             <IonIcon slot="start" icon={peopleOutline}></IonIcon>
             <IonLabel className="ion-text-wrap">
               <Link

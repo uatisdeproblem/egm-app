@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router';
 import {
   IonLabel,
   IonCard,
@@ -9,10 +10,14 @@ import {
   IonCol,
   IonAvatar,
   IonImg,
-  IonCardSubtitle
+  IonCardSubtitle,
+  IonButton,
+  IonIcon
 } from '@ionic/react';
+import { eye, mail } from 'ionicons/icons';
 
 import { Speaker } from 'models/speaker';
+
 import { mdParser } from '../utils';
 import { getImageURLByURI } from '../utils/data';
 
@@ -25,6 +30,8 @@ interface ContainerProps {
 const fallbackSpeakerImg = '/assets/images/no-avatar.jpg';
 
 const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => {
+  const history = useHistory();
+
   return speaker ? (
     <IonCard button={!!select} onClick={select} color="white" style={{ height: preview ? '100%' : 'auto' }}>
       <IonCardHeader>
@@ -55,6 +62,19 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
         ''
       ) : (
         <IonCardContent>
+          <div className="ion-text-right" style={{ marginBottom: 10 }}>
+            <IonButton
+              fill="clear"
+              color="dark"
+              onClick={() => history.push('/organization/' + speaker.organization.organizationId)}
+            >
+              Discover organization <IonIcon icon={eye} slot="end"></IonIcon>
+            </IonButton>
+            <IonButton target="_blank" href={`mailto:${speaker.contactEmail}?subject=EGM%20contact%20request`}>
+              Contact me <IonIcon icon={mail} slot="end"></IonIcon>
+            </IonButton>
+          </div>
+
           <div className="divDescription">
             {speaker.description ? (
               <span dangerouslySetInnerHTML={{ __html: mdParser.render(speaker.description) }}></span>
