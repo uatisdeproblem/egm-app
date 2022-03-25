@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   IonContent,
@@ -14,7 +14,9 @@ import {
   IonIcon,
   IonButton,
   useIonToast,
-  useIonViewDidEnter
+  useIonViewDidEnter,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent
 } from '@ionic/react';
 import { close, star } from 'ionicons/icons';
 
@@ -33,6 +35,8 @@ import SessionItem from '../components/SessionItem';
 import Searchbar from '../components/Searchbar';
 import ManageEntityButton from '../components/ManageEntityButton';
 
+const PAGINATION_NUM_MAX_ELEMENTS = 24;
+
 const SessionsPage: React.FC = () => {
   const history = useHistory();
   const [showMessage] = useIonToast();
@@ -43,6 +47,8 @@ const SessionsPage: React.FC = () => {
   const [sessionsDays, setSessionsDays] = useState(new Array<string>());
   const [filteredSessions, setFilteredSessions] = useState<Array<Session>>();
   const [currentSession, setCurrentSession] = useState<Session>();
+
+  const searchbar = useRef(null);
 
   useEffect(() => {
     loadData();
@@ -60,22 +66,28 @@ const SessionsPage: React.FC = () => {
     setSessions(sessions);
     setSessionsDays(sessionsDays);
     setUserFavoriteSessionsSet(userFavoriteSessions);
-    setFilteredSessions(sessions.filter(s => userFavoriteSessions.has(s.sessionId)));
+    setFilteredSessions(
+      sessions.filter(s => userFavoriteSessions.has(s.sessionId)).slice(0, PAGINATION_NUM_MAX_ELEMENTS)
+    );
   };
 
   const changeSegment = (segment: string): void => {
     setSegment(segment);
     filterSessions('', segment);
   };
-  const filterSessions = (search = '', forceSegment?: string): void => {
-    let filteredSessions: Session[];
+  const filterSessions = (search = '', forceSegment?: string, scrollToNextPage?: any): void => {
+    const startPaginationAfterId = filteredSessions?.length
+      ? filteredSessions[filteredSessions.length - 1].sessionId
+      : null;
+
+    let filteredList: Session[];
 
     const useSegment = forceSegment !== undefined ? forceSegment : segment;
 
-    if (!useSegment) filteredSessions = sessions?.filter(s => isSessionUserFavorite(s)) || [];
-    else filteredSessions = sessions?.filter(s => s.startsAt.startsWith(useSegment)) || [];
+    if (!useSegment) filteredList = sessions?.filter(s => isSessionUserFavorite(s)) || [];
+    else filteredList = sessions?.filter(s => s.startsAt.startsWith(useSegment)) || [];
 
-    filteredSessions = filteredSessions.filter(x =>
+    filteredList = filteredList.filter(x =>
       search
         .split(' ')
         .every(searchTerm =>
@@ -93,7 +105,16 @@ const SessionsPage: React.FC = () => {
         )
     );
 
-    setFilteredSessions(filteredSessions);
+    let indexOfLastOfPreviousPage = 0;
+
+    if (scrollToNextPage && filteredList.length > PAGINATION_NUM_MAX_ELEMENTS)
+      indexOfLastOfPreviousPage = filteredList.findIndex(x => x.sessionId === startPaginationAfterId) || 0;
+
+    filteredList = filteredList.slice(0, indexOfLastOfPreviousPage + PAGINATION_NUM_MAX_ELEMENTS);
+
+    if (scrollToNextPage) setTimeout(() => scrollToNextPage.complete(), 100);
+
+    setFilteredSessions(filteredList);
   };
 
   const isSessionUserFavorite = (session: Session): boolean => userFavoriteSessionsSet.has(session.sessionId);
@@ -155,6 +176,7 @@ const SessionsPage: React.FC = () => {
                     placeholder="Filter by title, venue, speaker..."
                     filterFn={filterSessions}
                     refreshFn={loadData}
+                    ref={searchbar}
                   ></Searchbar>
                 ) : (
                   ''
@@ -187,6 +209,11 @@ const SessionsPage: React.FC = () => {
                   ))
                 )}
               </IonList>
+              <IonInfiniteScroll
+                onIonInfinite={event => filterSessions((searchbar as any)?.current?.value, undefined, event?.target)}
+              >
+                <IonInfiniteScrollContent></IonInfiniteScrollContent>
+              </IonInfiniteScroll>
             </div>
             <div
               style={
