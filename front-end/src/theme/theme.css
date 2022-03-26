@@ -137,3 +137,17 @@ ion-grid.contentGrid {
   margin-bottom: 16px;
   text-align: justify;
 }
+
+.widePopover {
+  --min-width: 300px;
+}
+@media only screen and (min-width: 350px) {
+  .widePopover {
+    --min-width: 350px;
+  }
+}
+@media only screen and (min-width: 400px) {
+  .widePopover {
+    --min-width: 400px;
+  }
+}

@@ -35,7 +35,6 @@ import { toastMessageDefaults } from '../utils';
 import {
   downloadUserCV,
   getImageURLByURI,
-  getUserProfile,
   saveUserProfile,
   updateUserAvatar,
   uploadUserCV,
@@ -44,7 +43,11 @@ import {
 import { ESNCountries, ESNSections } from '../utils/ESNSections';
 import { Languages } from '../utils/languages';
 
-const UserProfileComponent: React.FC = () => {
+interface ContainerProps {
+  profile: UserProfile;
+}
+
+const UserProfileComponent: React.FC<ContainerProps> = ({ profile }) => {
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
 
@@ -64,15 +67,14 @@ const UserProfileComponent: React.FC = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      const userProfile = await getUserProfile();
-      if (!userProfile.contactEmail) {
+      if (!profile.contactEmail) {
         const user = await Auth.currentAuthenticatedUser();
-        userProfile.contactEmail = user.attributes.email;
+        profile.contactEmail = user.attributes.email;
       }
-      setUserProfile(userProfile);
-      setLanguages(userProfile.languages);
+      setUserProfile(profile);
+      setLanguages(profile.languages);
 
-      const avatar = getImageURLByURI(userProfile.imageURI);
+      const avatar = getImageURLByURI(profile.imageURI);
       setAvatar(avatar);
     };
     loadData();

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import QRCode from 'qrcode.react';
 import {
   IonLabel,
   IonIcon,
@@ -9,19 +9,10 @@ import {
   IonCardHeader,
   IonAvatar,
   IonImg,
-  IonCardContent
+  IonCardContent,
+  useIonPopover
 } from '@ionic/react';
-import {
-  call,
-  chevronDown,
-  chevronUp,
-  logoFacebook,
-  logoInstagram,
-  logoLinkedin,
-  logoTiktok,
-  logoTwitter,
-  mail
-} from 'ionicons/icons';
+import { call, logoFacebook, logoInstagram, logoLinkedin, logoTiktok, logoTwitter, mail } from 'ionicons/icons';
 
 import { UserProfile } from 'models/userProfile';
 
@@ -36,15 +27,28 @@ import {
 
 interface ContainerProps {
   profile?: UserProfile;
+  showDetails?: boolean;
+  showQRCode?: boolean;
 }
 
-const UserProfileCard: React.FC<ContainerProps> = ({ profile }) => {
-  const [showDetails, setShowDetails] = useState<boolean>();
+const UserProfileCard: React.FC<ContainerProps> = ({ profile, showDetails, showQRCode }) => {
+  const [showPopover, dismissPopover] = useIonPopover(UserProfileCard, {
+    profile,
+    showDetails: true,
+
+    onHide: () => dismissPopover()
+  });
+
+  const openCardWithDetails = (event: any) => {
+    if (showDetails) return;
+
+    showPopover({ event, cssClass: 'widePopover' });
+  };
 
   return profile ? (
     <IonCard color="white" style={{ margin: 0 }}>
       <IonCardHeader style={{ padding: 6 }}>
-        <IonItem lines="none" color="white" button onClick={() => setShowDetails(!showDetails)}>
+        <IonItem lines="none" color="white" button={!showDetails} onClick={openCardWithDetails}>
           <IonAvatar slot="start">
             {profile.imageURI ? (
               <IonImg
@@ -57,12 +61,10 @@ const UserProfileCard: React.FC<ContainerProps> = ({ profile }) => {
           </IonAvatar>
           <IonLabel>
             {profile.getName()}
-            <p title={profile.ESNSection}>
+            <p className={showDetails ? 'ion-text-wrap' : ''}>
               {profile.ESNCountry} {profile.ESNSection ? `- ${profile.ESNSection}` : ''}
             </p>
           </IonLabel>
-
-          <IonIcon icon={showDetails ? chevronDown : chevronUp} color="medium" slot="end" size="small"></IonIcon>
         </IonItem>
       </IonCardHeader>
       {showDetails ? (
@@ -153,6 +155,13 @@ const UserProfileCard: React.FC<ContainerProps> = ({ profile }) => {
             ''
           )}
           {profile.bio ? <p className="ion-padding">{profile.bio}</p> : ''}
+          {showQRCode ? (
+            <p className="ion-text-center ion-padding">
+              <QRCode value={profile.userId} size={200} />
+            </p>
+          ) : (
+            ''
+          )}
         </IonCardContent>
       ) : (
         ''
