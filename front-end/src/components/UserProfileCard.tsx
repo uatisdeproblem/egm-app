@@ -1,4 +1,3 @@
-import QRCode from 'qrcode.react';
 import {
   IonLabel,
   IonIcon,
@@ -10,32 +9,48 @@ import {
   IonAvatar,
   IonImg,
   IonCardContent,
-  useIonPopover
+  useIonPopover,
+  useIonAlert,
+  useIonToast,
+  useIonLoading
 } from '@ionic/react';
-import { call, logoFacebook, logoInstagram, logoLinkedin, logoTiktok, logoTwitter, mail } from 'ionicons/icons';
+import { call, logoFacebook, logoInstagram, logoLinkedin, logoTiktok, logoTwitter, mail, trash } from 'ionicons/icons';
 
 import { UserProfile } from 'models/userProfile';
 
-import { getImageURLByURI, usersFallbackImageURL } from '../utils/data';
+import { getImageURLByURI, usersFallbackImageURL, deleteConnection } from '../utils/data';
 import {
   getFacebookProfileURL,
   getInstagramProfileURL,
   getLinkedinProfileURL,
   getTikTokProfileURL,
-  getTwitterProfileURL
+  getTwitterProfileURL,
+  toastMessageDefaults
 } from '../utils';
 
 interface ContainerProps {
   profile?: UserProfile;
   showDetails?: boolean;
-  showQRCode?: boolean;
+  isUserProfile?: boolean;
+  onDeletedConnection?: () => void;
+  onHide?: () => void;
 }
 
-const UserProfileCard: React.FC<ContainerProps> = ({ profile, showDetails, showQRCode }) => {
+const UserProfileCard: React.FC<ContainerProps> = ({
+  profile,
+  showDetails,
+  isUserProfile,
+  onDeletedConnection,
+  onHide
+}) => {
+  const [showAlert] = useIonAlert();
+  const [showMessage] = useIonToast();
+  const [showLoading, dismissLoading] = useIonLoading();
+
   const [showPopover, dismissPopover] = useIonPopover(UserProfileCard, {
     profile,
     showDetails: true,
-
+    onDeletedConnection,
     onHide: () => dismissPopover()
   });
 
@@ -43,6 +58,32 @@ const UserProfileCard: React.FC<ContainerProps> = ({ profile, showDetails, showQ
     if (showDetails) return;
 
     showPopover({ event, cssClass: 'widePopover' });
+  };
+
+  const askConfirmationToDeleteConnection = async (): Promise<void> => {
+    const header = 'Delete connection';
+    const message = 'Are you sure?';
+    const buttons = [
+      { text: 'Cancel', role: 'cancel' },
+      { text: 'Delete', handler: () => deleteConnectionWithUser(profile!.userId) }
+    ];
+    await showAlert({ header, message, buttons });
+  };
+
+  const deleteConnectionWithUser = async (userId: string): Promise<void> => {
+    await showLoading();
+    try {
+      await deleteConnection(userId);
+
+      await showMessage({ ...toastMessageDefaults, message: 'Connection removed.', color: 'success' });
+
+      if (onDeletedConnection) onDeletedConnection();
+      if (onHide) onHide();
+    } catch (e) {
+      await showMessage({ ...toastMessageDefaults, message: 'Error finding the user.', color: 'danger' });
+    } finally {
+      await dismissLoading();
+    }
   };
 
   return profile ? (
@@ -62,7 +103,7 @@ const UserProfileCard: React.FC<ContainerProps> = ({ profile, showDetails, showQ
           <IonLabel>
             {profile.getName()}
             <p className={showDetails ? 'ion-text-wrap' : ''}>
-              {profile.ESNCountry} {profile.ESNSection ? `- ${profile.ESNSection}` : ''}
+              {profile.ESNCountry || '-'} {profile.ESNSection ? `- ${profile.ESNSection}` : ''}
             </p>
           </IonLabel>
         </IonItem>
@@ -155,12 +196,14 @@ const UserProfileCard: React.FC<ContainerProps> = ({ profile, showDetails, showQ
             ''
           )}
           {profile.bio ? <p className="ion-padding">{profile.bio}</p> : ''}
-          {showQRCode ? (
-            <p className="ion-text-center ion-padding">
-              <QRCode value={profile.userId} size={200} />
-            </p>
-          ) : (
+          {isUserProfile ? (
             ''
+          ) : (
+            <p className="ion-padding ion-text-center" style={{ marginTop: 10 }}>
+              <IonButton size="small" color="danger" fill="clear" onClick={askConfirmationToDeleteConnection}>
+                Delete connection <IonIcon icon={trash} slot="end"></IonIcon>
+              </IonButton>
+            </p>
           )}
         </IonCardContent>
       ) : (
@@ -168,7 +211,7 @@ const UserProfileCard: React.FC<ContainerProps> = ({ profile, showDetails, showQ
       )}
     </IonCard>
   ) : (
-    <IonCard color="white">
+    <IonCard color="white" style={{ margin: 0 }}>
       <IonCardHeader>
         <IonItem lines="none" color="white">
           <IonAvatar slot="start">

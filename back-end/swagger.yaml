@@ -151,8 +151,9 @@ paths:
             schema:
               type: object
               properties:
-                userId:
+                username:
                   type: string
+                  description: User's email address
       responses:
         200:
           $ref: '#/components/responses/User'

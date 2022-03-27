@@ -2,8 +2,10 @@ import { isEmpty, Resource } from 'idea-toolbox';
 
 export class UserProfile extends Resource {
   userId: string;
+
   firstName: string;
   lastName: string;
+
   imageURI: string;
 
   languages: string[];
@@ -30,8 +32,10 @@ export class UserProfile extends Resource {
   load(x: any): void {
     super.load(x);
     this.userId = this.clean(x.userId, String);
+
     this.firstName = this.clean(x.firstName, String);
     this.lastName = this.clean(x.lastName, String);
+
     this.imageURI = this.clean(x.imageURI, String);
 
     this.languages = this.cleanArray(x.languages, String);

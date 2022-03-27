@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { Cognito, DynamoDB, RCError, ResourceController } from 'idea-aws';
 
 import { Connection } from '../models/connection';
 import { UserProfile } from '../models/userProfile';
@@ -13,12 +13,15 @@ import { UserProfile } from '../models/userProfile';
 
 const PROJECT = process.env.PROJECT;
 
+const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
+
 const DDB_TABLES = {
   profiles: process.env.DDB_TABLE_userProfiles,
   connections: process.env.DDB_TABLE_connections
 };
 
 const ddb = new DynamoDB();
+const cognito = new Cognito();
 
 export const handler = (ev: any, _: any, cb: any) => new Connections(ev, cb).handleRequest();
 
@@ -27,22 +30,29 @@ export const handler = (ev: any, _: any, cb: any) => new Connections(ev, cb).han
 ///
 
 class Connections extends ResourceController {
-  requesterId: string;
-  targetId: string;
+  target: UserProfile;
 
   constructor(event: any, callback: any) {
     super(event, callback, { resourceId: 'userId' });
-    this.requesterId = this.principalId;
-    this.targetId = this.body.userId || this.pathParameters.userId;
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
-    if (this.requesterId === this.targetId) throw new RCError('Same user');
-
     const requesterProfile = new UserProfile(
-      await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.requesterId } })
+      await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.principalId } })
     );
-    if (!requesterProfile.getName()) throw new RCError('Profile incomplete');
+    if (!requesterProfile.getName()) throw new RCError('Requester profile incomplete');
+
+    if (!this.resourceId) return;
+
+    try {
+      this.target = new UserProfile(
+        await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.resourceId } })
+      );
+    } catch (error) {
+      throw new RCError('Not found');
+    }
+
+    if (!this.target.getName()) throw new RCError('Target profile incomplete');
   }
 
   protected async getResources(): Promise<UserProfile[]> {
@@ -52,13 +62,13 @@ class Connections extends ResourceController {
           TableName: DDB_TABLES.connections,
           IndexName: 'requesterId-targetId-index',
           KeyConditionExpression: 'requesterId = :userId',
-          ExpressionAttributeValues: { ':userId': this.requesterId }
+          ExpressionAttributeValues: { ':userId': this.principalId }
         }),
         ddb.query({
           TableName: DDB_TABLES.connections,
           IndexName: 'targetId-requesterId-index',
           KeyConditionExpression: 'targetId = :userId',
-          ExpressionAttributeValues: { ':userId': this.requesterId }
+          ExpressionAttributeValues: { ':userId': this.principalId }
         })
       ]);
 
@@ -75,46 +85,47 @@ class Connections extends ResourceController {
 
       return sortedUserConnections;
     } catch (err) {
-      console.log('err', err);
       throw new RCError('Operation failed');
     }
   }
 
   protected async postResources(): Promise<UserProfile> {
-    const target = new UserProfile(await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.targetId } }));
+    try {
+      this.resourceId = (await cognito.getUserByEmail(this.body.username, COGNITO_USER_POOL_ID)).sub;
+    } catch (error) {
+      throw new RCError('Not found');
+    }
+    if (this.principalId === this.resourceId) throw new RCError('Same user');
 
-    if (!target.getName()) throw new RCError('Target profile incomplete');
+    try {
+      this.target = new UserProfile(
+        await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.resourceId } })
+      );
+    } catch (error) {
+      throw new RCError('Profile not found');
+    }
+    if (!this.target.getName()) throw new RCError('Target profile incomplete');
+
+    const existingConnection = await this.getConnectionOfUserWithTarget(this.target.userId);
+    if (existingConnection) throw new RCError('Already connected');
 
     const connection = new Connection({
       connectionId: await ddb.IUNID(PROJECT),
-      requesterId: this.requesterId,
-      targetId: target.userId
+      requesterId: this.principalId,
+      targetId: this.target.userId
     });
 
     try {
       await ddb.put({ TableName: DDB_TABLES.connections, Item: connection });
 
-      return target;
+      return this.target;
     } catch (err) {
       throw new RCError('Creation failed');
     }
   }
 
   protected async deleteResource(): Promise<void> {
-    const connectionWithUserAsRequester = await ddb.query({
-      TableName: DDB_TABLES.connections,
-      IndexName: 'requesterId-targetId-index',
-      KeyConditionExpression: 'requesterId = :requesterId AND targetId = :targetId',
-      ExpressionAttributeValues: { ':requesterId': this.requesterId, ':targetId': this.targetId }
-    });
-    const connectionWithUserAsTarget = await ddb.query({
-      TableName: DDB_TABLES.connections,
-      IndexName: 'targetId-requesterId-index',
-      KeyConditionExpression: 'requesterId = :requesterId AND targetId = :targetId',
-      ExpressionAttributeValues: { ':requesterId': this.targetId, ':targetId': this.requesterId }
-    });
-    const connection = connectionWithUserAsRequester[0] || connectionWithUserAsTarget[0];
-
+    const connection = await this.getConnectionOfUserWithTarget(this.target.userId);
     if (!connection) throw new RCError('Not found');
 
     try {
@@ -122,5 +133,23 @@ class Connections extends ResourceController {
     } catch (err) {
       throw new RCError('Delete failed');
     }
+  }
+
+  private async getConnectionOfUserWithTarget(targetId: string): Promise<Connection> {
+    const connectionWithUserAsRequester = await ddb.query({
+      TableName: DDB_TABLES.connections,
+      IndexName: 'requesterId-targetId-index',
+      KeyConditionExpression: 'requesterId = :requesterId AND targetId = :targetId',
+      ExpressionAttributeValues: { ':requesterId': this.principalId, ':targetId': targetId }
+    });
+    const connectionWithUserAsTarget = await ddb.query({
+      TableName: DDB_TABLES.connections,
+      IndexName: 'targetId-requesterId-index',
+      KeyConditionExpression: 'requesterId = :requesterId AND targetId = :targetId',
+      ExpressionAttributeValues: { ':requesterId': targetId, ':targetId': this.principalId }
+    });
+    const connection = connectionWithUserAsRequester[0] || connectionWithUserAsTarget[0];
+
+    return connection ? new Connection(connection) : null;
   }
 }

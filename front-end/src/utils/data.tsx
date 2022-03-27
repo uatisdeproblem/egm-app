@@ -99,6 +99,12 @@ export const isUserAdmin = async (): Promise<boolean> => {
 export const getConnections = async (): Promise<UserProfile[]> => {
   return (await apiRequest('GET', 'connections')).map((x: UserProfile) => new UserProfile(x));
 };
+export const addConnection = async (username: string): Promise<UserProfile> => {
+  return new UserProfile(await apiRequest('POST', 'connections', { username }));
+};
+export const deleteConnection = async (userId: string): Promise<void> => {
+  await apiRequest('DELETE', ['connections', userId]);
+};
 
 //
 // VENUES
@@ -205,11 +211,11 @@ const apiRequest = async (
   const headers = { Authorization: authSession.getAccessToken().getJwtToken() };
   let url = env.apiUrl.concat('/', env.currentStage, '/', Array.isArray(path) ? path.join('/') : path);
   const res = await fetch(url, { method, headers, body: JSON.stringify(body) });
-  if (res.status === 200) return res.json();
+  if (res.status === 200) return await res.json();
   else {
     let errMessage: string;
     try {
-      errMessage = (res.json() as any).message;
+      errMessage = (await res.json()).message;
     } catch (err) {
       errMessage = 'Operation failed';
     }

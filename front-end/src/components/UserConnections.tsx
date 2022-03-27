@@ -11,7 +11,7 @@ import {
   IonRow,
   useIonPopover
 } from '@ionic/react';
-import { idCard, personAdd } from 'ionicons/icons';
+import { idCard } from 'ionicons/icons';
 
 import { UserProfile } from 'models/userProfile';
 
@@ -19,6 +19,7 @@ import { getConnections } from '../utils/data';
 
 import UserProfileCard from '../components/UserProfileCard';
 import Searchbar from '../components/Searchbar';
+import AddConnectionButton from './AddConnectionButton';
 
 const PAGINATION_NUM_MAX_ELEMENTS = 48;
 
@@ -70,29 +71,45 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
     setFilteredConnections(filteredList);
   };
 
-  const [showPopover, dismissPopover] = useIonPopover(UserProfileCard, {
+  const [showUserCardPopover, dismissUserCardPopover] = useIonPopover(UserProfileCard, {
     profile,
     showDetails: true,
-    showQRCode: true,
-    onHide: () => dismissPopover()
+    isUserProfile: true,
+    onHide: () => dismissUserCardPopover()
   });
-  const openUserCard = (event: any) => showPopover({ event, cssClass: 'widePopover' });
+  const openUserCard = (event: any) => showUserCardPopover({ event, cssClass: 'widePopover' });
+
+  const newConnection = (connection: UserProfile): void => {
+    if (!connections) return;
+
+    connections.unshift(connection);
+    setConnections(connections);
+
+    filterConnections();
+  };
+  const deletedConnection = (connection: UserProfile): void => {
+    if (!connections) return;
+
+    connections.splice(connections.indexOf(connection), 1);
+    setConnections(connections);
+
+    filterConnections();
+  };
+
   return (
     <IonGrid>
       <IonRow>
-        <IonCol className="ion-text-center">
+        <IonCol className="ion-text-center ion-padding">
           <IonButton fill="clear" color="dark" onClick={openUserCard}>
-            Share your social card <IonIcon icon={idCard} slot="end"></IonIcon>
+            See your social card <IonIcon icon={idCard} slot="end"></IonIcon>
           </IonButton>
-          <IonButton>
-            Add a connection <IonIcon icon={personAdd} slot="end"></IonIcon>
-          </IonButton>
+          <AddConnectionButton newConnection={newConnection}></AddConnectionButton>
         </IonCol>
       </IonRow>
       <IonRow>
         <IonCol>
           <Searchbar
-            placeholder="Filter by name, ESN country..."
+            placeholder={connections?.length ? 'Filter your ' + connections.length + ' connections...' : ''}
             filterFn={filterConnections}
             ref={searchbar}
           ></Searchbar>
@@ -114,7 +131,7 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
         ) : (
           filteredConnections.map(user => (
             <IonCol key={user.userId} size="12" sizeMd="6" sizeLg="4" sizeXl="3">
-              <UserProfileCard profile={user}></UserProfileCard>
+              <UserProfileCard profile={user} onDeletedConnection={() => deletedConnection(user)}></UserProfileCard>
             </IonCol>
           ))
         )}
