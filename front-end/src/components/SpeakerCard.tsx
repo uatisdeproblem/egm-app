@@ -37,7 +37,7 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
       <IonCardHeader>
         <IonRow className="ion-align-items-center">
           <IonCol size="12" sizeSm={preview ? '12' : '3'}>
-            <IonAvatar style={{ margin: '0 auto', width: 100, height: 100, marginBottom: 16 }}>
+            <IonAvatar style={avatarStyle}>
               <IonImg
                 src={getImageURLByURI(speaker.imageURI)}
                 onIonError={(e: any) => (e.target.src = fallbackSpeakerImg)}
@@ -90,7 +90,7 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
       <IonCardHeader>
         <IonRow>
           <IonCol size="12" sizeSm={preview ? '12' : '3'}>
-            <IonAvatar>
+            <IonAvatar style={avatarStyle}>
               <IonSkeletonText animated />
             </IonAvatar>
           </IonCol>
@@ -117,3 +117,5 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
 };
 
 export default SpeakerCard;
+
+const avatarStyle = { margin: '0 auto', width: 100, height: 100, marginBottom: 16 };
