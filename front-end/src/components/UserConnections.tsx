@@ -101,7 +101,7 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
       <IonRow>
         <IonCol className="ion-text-center ion-padding">
           <IonButton fill="clear" color="dark" onClick={openUserCard}>
-            See your social card <IonIcon icon={idCard} slot="end"></IonIcon>
+            Open your social card <IonIcon icon={idCard} slot="end"></IonIcon>
           </IonButton>
           <AddConnectionButton newConnection={newConnection}></AddConnectionButton>
         </IonCol>
