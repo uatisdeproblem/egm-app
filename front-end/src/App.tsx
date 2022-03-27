@@ -67,6 +67,7 @@ Amplify.configure({
   }
 });
 
+Amplify.I18n.setLanguage('en');
 Amplify.I18n.putVocabularies({ en: { Username: 'Email' } });
 
 const App: React.FC = () => (
