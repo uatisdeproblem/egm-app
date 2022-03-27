@@ -22,9 +22,9 @@ import {
   logOut,
   map,
   mapOutline,
+  mic,
   people,
   peopleOutline,
-  person,
   refresh
 } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
@@ -94,12 +94,12 @@ const MenuPage: React.FC = () => {
             <IonLabel>Organizations</IonLabel>
           </IonItem>
           <IonItem button color="white" routerLink="/speakers">
-            <IonIcon icon={people} slot="start"></IonIcon>
+            <IonIcon icon={mic} slot="start"></IonIcon>
             <IonLabel>Speakers</IonLabel>
           </IonItem>
           <IonItem button color="white" routerLink="/user">
-            <IonIcon icon={person} slot="start"></IonIcon>
-            <IonLabel>Profile</IonLabel>
+            <IonIcon icon={people} slot="start"></IonIcon>
+            <IonLabel>Profile and connections</IonLabel>
           </IonItem>
           {userIsAdmin ? (
             <>
