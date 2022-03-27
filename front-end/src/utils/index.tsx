@@ -5,16 +5,30 @@ import { isPlatform } from '@ionic/core';
 
 export const SessionTypeStr = {
   [SessionType.KEYNOTE]: 'Keynote',
-  [SessionType.PARTNER]: 'Partner',
-  [SessionType.SMALL_SESSION]: 'Small session',
-  [SessionType.WORKSHOP]: 'Workshop'
+  [SessionType.WORKSHOP]: 'Workshop',
+  [SessionType.TALK]: 'EG Talk',
+  [SessionType.QA]: 'Q&A',
+  [SessionType.DISCUSSION]: 'Discussion',
+  [SessionType.IGNITE]: 'Ignite session',
+  [SessionType.CAMPFIRE]: 'Campfire session',
+  [SessionType.LAB]: 'Idea Lab',
+  [SessionType.KNOWLEDGE_EXCHANGE]: 'Knowledge Hub',
+  [SessionType.PROJECT]: 'Project Work',
+  [SessionType.POSTER]: 'Poster session'
 };
 
 export const SessionTypeColor = {
   [SessionType.KEYNOTE]: 'ESNdarkBlue',
-  [SessionType.PARTNER]: 'ESNcyan',
-  [SessionType.SMALL_SESSION]: 'ESNorange',
-  [SessionType.WORKSHOP]: 'ESNgreen'
+  [SessionType.WORKSHOP]: 'medium',
+  [SessionType.TALK]: 'ESNorange',
+  [SessionType.QA]: 'medium',
+  [SessionType.DISCUSSION]: 'ESNdarkBlue',
+  [SessionType.IGNITE]: 'ESNgreen',
+  [SessionType.CAMPFIRE]: 'ESNcyan',
+  [SessionType.LAB]: 'ESNorange',
+  [SessionType.KNOWLEDGE_EXCHANGE]: 'warning',
+  [SessionType.PROJECT]: 'ESNpink',
+  [SessionType.POSTER]: 'ESNdanger'
 };
 
 export const formatTime = (date: string): string =>

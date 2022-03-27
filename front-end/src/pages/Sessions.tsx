@@ -92,6 +92,7 @@ const SessionsPage: React.FC = () => {
         .split(' ')
         .every(searchTerm =>
           [
+            x.code,
             x.name,
             x.description,
             SessionTypeStr[x.type],

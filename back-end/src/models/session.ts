@@ -5,8 +5,8 @@ import { VenueLinked } from './venue';
 
 export class Session extends Resource {
   sessionId: string;
+  code: string;
   name: string;
-  abstract: string;
   description: string;
   type: SessionType;
   startsAt: epochISOString;
@@ -19,8 +19,8 @@ export class Session extends Resource {
   load(x: any): void {
     super.load(x);
     this.sessionId = this.clean(x.sessionId, String);
+    this.code = this.clean(x.code, String);
     this.name = this.clean(x.name, String);
-    this.abstract = this.clean(x.abstract, String);
     this.description = this.clean(x.description, String);
     this.type = this.clean(x.type, String) as SessionType;
     this.startsAt = this.clean(x.startsAt, String) as epochISOString;
@@ -50,8 +50,15 @@ export class Session extends Resource {
 }
 
 export enum SessionType {
-  PARTNER = 'PARTNER',
+  KEYNOTE = 'KEYNOTE',
   WORKSHOP = 'WORKSHOP',
-  SMALL_SESSION = 'SMALL_SESSION',
-  KEYNOTE = 'KEYNOTE'
+  TALK = 'TALK',
+  QA = 'QA',
+  DISCUSSION = 'DISCUSSION',
+  IGNITE = 'IGNITE',
+  CAMPFIRE = 'CAMPFIRE',
+  LAB = 'LAB',
+  KNOWLEDGE_EXCHANGE = 'KNOWLEDGE_EXCHANGE',
+  PROJECT = 'PROJECT',
+  POSTER = 'POSTER'
 }

@@ -59,15 +59,7 @@ const VenuePage: React.FC = () => {
       search
         .split(' ')
         .every(searchTerm =>
-          [
-            x.name,
-            x.description,
-            SessionTypeStr[x.type],
-            x.venue.name,
-            x.speaker1.name,
-            x.speaker2.name,
-            x.speaker3.name
-          ]
+          [x.code, x.name, x.description, SessionTypeStr[x.type], x.speaker1.name, x.speaker2.name, x.speaker3.name]
             .filter(f => f)
             .some(f => f.toLowerCase().includes(searchTerm))
         )

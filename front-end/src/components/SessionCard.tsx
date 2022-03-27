@@ -35,11 +35,17 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
           <IonCol size="10">
             <IonCardSubtitle style={{ marginBottom: 4 }}>
               <IonBadge color={SessionTypeColor[session.type]}>{SessionTypeStr[session.type]}</IonBadge>
+              {session.code ? (
+                <IonBadge color="light" style={{ marginLeft: 10 }}>
+                  {session.code}
+                </IonBadge>
+              ) : (
+                ''
+              )}
             </IonCardSubtitle>
             <IonCardTitle>
               <IonLabel>
                 <h1>{session.name}</h1>
-                <p>{session.abstract}</p>
               </IonLabel>
             </IonCardTitle>
           </IonCol>

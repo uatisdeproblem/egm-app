@@ -43,9 +43,7 @@ const OrganizationsPage: React.FC = () => {
     filteredOrganizations = (organizations || []).filter(x =>
       search
         .split(' ')
-        .every(searchTerm =>
-          [x.name, x.description || ''].filter(x => x).some(f => f.toLowerCase().includes(searchTerm))
-        )
+        .every(searchTerm => [x.name, x.description].filter(x => x).some(f => f.toLowerCase().includes(searchTerm)))
     );
 
     setFilteredOrganizations(filteredOrganizations);

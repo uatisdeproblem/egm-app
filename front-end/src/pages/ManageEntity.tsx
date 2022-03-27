@@ -139,8 +139,8 @@ const ManageEntityPage: React.FC = () => {
         const required = true;
         return [
           { type: 'hidden', name: 'sessionId', value: x['sessionId'] },
+          { type: 'text', name: 'code', value: x['code'], label: 'Code' },
           { type: 'text', name: 'name', value: x['name'], label: 'Name', required },
-          { type: 'text', name: 'abstract', value: x['abstract'], label: 'Abstract' },
           { type: 'textarea', name: 'description', value: x['description'], label: 'Description' },
           { type: 'select', name: 'type', value: x['type'], required, label: 'Type', options: sessionTypes },
           { type: 'datetime-local', name: 'startsAt', value: x['startsAt'], label: 'Starts at' },
