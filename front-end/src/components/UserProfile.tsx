@@ -45,9 +45,10 @@ import { Languages } from '../utils/languages';
 
 interface ContainerProps {
   profile: UserProfile;
+  onChange: (profile: UserProfile) => void;
 }
 
-const UserProfileComponent: React.FC<ContainerProps> = ({ profile }) => {
+const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) => {
   const [showMessage] = useIonToast();
   const [showLoading, dismissLoading] = useIonLoading();
 
@@ -135,6 +136,8 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile }) => {
 
       await saveUserProfile(userProfile);
       await showMessage({ ...toastMessageDefaults, message: 'Profile saved.', color: 'success' });
+
+      onChange(userProfile);
     } catch (err) {
       await showMessage({
         ...toastMessageDefaults,

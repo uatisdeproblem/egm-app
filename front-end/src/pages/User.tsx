@@ -62,7 +62,14 @@ const UserPage: React.FC = () => {
           ) : (
             ''
           )}
-          {segment === 'profile' ? <UserProfileComponent profile={userProfile}></UserProfileComponent> : ''}
+          {segment === 'profile' ? (
+            <UserProfileComponent
+              profile={userProfile}
+              onChange={userProfile => setUserProfile(userProfile)}
+            ></UserProfileComponent>
+          ) : (
+            ''
+          )}
         </IonContent>
       ) : (
         ''

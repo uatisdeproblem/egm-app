@@ -106,15 +106,19 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
           <AddConnectionButton newConnection={newConnection}></AddConnectionButton>
         </IonCol>
       </IonRow>
-      <IonRow>
-        <IonCol>
-          <Searchbar
-            placeholder={connections?.length ? 'Filter your ' + connections.length + ' connections...' : ''}
-            filterFn={filterConnections}
-            ref={searchbar}
-          ></Searchbar>
-        </IonCol>
-      </IonRow>
+      {connections?.length ? (
+        <IonRow>
+          <IonCol>
+            <Searchbar
+              placeholder={'Filter your ' + connections.length + ' connections...'}
+              filterFn={filterConnections}
+              ref={searchbar}
+            ></Searchbar>
+          </IonCol>
+        </IonRow>
+      ) : (
+        ''
+      )}
       <IonRow className="ion-justify-content-start">
         {!filteredConnections ? (
           [0, 1, 2, 3].map(x => (
@@ -124,7 +128,7 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
           ))
         ) : filteredConnections && filteredConnections.length === 0 ? (
           <IonCol>
-            <IonItem lines="none">
+            <IonItem lines="none" color="white">
               <IonLabel className="ion-text-center">No connections found.</IonLabel>
             </IonItem>
           </IonCol>
