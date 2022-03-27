@@ -34,10 +34,12 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
       </IonNote>
       <IonLabel className="ion-text-wrap">
         <IonText style={{ fontWeight: 500 }}>{session.name}</IonText>
-        <p className="ion-hide-sm-up" style={{ marginTop: 2 }}>
-          <IonBadge color={SessionTypeColor[session.type]}>{SessionTypeStr[session.type]}</IonBadge>
+        <p className="ion-hide-sm-up" style={{ paddingBottom: 2 }}>
+          <IonBadge style={{ marginTop: 2, fontSize: '0.8em' }} color={SessionTypeColor[session.type]}>
+            {SessionTypeStr[session.type]}
+          </IonBadge>
         </p>
-        <p>
+        <p style={{ marginTop: 4 }}>
           <IonIcon icon={locationOutline} style={{ verticalAlign: 'middle', marginRight: 4 }}></IonIcon>
           {session.venue ? (
             <Link onClick={(e: any) => e.stopPropagation()} to={'/venue/' + session.venue.venueId}>
