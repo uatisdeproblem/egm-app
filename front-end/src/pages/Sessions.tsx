@@ -185,7 +185,7 @@ const SessionsPage: React.FC = () => {
                 {!filteredSessions ? (
                   <SessionItem></SessionItem>
                 ) : filteredSessions.length === 0 ? (
-                  <IonItem lines="none">
+                  <IonItem lines="none" color="white">
                     <IonLabel className="ion-text-wrap ion-text-center">
                       {!segment && userFavoriteSessionsSet.size === 0 ? (
                         <>

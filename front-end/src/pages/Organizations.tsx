@@ -72,7 +72,7 @@ const OrganizationsPage: React.FC = () => {
                   </IonCol>
                 ) : filteredOrganizations && filteredOrganizations.length === 0 ? (
                   <IonCol>
-                    <IonItem lines="none">
+                    <IonItem lines="none" color="white">
                       <IonLabel className="ion-text-center">No organizations found.</IonLabel>
                     </IonItem>
                   </IonCol>

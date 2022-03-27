@@ -80,7 +80,7 @@ const SpeakersPage: React.FC = () => {
                   </IonCol>
                 ) : filteredSpeakers && filteredSpeakers.length === 0 ? (
                   <IonCol>
-                    <IonItem lines="none">
+                    <IonItem lines="none" color="white">
                       <IonLabel className="ion-text-center">No speakers found.</IonLabel>
                     </IonItem>
                   </IonCol>

@@ -107,7 +107,7 @@ const VenuePage: React.FC = () => {
                     </IonCol>
                   ) : filteredSessions && filteredSessions.length === 0 ? (
                     <IonCol>
-                      <IonItem lines="none">
+                      <IonItem lines="none" color="white">
                         <IonLabel className="ion-text-center">No sessions found.</IonLabel>
                       </IonItem>
                     </IonCol>
