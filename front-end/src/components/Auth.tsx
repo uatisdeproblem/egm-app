@@ -1,15 +1,20 @@
-import { Flex, Image, Text, useAuthenticator } from '@aws-amplify/ui-react';
-
+import { useAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
+
+import { IonIcon, IonImg, IonText } from '@ionic/react';
+import { openOutline } from 'ionicons/icons';
 
 export const AuthHeader = () => {
   const { isPending } = useAuthenticator();
   return isPending === undefined ? (
     <></>
   ) : (
-    <Flex justifyContent="center" padding={30} style={{ marginTop: 30 }}>
-      <Image alt="logo" src="/assets/images/ESN-star-full-colour.png" width={100} />
-    </Flex>
+    <div className="ion-padding ion-text-center" style={{ marginTop: 30 }}>
+      <IonImg
+        src="/assets/images/ESN-star-full-colour.png"
+        style={{ width: 100, margin: '0 auto', marginBottom: 20 }}
+      />
+    </div>
   );
 };
 
@@ -18,8 +23,15 @@ export const AuthFooter = () => {
   return isPending === undefined ? (
     <></>
   ) : (
-    <Flex justifyContent="center" padding={30}>
-      <Text color="white">Some useful info and links</Text>
-    </Flex>
+    <div className="ion-padding ion-text-center">
+      <p>
+        <a target="_blank" rel="noreferrer" href="https://meeting.erasmusgeneration.org">
+          Discover the Erasmus Generation Meeting <IonIcon icon={openOutline}></IonIcon>
+        </a>
+      </p>
+      <p>
+        <IonText color="medium">v0.0.1</IonText>
+      </p>
+    </div>
   );
 };

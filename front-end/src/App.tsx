@@ -1,4 +1,4 @@
-import Amplify from 'aws-amplify';
+import { Amplify } from 'aws-amplify';
 import { Authenticator } from '@aws-amplify/ui-react';
 
 import { Redirect, Route } from 'react-router-dom';
@@ -66,6 +66,8 @@ Amplify.configure({
     }
   }
 });
+
+Amplify.I18n.putVocabularies({ en: { Username: 'Email' } });
 
 const App: React.FC = () => (
   <Authenticator components={{ Header: AuthHeader, Footer: AuthFooter }}>
