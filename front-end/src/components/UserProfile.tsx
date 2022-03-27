@@ -309,7 +309,8 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
           <IonTextarea
             placeholder="Write something about you"
             value={userProfile.bio}
-            maxlength={100}
+            maxlength={300}
+            rows={4}
             onIonChange={e => handleFieldChange('bio', e.detail.value)}
             className={fieldHasErrors('bio') ? 'fieldHasError' : ''}
           />

@@ -48,7 +48,7 @@ export class UserProfile extends Resource {
     this.contactPhone = this.clean(x.contactPhone, String);
 
     this.bio = this.clean(x.bio, String);
-    if (this.bio) this.bio = this.bio.slice(0, 100);
+    if (this.bio) this.bio = this.bio.slice(0, 300);
 
     this.facebook = this.clean(x.facebook, String);
     this.instagram = this.clean(x.instagram, String);

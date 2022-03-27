@@ -195,7 +195,13 @@ const UserProfileCard: React.FC<ContainerProps> = ({
           ) : (
             ''
           )}
-          {profile.bio ? <p className="ion-padding">{profile.bio}</p> : ''}
+          {profile.bio ? (
+            <p className="ion-padding" style={{ background: 'var(--ion-color-light)' }}>
+              {profile.bio}
+            </p>
+          ) : (
+            ''
+          )}
           {isUserProfile ? (
             ''
           ) : (
