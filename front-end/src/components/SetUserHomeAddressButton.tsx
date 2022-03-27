@@ -20,7 +20,7 @@ const SetUserHomeAddressButton: React.FC<ContainerProps> = ({ userProfile, setFn
   const chooseHomeAddress = async (): Promise<void> => {
     const header = 'Home address';
     const message =
-      "You can set an address to quickly find your hotel, flat, etc. in the map, compared to the event's venues";
+      "You can set an address to quickly find your hotel, flat, etc. in the map, compared to the event's venues.";
     const inputs: any = [
       { name: 'address', placeholder: 'ABC Street, City XYZ, Country', value: userProfile.homeAddress }
     ];
