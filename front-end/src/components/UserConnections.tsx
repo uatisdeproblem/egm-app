@@ -119,7 +119,7 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
       ) : (
         ''
       )}
-      <IonRow className="ion-justify-content-start">
+      <IonRow className="ion-justify-content-center">
         {!filteredConnections ? (
           [0, 1, 2, 3].map(x => (
             <IonCol key={x} size="12" sizeMd="6" sizeLg="4" sizeXl="3">
