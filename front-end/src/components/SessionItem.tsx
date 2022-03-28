@@ -21,6 +21,11 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
   return session ? (
     <IonItem lines="none" color="white" style={itemStyle} key={session.sessionId} button onClick={select}>
       <IonNote slot="start" className="ion-text-center" style={{ marginRight: 18, lineHeight: 1.4 }}>
+        {toggleUserFavorite ? (
+          ''
+        ) : (
+          <span style={{ display: 'block', marginBottom: 6 }}>{formatDateShort(session.startsAt)}</span>
+        )}
         <b style={{ display: 'block' }}>{formatTime(session.startsAt)}</b>
         <span style={{ display: 'block' }}>{formatTime(session.endsAt)}</span>
         {toggleUserFavorite ? (
@@ -28,7 +33,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
             <IonIcon icon={isUserFavorite ? star : starOutline}></IonIcon>
           </IonButton>
         ) : (
-          <span style={{ display: 'block', marginTop: 6 }}>{formatDateShort(session.startsAt)}</span>
+          ''
         )}
       </IonNote>
       <IonLabel className="ion-text-wrap" style={{ lineHeight: 1.3 }}>
