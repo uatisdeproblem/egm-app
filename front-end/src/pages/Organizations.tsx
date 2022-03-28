@@ -78,7 +78,7 @@ const OrganizationsPage: React.FC = () => {
                   </IonCol>
                 ) : (
                   filteredOrganizations.map(organization => (
-                    <IonCol key={organization.organizationId} size="12" sizeSm="6" sizeMd="4" sizeLg="3" sizeXl="2">
+                    <IonCol key={organization.organizationId} size="12" sizeSm="6" sizeMd="4" sizeLg="3">
                       <OrganizationCard
                         organization={organization}
                         preview

@@ -44,7 +44,7 @@ const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, sel
           </div>
         ) : (
           <IonTitle>
-            <h2 className="ion-text-center">{organization.name}</h2>
+            <h2 className="ion-text-center ion-text-wrap">{organization.name}</h2>
           </IonTitle>
         )}
       </IonCardHeader>
