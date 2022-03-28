@@ -8,8 +8,9 @@ import { eye, navigate } from 'ionicons/icons';
 import { Venue } from 'models/venue';
 import { createMapMarker, openGeoLocationInMap } from '../utils';
 
-// ESN AISBL office
-const DEFAULT_MAP_CENTER: [number, number] = [4.378551, 50.844578];
+const DEFAULT_MAP_CENTER: [number, number] = [4.378551, 50.844578]; // ESN AISBL office
+
+const ZOOM_LEVEL = 14;
 
 const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref) => {
   const [showPopover, setShowPopover] = useState(false);
@@ -19,7 +20,7 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
 
   useEffect(() => {
     const initializeMap = async (): Promise<void> => {
-      const mapOptions = { container: id, zoom: 14, center: DEFAULT_MAP_CENTER };
+      const mapOptions = { container: id, zoom: ZOOM_LEVEL, center: DEFAULT_MAP_CENTER };
       if (venues.length) mapOptions.center = Venue.getCoordinates(venues[0]);
 
       const map = await createMap(mapOptions);
@@ -60,6 +61,8 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
 
           const activeMarker = ['match', ['get', 'id'], venue.venueId, 'active-marker', 'inactive-marker'];
           map.setLayoutProperty('venues', 'icon-image', activeMarker);
+
+          map.easeTo({ center: [venue.longitude, venue.latitude], zoom: ZOOM_LEVEL });
 
           setSelectedVenue(venue);
           setShowPopover(true);
