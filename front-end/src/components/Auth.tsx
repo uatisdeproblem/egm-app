@@ -34,7 +34,7 @@ export const AuthFooter = () => {
         </a>
       </p>
       <p>
-        <IonText color="medium">v0.0.1</IonText>
+        <IonText color="medium">v1.0.0</IonText>
       </p>
     </div>
   );

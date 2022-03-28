@@ -49,7 +49,7 @@ const MenuPage: React.FC = () => {
 
   const showAppInfo = async (): Promise<void> => {
     const header = 'App version';
-    const message = 'v0.0.1';
+    const message = 'v1.0.0';
     const buttons = ['Got it'];
     await showAlert({ header, message, buttons });
   };
