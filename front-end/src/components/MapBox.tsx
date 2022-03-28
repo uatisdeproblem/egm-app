@@ -4,7 +4,7 @@ import { createMap } from 'maplibre-gl-js-amplify';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import 'maplibre-gl-js-amplify/dist/public/amplify-map.css';
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonIcon, IonPopover } from '@ionic/react';
-import { eye, navigate } from 'ionicons/icons';
+import { navigate } from 'ionicons/icons';
 
 import { Venue } from 'models/venue';
 import { createMapMarker, openGeoLocationInMap } from '../utils';
@@ -108,7 +108,7 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
             <p className="ion-text-center ion-padding">{selectedVenue?.address}</p>
             {selectedVenue?.venueId !== 'home' ? (
               <IonButton fill="clear" expand="block" href={`/venue/${selectedVenue?.venueId}`}>
-                See details <IonIcon icon={eye} slot="end"></IonIcon>
+                See details
               </IonButton>
             ) : (
               ''
