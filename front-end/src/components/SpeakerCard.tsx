@@ -35,7 +35,7 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
       button={!!select}
       onClick={select}
       color="white"
-      style={{ height: preview ? '100%' : 'auto', width: '100%' }}
+      style={{ height: preview ? '100%' : 'auto', width: '100%', margin: 0 }}
     >
       <IonCardHeader>
         <IonRow className="ion-align-items-center">
