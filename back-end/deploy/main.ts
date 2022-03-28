@@ -24,27 +24,12 @@ const apiResources: ApiResourceController[] = [
   { name: 'speakers', paths: ['/speakers', '/speakers/{speakerId}'] },
   { name: 'venues', paths: ['/venues', '/venues/{venueId}'] },
   { name: 'sessions', paths: ['/sessions', '/sessions/{sessionId}'] },
+  { name: 'communications', paths: ['/communications', '/communications/{communicationId}'] },
   { name: 'media', paths: ['/media'] }
 ];
 
 const tables: { [tableName: string]: ApiTable } = {
   userProfiles: { PK: { name: 'userId', type: DDB.AttributeType.STRING } },
-  organizations: { PK: { name: 'organizationId', type: DDB.AttributeType.STRING } },
-  speakers: { PK: { name: 'speakerId', type: DDB.AttributeType.STRING } },
-  venues: { PK: { name: 'venueId', type: DDB.AttributeType.STRING } },
-  sessions: { PK: { name: 'sessionId', type: DDB.AttributeType.STRING } },
-  usersFavoriteSessions: {
-    PK: { name: 'userId', type: DDB.AttributeType.STRING },
-    SK: { name: 'sessionId', type: DDB.AttributeType.STRING },
-    indexes: [
-      {
-        indexName: 'inverted-index',
-        partitionKey: { name: 'sessionId', type: DDB.AttributeType.STRING },
-        sortKey: { name: 'userId', type: DDB.AttributeType.STRING },
-        projectionType: DDB.ProjectionType.ALL
-      }
-    ]
-  },
   connections: {
     PK: { name: 'connectionId', type: DDB.AttributeType.STRING },
     indexes: [
@@ -61,6 +46,27 @@ const tables: { [tableName: string]: ApiTable } = {
         projectionType: DDB.ProjectionType.ALL
       }
     ]
+  },
+  organizations: { PK: { name: 'organizationId', type: DDB.AttributeType.STRING } },
+  speakers: { PK: { name: 'speakerId', type: DDB.AttributeType.STRING } },
+  venues: { PK: { name: 'venueId', type: DDB.AttributeType.STRING } },
+  sessions: { PK: { name: 'sessionId', type: DDB.AttributeType.STRING } },
+  usersFavoriteSessions: {
+    PK: { name: 'userId', type: DDB.AttributeType.STRING },
+    SK: { name: 'sessionId', type: DDB.AttributeType.STRING },
+    indexes: [
+      {
+        indexName: 'inverted-index',
+        partitionKey: { name: 'sessionId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'userId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      }
+    ]
+  },
+  communications: { PK: { name: 'communicationId', type: DDB.AttributeType.STRING } },
+  usersReadCommunications: {
+    PK: { name: 'userId', type: DDB.AttributeType.STRING },
+    SK: { name: 'communicationId', type: DDB.AttributeType.STRING }
   }
 };
 

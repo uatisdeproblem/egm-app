@@ -555,6 +555,117 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /communications:
+    get:
+      summary: Get the communications
+      tags: [Communications]
+      security:
+        - CognitoUserPool: []
+      responses:
+        200:
+          $ref: '#/components/responses/Communications'
+    post:
+      summary: Insert a new communication
+      description: Requires to be Admin.
+      tags: [Communications]
+      security:
+        - CognitoUserPool: []
+      requestBody:
+        required: true
+        description: Communication
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Communication'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /communications/{communicationId}:
+    get:
+      summary: Get a communication
+      tags: [Communications]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: communicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Communication'
+    put:
+      summary: Edit a communication
+      description: Requires to be Admin.
+      tags: [Communications]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: communicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Communication
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Communication'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on a communication
+      tags: [Communications, Users]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: communicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum:
+                    - MARK_AS_READ
+                    - MARK_AS_UNREAD
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a communication
+      description: Requires to be Admin.
+      tags: [Communications]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: communicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
   /media:
     post:
       summary: Request the signed URL to upload a new media
@@ -637,6 +748,20 @@ components:
             type: object
     Sessions:
       description: Session[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+    Communication:
+      description: Communication
+      content:
+        application/json:
+          schema:
+            type: object
+    Communications:
+      description: Communication[]
       content:
         application/json:
           schema:

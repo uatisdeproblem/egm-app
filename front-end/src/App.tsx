@@ -1,9 +1,11 @@
-import { Amplify } from 'aws-amplify';
+import { Amplify, Hub } from 'aws-amplify';
 import { Authenticator } from '@aws-amplify/ui-react';
 
+import { useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
+  IonBadge,
   IonIcon,
   IonImg,
   IonLabel,
@@ -14,7 +16,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { calendar, map, menu, people } from 'ionicons/icons';
+import { calendar, map, megaphone, menu, people } from 'ionicons/icons';
 
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
@@ -39,6 +41,8 @@ import SpeakersPage from './pages/Speakers';
 import SpeakerPage from './pages/Speaker';
 import OrganizationsPage from './pages/Organizations';
 import OrganizationPage from './pages/Organization';
+import CommunicationsPage from './pages/Communications';
+import CommunicationPage from './pages/Communication';
 import ManageEntityPage from './pages/ManageEntity';
 
 import { isMobileMode } from './utils';
@@ -70,89 +74,112 @@ Amplify.configure({
 Amplify.I18n.setLanguage('en');
 Amplify.I18n.putVocabularies({ en: { Username: 'Email' } });
 
-const App: React.FC = () => (
-  <Authenticator components={{ Header: AuthHeader, Footer: AuthFooter }}>
-    {({ user }) =>
-      !user ? (
-        <></>
-      ) : (
-        <IonApp>
-          <IonReactRouter>
-            <IonTabs>
-              <IonRouterOutlet>
-                <Route path="/user">
-                  <UserPage />
-                </Route>
-                <Route path="/menu">
-                  <MenuPage />
-                </Route>
-                <Route path="/sessions">
-                  <SessionsPage />
-                </Route>
-                <Route path="/session/:sessionId">
-                  <SessionPage />
-                </Route>
-                <Route path="/venues">
-                  <VenuesPage />
-                </Route>
-                <Route path="/venue/:venueId">
-                  <VenuePage />
-                </Route>
-                <Route path="/speakers">
-                  <SpeakersPage />
-                </Route>
-                <Route path="/speaker/:speakerId">
-                  <SpeakerPage />
-                </Route>
-                <Route path="/organizations">
-                  <OrganizationsPage />
-                </Route>
-                <Route path="/organization/:organizationId">
-                  <OrganizationPage />
-                </Route>
-                <Route path="/manage/:type/:id">
-                  <ManageEntityPage />
-                </Route>
-                <Route exact path="/">
-                  <Redirect to="/sessions" />
-                </Route>
-              </IonRouterOutlet>
-              <IonTabBar
-                color="ideaToolbar"
-                mode={isMobileMode() ? 'md' : 'ios'}
-                slot={isMobileMode() ? 'bottom' : 'top'}
-                style={isMobileMode() ? {} : { justifyContent: 'right', borderBottom: 'none' }}
-              >
-                <IonTabButton tab="sessions" href="/sessions">
-                  {isMobileMode() ? <IonIcon icon={calendar} /> : ''}
-                  <IonLabel>Agenda</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="venues" href="/venues">
-                  {isMobileMode() ? <IonIcon icon={map} /> : ''}
-                  <IonLabel>Venues</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="user" href="/user">
-                  {isMobileMode() ? <IonIcon icon={people} /> : ''}
-                  <IonLabel>You</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="menu" href="/menu">
-                  {isMobileMode() ? <IonIcon icon={menu} /> : ''}
-                  <IonLabel>Menu</IonLabel>
-                </IonTabButton>
-                {isMobileMode() ? (
-                  ''
-                ) : (
-                  <IonTabButton>
-                    <IonImg src="/assets/images/ESN-star-full-colour.png" style={{ height: 25 }}></IonImg>
+const App: React.FC = () => {
+  const [communicationsCounter, setCommunicationsCounter] = useState(0);
+
+  Hub.listen('communications', ({ payload }) => setCommunicationsCounter(payload.data.num || 0));
+
+  return (
+    <Authenticator components={{ Header: AuthHeader, Footer: AuthFooter }}>
+      {({ user }) =>
+        !user ? (
+          <></>
+        ) : (
+          <IonApp>
+            <IonReactRouter>
+              <IonTabs>
+                <IonRouterOutlet>
+                  <Route path="/user">
+                    <UserPage />
+                  </Route>
+                  <Route path="/menu">
+                    <MenuPage />
+                  </Route>
+                  <Route path="/sessions">
+                    <SessionsPage />
+                  </Route>
+                  <Route path="/session/:sessionId">
+                    <SessionPage />
+                  </Route>
+                  <Route path="/communications">
+                    <CommunicationsPage />
+                  </Route>
+                  <Route path="/communication/:communicationId">
+                    <CommunicationPage />
+                  </Route>
+                  <Route path="/venues">
+                    <VenuesPage />
+                  </Route>
+                  <Route path="/venue/:venueId">
+                    <VenuePage />
+                  </Route>
+                  <Route path="/speakers">
+                    <SpeakersPage />
+                  </Route>
+                  <Route path="/speaker/:speakerId">
+                    <SpeakerPage />
+                  </Route>
+                  <Route path="/organizations">
+                    <OrganizationsPage />
+                  </Route>
+                  <Route path="/organization/:organizationId">
+                    <OrganizationPage />
+                  </Route>
+                  <Route path="/manage/:type/:id">
+                    <ManageEntityPage />
+                  </Route>
+                  <Route exact path="/">
+                    <Redirect to="/communications" />
+                  </Route>
+                </IonRouterOutlet>
+                <IonTabBar
+                  color="ideaToolbar"
+                  mode={isMobileMode() ? 'md' : 'ios'}
+                  slot={isMobileMode() ? 'bottom' : 'top'}
+                  style={isMobileMode() ? {} : { justifyContent: 'right', borderBottom: 'none' }}
+                >
+                  <IonTabButton tab="communications" href="/communications">
+                    {isMobileMode() ? <IonIcon icon={megaphone} /> : ''}
+                    <IonLabel>News</IonLabel>
+                    {communicationsCounter > 0 ? (
+                      <IonBadge color="ESNcyan" style={{ marginLeft: 8, fontWeight: 'bold' }}>
+                        {communicationsCounter}
+                      </IonBadge>
+                    ) : (
+                      ''
+                    )}
                   </IonTabButton>
-                )}
-              </IonTabBar>
-            </IonTabs>
-          </IonReactRouter>
-        </IonApp>
-      )
-    }
-  </Authenticator>
-);
+                  <IonTabButton tab="sessions" href="/sessions">
+                    {isMobileMode() ? <IonIcon icon={calendar} /> : ''}
+                    <IonLabel>Agenda</IonLabel>
+                  </IonTabButton>
+                  <IonTabButton tab="venues" href="/venues">
+                    {isMobileMode() ? <IonIcon icon={map} /> : ''}
+                    <IonLabel>Venues</IonLabel>
+                  </IonTabButton>
+                  <IonTabButton tab="user" href="/user">
+                    {isMobileMode() ? <IonIcon icon={people} /> : ''}
+                    <IonLabel>You</IonLabel>
+                  </IonTabButton>
+                  <IonTabButton tab="menu" href="/menu">
+                    {isMobileMode() ? <IonIcon icon={menu} /> : ''}
+                    <IonLabel>Menu</IonLabel>
+                  </IonTabButton>
+                  {isMobileMode() ? (
+                    ''
+                  ) : (
+                    <IonTabButton>
+                      <IonImg src="/assets/images/ESN-star-full-colour.png" style={{ height: 25 }}></IonImg>
+                    </IonTabButton>
+                  )}
+                </IonTabBar>
+              </IonTabs>
+            </IonReactRouter>
+          </IonApp>
+        )
+      }
+    </Authenticator>
+  );
+};
 
 export default App;

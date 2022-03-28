@@ -20,7 +20,7 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 
 import { Entity } from 'models/entity';
-import { formatDateTime, mdParser, toastMessageDefaults } from '../utils';
+import { extractDateTime, mdParser, toastMessageDefaults } from '../utils';
 import { openImage, uploadMediaAndGetURI } from '../utils/data';
 
 export interface ManageEntityField {
@@ -269,7 +269,7 @@ const ManageEntityForm: React.FC<ComponentProps> = ({
               <IonInput
                 type={f.type}
                 name={f.name}
-                value={f.value ? formatDateTime(f.value) : ''}
+                value={f.value ? extractDateTime(f.value) : ''}
                 className={fieldHasErrors(f.name) ? 'fieldHasError' : ''}
               ></IonInput>
             </IonItem>

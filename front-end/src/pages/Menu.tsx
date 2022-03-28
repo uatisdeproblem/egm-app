@@ -22,6 +22,8 @@ import {
   logOut,
   map,
   mapOutline,
+  megaphone,
+  megaphoneOutline,
   mic,
   people,
   peopleOutline,
@@ -81,6 +83,10 @@ const MenuPage: React.FC = () => {
           <IonItemDivider>
             <IonLabel>Pages</IonLabel>
           </IonItemDivider>
+          <IonItem button color="white" routerLink="/communications">
+            <IonIcon icon={megaphone} slot="start"></IonIcon>
+            <IonLabel>News & communications</IonLabel>
+          </IonItem>
           <IonItem button color="white" routerLink="/sessions">
             <IonIcon icon={calendar} slot="start"></IonIcon>
             <IonLabel>Agenda</IonLabel>
@@ -106,6 +112,10 @@ const MenuPage: React.FC = () => {
               <IonItemDivider>
                 <IonLabel>Manage</IonLabel>
               </IonItemDivider>
+              <IonItem button color="white" routerLink="/manage/communication/new">
+                <IonIcon icon={megaphoneOutline} slot="start"></IonIcon>
+                <IonLabel>Add communication</IonLabel>
+              </IonItem>
               <IonItem button color="white" routerLink="/manage/session/new">
                 <IonIcon icon={calendarOutline} slot="start"></IonIcon>
                 <IonLabel>Add session</IonLabel>

@@ -3,7 +3,6 @@
 ///
 
 import { DynamoDB, RCError, ResourceController } from 'idea-aws';
-import { SignedURL } from 'idea-toolbox';
 
 import { Session } from '../models/session';
 import { SpeakerLinked } from '../models/speaker';
@@ -87,15 +86,6 @@ class Sessions extends ResourceController {
       return this.session;
     } catch (err) {
       throw new RCError('Operation failed');
-    }
-  }
-
-  protected async patchResource(): Promise<SignedURL> {
-    if (!this.cognitoUser.isAdmin()) throw new RCError('Unauthorized');
-
-    switch (this.body.action) {
-      default:
-        throw new RCError('Unsupported action');
     }
   }
 

@@ -16,10 +16,12 @@ import {
 import { close } from 'ionicons/icons';
 
 import {
+  deleteCommunication,
   deleteOrganization,
   deleteSession,
   deleteSpeaker,
   deleteVenue,
+  getCommunication,
   getOrganization,
   getOrganizations,
   getSession,
@@ -27,6 +29,7 @@ import {
   getSpeakers,
   getVenue,
   getVenues,
+  saveCommunication,
   saveOrganization,
   saveSession,
   saveSpeaker,
@@ -37,6 +40,7 @@ import { Organization } from 'models/organization';
 import { Speaker } from 'models/speaker';
 import { Venue } from 'models/venue';
 import { Session, SessionType } from 'models/session';
+import { Communication } from 'models/communication';
 
 import ManageEntityForm, { ManageEntityField } from '../components/ManageEntityForm';
 import { SessionTypeStr } from '../utils';
@@ -159,6 +163,22 @@ const ManageEntityPage: React.FC = () => {
         ];
       },
       entitySupportData: async (): Promise<any> => ({ speakers: await getSpeakers(), venues: await getVenues() })
+    },
+    communication: {
+      initEntity: data => new Communication(data),
+      loadEntity: async id => await getCommunication(id),
+      saveEntity: async x => await saveCommunication(x as Communication),
+      deleteEntity: async x => await deleteCommunication(x as Communication),
+      entityFields: (x): ManageEntityField[] => {
+        const required = true;
+        return [
+          { type: 'hidden', name: 'communicationId', value: x['communicationId'] },
+          { type: 'text', name: 'title', value: x['title'], label: 'Title', required },
+          { type: 'textarea', name: 'content', value: x['content'], label: 'Content', required },
+          { type: 'datetime-local', name: 'publishedAt', value: x['publishedAt'], label: 'Published at', required },
+          { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Image' }
+        ];
+      }
     }
   };
 

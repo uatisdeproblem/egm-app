@@ -7,6 +7,7 @@ import { Organization } from 'models/organization';
 import { Venue } from 'models/venue';
 import { Speaker } from 'models/speaker';
 import { Session } from 'models/session';
+import { Communication, CommunicationWithMarker } from 'models/communication';
 
 import { getEnv } from '../environment';
 
@@ -55,6 +56,33 @@ export const removeSessionFromUserFavorites = async (session: Session): Promise<
   const body = { action: 'REMOVE_FAVORITE_SESSION', sessionId: session.sessionId };
   return await apiRequest('PATCH', ['users', 'me'], body);
 };
+
+//
+// COMMUNICATIONS
+//
+
+export const getCommunications = async (): Promise<CommunicationWithMarker[]> => {
+  return (await apiRequest('GET', 'communications')).map(
+    (x: CommunicationWithMarker) => new CommunicationWithMarker(x)
+  );
+};
+export const getCommunication = async (communicationId: string): Promise<CommunicationWithMarker> => {
+  return new CommunicationWithMarker(await apiRequest('GET', ['communications', communicationId]));
+};
+export const saveCommunication = async (communication: Communication): Promise<Communication> => {
+  if (communication.communicationId)
+    return await apiRequest('PUT', ['communications', communication.communicationId], communication);
+  else return await apiRequest('POST', 'communications', communication);
+};
+export const deleteCommunication = async (communication: Communication): Promise<void> => {
+  return await apiRequest('DELETE', ['communications', communication.communicationId]);
+};
+export const markCommunicationAsRead = async (communication: Communication, markRead: boolean): Promise<void> => {
+  return await apiRequest('PATCH', ['communications', communication.communicationId], {
+    action: markRead ? 'MARK_AS_READ' : 'MARK_AS_UNREAD'
+  });
+};
+export const newsFallbackImageURL = '/assets/images/no-news.jpg';
 
 //
 // USER PROFILE

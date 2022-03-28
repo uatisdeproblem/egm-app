@@ -19,15 +19,13 @@ import { eye, mail } from 'ionicons/icons';
 import { Speaker } from 'models/speaker';
 
 import { mdParser } from '../utils';
-import { getImageURLByURI } from '../utils/data';
+import { getImageURLByURI, usersFallbackImageURL } from '../utils/data';
 
 interface ContainerProps {
   speaker?: Speaker;
   preview?: boolean;
   select?: () => void;
 }
-
-const fallbackSpeakerImg = '/assets/images/no-avatar.jpg';
 
 const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => {
   const history = useHistory();
@@ -40,7 +38,7 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
             <IonAvatar style={avatarStyle}>
               <IonImg
                 src={getImageURLByURI(speaker.imageURI)}
-                onIonError={(e: any) => (e.target.src = fallbackSpeakerImg)}
+                onIonError={(e: any) => (e.target.src = usersFallbackImageURL)}
               ></IonImg>
             </IonAvatar>
           </IonCol>

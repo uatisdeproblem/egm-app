@@ -39,7 +39,7 @@ export const formatDateShort = (date: string | Date): string => {
   return date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
 };
 
-export const formatDateTime = (date: string | Date): string => {
+export const extractDateTime = (date: string | Date): string => {
   if (!(date instanceof Date)) date = new Date(date);
   return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 };
