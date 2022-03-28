@@ -1,4 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { LngLatBounds } from 'maplibre-gl';
 import { createMap } from 'maplibre-gl-js-amplify';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import 'maplibre-gl-js-amplify/dist/public/amplify-map.css';
@@ -37,8 +38,13 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
         map.addImage('inactive-marker', inactiveMarker, { pixelRatio: 2 });
         map.addImage('active-marker', activeMarker, { pixelRatio: 2 });
 
-        map.addSource('venues', { type: 'geojson', data: mapVenuesToMaplibreFeatureCollection(venues) });
+        const featuresCollection = mapVenuesToMaplibreFeatureCollection(venues);
+        map.addSource('venues', { type: 'geojson', data: featuresCollection });
         map.addLayer({ id: 'venues', type: 'symbol', source: 'venues', layout: { 'icon-image': 'inactive-marker' } });
+
+        const bounds = new LngLatBounds();
+        featuresCollection.features.forEach((feature: any) => bounds.extend(feature.geometry.coordinates));
+        map.fitBounds(bounds, { padding: 120 });
 
         map.on('mouseenter', 'venues', () => (map.getCanvas().style.cursor = 'pointer'));
         map.on('mouseleave', 'venues', () => (map.getCanvas().style.cursor = ''));
