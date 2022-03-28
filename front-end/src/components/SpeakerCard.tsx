@@ -43,16 +43,15 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
             </IonAvatar>
           </IonCol>
           <IonCol size="12" sizeSm={preview ? '12' : '9'}>
-            {Speaker.getRole(speaker).length ? (
-              <IonCardSubtitle className={preview ? 'ion-text-center' : ''}>{Speaker.getRole(speaker)}</IonCardSubtitle>
-            ) : (
-              ''
-            )}
-            <IonCardTitle>
-              <h2 style={{ marginTop: 3 }} className={preview ? 'ion-text-center' : ''}>
+            <IonCardTitle style={preview ? { marginTop: 8 } : undefined}>
+              <h2 style={{ marginTop: 3, marginBottom: 6 }} className={preview ? 'ion-text-center' : ''}>
                 {speaker.name}
               </h2>
             </IonCardTitle>
+            <IonCardSubtitle className={preview ? 'ion-text-center' : ''}>{speaker.organization.name}</IonCardSubtitle>
+            <IonCardSubtitle className={preview ? 'ion-text-center' : ''} style={{ fontWeight: 300 }}>
+              {speaker.title}
+            </IonCardSubtitle>
           </IonCol>
         </IonRow>
       </IonCardHeader>
@@ -120,4 +119,4 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
 
 export default SpeakerCard;
 
-const avatarStyle = { margin: '0 auto', width: 100, height: 100, marginBottom: 16 };
+const avatarStyle = { margin: '0 auto', width: 100, height: 100 };
