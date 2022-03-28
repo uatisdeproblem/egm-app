@@ -68,9 +68,13 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
             >
               Discover organization <IonIcon icon={eye} slot="end"></IonIcon>
             </IonButton>
-            <IonButton target="_blank" href={`mailto:${speaker.contactEmail}?subject=EGM%20contact%20request`}>
-              Contact me <IonIcon icon={mail} slot="end"></IonIcon>
-            </IonButton>
+            {speaker.contactEmail ? (
+              <IonButton target="_blank" href={`mailto:${speaker.contactEmail}?subject=EGM%20contact%20request`}>
+                Contact me <IonIcon icon={mail} slot="end"></IonIcon>
+              </IonButton>
+            ) : (
+              ''
+            )}
           </div>
 
           <div className="divDescription">

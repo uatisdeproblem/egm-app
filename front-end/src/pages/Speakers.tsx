@@ -86,7 +86,7 @@ const SpeakersPage: React.FC = () => {
                   </IonCol>
                 ) : (
                   filteredSpeakers.map(speaker => (
-                    <IonCol key={speaker.speakerId} size="12" sizeSm="6" sizeMd="4" sizeLg="3" sizeXl="2">
+                    <IonCol key={speaker.speakerId} size="12" sizeSm="6" sizeMd="4" sizeLg="3">
                       <SpeakerCard
                         speaker={speaker}
                         preview
