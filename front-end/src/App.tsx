@@ -44,6 +44,7 @@ import OrganizationPage from './pages/Organization';
 import CommunicationsPage from './pages/Communications';
 import CommunicationPage from './pages/Communication';
 import ManageEntityPage from './pages/ManageEntity';
+import AddToHomeScreenSuggestion from './components/AddToHomeScreenSuggestion';
 
 import { isMobileMode } from './utils';
 
@@ -80,12 +81,13 @@ const App: React.FC = () => {
   Hub.listen('communications', ({ payload }) => setCommunicationsCounter(payload.data.num || 0));
 
   return (
-    <Authenticator components={{ Header: AuthHeader, Footer: AuthFooter }}>
-      {({ user }) =>
-        !user ? (
-          <></>
-        ) : (
-          <IonApp>
+    <IonApp>
+      <AddToHomeScreenSuggestion></AddToHomeScreenSuggestion>
+      <Authenticator components={{ Header: AuthHeader, Footer: AuthFooter }}>
+        {({ user }) =>
+          !user ? (
+            <></>
+          ) : (
             <IonReactRouter>
               <IonTabs>
                 <IonRouterOutlet>
@@ -175,10 +177,10 @@ const App: React.FC = () => {
                 </IonTabBar>
               </IonTabs>
             </IonReactRouter>
-          </IonApp>
-        )
-      }
-    </Authenticator>
+          )
+        }
+      </Authenticator>
+    </IonApp>
   );
 };
 
