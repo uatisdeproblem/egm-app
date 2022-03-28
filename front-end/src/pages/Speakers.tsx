@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import {
   IonCol,
   IonContent,
   IonGrid,
   IonHeader,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
   IonItem,
   IonLabel,
   IonList,
@@ -21,8 +23,12 @@ import { Speaker } from 'models/speaker';
 import SpeakerCard from '../components/SpeakerCard';
 import Searchbar from '../components/Searchbar';
 
+const PAGINATION_NUM_MAX_ELEMENTS = 24;
+
 const SpeakersPage: React.FC = () => {
   const history = useHistory();
+
+  const searchbar = useRef(null);
 
   const [speakers, setSpeakers] = useState<Array<Speaker>>();
   const [filteredSpeakers, setFilteredSpeakers] = useState<Array<Speaker>>();
@@ -34,13 +40,17 @@ const SpeakersPage: React.FC = () => {
   const loadData = async (): Promise<void> => {
     const speakers = await getSpeakers();
     setSpeakers(speakers);
-    setFilteredSpeakers(speakers);
+    setFilteredSpeakers(speakers.slice(0, PAGINATION_NUM_MAX_ELEMENTS));
   };
 
-  const filterSpeakers = (search = ''): void => {
-    let filteredSpeakers: Speaker[];
+  const filterSpeakers = (search = '', scrollToNextPage?: any): void => {
+    const startPaginationAfterId = filteredSpeakers?.length
+      ? filteredSpeakers[filteredSpeakers.length - 1].speakerId
+      : null;
 
-    filteredSpeakers = (speakers || []).filter(x =>
+    let filteredList: Speaker[];
+
+    filteredList = (speakers || []).filter(x =>
       search
         .split(' ')
         .every(searchTerm =>
@@ -50,7 +60,16 @@ const SpeakersPage: React.FC = () => {
         )
     );
 
-    setFilteredSpeakers(filteredSpeakers);
+    let indexOfLastOfPreviousPage = 0;
+
+    if (scrollToNextPage && filteredList.length > PAGINATION_NUM_MAX_ELEMENTS)
+      indexOfLastOfPreviousPage = filteredList.findIndex(x => x.speakerId === startPaginationAfterId) || 0;
+
+    filteredList = filteredList.slice(0, indexOfLastOfPreviousPage + PAGINATION_NUM_MAX_ELEMENTS);
+
+    if (scrollToNextPage) setTimeout(() => scrollToNextPage.complete(), 100);
+
+    setFilteredSpeakers(filteredList);
   };
 
   return (
@@ -71,6 +90,7 @@ const SpeakersPage: React.FC = () => {
               placeholder="Filter by name, organization, title..."
               filterFn={filterSpeakers}
               refreshFn={loadData}
+              ref={searchbar}
             ></Searchbar>
             <IonGrid>
               <IonRow className="ion-justify-content-center">
@@ -95,6 +115,15 @@ const SpeakersPage: React.FC = () => {
                     </IonCol>
                   ))
                 )}
+              </IonRow>
+              <IonRow>
+                <IonCol>
+                  <IonInfiniteScroll
+                    onIonInfinite={event => filterSpeakers((searchbar as any)?.current?.value, event?.target)}
+                  >
+                    <IonInfiniteScrollContent></IonInfiniteScrollContent>
+                  </IonInfiniteScroll>
+                </IonCol>
               </IonRow>
             </IonGrid>
           </IonList>
