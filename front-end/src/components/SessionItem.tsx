@@ -31,7 +31,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
           <span style={{ display: 'block', marginTop: 6 }}>{formatDateShort(session.startsAt)}</span>
         )}
       </IonNote>
-      <IonLabel className="ion-text-wrap">
+      <IonLabel className="ion-text-wrap" style={{ lineHeight: 1.3 }}>
         <IonText style={{ fontWeight: 500 }}>{session.name}</IonText>
         <p className="ion-hide-sm-up" style={{ paddingBottom: 2 }}>
           <IonBadge style={{ marginTop: 2, fontSize: '0.8em' }} color={SessionTypeColor[session.type]}>
