@@ -43,6 +43,8 @@ import {
 import { ESNCountries, ESNSections } from '../utils/ESNSections';
 import { Languages } from '../utils/languages';
 
+import ChangeUserEmailComponent from './ChangeUserEmailComponent';
+
 interface ContainerProps {
   profile: UserProfile;
   onChange: (profile: UserProfile) => void;
@@ -168,6 +170,7 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
         <IonItemDivider>
           <IonLabel>Basic Information</IonLabel>
         </IonItemDivider>
+        <ChangeUserEmailComponent></ChangeUserEmailComponent>
         <IonItem color="white">
           <IonLabel position="floating">
             First name <IonText color="danger">*</IonText>
