@@ -19,7 +19,7 @@ const MapBox = forwardRef(({ id, venues }: { id: string; venues: Venue[] }, ref)
 
   useEffect(() => {
     const initializeMap = async (): Promise<void> => {
-      const mapOptions = { container: id, zoom: 11, center: DEFAULT_MAP_CENTER };
+      const mapOptions = { container: id, zoom: 14, center: DEFAULT_MAP_CENTER };
       if (venues.length) mapOptions.center = Venue.getCoordinates(venues[0]);
 
       const map = await createMap(mapOptions);
