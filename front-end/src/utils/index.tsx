@@ -39,6 +39,11 @@ export const formatDateShort = (date: string | Date): string => {
   return date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
 };
 
+export const formatDateTime = (date: string | Date): string => {
+  if (!(date instanceof Date)) date = new Date(date);
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+};
+
 export const toastMessageDefaults = { duration: 3000, buttons: ['X'] };
 
 export const isMobileMode = () => window.innerWidth < 992;

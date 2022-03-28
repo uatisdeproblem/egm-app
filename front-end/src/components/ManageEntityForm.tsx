@@ -20,7 +20,7 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 
 import { Entity } from 'models/entity';
-import { mdParser, toastMessageDefaults } from '../utils';
+import { formatDateTime, mdParser, toastMessageDefaults } from '../utils';
 import { openImage, uploadMediaAndGetURI } from '../utils/data';
 
 export interface ManageEntityField {
@@ -239,7 +239,7 @@ const ManageEntityForm: React.FC<ComponentProps> = ({
           );
         else if (f.type === 'textarea')
           return (
-            <div key={f.name}>
+            <div key={f.name} className={fieldHasErrors(f.name) ? 'fieldHasError' : ''}>
               <IonItem key={f.name} color="white" lines="none">
                 <IonLabel position="stacked" style={{ marginBottom: 14 }}>
                   {f.label} {f.required ? <IonText color="danger">*</IonText> : ''}
@@ -259,6 +259,20 @@ const ManageEntityForm: React.FC<ComponentProps> = ({
                 }}
               />
             </div>
+          );
+        else if (f.type === 'datetime-local')
+          return (
+            <IonItem key={f.name} color="white">
+              <IonLabel position="stacked">
+                {f.label} {f.required ? <IonText color="danger">*</IonText> : ''}
+              </IonLabel>
+              <IonInput
+                type={f.type}
+                name={f.name}
+                value={f.value ? formatDateTime(f.value) : ''}
+                className={fieldHasErrors(f.name) ? 'fieldHasError' : ''}
+              ></IonInput>
+            </IonItem>
           );
         else
           return (
