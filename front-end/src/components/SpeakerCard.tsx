@@ -31,7 +31,12 @@ const SpeakerCard: React.FC<ContainerProps> = ({ speaker, preview, select }) => 
   const history = useHistory();
 
   return speaker ? (
-    <IonCard button={!!select} onClick={select} color="white" style={{ height: preview ? '100%' : 'auto' }}>
+    <IonCard
+      button={!!select}
+      onClick={select}
+      color="white"
+      style={{ height: preview ? '100%' : 'auto', width: '100%' }}
+    >
       <IonCardHeader>
         <IonRow className="ion-align-items-center">
           <IonCol size="12" sizeSm={preview ? '12' : '3'}>
