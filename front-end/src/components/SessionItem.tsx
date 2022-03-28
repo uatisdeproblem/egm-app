@@ -3,8 +3,7 @@ import { IonLabel, IonBadge, IonIcon, IonItem, IonSkeletonText, IonButton, IonNo
 import { locationOutline, peopleOutline, star, starOutline } from 'ionicons/icons';
 
 import { Session } from 'models/session';
-import { Speaker } from 'models/speaker';
-import { SessionTypeStr, SessionTypeColor, formatTime } from '../utils';
+import { SessionTypeStr, SessionTypeColor, formatTime, formatDateShort } from '../utils';
 
 interface ContainerProps {
   session?: Session;
@@ -29,7 +28,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
             <IonIcon icon={isUserFavorite ? star : starOutline}></IonIcon>
           </IonButton>
         ) : (
-          ''
+          <span style={{ display: 'block', marginTop: 6 }}>{formatDateShort(session.startsAt)}</span>
         )}
       </IonNote>
       <IonLabel className="ion-text-wrap">
@@ -54,34 +53,63 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
             key={session.speaker1.speakerId}
             onClick={(e: any) => e.stopPropagation()}
             to={'/speaker/' + session.speaker1.speakerId}
-            style={{ marginRight: 10 }}
           >
-            {session.speaker1.name.trim()}
-            {Speaker.getRole(session.speaker1) ? ` (${Speaker.getRole(session.speaker1)})` : ''}
+            {session.speaker1.name}
           </Link>
           {session.speaker2.speakerId ? (
-            <Link
-              key={session.speaker2.speakerId}
-              onClick={(e: any) => e.stopPropagation()}
-              to={'/speaker/' + session.speaker2.speakerId}
-              style={{ marginRight: 10 }}
-            >
-              {session.speaker2.name}
-              {Speaker.getRole(session.speaker2) ? ` (${Speaker.getRole(session.speaker2)})` : ''}
-            </Link>
+            <>
+              ,{' '}
+              <Link
+                key={session.speaker2.speakerId}
+                onClick={(e: any) => e.stopPropagation()}
+                to={'/speaker/' + session.speaker2.speakerId}
+              >
+                {session.speaker2.name}
+              </Link>
+            </>
           ) : (
             ''
           )}
           {session.speaker3.speakerId ? (
-            <Link
-              key={session.speaker3.speakerId}
-              onClick={(e: any) => e.stopPropagation()}
-              to={'/speaker/' + session.speaker3.speakerId}
-              style={{ marginRight: 10 }}
-            >
-              {session.speaker3.name}
-              {Speaker.getRole(session.speaker3) ? ` (${Speaker.getRole(session.speaker3)})` : ''}
-            </Link>
+            <>
+              ,{' '}
+              <Link
+                key={session.speaker3.speakerId}
+                onClick={(e: any) => e.stopPropagation()}
+                to={'/speaker/' + session.speaker3.speakerId}
+              >
+                {session.speaker3.name}
+              </Link>
+            </>
+          ) : (
+            ''
+          )}
+          {session.speaker4.speakerId ? (
+            <>
+              ,{' '}
+              <Link
+                key={session.speaker4.speakerId}
+                onClick={(e: any) => e.stopPropagation()}
+                to={'/speaker/' + session.speaker4.speakerId}
+              >
+                {session.speaker4.name}
+              </Link>
+            </>
+          ) : (
+            ''
+          )}
+          {session.speaker5.speakerId ? (
+            <>
+              ,{' '}
+              <Link
+                key={session.speaker5.speakerId}
+                onClick={(e: any) => e.stopPropagation()}
+                to={'/speaker/' + session.speaker5.speakerId}
+                style={{ marginRight: 10 }}
+              >
+                {session.speaker5.name}
+              </Link>
+            </>
           ) : (
             ''
           )}

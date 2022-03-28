@@ -53,11 +53,11 @@ const SpeakerPage: React.FC = () => {
       <IonContent>
         <IonGrid className="contentGrid">
           <IonRow className="ion-justify-content-center">
-            <IonCol size="12" sizeMd="6">
+            <IonCol size="12" sizeLg="6">
               <SpeakerCard speaker={speaker}></SpeakerCard>
             </IonCol>
             {sessions?.length ? (
-              <IonCol size="12" sizeMd="6">
+              <IonCol size="12" sizeLg="6">
                 <IonList style={{ maxWidth: 600, margin: '0 auto' }}>
                   <IonListHeader>
                     <IonLabel class="ion-text-center">

@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import {
   IonList,
   IonLabel,
@@ -15,7 +14,7 @@ import {
   IonRow,
   IonCol
 } from '@ionic/react';
-import { calendarOutline, locationOutline, peopleOutline, star, starOutline } from 'ionicons/icons';
+import { calendarOutline, locationOutline, micOutline, peopleOutline, star, starOutline } from 'ionicons/icons';
 
 import { Session } from 'models/session';
 import { Speaker } from 'models/speaker';
@@ -69,49 +68,62 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
               <br /> {formatTime(session.startsAt)} {' - '} {formatTime(session.endsAt)}
             </IonLabel>
           </IonItem>
-          <IonItem color="white">
+          <IonItem color="white" routerLink={'/venue/' + session.venue.venueId}>
             <IonIcon slot="start" icon={locationOutline}></IonIcon>
+            <IonLabel className="ion-text-wrap">{session.venue.name}</IonLabel>
+          </IonItem>
+          <IonItem color="white" routerLink={'/speaker/' + session.speaker1.speakerId}>
+            <IonIcon slot="start" icon={micOutline}></IonIcon>
             <IonLabel className="ion-text-wrap">
-              <Link to={'/venue/' + session.venue.venueId}>{session.venue.name}</Link>
+              {session.speaker1.name}
+              <p>{Speaker.getRole(session.speaker1)}</p>
             </IonLabel>
           </IonItem>
-          <IonItem color="white">
-            <IonIcon slot="start" icon={peopleOutline}></IonIcon>
-            <IonLabel className="ion-text-wrap">
-              <Link
-                key={session.speaker1.speakerId}
-                to={'/speaker/' + session.speaker1.speakerId}
-                style={{ display: 'block' }}
-              >
-                {session.speaker1.name}
-                {Speaker.getRole(session.speaker1) ? ` (${Speaker.getRole(session.speaker1)})` : ''}
-              </Link>
-              {session.speaker2.speakerId ? (
-                <Link
-                  key={session.speaker2.speakerId}
-                  to={'/speaker/' + session.speaker2.speakerId}
-                  style={{ display: 'block' }}
-                >
-                  {session.speaker2.name}
-                  {Speaker.getRole(session.speaker2) ? ` (${Speaker.getRole(session.speaker2)})` : ''}
-                </Link>
-              ) : (
-                ''
-              )}
-              {session.speaker3.speakerId ? (
-                <Link
-                  key={session.speaker3.speakerId}
-                  to={'/speaker/' + session.speaker3.speakerId}
-                  style={{ display: 'block' }}
-                >
-                  {session.speaker3.name}
-                  {Speaker.getRole(session.speaker3) ? ` (${Speaker.getRole(session.speaker3)})` : ''}
-                </Link>
-              ) : (
-                ''
-              )}
-            </IonLabel>
-          </IonItem>
+          {session.speaker2.speakerId ? (
+            <IonItem color="white" routerLink={'/speaker/' + session.speaker2.speakerId}>
+              <IonIcon slot="start"></IonIcon>
+              <IonLabel>
+                {session.speaker2.name}
+                <p>{Speaker.getRole(session.speaker2)}</p>
+              </IonLabel>
+            </IonItem>
+          ) : (
+            ''
+          )}
+          {session.speaker3.speakerId ? (
+            <IonItem color="white" routerLink={'/speaker/' + session.speaker3.speakerId}>
+              <IonIcon slot="start"></IonIcon>
+              <IonLabel>
+                {session.speaker3.name}
+                <p>{Speaker.getRole(session.speaker3)}</p>
+              </IonLabel>
+            </IonItem>
+          ) : (
+            ''
+          )}
+          {session.speaker4.speakerId ? (
+            <IonItem color="white" routerLink={'/speaker/' + session.speaker4.speakerId}>
+              <IonIcon slot="start"></IonIcon>
+              <IonLabel>
+                {session.speaker4.name}
+                <p>{Speaker.getRole(session.speaker4)}</p>
+              </IonLabel>
+            </IonItem>
+          ) : (
+            ''
+          )}
+          {session.speaker5.speakerId ? (
+            <IonItem color="white" routerLink={'/speaker/' + session.speaker5.speakerId}>
+              <IonIcon slot="start"></IonIcon>
+              <IonLabel>
+                {session.speaker5.name}
+                <p>{Speaker.getRole(session.speaker5)}</p>
+              </IonLabel>
+            </IonItem>
+          ) : (
+            ''
+          )}
+
           <div className="divDescription" style={{ marginTop: 12 }}>
             {session.description ? (
               <span dangerouslySetInnerHTML={{ __html: mdParser.render(session.description) }}></span>

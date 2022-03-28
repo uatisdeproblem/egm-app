@@ -77,6 +77,14 @@ class Sessions extends ResourceController {
       this.session.speaker3 = new SpeakerLinked(
         await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker3.speakerId } })
       );
+    if (this.session.speaker4.speakerId)
+      this.session.speaker4 = new SpeakerLinked(
+        await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker4.speakerId } })
+      );
+    if (this.session.speaker5.speakerId)
+      this.session.speaker5 = new SpeakerLinked(
+        await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker5.speakerId } })
+      );
 
     try {
       const putParams: any = { TableName: DDB_TABLES.sessions, Item: this.session };
@@ -119,7 +127,7 @@ class Sessions extends ResourceController {
           (!this.queryParams.venue || x.venue.venueId === this.queryParams.venue)
       );
 
-      const sortedSessions = filtertedSessions.sort((a, b) => a.name.localeCompare(b.name));
+      const sortedSessions = filtertedSessions.sort((a, b) => a.startsAt.localeCompare(b.startsAt));
 
       return sortedSessions;
     } catch (err) {

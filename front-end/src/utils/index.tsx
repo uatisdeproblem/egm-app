@@ -9,12 +9,12 @@ export const SessionTypeStr = {
   [SessionType.TALK]: 'EG Talk',
   [SessionType.QA]: 'Q&A',
   [SessionType.DISCUSSION]: 'Discussion',
-  [SessionType.IGNITE]: 'Ignite session',
-  [SessionType.CAMPFIRE]: 'Campfire session',
+  [SessionType.IGNITE]: 'Ignite',
+  [SessionType.CAMPFIRE]: 'Campfire',
   [SessionType.LAB]: 'Idea Lab',
   [SessionType.KNOWLEDGE_EXCHANGE]: 'Knowledge Hub',
   [SessionType.PROJECT]: 'Project Work',
-  [SessionType.POSTER]: 'Poster session'
+  [SessionType.POSTER]: 'Poster'
 };
 
 export const SessionTypeColor = {

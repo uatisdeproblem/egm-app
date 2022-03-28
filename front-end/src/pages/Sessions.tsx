@@ -99,7 +99,9 @@ const SessionsPage: React.FC = () => {
             x.venue.name,
             x.speaker1.name,
             x.speaker2.name,
-            x.speaker3.name
+            x.speaker3.name,
+            x.speaker4.name,
+            x.speaker5.name
           ]
             .filter(x => x)
             .some(f => f.toLowerCase().includes(searchTerm))
@@ -218,7 +220,17 @@ const SessionsPage: React.FC = () => {
             </div>
             <div
               style={
-                isMobileMode() ? { display: 'none' } : { width: '50%', float: 'right', right: 0, position: 'fixed' }
+                isMobileMode()
+                  ? { display: 'none' }
+                  : {
+                      width: '50%',
+                      height: '100%',
+                      float: 'right',
+                      right: 0,
+                      position: 'fixed',
+                      overflowY: 'auto',
+                      paddingBottom: 100
+                    }
               }
             >
               {currentSession ? (

@@ -138,7 +138,7 @@ const ManageEntityPage: React.FC = () => {
         const venues = supportData.venues.map(v => ({ id: v.venueId, label: v.name }));
         const speakers = supportData.speakers.map(s => ({
           id: s.speakerId,
-          label: s.name.concat(' ', Speaker.getRole(s))
+          label: s.name.concat(` (${s.organization.name})`)
         }));
         const required = true;
         return [
@@ -148,7 +148,7 @@ const ManageEntityPage: React.FC = () => {
           { type: 'textarea', name: 'description', value: x['description'], label: 'Description' },
           { type: 'select', name: 'type', value: x['type'], required, label: 'Type', options: sessionTypes },
           { type: 'datetime-local', name: 'startsAt', value: x['startsAt'], label: 'Starts at' },
-          { type: 'datetime-local', name: 'endsAt', value: x['endsAt'], label: 'Ends at' },
+          { type: 'number', name: 'durationMinutes', value: x['durationMinutes'], label: 'Duration (minutes)' },
           { type: 'select', name: 'venue', value: x['venue'].venueId, required, label: 'Venue', options: venues },
           {
             type: 'select',
@@ -159,7 +159,9 @@ const ManageEntityPage: React.FC = () => {
             options: speakers
           },
           { type: 'select', name: 'speaker2', value: x['speaker2'].speakerId, label: 'Speaker 2', options: speakers },
-          { type: 'select', name: 'speaker3', value: x['speaker3'].speakerId, label: 'Speaker 3', options: speakers }
+          { type: 'select', name: 'speaker3', value: x['speaker3'].speakerId, label: 'Speaker 3', options: speakers },
+          { type: 'select', name: 'speaker4', value: x['speaker4'].speakerId, label: 'Speaker 4', options: speakers },
+          { type: 'select', name: 'speaker5', value: x['speaker5'].speakerId, label: 'Speaker 5', options: speakers }
         ];
       },
       entitySupportData: async (): Promise<any> => ({ speakers: await getSpeakers(), venues: await getVenues() })
