@@ -27,7 +27,7 @@ interface ContainerProps {
 const RoomCard: React.FC<ContainerProps> = ({ room, preview, select }) => {
   return room ? (
     preview ? (
-      <IonItem button={!!select} onClick={select}>
+      <IonItem color="white" button={!!select} onClick={select}>
         <IonLabel>
           {room.name}
           <p>{room.internalLocation}</p>
