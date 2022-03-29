@@ -96,6 +96,8 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
     filterConnections();
   };
 
+  const getSearchbarValue = (): string => (searchbar as any)?.current?.value;
+
   return (
     <IonGrid>
       <IonRow>
@@ -142,9 +144,7 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
       </IonRow>
       <IonRow>
         <IonCol>
-          <IonInfiniteScroll
-            onIonInfinite={event => filterConnections((searchbar as any)?.current?.value, event?.target)}
-          >
+          <IonInfiniteScroll onIonInfinite={event => filterConnections(getSearchbarValue(), event?.target)}>
             <IonInfiniteScrollContent></IonInfiniteScrollContent>
           </IonInfiniteScroll>
         </IonCol>

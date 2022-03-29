@@ -68,6 +68,8 @@ const OrganizationsPage: React.FC = () => {
     setFilteredOrganizations(filteredList);
   };
 
+  const getSearchbarValue = (): string => (searchbar as any)?.current?.value;
+
   return (
     <IonPage>
       <IonHeader>
@@ -114,9 +116,7 @@ const OrganizationsPage: React.FC = () => {
               </IonRow>
               <IonRow>
                 <IonCol>
-                  <IonInfiniteScroll
-                    onIonInfinite={event => filterOrganizations((searchbar as any)?.current?.value, event?.target)}
-                  >
+                  <IonInfiniteScroll onIonInfinite={event => filterOrganizations(getSearchbarValue(), event?.target)}>
                     <IonInfiniteScrollContent></IonInfiniteScrollContent>
                   </IonInfiniteScroll>
                 </IonCol>

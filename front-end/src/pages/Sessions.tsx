@@ -73,7 +73,7 @@ const SessionsPage: React.FC = () => {
 
   const changeSegment = (segment: string): void => {
     setSegment(segment);
-    filterSessions('', segment);
+    filterSessions(getSearchbarValue(), segment);
   };
   const filterSessions = (search = '', forceSegment?: string, scrollToNextPage?: any): void => {
     const startPaginationAfterId = filteredSessions?.length
@@ -146,6 +146,8 @@ const SessionsPage: React.FC = () => {
   const refreshUserFavoriteSessions = async (): Promise<void> =>
     setUserFavoriteSessionsSet(await getUserFavoriteSessionsSet());
 
+  const getSearchbarValue = (): string => (searchbar as any)?.current?.value;
+
   return (
     <IonPage>
       <IonHeader>
@@ -212,9 +214,7 @@ const SessionsPage: React.FC = () => {
                   ))
                 )}
               </IonList>
-              <IonInfiniteScroll
-                onIonInfinite={event => filterSessions((searchbar as any)?.current?.value, undefined, event?.target)}
-              >
+              <IonInfiniteScroll onIonInfinite={event => filterSessions(getSearchbarValue(), undefined, event?.target)}>
                 <IonInfiniteScrollContent></IonInfiniteScrollContent>
               </IonInfiniteScroll>
             </div>

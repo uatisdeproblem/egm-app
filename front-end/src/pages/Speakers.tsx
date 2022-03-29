@@ -72,6 +72,8 @@ const SpeakersPage: React.FC = () => {
     setFilteredSpeakers(filteredList);
   };
 
+  const getSearchbarValue = (): string => (searchbar as any)?.current?.value;
+
   return (
     <IonPage>
       <IonHeader>
@@ -118,9 +120,7 @@ const SpeakersPage: React.FC = () => {
               </IonRow>
               <IonRow>
                 <IonCol>
-                  <IonInfiniteScroll
-                    onIonInfinite={event => filterSpeakers((searchbar as any)?.current?.value, event?.target)}
-                  >
+                  <IonInfiniteScroll onIonInfinite={event => filterSpeakers(getSearchbarValue(), event?.target)}>
                     <IonInfiniteScrollContent></IonInfiniteScrollContent>
                   </IonInfiniteScroll>
                 </IonCol>
