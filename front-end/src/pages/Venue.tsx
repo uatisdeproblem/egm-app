@@ -18,7 +18,7 @@ import {
 import { Venue } from 'models/venue';
 import { Session } from 'models/session';
 
-import { SessionTypeStr, toastMessageDefaults } from '../utils';
+import { cleanStrForSearches, SessionTypeStr, toastMessageDefaults } from '../utils';
 import { getImageURLByURI, getSessions, getURLPathResourceId, getVenue, venuesFallbackImageURL } from '../utils/data';
 
 import EntityHeader from '../components/EntityHeader';
@@ -56,7 +56,7 @@ const VenuePage: React.FC = () => {
     let filteredSessions: Session[];
 
     filteredSessions = (sessions || []).filter(x =>
-      search
+      cleanStrForSearches(search)
         .split(' ')
         .every(searchTerm =>
           [
@@ -64,11 +64,11 @@ const VenuePage: React.FC = () => {
             x.name,
             x.description,
             SessionTypeStr[x.type],
-            x.speaker1.name,
-            x.speaker2.name,
-            x.speaker3.name,
-            x.speaker4.name,
-            x.speaker5.name
+            cleanStrForSearches(x.speaker1.name),
+            cleanStrForSearches(x.speaker2.name),
+            cleanStrForSearches(x.speaker3.name),
+            cleanStrForSearches(x.speaker4.name),
+            cleanStrForSearches(x.speaker5.name)
           ]
             .filter(f => f)
             .some(f => f.toLowerCase().includes(searchTerm))

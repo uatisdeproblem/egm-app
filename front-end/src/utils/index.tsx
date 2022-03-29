@@ -121,3 +121,5 @@ export const getLinkedinProfileURL = (link: string): string => {
   if (isValidURL(link)) return link;
   return 'https://linkedin.com/in/'.concat(link);
 };
+
+export const cleanStrForSearches = (str: string): string => str.normalize('NFD').replace(/\p{Diacritic}/gu, '');

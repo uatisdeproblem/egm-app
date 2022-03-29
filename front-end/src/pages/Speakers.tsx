@@ -16,7 +16,7 @@ import {
   IonToolbar
 } from '@ionic/react';
 
-import { isMobileMode } from '../utils';
+import { cleanStrForSearches, isMobileMode } from '../utils';
 import { getSpeakers } from '../utils/data';
 import { Speaker } from 'models/speaker';
 
@@ -51,10 +51,10 @@ const SpeakersPage: React.FC = () => {
     let filteredList: Speaker[];
 
     filteredList = (speakers || []).filter(x =>
-      search
+      cleanStrForSearches(search)
         .split(' ')
         .every(searchTerm =>
-          [x.name, x.organization.name, x.title, x.description]
+          [cleanStrForSearches(x.name), x.organization.name, x.title, x.description]
             .filter(x => x)
             .some(f => f.toLowerCase().includes(searchTerm))
         )

@@ -21,7 +21,7 @@ import {
 import { close, star } from 'ionicons/icons';
 
 import { Session } from 'models/session';
-import { formatDateShort, isMobileMode, SessionTypeStr, toastMessageDefaults } from '../utils';
+import { cleanStrForSearches, formatDateShort, isMobileMode, SessionTypeStr, toastMessageDefaults } from '../utils';
 import {
   addSessionToUserFavorites,
   getSessions,
@@ -88,7 +88,7 @@ const SessionsPage: React.FC = () => {
     else filteredList = sessions?.filter(s => s.startsAt.startsWith(useSegment)) || [];
 
     filteredList = filteredList.filter(x =>
-      search
+      cleanStrForSearches(search)
         .split(' ')
         .every(searchTerm =>
           [
@@ -97,11 +97,11 @@ const SessionsPage: React.FC = () => {
             x.description,
             SessionTypeStr[x.type],
             x.venue.name,
-            x.speaker1.name,
-            x.speaker2.name,
-            x.speaker3.name,
-            x.speaker4.name,
-            x.speaker5.name
+            cleanStrForSearches(x.speaker1.name),
+            cleanStrForSearches(x.speaker2.name),
+            cleanStrForSearches(x.speaker3.name),
+            cleanStrForSearches(x.speaker4.name),
+            cleanStrForSearches(x.speaker5.name)
           ]
             .filter(x => x)
             .some(f => f.toLowerCase().includes(searchTerm))
