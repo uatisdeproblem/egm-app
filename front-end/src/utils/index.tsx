@@ -14,7 +14,8 @@ export const SessionTypeStr = {
   [SessionType.LAB]: 'Idea Lab',
   [SessionType.KNOWLEDGE_EXCHANGE]: 'Knowledge Hub',
   [SessionType.PROJECT]: 'Project Work',
-  [SessionType.POSTER]: 'Poster'
+  [SessionType.POSTER]: 'Poster',
+  [SessionType.OTHER]: 'Other'
 };
 
 export const SessionTypeColor = {
@@ -28,7 +29,8 @@ export const SessionTypeColor = {
   [SessionType.LAB]: 'ESNorange',
   [SessionType.KNOWLEDGE_EXCHANGE]: 'warning',
   [SessionType.PROJECT]: 'ESNpink',
-  [SessionType.POSTER]: 'ESNdanger'
+  [SessionType.POSTER]: 'danger',
+  [SessionType.OTHER]: 'light'
 };
 
 export const formatTime = (date: string): string =>

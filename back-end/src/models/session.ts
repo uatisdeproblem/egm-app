@@ -80,5 +80,6 @@ export enum SessionType {
   LAB = 'LAB',
   KNOWLEDGE_EXCHANGE = 'KNOWLEDGE_EXCHANGE',
   PROJECT = 'PROJECT',
-  POSTER = 'POSTER'
+  POSTER = 'POSTER',
+  OTHER = 'OTHER'
 }
