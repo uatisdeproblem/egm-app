@@ -31,12 +31,13 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
 import { AuthFooter, AuthHeader } from './components/Auth';
-import SessionsPage from './pages/Sessions';
-import VenuesPage from './pages/Venues';
-import UserPage from './pages/User';
 import MenuPage from './pages/Menu';
+import UserPage from './pages/User';
+import SessionsPage from './pages/Sessions';
 import SessionPage from './pages/Session';
+import VenuesPage from './pages/Venues';
 import VenuePage from './pages/Venue';
+import RoomPage from './pages/Room';
 import SpeakersPage from './pages/Speakers';
 import SpeakerPage from './pages/Speaker';
 import OrganizationsPage from './pages/Organizations';
@@ -114,6 +115,9 @@ const App: React.FC = () => {
                   </Route>
                   <Route path="/venue/:venueId">
                     <VenuePage />
+                  </Route>
+                  <Route path="/room/:roomId">
+                    <RoomPage />
                   </Route>
                   <Route path="/speakers">
                     <SpeakersPage />

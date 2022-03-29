@@ -5,6 +5,7 @@ import { Browser } from '@capacitor/browser';
 import { UserProfile } from 'models/userProfile';
 import { Organization } from 'models/organization';
 import { Venue } from 'models/venue';
+import { Room } from 'models/room';
 import { Speaker } from 'models/speaker';
 import { Session } from 'models/session';
 import { Communication, CommunicationWithMarker } from 'models/communication';
@@ -15,13 +16,13 @@ import { getEnv } from '../environment';
 // SESSIONS
 //
 
-export const getSessions = async (filterBy?: { speaker?: Speaker; venue?: Venue }): Promise<Session[]> => {
+export const getSessions = async (filterBy?: { speaker?: Speaker; room?: Room }): Promise<Session[]> => {
   let path = 'sessions';
 
   if (filterBy) {
     const queryParams = [];
     if (filterBy.speaker?.speakerId) queryParams.push('speaker='.concat(filterBy.speaker.speakerId));
-    if (filterBy.venue?.venueId) queryParams.push('venue='.concat(filterBy.venue.venueId));
+    if (filterBy.room?.roomId) queryParams.push('room='.concat(filterBy.room.roomId));
     if (queryParams.length) path = path.concat('?', queryParams.join('&'));
   }
 
@@ -151,6 +152,28 @@ export const saveVenue = async (venue: Venue): Promise<Venue> => {
 };
 export const deleteVenue = async (venue: Venue): Promise<void> => {
   return await apiRequest('DELETE', ['venues', venue.venueId]);
+};
+
+//
+// ROOMS
+//
+
+export const getRooms = async (filterByVenue?: Venue): Promise<Room[]> => {
+  let path = 'rooms';
+  if (filterByVenue) path = path.concat('?venue='.concat(filterByVenue.venueId));
+
+  return (await apiRequest('GET', path)).map((x: Room) => new Room(x));
+};
+export const getRoom = async (roomId: string): Promise<Room> => {
+  return new Room(await apiRequest('GET', ['rooms', roomId]));
+};
+export const roomsFallbackImageURL = '/assets/images/no-room.jpg';
+export const saveRoom = async (room: Room): Promise<Room> => {
+  if (room.roomId) return await apiRequest('PUT', ['rooms', room.roomId], room);
+  else return await apiRequest('POST', 'rooms', room);
+};
+export const deleteRoom = async (room: Room): Promise<void> => {
+  return await apiRequest('DELETE', ['rooms', room.roomId]);
 };
 
 //

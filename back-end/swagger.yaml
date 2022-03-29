@@ -33,6 +33,8 @@ tags:
     description: The speakers of the event
   - name: Venues
     description: The venues of the event
+  - name: Rooms
+    description: The rooms of the event
   - name: Sessions
     description: The sessions of the event
 
@@ -463,6 +465,94 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /rooms:
+    get:
+      summary: Get the rooms
+      tags: [Rooms]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: venue
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Rooms'
+    post:
+      summary: Insert a new room
+      description: Requires to be Admin.
+      tags: [Rooms]
+      security:
+        - CognitoUserPool: []
+      requestBody:
+        required: true
+        description: Room
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /rooms/{roomId}:
+    get:
+      summary: Get a room
+      tags: [Rooms]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+    put:
+      summary: Edit a room
+      description: Requires to be Admin.
+      tags: [Rooms]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Room
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a room
+      description: Requires to be Admin.
+      tags: [Rooms]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
   /sessions:
     get:
       summary: Get the sessions
@@ -734,6 +824,20 @@ components:
             type: object
     Venues:
       description: Venue[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+    Room:
+      description: Room
+      content:
+        application/json:
+          schema:
+            type: object
+    Rooms:
+      description: Room[]
       content:
         application/json:
           schema:

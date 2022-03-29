@@ -4,7 +4,6 @@ import {
   IonCol,
   IonContent,
   IonGrid,
-  IonImg,
   IonItem,
   IonLabel,
   IonList,
@@ -16,23 +15,23 @@ import {
 } from '@ionic/react';
 
 import { Venue } from 'models/venue';
-import { Session } from 'models/session';
+import { Room } from 'models/room';
 
-import { cleanStrForSearches, SessionTypeStr, toastMessageDefaults } from '../utils';
-import { getImageURLByURI, getSessions, getURLPathResourceId, getVenue, venuesFallbackImageURL } from '../utils/data';
+import { toastMessageDefaults } from '../utils';
+import { getRooms, getURLPathResourceId, getVenue } from '../utils/data';
 
 import EntityHeader from '../components/EntityHeader';
 import VenueCard from '../components/VenueCard';
-import SessionItem from '../components/SessionItem';
 import Searchbar from '../components/Searchbar';
+import RoomCard from '../components/RoomCard';
 
 const VenuePage: React.FC = () => {
   const history = useHistory();
   const [showMessage] = useIonToast();
 
   const [venue, setVenue] = useState<Venue>();
-  const [sessions, setSessions] = useState<Array<Session>>();
-  const [filteredSessions, setFilteredSessions] = useState<Array<Session>>();
+  const [rooms, setRooms] = useState<Array<Room>>();
+  const [filteredRooms, setFilteredRooms] = useState<Array<Room>>();
 
   useIonViewWillEnter(() => {
     loadData();
@@ -42,40 +41,28 @@ const VenuePage: React.FC = () => {
     try {
       const venueId = getURLPathResourceId();
       const venue = await getVenue(venueId);
-      const sessions = await getSessions({ venue });
+      const rooms = await getRooms(venue);
 
       setVenue(venue);
-      setSessions(sessions);
-      setFilteredSessions(sessions);
+      setRooms(rooms);
+      setFilteredRooms(rooms);
     } catch (err) {
       await showMessage({ ...toastMessageDefaults, message: 'Venue not found.' });
     }
   };
 
-  const filterSessions = (search = ''): void => {
-    let filteredSessions: Session[];
+  const filterRooms = (search = ''): void => {
+    let filteredRooms: Room[];
 
-    filteredSessions = (sessions || []).filter(x =>
-      cleanStrForSearches(search)
+    filteredRooms = (rooms || []).filter(x =>
+      search
         .split(' ')
         .every(searchTerm =>
-          [
-            x.code,
-            x.name,
-            x.description,
-            SessionTypeStr[x.type],
-            cleanStrForSearches(x.speaker1.name),
-            cleanStrForSearches(x.speaker2.name),
-            cleanStrForSearches(x.speaker3.name),
-            cleanStrForSearches(x.speaker4.name),
-            cleanStrForSearches(x.speaker5.name)
-          ]
-            .filter(f => f)
-            .some(f => f.toLowerCase().includes(searchTerm))
+          [x.name, x.internalLocation, x.description].filter(f => f).some(f => f.toLowerCase().includes(searchTerm))
         )
     );
 
-    setFilteredSessions(filteredSessions);
+    setFilteredRooms(filteredRooms);
   };
 
   return (
@@ -86,48 +73,34 @@ const VenuePage: React.FC = () => {
           <IonRow className="ion-justify-content-center">
             <IonCol size="12" sizeMd="6">
               <VenueCard venue={venue}></VenueCard>
-              {venue?.planImageURI ? (
-                <IonList style={{ padding: 20 }}>
-                  <IonListHeader>
-                    <IonLabel class="ion-text-center">
-                      <h2>Where to find the room</h2>
-                    </IonLabel>
-                  </IonListHeader>
-                  <IonImg
-                    src={getImageURLByURI(venue.planImageURI)}
-                    onIonError={(e: any) => (e.target.src = venuesFallbackImageURL)}
-                  ></IonImg>
-                </IonList>
-              ) : (
-                ''
-              )}
             </IonCol>
-            {sessions?.length ? (
+            {rooms?.length ? (
               <IonCol size="12" sizeMd="6">
                 <IonList>
                   <IonListHeader>
                     <IonLabel class="ion-text-center">
-                      <h2>Sessions hosted in the venue</h2>
+                      <h2>Venue's rooms</h2>
                     </IonLabel>
                   </IonListHeader>
-                  <Searchbar placeholder="Filter by title, speaker..." filterFn={filterSessions}></Searchbar>
-                  {!filteredSessions ? (
+                  <Searchbar placeholder="Filter by name..." filterFn={filterRooms}></Searchbar>
+                  {!filteredRooms ? (
                     <IonCol>
-                      <SessionItem></SessionItem>
+                      <RoomCard preview></RoomCard>
                     </IonCol>
-                  ) : filteredSessions && filteredSessions.length === 0 ? (
+                  ) : filteredRooms && filteredRooms.length === 0 ? (
                     <IonCol>
                       <IonItem lines="none" color="white">
-                        <IonLabel className="ion-text-center">No sessions found.</IonLabel>
+                        <IonLabel className="ion-text-center">No rooms found.</IonLabel>
                       </IonItem>
                     </IonCol>
                   ) : (
-                    filteredSessions?.map(session => (
-                      <SessionItem
-                        key={session.sessionId}
-                        session={session}
-                        select={() => history.push('/session/' + session.sessionId)}
-                      ></SessionItem>
+                    filteredRooms?.map(room => (
+                      <RoomCard
+                        key={room.roomId}
+                        room={room}
+                        preview
+                        select={() => history.push('/room/' + room.roomId)}
+                      ></RoomCard>
                     ))
                   )}
                 </IonList>

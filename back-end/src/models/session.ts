@@ -1,7 +1,7 @@
 import { isEmpty, Resource } from 'idea-toolbox';
+import { RoomLinked } from './room';
 
 import { SpeakerLinked } from './speaker';
-import { VenueLinked } from './venue';
 
 /**
  * YYYY-MM-DDTHH:MM, without timezone.
@@ -17,7 +17,7 @@ export class Session extends Resource {
   startsAt: datetime;
   durationMinutes: number;
   endsAt: datetime;
-  venue: VenueLinked;
+  room: RoomLinked;
   speaker1: SpeakerLinked;
   speaker2: SpeakerLinked;
   speaker3: SpeakerLinked;
@@ -36,7 +36,7 @@ export class Session extends Resource {
     const endsAt = new Date(this.startsAt);
     endsAt.setMinutes(endsAt.getMinutes() + this.durationMinutes);
     this.endsAt = this.calcDatetimeWithoutTimezone(endsAt);
-    this.venue = typeof x.venue === 'string' ? new VenueLinked({ venueId: x.venue }) : new VenueLinked(x.venue);
+    this.room = typeof x.room === 'string' ? new RoomLinked({ roomId: x.room }) : new RoomLinked(x.room);
     this.speaker1 =
       typeof x.speaker1 === 'string' ? new SpeakerLinked({ speakerId: x.speaker1 }) : new SpeakerLinked(x.speaker1);
     this.speaker2 =
@@ -58,7 +58,7 @@ export class Session extends Resource {
     if (!Object.keys(SessionType).includes(this.type)) e.push('type');
     if (isEmpty(this.startsAt, 'date')) e.push('startsAt');
     if (isEmpty(this.durationMinutes)) e.push('durationMinutes');
-    if (!this.venue.venueId) e.push('venue');
+    if (!this.room.roomId) e.push('room');
     if (!this.speaker1.speakerId) e.push('speaker1');
     return e;
   }

@@ -93,8 +93,8 @@ const createThumbnailer = (scope: Construct): Lambda.Function => {
     functionName: 'idea_thumbnailer',
     environment: {
       THUMB_KEY_PREFIX: 'thumbnails/',
-      THUMB_HEIGHT: '600',
-      THUMB_WIDTH: '600'
+      THUMB_HEIGHT: '1200',
+      THUMB_WIDTH: '1200'
     },
     layers: [ghostScriptLayer, imageMagickLayer]
   });

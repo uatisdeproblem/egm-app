@@ -155,3 +155,10 @@ ion-grid.contentGrid {
 .tappable {
   cursor: pointer !important;
 }
+
+ion-img.inGallery {
+  --box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
+}
+ion-img.inGallery::part(image) {
+  border-radius: 2px;
+}

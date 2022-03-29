@@ -57,6 +57,9 @@ const VenueCard: React.FC<ContainerProps> = ({ venue }) => {
         <IonCardTitle>
           <IonSkeletonText animated style={{ width: '60%' }} />
         </IonCardTitle>
+        <IonCardSubtitle>
+          <IonSkeletonText animated style={{ width: '50%' }} />
+        </IonCardSubtitle>
       </IonCardHeader>
       <IonCardContent>
         <IonSkeletonText animated style={{ width: '80%' }} />

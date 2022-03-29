@@ -23,6 +23,7 @@ const apiResources: ApiResourceController[] = [
   { name: 'organizations', paths: ['/organizations', '/organizations/{organizationId}'] },
   { name: 'speakers', paths: ['/speakers', '/speakers/{speakerId}'] },
   { name: 'venues', paths: ['/venues', '/venues/{venueId}'] },
+  { name: 'rooms', paths: ['/rooms', '/rooms/{roomId}'] },
   { name: 'sessions', paths: ['/sessions', '/sessions/{sessionId}'] },
   { name: 'communications', paths: ['/communications', '/communications/{communicationId}'] },
   { name: 'media', paths: ['/media'] }
@@ -50,6 +51,7 @@ const tables: { [tableName: string]: ApiTable } = {
   organizations: { PK: { name: 'organizationId', type: DDB.AttributeType.STRING } },
   speakers: { PK: { name: 'speakerId', type: DDB.AttributeType.STRING } },
   venues: { PK: { name: 'venueId', type: DDB.AttributeType.STRING } },
+  rooms: { PK: { name: 'roomId', type: DDB.AttributeType.STRING } },
   sessions: { PK: { name: 'sessionId', type: DDB.AttributeType.STRING } },
   usersFavoriteSessions: {
     PK: { name: 'userId', type: DDB.AttributeType.STRING },

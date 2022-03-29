@@ -18,12 +18,15 @@ import { close } from 'ionicons/icons';
 import {
   deleteCommunication,
   deleteOrganization,
+  deleteRoom,
   deleteSession,
   deleteSpeaker,
   deleteVenue,
   getCommunication,
   getOrganization,
   getOrganizations,
+  getRoom,
+  getRooms,
   getSession,
   getSpeaker,
   getSpeakers,
@@ -31,6 +34,7 @@ import {
   getVenues,
   saveCommunication,
   saveOrganization,
+  saveRoom,
   saveSession,
   saveSpeaker,
   saveVenue
@@ -39,6 +43,7 @@ import { Entity } from 'models/entity';
 import { Organization } from 'models/organization';
 import { Speaker } from 'models/speaker';
 import { Venue } from 'models/venue';
+import { Room } from 'models/room';
 import { Session, SessionType } from 'models/session';
 import { Communication } from 'models/communication';
 
@@ -124,18 +129,37 @@ const ManageEntityPage: React.FC = () => {
         { type: 'text', name: 'longitude', value: x['longitude'], label: 'Longitude', required: true },
         { type: 'text', name: 'latitude', value: x['latitude'], label: 'Latitude', required: true },
         { type: 'textarea', name: 'description', value: x['description'], label: 'Description' },
-        { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Image' },
-        { type: 'image', name: 'planImageURI', value: x['planImageURI'], label: 'Plan (internal building)' }
+        { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Image' }
       ]
+    },
+    room: {
+      initEntity: data => new Room(data),
+      loadEntity: async id => await getRoom(id),
+      saveEntity: async x => await saveRoom(x as Room),
+      deleteEntity: async x => await deleteRoom(x as Room),
+      entityFields: (x, supportData: { venues: Venue[] }): ManageEntityField[] => {
+        const venues = supportData.venues.map(v => ({ id: v.venueId, label: v.name }));
+        const required = true;
+        return [
+          { type: 'hidden', name: 'roomId', value: x['roomId'] },
+          { type: 'text', name: 'name', value: x['name'], label: 'Name', required },
+          { type: 'select', name: 'venue', value: x['venue'].venueId, required, label: 'Venue', options: venues },
+          { type: 'text', name: 'internalLocation', value: x['internalLocation'], label: 'Internal location' },
+          { type: 'textarea', name: 'description', value: x['description'], label: 'Description' },
+          { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Picture' },
+          { type: 'image', name: 'planImageURI', value: x['planImageURI'], label: 'Plan (internal)' }
+        ];
+      },
+      entitySupportData: async (): Promise<any> => ({ venues: await getVenues() })
     },
     session: {
       initEntity: data => new Session(data),
       loadEntity: async id => await getSession(id),
       saveEntity: async x => await saveSession(x as Session),
       deleteEntity: async x => await deleteSession(x as Session),
-      entityFields: (x, supportData: { venues: Venue[]; speakers: Speaker[] }): ManageEntityField[] => {
+      entityFields: (x, supportData: { rooms: Room[]; speakers: Speaker[] }): ManageEntityField[] => {
         const sessionTypes = Object.keys(SessionType).map(t => ({ id: t, label: (SessionTypeStr as any)[t] }));
-        const venues = supportData.venues.map(v => ({ id: v.venueId, label: v.name }));
+        const rooms = supportData.rooms.map(r => ({ id: r.roomId, label: r.name.concat(` (${r.venue.name})`) }));
         const speakers = supportData.speakers.map(s => ({
           id: s.speakerId,
           label: s.name.concat(` (${s.organization.name})`)
@@ -149,7 +173,7 @@ const ManageEntityPage: React.FC = () => {
           { type: 'select', name: 'type', value: x['type'], required, label: 'Type', options: sessionTypes },
           { type: 'datetime-local', name: 'startsAt', value: x['startsAt'], label: 'Starts at' },
           { type: 'number', name: 'durationMinutes', value: x['durationMinutes'], label: 'Duration (minutes)' },
-          { type: 'select', name: 'venue', value: x['venue'].venueId, required, label: 'Venue', options: venues },
+          { type: 'select', name: 'room', value: x['room'].roomId, required, label: 'Room', options: rooms },
           {
             type: 'select',
             name: 'speaker1',
@@ -164,7 +188,7 @@ const ManageEntityPage: React.FC = () => {
           { type: 'select', name: 'speaker5', value: x['speaker5'].speakerId, label: 'Speaker 5', options: speakers }
         ];
       },
-      entitySupportData: async (): Promise<any> => ({ speakers: await getSpeakers(), venues: await getVenues() })
+      entitySupportData: async (): Promise<any> => ({ speakers: await getSpeakers(), rooms: await getRooms() })
     },
     communication: {
       initEntity: data => new Communication(data),

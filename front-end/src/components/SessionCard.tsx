@@ -14,7 +14,7 @@ import {
   IonRow,
   IonCol
 } from '@ionic/react';
-import { calendarOutline, locationOutline, micOutline, peopleOutline, star, starOutline } from 'ionicons/icons';
+import { calendarOutline, locationOutline, micOutline, star, starOutline } from 'ionicons/icons';
 
 import { Session } from 'models/session';
 import { Speaker } from 'models/speaker';
@@ -68,9 +68,11 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
               <br /> {formatTime(session.startsAt)} {' - '} {formatTime(session.endsAt)}
             </IonLabel>
           </IonItem>
-          <IonItem color="white" routerLink={'/venue/' + session.venue.venueId}>
+          <IonItem color="white" routerLink={'/room/' + session.room.roomId}>
             <IonIcon slot="start" icon={locationOutline}></IonIcon>
-            <IonLabel className="ion-text-wrap">{session.venue.name}</IonLabel>
+            <IonLabel className="ion-text-wrap">
+              {session.room.name} ({session.room.venue.name})
+            </IonLabel>
           </IonItem>
           <IonItem color="white" routerLink={'/speaker/' + session.speaker1.speakerId}>
             <IonIcon slot="start" icon={micOutline}></IonIcon>
@@ -161,7 +163,7 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
             </IonLabel>
           </IonItem>
           <IonItem>
-            <IonIcon slot="start" icon={peopleOutline}></IonIcon>
+            <IonIcon slot="start" icon={micOutline}></IonIcon>
             <IonLabel>
               <IonSkeletonText animated style={{ width: '60%' }} />
             </IonLabel>

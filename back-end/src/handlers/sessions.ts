@@ -6,7 +6,7 @@ import { DynamoDB, RCError, ResourceController } from 'idea-aws';
 
 import { Session } from '../models/session';
 import { SpeakerLinked } from '../models/speaker';
-import { VenueLinked } from '../models/venue';
+import { RoomLinked } from '../models/room';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -16,7 +16,7 @@ const PROJECT = process.env.PROJECT;
 
 const DDB_TABLES = {
   sessions: process.env.DDB_TABLE_sessions,
-  venues: process.env.DDB_TABLE_venues,
+  rooms: process.env.DDB_TABLE_rooms,
   speakers: process.env.DDB_TABLE_speakers
 };
 
@@ -63,8 +63,8 @@ class Sessions extends ResourceController {
     const errors = this.session.validate();
     if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
 
-    this.session.venue = new VenueLinked(
-      await ddb.get({ TableName: DDB_TABLES.venues, Key: { venueId: this.session.venue.venueId } })
+    this.session.room = new RoomLinked(
+      await ddb.get({ TableName: DDB_TABLES.rooms, Key: { roomId: this.session.room.roomId } })
     );
     this.session.speaker1 = new SpeakerLinked(
       await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker1.speakerId } })
@@ -130,7 +130,7 @@ class Sessions extends ResourceController {
               x.speaker4.speakerId,
               x.speaker5.speakerId
             ].includes(this.queryParams.speaker)) &&
-          (!this.queryParams.venue || x.venue.venueId === this.queryParams.venue)
+          (!this.queryParams.room || x.room.roomId === this.queryParams.room)
       );
 
       const sortedSessions = filtertedSessions.sort((a, b) => a.startsAt.localeCompare(b.startsAt));

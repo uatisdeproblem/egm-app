@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { IonLabel, IonBadge, IonIcon, IonItem, IonSkeletonText, IonButton, IonNote, IonText } from '@ionic/react';
-import { locationOutline, peopleOutline, star, starOutline } from 'ionicons/icons';
+import { locationOutline, micOutline, star, starOutline } from 'ionicons/icons';
 
 import { Session } from 'models/session';
 import { SessionTypeStr, SessionTypeColor, formatTime, formatDateShort } from '../utils';
@@ -45,15 +45,11 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
         </p>
         <p style={{ marginTop: 4 }}>
           <IonIcon icon={locationOutline} style={{ verticalAlign: 'middle', marginRight: 4 }}></IonIcon>
-          {session.venue ? (
-            <Link onClick={(e: any) => e.stopPropagation()} to={'/venue/' + session.venue.venueId}>
-              {session.venue.name}
-            </Link>
-          ) : (
-            ''
-          )}
+          <Link onClick={(e: any) => e.stopPropagation()} to={'/room/' + session.room.roomId}>
+            {session.room.name} ({session.room.venue.name})
+          </Link>
           <br />
-          <IonIcon icon={peopleOutline} style={{ verticalAlign: 'middle', marginRight: 4 }}></IonIcon>
+          <IonIcon icon={micOutline} style={{ verticalAlign: 'middle', marginRight: 4 }}></IonIcon>
           <Link
             key={session.speaker1.speakerId}
             onClick={(e: any) => e.stopPropagation()}

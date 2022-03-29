@@ -25,8 +25,9 @@ import {
   megaphone,
   megaphoneOutline,
   mic,
+  micOutline,
   people,
-  peopleOutline,
+  prismOutline,
   refresh
 } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
@@ -124,12 +125,16 @@ const MenuPage: React.FC = () => {
                 <IonIcon icon={mapOutline} slot="start"></IonIcon>
                 <IonLabel>Add venue</IonLabel>
               </IonItem>
+              <IonItem button color="white" routerLink="/manage/room/new">
+                <IonIcon icon={prismOutline} slot="start"></IonIcon>
+                <IonLabel>Add room</IonLabel>
+              </IonItem>
               <IonItem button color="white" routerLink="/manage/organization/new">
                 <IonIcon icon={businessOutline} slot="start"></IonIcon>
                 <IonLabel>Add organization</IonLabel>
               </IonItem>
               <IonItem button color="white" routerLink="/manage/speaker/new">
-                <IonIcon icon={peopleOutline} slot="start"></IonIcon>
+                <IonIcon icon={micOutline} slot="start"></IonIcon>
                 <IonLabel>Add speaker</IonLabel>
               </IonItem>
             </>
