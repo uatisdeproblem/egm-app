@@ -1,7 +1,7 @@
 # EGM 2022 app
 
-**[How to contribute / developers guide](/CONTRIBUTING.md)**.
-**[How to init (deploy) the project](/HOW-TO-DEPLOY.md)**.
+- **[How to contribute / developers guide](/CONTRIBUTING.md)**.
+- **[How to init (deploy) the project](/HOW-TO-DEPLOY.md)**.
 
 ## Dictionary
 
