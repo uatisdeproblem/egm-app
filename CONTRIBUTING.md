@@ -10,7 +10,7 @@ The app will be available through the major browsers and, possibly, published on
 
 The project's architecture identifies two modular blocks: [**front-end** and **back-end**](https://www.indeed.com/career-advice/career-development/front-end-vs-back-end).
 
-We will focus on the front-end, since the back-end is already defined, based on what we need.
+We will mostly focus on the front-end (@uatisdeproblem will take care of the back-end).
 
 ### Languages
 
@@ -51,14 +51,14 @@ _We will get to this later on!_
 
 Here's the initial project folders/files structure:
 
-<img width="300" alt="initial project structure" src="https://user-images.githubusercontent.com/3777036/147560410-80d57347-0074-4c0b-93c4-c482635792fa.png">
+<img width="300" alt="initial project structure" src="https://user-images.githubusercontent.com/3777036/160777541-e64ba44f-ae66-4497-b1ed-ebf973dc4122.png">
 
 _Don't worry: you won't need to know or edit most of this stuff!_
 
 You will spend 90% of your time working on the `src/components` and `src/pages` folders:
 
-- Pages: are the pages accessible in the app by a particular link (e.g. `/profile`).
-- Components: are the building blocks that compose a page (e.g. `<ProfileAvatar />`).
+- Pages: are the pages accessible in the app by a particular link (e.g. `/venue`).
+- Components: are the building blocks that compose a page (e.g. `<VenueCard />`).
 
 Each component/page is represented by a `.tsx` file (containing structure and business logic, i.e. HTML and TypeScript); sometimes, you may also find a `.css` file (containing the presentation code, i.e. CSS).
 
@@ -84,13 +84,17 @@ You probably have most of this stuff already on your dev computer, but if you ne
 
 ### Starting the local environment
 
-Make sure you have installed the projec's latest libraries and dependencies by running (project's root):
+Make sure you have installed the project's latest libraries and dependencies (and compiled the models) by running in the terminal, from project's root:
 
 ```
+cd back-end
+npm install
+npm run compile
+cd ../front-end
 npm install
 ```
 
-Start the project locally by running:
+Start the project locally by running (from the `front-end` folder):
 
 ```
 npm start
@@ -104,7 +108,7 @@ Any change that you make to the code will be automatically reloaded in the brows
 
 If you want to debug your code, you can open the [Developer Tools](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools) of your browser.
 
-⚠️⚠️ Since the app supports **development** and **production** stages, you need decide which to use when you run the front-end; in `/front-end/src/environment.tsx` you can switch between "dev" and "prod" with the variable `CURRENT_STAGE`. Note: _dev_ and _prod_ environment use the same user base (the accounts to log-in), but they have their own databases; this means that organizations, venues, speakers, sessions and user profiles will be different based on which environment you’re referring to with the variable `CURRENT_STAGE`.
+⚠️⚠️ Since the app supports **development** and **production** stages, you need decide which to use when you run the front-end; in `/front-end/src/environment.tsx` you can switch between "dev" and "prod" with the variable `CURRENT_STAGE`. Note: _dev_ and _prod_ environment use the same user base (the accounts to log-in), but they have their own databases; this means that organizations, venues, rooms, speakers, sessions and user profiles will be different based on which environment you’re referring to with the variable `CURRENT_STAGE`.
 
 ### Tackle an issue, develop and commit changes
 
