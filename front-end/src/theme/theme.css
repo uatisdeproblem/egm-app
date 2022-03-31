@@ -16,6 +16,12 @@ a:hover {
   border-top-width: 5px;
   margin-top: -5px;
 }
+[data-amplify-authenticator] [data-amplify-container] {
+  margin: 0 auto;
+}
+label.amplify-label.sr-only {
+  display: none !important;
+}
 [data-amplify-theme] {
   --amplify-colors-brand-primary-10: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.1) !important;
   --amplify-colors-brand-primary-20: rgba(var(--ion-color-ESNdarkBlue-rgb), 0.2) !important;
