@@ -2,7 +2,7 @@
  * @idea this file is a copy of `@aws-amplify/ui-react/styles.css` with a fix to solve a bug on iOS Safari.
  *
  *    [class*='amplify'] {
- *       all: initial; -> instead of "all"
+ *       all: initial; -> instead of "unset"
  *    }
  *
  *    Without it, the auth UI freezes for some reasons, and users can't type anything.
@@ -911,7 +911,7 @@ select {
 }
 
 [class*='amplify'] {
-  all: initial; /* @idea changed from "all" do "initial" to solve bug on iOS Safari */
+  all: initial; /* @idea changed from "unset" do "initial" to solve bug on iOS Safari */
   /* protect against external styles */
   box-sizing: border-box;
   /* set box-sizing after unset above */
