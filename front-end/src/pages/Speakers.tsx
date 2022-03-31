@@ -52,6 +52,7 @@ const SpeakersPage: React.FC = () => {
 
     filteredList = (speakers || []).filter(x =>
       cleanStrForSearches(search)
+        .toLowerCase()
         .split(' ')
         .every(searchTerm =>
           [cleanStrForSearches(x.name), x.organization.name, x.title, x.description]

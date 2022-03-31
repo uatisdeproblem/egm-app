@@ -89,6 +89,7 @@ const SessionsPage: React.FC = () => {
 
     filteredList = filteredList.filter(x =>
       cleanStrForSearches(search)
+        .toLowerCase()
         .split(' ')
         .every(searchTerm =>
           [

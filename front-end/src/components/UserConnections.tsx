@@ -51,6 +51,7 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
 
     filteredList = (connections || []).filter(x =>
       search
+        .toLowerCase()
         .split(' ')
         .every(searchTerm =>
           [x.firstName, x.lastName, x.ESNCountry, x.ESNSection]

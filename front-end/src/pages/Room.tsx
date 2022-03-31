@@ -73,6 +73,7 @@ const RoomPage: React.FC = () => {
 
     filteredList = (sessions || []).filter(x =>
       cleanStrForSearches(search)
+        .toLowerCase()
         .split(' ')
         .every(searchTerm =>
           [

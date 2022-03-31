@@ -56,6 +56,7 @@ const VenuePage: React.FC = () => {
 
     filteredRooms = (rooms || []).filter(x =>
       search
+        .toLowerCase()
         .split(' ')
         .every(searchTerm =>
           [x.name, x.internalLocation, x.description].filter(f => f).some(f => f.toLowerCase().includes(searchTerm))
