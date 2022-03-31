@@ -50,6 +50,7 @@ import AddToHomeScreenSuggestion from './components/AddToHomeScreenSuggestion';
 import { isMobileMode } from './utils';
 
 import 'typeface-poppins';
+import './theme/amplify-ui-react.css';
 import './theme/variables.css';
 import './theme/theme.css';
 

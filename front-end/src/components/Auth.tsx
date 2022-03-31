@@ -1,5 +1,4 @@
 import { useAuthenticator } from '@aws-amplify/ui-react';
-import '@aws-amplify/ui-react/styles.css';
 
 import { IonIcon, IonImg, IonText } from '@ionic/react';
 import { openOutline } from 'ionicons/icons';
