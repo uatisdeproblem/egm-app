@@ -22,13 +22,14 @@ const AddToHomeScreenSuggestion: React.FC = () => {
 
   const showSuggestion = async (): Promise<void> => {
     const message = 'You can add the app to your homescreen for a better experience. 🙌';
+    const position = 'top';
     const color = 'dark';
     const buttons = [
       { text: 'How to', handler: openInstructions },
       { text: 'X', handler: dimissSuggestionForeverOnDevice }
     ];
 
-    await showMessage({ message, color, buttons });
+    await showMessage({ message, color, buttons, position });
   };
 
   const openInstructions = async (): Promise<void> => {
