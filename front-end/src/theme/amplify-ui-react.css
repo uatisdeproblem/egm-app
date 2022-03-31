@@ -887,11 +887,12 @@ html:focus-within {
   scroll-behavior: smooth;
 }
 
+/* @idea remove to correctly show Ionic's tab bar
 body {
   min-height: 100vh;
   text-rendering: optimizeSpeed;
   line-height: var(--amplify-line-heights-medium);
-}
+}*/
 
 * {
   box-sizing: border-box;
