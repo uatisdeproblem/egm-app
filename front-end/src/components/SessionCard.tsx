@@ -81,7 +81,7 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
               <p>{Speaker.getRole(session.speaker1)}</p>
             </IonLabel>
           </IonItem>
-          {session.speaker2.speakerId ? (
+          {session.speaker2?.speakerId ? (
             <IonItem color="white" routerLink={'/speaker/' + session.speaker2.speakerId}>
               <IonIcon slot="start"></IonIcon>
               <IonLabel>
@@ -92,18 +92,18 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
           ) : (
             ''
           )}
-          {session.speaker3.speakerId ? (
+          {session.speaker3?.speakerId ? (
             <IonItem color="white" routerLink={'/speaker/' + session.speaker3.speakerId}>
               <IonIcon slot="start"></IonIcon>
               <IonLabel>
-                {session.speaker3.name}
+                {session.speaker3?.name}
                 <p>{Speaker.getRole(session.speaker3)}</p>
               </IonLabel>
             </IonItem>
           ) : (
             ''
           )}
-          {session.speaker4.speakerId ? (
+          {session.speaker4?.speakerId ? (
             <IonItem color="white" routerLink={'/speaker/' + session.speaker4.speakerId}>
               <IonIcon slot="start"></IonIcon>
               <IonLabel>
@@ -114,7 +114,7 @@ const SessionCard: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
           ) : (
             ''
           )}
-          {session.speaker5.speakerId ? (
+          {session.speaker5?.speakerId ? (
             <IonItem color="white" routerLink={'/speaker/' + session.speaker5.speakerId}>
               <IonIcon slot="start"></IonIcon>
               <IonLabel>

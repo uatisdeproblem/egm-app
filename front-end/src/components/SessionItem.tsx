@@ -54,7 +54,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, showDa
           >
             {session.speaker1.name}
           </Link>
-          {session.speaker2.speakerId ? (
+          {session.speaker2?.speakerId ? (
             <>
               ,{' '}
               <Link
@@ -68,7 +68,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, showDa
           ) : (
             ''
           )}
-          {session.speaker3.speakerId ? (
+          {session.speaker3?.speakerId ? (
             <>
               ,{' '}
               <Link
@@ -82,7 +82,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, showDa
           ) : (
             ''
           )}
-          {session.speaker4.speakerId ? (
+          {session.speaker4?.speakerId ? (
             <>
               ,{' '}
               <Link
@@ -96,7 +96,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, showDa
           ) : (
             ''
           )}
-          {session.speaker5.speakerId ? (
+          {session.speaker5?.speakerId ? (
             <>
               ,{' '}
               <Link
