@@ -307,7 +307,6 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
           <IonLabel>Present yourself to the other participants</IonLabel>
         </IonItemDivider>
         <IonItem color="white">
-          <IonLabel position="stacked">A brief "About me"</IonLabel>
           <IonTextarea
             placeholder="Write something about you"
             value={userProfile.bio}

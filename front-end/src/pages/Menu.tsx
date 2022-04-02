@@ -81,7 +81,7 @@ const MenuPage: React.FC = () => {
         )}
       </IonHeader>
       <IonContent>
-        <IonList style={{ maxWidth: 500, margin: '0 auto' }}>
+        <IonList style={{ maxWidth: 500, margin: '0 auto', paddingBottom: 40 }}>
           <IonItemDivider>
             <IonLabel>Pages</IonLabel>
           </IonItemDivider>
