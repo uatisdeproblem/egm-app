@@ -4,6 +4,9 @@ import '../theme/amplify-ui-react.css';
 import { IonIcon, IonImg, IonText } from '@ionic/react';
 import { openOutline } from 'ionicons/icons';
 
+import { getEnv } from '../environment';
+const env = getEnv();
+
 export const AuthHeader = () => {
   const { isPending } = useAuthenticator();
   return isPending === undefined ? (
@@ -31,6 +34,11 @@ export const AuthFooter = () => {
       <p>
         <a target="_blank" rel="noreferrer" href="https://meeting.erasmusgeneration.org">
           Discover the Erasmus Generation Meeting <IonIcon icon={openOutline}></IonIcon>
+        </a>
+      </p>
+      <p>
+        <a target="_blank" rel="noreferrer" href={env.privacyPolicyURL}>
+          Privacy Policy <IonIcon icon={openOutline}></IonIcon>
         </a>
       </p>
       <p>

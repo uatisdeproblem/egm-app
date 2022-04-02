@@ -13,6 +13,7 @@ const parameters = {
   currentStage: CURRENT_STAGE,
   stage: { url: 'placeholder' },
   supportEmail: 'egm.it@esnportugal.org',
+  privacyPolicyURL: 'https://www.iubenda.com/privacy-policy/47311861',
   apiUrl: 'https://api.egm-app.link',
   mediaUrl: 'https://media.egm-app.link',
   cognito: {
