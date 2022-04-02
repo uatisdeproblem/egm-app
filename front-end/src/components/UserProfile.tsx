@@ -193,34 +193,8 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
             className={fieldHasErrors('lastName') ? 'fieldHasError' : ''}
           ></IonInput>
         </IonItem>
-        <IonItemDivider>
-          <IonLabel>Contacts</IonLabel>
-        </IonItemDivider>
         <IonItem color="white">
-          <IonLabel position="floating">
-            Email <IonText color="danger">*</IonText>
-          </IonLabel>
-          <IonInput
-            inputMode="email"
-            value={userProfile.contactEmail}
-            onIonChange={e => handleFieldChange('contactEmail', e.detail.value)}
-            className={fieldHasErrors('contactEmail') ? 'fieldHasError' : ''}
-          ></IonInput>
-        </IonItem>
-        <IonItem color="white">
-          <IonLabel position="floating">Phone</IonLabel>
-          <IonInput
-            inputMode="tel"
-            value={userProfile.contactPhone}
-            onIonChange={e => handleFieldChange('contactPhone', e.detail.value)}
-            className={fieldHasErrors('contactPhone') ? 'fieldHasError' : ''}
-          ></IonInput>
-        </IonItem>
-        <IonItemDivider>
-          <IonLabel>Skills</IonLabel>
-        </IonItemDivider>
-        <IonItem color="white">
-          <IonLabel position="stacked">Languages</IonLabel>
+          <IonLabel position="stacked">Languages you speak</IonLabel>
           <IonSelect
             multiple
             interface="popover"
@@ -235,38 +209,7 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
             ))}
           </IonSelect>
         </IonItem>
-        <IonItem color="white">
-          <IonLabel position="stacked">Curriculum vitae</IonLabel>
-          <IonInput readonly value={userProfile.hasUploadedCV ? 'PDF document' : ''}></IonInput>
-          <input type="hidden" name="hasUploadedCV" value={userProfile.hasUploadedCV ? 'true' : ''}></input>
-          <input type="file" accept="application/pdf" onChange={uploadAndSetCV} id="cv-input" hidden={true} />
-          {userProfile.hasUploadedCV ? (
-            <>
-              <IonButton
-                slot="end"
-                fill="clear"
-                color="medium"
-                style={{ marginTop: 16 }}
-                onClick={() => handleFieldChange('hasUploadedCV', false)}
-              >
-                <IonIcon icon={trash} slot="icon-only"></IonIcon>
-              </IonButton>
-              <IonButton slot="end" fill="clear" color="medium" style={{ marginTop: 16 }} onClick={downloadUserCV}>
-                <IonIcon icon={open} slot="icon-only"></IonIcon>
-              </IonButton>
-            </>
-          ) : (
-            <IonButton
-              slot="end"
-              fill="clear"
-              color="medium"
-              style={{ marginTop: 16 }}
-              onClick={() => document.getElementById('cv-input')?.click()}
-            >
-              <IonIcon icon={cloudUpload} slot="icon-only"></IonIcon>
-            </IonButton>
-          )}
-        </IonItem>
+
         <IonItemDivider>
           <IonLabel>ESN</IonLabel>
         </IonItemDivider>
@@ -305,10 +248,10 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
           </IonSelect>
         </IonItem>
         <IonItemDivider>
-          <IonLabel>Extra</IonLabel>
+          <IonLabel>Present yourself to the other participants</IonLabel>
         </IonItemDivider>
         <IonItem color="white">
-          <IonLabel position="stacked">About me</IonLabel>
+          <IonLabel position="stacked">A brief "About me"</IonLabel>
           <IonTextarea
             placeholder="Write something about you"
             value={userProfile.bio}
@@ -317,6 +260,29 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
             onIonChange={e => handleFieldChange('bio', e.detail.value)}
             className={fieldHasErrors('bio') ? 'fieldHasError' : ''}
           />
+        </IonItem>
+        <IonItemDivider>
+          <IonLabel>Contacts</IonLabel>
+        </IonItemDivider>
+        <IonItem color="white">
+          <IonLabel position="floating">
+            Email <IonText color="danger">*</IonText>
+          </IonLabel>
+          <IonInput
+            inputMode="email"
+            value={userProfile.contactEmail}
+            onIonChange={e => handleFieldChange('contactEmail', e.detail.value)}
+            className={fieldHasErrors('contactEmail') ? 'fieldHasError' : ''}
+          ></IonInput>
+        </IonItem>
+        <IonItem color="white">
+          <IonLabel position="floating">Phone</IonLabel>
+          <IonInput
+            inputMode="tel"
+            value={userProfile.contactPhone}
+            onIonChange={e => handleFieldChange('contactPhone', e.detail.value)}
+            className={fieldHasErrors('contactPhone') ? 'fieldHasError' : ''}
+          ></IonInput>
         </IonItem>
         <IonItemDivider>
           <IonLabel>Social</IonLabel>
@@ -366,6 +332,48 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
             className={fieldHasErrors('linkedin') ? 'fieldHasError' : ''}
           />
         </IonItem>
+        {true ? (
+          // disabled #41
+          ''
+        ) : (
+          <>
+            <IonItemDivider>
+              <IonLabel>Skills</IonLabel>
+            </IonItemDivider>
+            <IonItem color="white">
+              <IonLabel position="stacked">Curriculum vitae</IonLabel>
+              <IonInput readonly value={userProfile!.hasUploadedCV ? 'PDF document' : ''}></IonInput>
+              <input type="hidden" name="hasUploadedCV" value={userProfile!.hasUploadedCV ? 'true' : ''}></input>
+              <input type="file" accept="application/pdf" onChange={uploadAndSetCV} id="cv-input" hidden={true} />
+              {userProfile!.hasUploadedCV ? (
+                <>
+                  <IonButton
+                    slot="end"
+                    fill="clear"
+                    color="medium"
+                    style={{ marginTop: 16 }}
+                    onClick={() => handleFieldChange('hasUploadedCV', false)}
+                  >
+                    <IonIcon icon={trash} slot="icon-only"></IonIcon>
+                  </IonButton>
+                  <IonButton slot="end" fill="clear" color="medium" style={{ marginTop: 16 }} onClick={downloadUserCV}>
+                    <IonIcon icon={open} slot="icon-only"></IonIcon>
+                  </IonButton>
+                </>
+              ) : (
+                <IonButton
+                  slot="end"
+                  fill="clear"
+                  color="medium"
+                  style={{ marginTop: 16 }}
+                  onClick={() => document.getElementById('cv-input')?.click()}
+                >
+                  <IonIcon icon={cloudUpload} slot="icon-only"></IonIcon>
+                </IonButton>
+              )}
+            </IonItem>
+          </>
+        )}
         <IonButton type="submit" expand="block" style={{ marginTop: 20 }}>
           Save changes
         </IonButton>
