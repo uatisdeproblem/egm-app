@@ -212,7 +212,10 @@ class Users extends ResourceController {
   protected async deleteResource(): Promise<void> {
     try {
       await ddb.delete({ TableName: DDB_TABLES.profiles, Key: { userId: this.resourceId } });
-      await cognito.deleteUser(this.principalId, COGNITO_USER_POOL_ID);
+      if (this.queryParams.deleteAccount) {
+        const userEmail = (await cognito.getUserBySub(this.principalId, COGNITO_USER_POOL_ID)).email;
+        await cognito.deleteUser(userEmail, COGNITO_USER_POOL_ID);
+      }
     } catch (err) {
       throw new RCError('Delete failed');
     }

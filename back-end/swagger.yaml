@@ -158,7 +158,7 @@ paths:
         400:
           $ref: '#/components/responses/BadParameters'
     delete:
-      summary: Delete your account
+      summary: Reset your profile
       tags: [Users]
       security:
         - CognitoUserPool: []
@@ -168,6 +168,10 @@ paths:
           required: true
           schema:
             type: string
+        - name: deleteAccount
+          in: query
+          schema:
+            type: boolean
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'

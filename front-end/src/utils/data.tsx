@@ -113,6 +113,12 @@ export const downloadUserCV = async (): Promise<void> => {
 export const setUserHomeAddress = async (address: string): Promise<void> => {
   await apiRequest('PATCH', ['users', 'me'], { action: 'SET_HOME_ADDRESS', address });
 };
+export const resetUserProfile = async (): Promise<void> => {
+  await apiRequest('DELETE', ['users', 'me']);
+};
+export const deleteUserAccount = async (): Promise<void> => {
+  await apiRequest('DELETE', ['users', 'me?deleteAccount=true']);
+};
 
 export const isUserAdmin = async (): Promise<boolean> => {
   const userData = await Auth.currentAuthenticatedUser();

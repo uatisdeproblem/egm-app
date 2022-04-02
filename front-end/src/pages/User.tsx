@@ -54,7 +54,10 @@ const UserPage: React.FC = () => {
               <IonList>
                 <IonItem button onClick={() => setSegment('profile')}>
                   <IonLabel className="ion-text-wrap ion-text-center">
-                    <i>Complete your profile by adding at least your name to start adding new connections.</i>
+                    <i>
+                      To make new connections or be visible to other participants, complete your profile by adding at
+                      least your full name.
+                    </i>
                   </IonLabel>
                 </IonItem>
               </IonList>

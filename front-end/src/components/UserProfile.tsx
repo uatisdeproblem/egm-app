@@ -15,6 +15,7 @@ import {
   IonSkeletonText,
   IonText,
   IonTextarea,
+  useIonAlert,
   useIonLoading,
   useIonToast
 } from '@ionic/react';
@@ -26,15 +27,18 @@ import {
   logoInstagram,
   logoTwitter,
   logoTiktok,
-  logoLinkedin
+  logoLinkedin,
+  eyeOff
 } from 'ionicons/icons';
 
 import { UserProfile } from 'models/userProfile';
 
 import { toastMessageDefaults } from '../utils';
 import {
+  deleteUserAccount,
   downloadUserCV,
   getImageURLByURI,
+  resetUserProfile,
   saveUserProfile,
   updateUserAvatar,
   uploadUserCV,
@@ -52,6 +56,7 @@ interface ContainerProps {
 
 const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) => {
   const [showMessage] = useIonToast();
+  const [showAlert] = useIonAlert();
   const [showLoading, dismissLoading] = useIonLoading();
 
   const [userProfile, setUserProfile] = useState<UserProfile>();
@@ -77,8 +82,8 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
       setUserProfile(profile);
       setLanguages(profile.languages);
 
-      const avatar = getImageURLByURI(profile.imageURI);
-      setAvatar(avatar);
+      if (profile.imageURI) setAvatar(getImageURLByURI(profile.imageURI));
+      else setAvatar(usersFallbackImageURL);
     };
     loadData();
   }, []);
@@ -149,6 +154,57 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
     } finally {
       await dismissLoading();
     }
+  };
+
+  const resetProfile = async (): Promise<void> => {
+    await showLoading();
+    try {
+      await resetUserProfile();
+      window.location.reload();
+    } catch (err) {
+      await showMessage({
+        ...toastMessageDefaults,
+        message: 'Something went wrong; please, try again.',
+        color: 'danger'
+      });
+    } finally {
+      await dismissLoading();
+    }
+  };
+  const askAndResetProfile = async (): Promise<void> => {
+    const header = 'Reset your profile';
+    const message = 'Are you sure?';
+    const buttons = [
+      { text: 'Cancel', role: 'cancel' },
+      { text: 'Reset', handler: () => resetProfile() }
+    ];
+    await showAlert({ header, message, buttons });
+  };
+
+  const deleteAccount = async (): Promise<void> => {
+    await showLoading();
+    try {
+      await deleteUserAccount();
+      await Auth.signOut();
+      window.location.reload();
+    } catch (err) {
+      await showMessage({
+        ...toastMessageDefaults,
+        message: 'Something went wrong; please, try again.',
+        color: 'danger'
+      });
+    } finally {
+      await dismissLoading();
+    }
+  };
+  const askAndDeleteAccount = async (): Promise<void> => {
+    const header = 'Delete your account';
+    const message = 'Are you sure?';
+    const buttons = [
+      { text: 'Cancel', role: 'cancel' },
+      { text: 'Delete', handler: () => deleteAccount() }
+    ];
+    await showAlert({ header, message, buttons });
   };
 
   return userProfile ? (
@@ -378,6 +434,31 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
           Save changes
         </IonButton>
       </form>
+      <div style={{ marginTop: 40 }}>
+        {profile.getName() ? (
+          <IonButton
+            fill="clear"
+            color="medium"
+            expand="block"
+            className="ion-text-wrap"
+            style={{ textTransform: 'none' }}
+            onClick={askAndResetProfile}
+          >
+            <IonIcon icon={eyeOff} slot="start"></IonIcon> I don't want to be found by other participants anymore.
+          </IonButton>
+        ) : (
+          ''
+        )}
+        <IonButton
+          fill="clear"
+          color="danger"
+          expand="block"
+          style={{ textTransform: 'none' }}
+          onClick={askAndDeleteAccount}
+        >
+          <IonIcon icon={trash} slot="start"></IonIcon> Delete account
+        </IonButton>
+      </div>
     </IonList>
   ) : (
     <></>

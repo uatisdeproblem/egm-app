@@ -36,9 +36,8 @@ const tables: { [tableName: string]: ApiTable } = {
       {
         indexName: 'summary-index',
         partitionKey: { name: 'userId', type: DDB.AttributeType.STRING },
-        sortKey: { name: 'firstName', type: DDB.AttributeType.STRING },
         projectionType: DDB.ProjectionType.INCLUDE,
-        nonKeyAttributes: ['lastName', 'imageURI', 'ESNCountry', 'ESNSection']
+        nonKeyAttributes: ['firstName', 'lastName', 'imageURI', 'ESNCountry', 'ESNSection']
       }
     ]
   },
