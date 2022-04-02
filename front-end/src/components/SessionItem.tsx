@@ -8,11 +8,12 @@ import { SessionTypeStr, SessionTypeColor, formatTime, formatDateShort } from '.
 interface ContainerProps {
   session?: Session;
   isUserFavorite?: boolean;
+  showDate?: boolean;
   toggleUserFavorite?: () => void;
   select?: () => void;
 }
 
-const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggleUserFavorite, select }) => {
+const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, showDate, toggleUserFavorite, select }) => {
   const toggleUserFavoriteWithPrevention = (e: any) => {
     e.stopPropagation();
     if (toggleUserFavorite) toggleUserFavorite();
@@ -21,11 +22,7 @@ const SessionItem: React.FC<ContainerProps> = ({ session, isUserFavorite, toggle
   return session ? (
     <IonItem lines="none" color="white" style={itemStyle} key={session.sessionId} button onClick={select}>
       <IonNote slot="start" className="ion-text-center" style={{ marginRight: 18, lineHeight: 1.4 }}>
-        {toggleUserFavorite ? (
-          ''
-        ) : (
-          <span style={{ display: 'block', marginBottom: 6 }}>{formatDateShort(session.startsAt)}</span>
-        )}
+        {showDate ? <span style={{ display: 'block', marginBottom: 6 }}>{formatDateShort(session.startsAt)}</span> : ''}
         <b style={{ display: 'block' }}>{formatTime(session.startsAt)}</b>
         <span style={{ display: 'block' }}>{formatTime(session.endsAt)}</span>
         {toggleUserFavorite ? (

@@ -162,6 +162,7 @@ const RoomPage: React.FC = () => {
                         <SessionItem
                           key={session.sessionId}
                           session={session}
+                          showDate
                           select={() => history.push('/session/' + session.sessionId)}
                         ></SessionItem>
                       ))

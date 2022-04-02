@@ -18,10 +18,17 @@ import {
   IonInfiniteScroll,
   IonInfiniteScrollContent
 } from '@ionic/react';
-import { close, star } from 'ionicons/icons';
+import { close, star, time, timeOutline } from 'ionicons/icons';
 
 import { Session } from 'models/session';
-import { cleanStrForSearches, formatDateShort, isMobileMode, SessionTypeStr, toastMessageDefaults } from '../utils';
+import {
+  cleanStrForSearches,
+  extractDateTime,
+  formatDateShort,
+  isMobileMode,
+  SessionTypeStr,
+  toastMessageDefaults
+} from '../utils';
 import {
   addSessionToUserFavorites,
   getSessions,
@@ -37,6 +44,10 @@ import ManageEntityButton from '../components/ManageEntityButton';
 
 const PAGINATION_NUM_MAX_ELEMENTS = 24;
 
+const marginDateToConsiderASessionPast = new Date();
+marginDateToConsiderASessionPast.setHours(marginDateToConsiderASessionPast.getHours() - 2);
+const REF_DATETIME_FOR_PAST_SESSION = extractDateTime(marginDateToConsiderASessionPast);
+
 const SessionsPage: React.FC = () => {
   const history = useHistory();
   const [showMessage] = useIonToast();
@@ -47,6 +58,8 @@ const SessionsPage: React.FC = () => {
   const [sessionsDays, setSessionsDays] = useState(new Array<string>());
   const [filteredSessions, setFilteredSessions] = useState<Array<Session>>();
   const [currentSession, setCurrentSession] = useState<Session>();
+
+  const [showPastSessions, setShowPastSessions] = useState(false);
 
   const searchbar = useRef(null);
 
@@ -67,7 +80,9 @@ const SessionsPage: React.FC = () => {
     setSessionsDays(sessionsDays);
     setUserFavoriteSessionsSet(userFavoriteSessions);
     setFilteredSessions(
-      sessions.filter(s => userFavoriteSessions.has(s.sessionId)).slice(0, PAGINATION_NUM_MAX_ELEMENTS)
+      sessions
+        .filter(s => userFavoriteSessions.has(s.sessionId) && (showPastSessions || !isSessionPast(s)))
+        .slice(0, PAGINATION_NUM_MAX_ELEMENTS)
     );
   };
 
@@ -75,7 +90,12 @@ const SessionsPage: React.FC = () => {
     setSegment(segment);
     filterSessions(getSearchbarValue(), segment);
   };
-  const filterSessions = (search = '', forceSegment?: string, scrollToNextPage?: any): void => {
+  const filterSessions = (
+    search = '',
+    forceSegment?: string,
+    scrollToNextPage?: any,
+    forceShowPastSessions?: boolean
+  ): void => {
     const startPaginationAfterId = filteredSessions?.length
       ? filteredSessions[filteredSessions.length - 1].sessionId
       : null;
@@ -83,8 +103,11 @@ const SessionsPage: React.FC = () => {
     let filteredList: Session[];
 
     const useSegment = forceSegment !== undefined ? forceSegment : segment;
+    const shouldShowPastSessions = forceShowPastSessions !== undefined ? forceShowPastSessions : showPastSessions;
 
-    if (!useSegment) filteredList = sessions?.filter(s => isSessionUserFavorite(s)) || [];
+    if (!useSegment)
+      filteredList =
+        sessions?.filter(s => isSessionUserFavorite(s) && (shouldShowPastSessions || !isSessionPast(s))) || [];
     else filteredList = sessions?.filter(s => s.startsAt.startsWith(useSegment)) || [];
 
     filteredList = filteredList.filter(x =>
@@ -150,6 +173,15 @@ const SessionsPage: React.FC = () => {
 
   const getSearchbarValue = (): string => (searchbar as any)?.current?.value;
 
+  const isSessionPast = (session: Session): boolean => session.endsAt.localeCompare(REF_DATETIME_FOR_PAST_SESSION) < 0;
+  const togglePastSessionsFilter = (): void => {
+    filterSessions(getSearchbarValue(), undefined, undefined, !showPastSessions);
+    setShowPastSessions(!showPastSessions);
+  };
+  const isThereAnyPastSession = (): boolean => {
+    return sessions!.some(x => isSessionPast(x));
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -188,6 +220,16 @@ const SessionsPage: React.FC = () => {
                 ) : (
                   ''
                 )}
+                {!segment && isThereAnyPastSession() ? (
+                  <div className="ion-text-center">
+                    <IonButton fill="clear" color="medium" onClick={togglePastSessionsFilter}>
+                      <IonIcon icon={showPastSessions ? time : timeOutline} slot="start"></IonIcon>
+                      {showPastSessions ? 'Hide past sessions' : 'Show past sessions'}
+                    </IonButton>
+                  </div>
+                ) : (
+                  ''
+                )}
                 {!filteredSessions ? (
                   <SessionItem></SessionItem>
                 ) : filteredSessions.length === 0 ? (
@@ -210,6 +252,7 @@ const SessionsPage: React.FC = () => {
                       key={session.sessionId}
                       session={session}
                       isUserFavorite={isSessionUserFavorite(session)}
+                      showDate={!segment}
                       toggleUserFavorite={() => toggleUserFavoriteSession(session)}
                       select={() => selectCurrentSession(session)}
                     ></SessionItem>
