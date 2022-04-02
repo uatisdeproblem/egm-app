@@ -82,13 +82,11 @@ const RoomPage: React.FC = () => {
             x.description,
             SessionTypeStr[x.type],
             cleanStrForSearches(x.speaker1.name),
-            cleanStrForSearches(x.speaker2.name),
-            cleanStrForSearches(x.speaker3.name),
-            cleanStrForSearches(x.speaker4.name),
-            cleanStrForSearches(x.speaker5.name)
-          ]
-            .filter(f => f)
-            .some(f => f.toLowerCase().includes(searchTerm))
+            x.speaker2 ? cleanStrForSearches(x.speaker2.name) : null,
+            x.speaker3 ? cleanStrForSearches(x.speaker3.name) : null,
+            x.speaker4 ? cleanStrForSearches(x.speaker4.name) : null,
+            x.speaker5 ? cleanStrForSearches(x.speaker5.name) : null
+          ].some(f => f && f.toLowerCase().includes(searchTerm))
         )
     );
 

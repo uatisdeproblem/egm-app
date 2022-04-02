@@ -69,22 +69,26 @@ class Sessions extends ResourceController {
     this.session.speaker1 = new SpeakerLinked(
       await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker1.speakerId } })
     );
-    if (this.session.speaker2.speakerId)
+    if (this.session.speaker2?.speakerId)
       this.session.speaker2 = new SpeakerLinked(
         await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker2.speakerId } })
       );
-    if (this.session.speaker3.speakerId)
+    else delete this.session.speaker2;
+    if (this.session.speaker3?.speakerId)
       this.session.speaker3 = new SpeakerLinked(
         await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker3.speakerId } })
       );
-    if (this.session.speaker4.speakerId)
+    else delete this.session.speaker3;
+    if (this.session.speaker4?.speakerId)
       this.session.speaker4 = new SpeakerLinked(
         await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker4.speakerId } })
       );
-    if (this.session.speaker5.speakerId)
+    else delete this.session.speaker4;
+    if (this.session.speaker5?.speakerId)
       this.session.speaker5 = new SpeakerLinked(
         await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.session.speaker5.speakerId } })
       );
+    else delete this.session.speaker5;
 
     try {
       const putParams: any = { TableName: DDB_TABLES.sessions, Item: this.session };
@@ -125,11 +129,13 @@ class Sessions extends ResourceController {
           (!this.queryParams.speaker ||
             [
               x.speaker1.speakerId,
-              x.speaker2.speakerId,
-              x.speaker3.speakerId,
-              x.speaker4.speakerId,
-              x.speaker5.speakerId
-            ].includes(this.queryParams.speaker)) &&
+              x.speaker2?.speakerId,
+              x.speaker3?.speakerId,
+              x.speaker4?.speakerId,
+              x.speaker5?.speakerId
+            ]
+              .filter(x => x)
+              .includes(this.queryParams.speaker)) &&
           (!this.queryParams.room || x.room.roomId === this.queryParams.room)
       );
 

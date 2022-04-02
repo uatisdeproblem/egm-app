@@ -188,10 +188,10 @@ const ManageEntityPage: React.FC = () => {
             label: 'Speaker 1',
             options: speakers
           },
-          { type: 'select', name: 'speaker2', value: x['speaker2'].speakerId, label: 'Speaker 2', options: speakers },
-          { type: 'select', name: 'speaker3', value: x['speaker3'].speakerId, label: 'Speaker 3', options: speakers },
-          { type: 'select', name: 'speaker4', value: x['speaker4'].speakerId, label: 'Speaker 4', options: speakers },
-          { type: 'select', name: 'speaker5', value: x['speaker5'].speakerId, label: 'Speaker 5', options: speakers }
+          { type: 'select', name: 'speaker2', value: x['speaker2']?.speakerId, label: 'Speaker 2', options: speakers },
+          { type: 'select', name: 'speaker3', value: x['speaker3']?.speakerId, label: 'Speaker 3', options: speakers },
+          { type: 'select', name: 'speaker4', value: x['speaker4']?.speakerId, label: 'Speaker 4', options: speakers },
+          { type: 'select', name: 'speaker5', value: x['speaker5']?.speakerId, label: 'Speaker 5', options: speakers }
         ];
       },
       entitySupportData: async (): Promise<any> => ({ speakers: await getSpeakers(), rooms: await getRooms() })
