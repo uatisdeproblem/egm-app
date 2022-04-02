@@ -6,7 +6,7 @@ import { Location } from 'aws-sdk';
 import { Cognito, DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
 import { SignedURL } from 'idea-toolbox';
 
-import { UserProfile } from '../models/userProfile';
+import { UserProfile, UserProfileSummary } from '../models/userProfile';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -46,16 +46,14 @@ class Users extends ResourceController {
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
-    if (!this.resourceId) throw new Error('Unauthorized');
-
     if (this.resourceId === 'me') this.resourceId = this.principalId;
 
     const userManageOwnProfile = this.resourceId === this.principalId;
-    if (!userManageOwnProfile) throw new Error('Unauthorized');
+    if (this.resourceId && !userManageOwnProfile) throw new Error('Unauthorized');
 
     try {
       this.profile = new UserProfile(
-        await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.resourceId } })
+        await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.principalId } })
       );
     } catch (err) {
       await this.createUserProfile();
@@ -69,6 +67,48 @@ class Users extends ResourceController {
       Item: this.profile,
       ConditionExpression: 'attribute_not_exists(userId)'
     });
+  }
+
+  protected async getResources(): Promise<UserProfileSummary[]> {
+    try {
+      let users: UserProfileSummary[];
+
+      if (this.queryParams.admins && this.cognitoUser.isAdmin()) {
+        const admins = (await cognito.listUsersInGroup('admins', COGNITO_USER_POOL_ID)).map(x => ({
+          userId: x.userId
+        }));
+        users = await ddb.batchGet(DDB_TABLES.profiles, admins);
+      } else {
+        users = await ddb.scan({ TableName: DDB_TABLES.profiles, IndexName: 'summary-index' });
+      }
+
+      const filteredUsers = users
+        .map((x: UserProfileSummary) => new UserProfileSummary(x))
+        .filter(x => x.getName().length);
+
+      const sortedUsers = filteredUsers.sort((a, b) =>
+        `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`)
+      );
+
+      return sortedUsers;
+    } catch (err) {
+      throw new RCError('Query failed');
+    }
+  }
+  protected async patchResources(): Promise<void> {
+    if (!this.cognitoUser.isAdmin()) throw new RCError('Unauthorized');
+
+    switch (this.body.action) {
+      case 'ADD_ADMIN':
+        return await this.setUserAdmin(this.body.userId, true);
+      case 'REMOVE_ADMIN':
+        return await this.setUserAdmin(this.body.userId, false);
+    }
+  }
+  private async setUserAdmin(userId: string, setAdmin: boolean): Promise<void> {
+    const userEmail = (await cognito.getUserBySub(userId, COGNITO_USER_POOL_ID)).email;
+    if (setAdmin) await cognito.addUserToGroup(userEmail, 'admins', COGNITO_USER_POOL_ID);
+    else await cognito.removeUserFromGroup(userEmail, 'admins', COGNITO_USER_POOL_ID);
   }
 
   protected async getResource(): Promise<UserProfile> {

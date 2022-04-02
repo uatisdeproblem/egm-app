@@ -39,6 +39,47 @@ tags:
     description: The sessions of the event
 
 paths:
+  /users:
+    get:
+      summary: Get some basic info of the platform's users (for networking purposes)
+      tags: [Users]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: admins
+          in: query
+          description: Get the administrators (only admins can request it)
+          schema:
+            type: boolean
+      responses:
+        200:
+          $ref: '#/components/responses/Users'
+    patch:
+      summary: Patch a user
+      description: Requires to be Admin.
+      tags: [Users]
+      security:
+        - CognitoUserPool: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum:
+                    - ADD_ADMIN
+                    - REMOVE_ADMIN
+                userId:
+                  type: string
+                  description: (ADD_ADMIN, REMOVE_ADMIN)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
   /users/{userId}:
     get:
       summary: Get your profile
@@ -788,6 +829,14 @@ components:
         application/json:
           schema:
             type: object
+    Users:
+      description: User[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
     Organization:
       description: Organization
       content:

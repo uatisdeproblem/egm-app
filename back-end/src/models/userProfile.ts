@@ -91,3 +91,26 @@ export class UserFavoriteSession extends Resource {
     this.sessionId = this.clean(x.sessionId, String);
   }
 }
+
+export class UserProfileSummary extends Resource {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  imageURI: string;
+  ESNCountry: string;
+  ESNSection: string;
+
+  load(x: any): void {
+    super.load(x);
+    this.userId = this.clean(x.userId, String);
+    this.firstName = this.clean(x.firstName, String);
+    this.lastName = this.clean(x.lastName, String);
+    this.imageURI = this.clean(x.imageURI, String);
+    this.ESNCountry = this.clean(x.ESNCountry, String);
+    this.ESNSection = this.clean(x.ESNSection, String);
+  }
+
+  getName(): string {
+    return `${this.firstName || ''} ${this.lastName || ''}`.trim();
+  }
+}

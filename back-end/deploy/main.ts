@@ -18,7 +18,7 @@ import { parameters, environments, Stage } from './environments';
 //
 
 const apiResources: ApiResourceController[] = [
-  { name: 'users', paths: ['/users/{userId}'] },
+  { name: 'users', paths: ['/users', '/users/{userId}'] },
   { name: 'connections', paths: ['/connections', '/connections/{userId}'] },
   { name: 'organizations', paths: ['/organizations', '/organizations/{organizationId}'] },
   { name: 'speakers', paths: ['/speakers', '/speakers/{speakerId}'] },
@@ -30,7 +30,18 @@ const apiResources: ApiResourceController[] = [
 ];
 
 const tables: { [tableName: string]: ApiTable } = {
-  userProfiles: { PK: { name: 'userId', type: DDB.AttributeType.STRING } },
+  userProfiles: {
+    PK: { name: 'userId', type: DDB.AttributeType.STRING },
+    indexes: [
+      {
+        indexName: 'summary-index',
+        partitionKey: { name: 'userId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'firstName', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.INCLUDE,
+        nonKeyAttributes: ['lastName', 'imageURI', 'ESNCountry', 'ESNSection']
+      }
+    ]
+  },
   connections: {
     PK: { name: 'connectionId', type: DDB.AttributeType.STRING },
     indexes: [

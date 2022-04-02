@@ -16,7 +16,7 @@ import {
 } from '@ionic/react';
 import { call, logoFacebook, logoInstagram, logoLinkedin, logoTiktok, logoTwitter, mail, trash } from 'ionicons/icons';
 
-import { UserProfile } from 'models/userProfile';
+import { UserProfile, UserProfileSummary } from 'models/userProfile';
 
 import { getImageURLByURI, usersFallbackImageURL, deleteConnection } from '../utils/data';
 import {
@@ -29,7 +29,8 @@ import {
 } from '../utils';
 
 interface ContainerProps {
-  profile?: UserProfile;
+  profile?: UserProfile | UserProfileSummary;
+  noPopup?: boolean;
   showDetails?: boolean;
   isUserProfile?: boolean;
   onDeletedConnection?: () => void;
@@ -38,6 +39,7 @@ interface ContainerProps {
 
 const UserProfileCard: React.FC<ContainerProps> = ({
   profile,
+  noPopup,
   showDetails,
   isUserProfile,
   onDeletedConnection,
@@ -55,7 +57,7 @@ const UserProfileCard: React.FC<ContainerProps> = ({
   });
 
   const openCardWithDetails = (event: any) => {
-    if (showDetails) return;
+    if (showDetails || noPopup) return;
 
     showPopover({ event, cssClass: 'widePopover' });
   };
@@ -89,7 +91,7 @@ const UserProfileCard: React.FC<ContainerProps> = ({
   return profile ? (
     <IonCard color="white" style={{ margin: 0 }}>
       <IonCardHeader style={{ padding: 6 }}>
-        <IonItem lines="none" color="white" button={!showDetails} onClick={openCardWithDetails}>
+        <IonItem lines="none" color="white" button={!showDetails && !noPopup} onClick={openCardWithDetails}>
           <IonAvatar slot="start">
             {profile.imageURI ? (
               <IonImg
@@ -108,7 +110,7 @@ const UserProfileCard: React.FC<ContainerProps> = ({
           </IonLabel>
         </IonItem>
       </IonCardHeader>
-      {showDetails ? (
+      {showDetails && profile instanceof UserProfile ? (
         <IonCardContent className="ion-text-left">
           <p className="ion-text-right">
             {profile.contactPhone ? (

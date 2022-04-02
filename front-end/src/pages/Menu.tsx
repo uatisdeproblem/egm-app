@@ -28,7 +28,8 @@ import {
   micOutline,
   people,
   prismOutline,
-  refresh
+  refresh,
+  ribbonOutline
 } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
 
@@ -136,6 +137,10 @@ const MenuPage: React.FC = () => {
               <IonItem button color="white" routerLink="/manage/speaker/new">
                 <IonIcon icon={micOutline} slot="start"></IonIcon>
                 <IonLabel>Add speaker</IonLabel>
+              </IonItem>
+              <IonItem button color="white" routerLink="/admins">
+                <IonIcon icon={ribbonOutline} slot="start"></IonIcon>
+                <IonLabel>Manage administrators</IonLabel>
               </IonItem>
             </>
           ) : (

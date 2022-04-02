@@ -2,7 +2,7 @@ import { Auth } from 'aws-amplify';
 import { isPlatform } from '@ionic/react';
 import { Browser } from '@capacitor/browser';
 
-import { UserProfile } from 'models/userProfile';
+import { UserProfile, UserProfileSummary } from 'models/userProfile';
 import { Organization } from 'models/organization';
 import { Venue } from 'models/venue';
 import { Room } from 'models/room';
@@ -119,6 +119,19 @@ export const isUserAdmin = async (): Promise<boolean> => {
   if (!userData) return false;
   const groups = userData.signInUserSession.accessToken.payload['cognito:groups'];
   return groups?.includes('admins');
+};
+
+export const getUsers = async (): Promise<UserProfileSummary[]> => {
+  return (await apiRequest('GET', 'users')).map((x: UserProfileSummary) => new UserProfileSummary(x));
+};
+export const getAdmins = async (): Promise<UserProfileSummary[]> => {
+  return (await apiRequest('GET', 'users?admins=true')).map((x: UserProfileSummary) => new UserProfileSummary(x));
+};
+export const addUserToAdminsById = async (userId: string): Promise<void> => {
+  await apiRequest('PATCH', 'users', { action: 'ADD_ADMIN', userId });
+};
+export const removeUserFromAdminsById = async (userId: string): Promise<void> => {
+  await apiRequest('PATCH', 'users', { action: 'REMOVE_ADMIN', userId });
 };
 
 //

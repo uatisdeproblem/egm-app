@@ -45,6 +45,7 @@ import OrganizationPage from './pages/Organization';
 import CommunicationsPage from './pages/Communications';
 import CommunicationPage from './pages/Communication';
 import ManageEntityPage from './pages/ManageEntity';
+import ManageAdminsPage from './pages/ManageAdmins';
 import AddToHomeScreenSuggestion from './components/AddToHomeScreenSuggestion';
 
 import { isMobileMode } from './utils';
@@ -133,6 +134,9 @@ const App: React.FC = () => {
                   </Route>
                   <Route path="/manage/:type/:id">
                     <ManageEntityPage />
+                  </Route>
+                  <Route path="/admins">
+                    <ManageAdminsPage />
                   </Route>
                   <Route exact path="/">
                     <Redirect to="/communications" />
