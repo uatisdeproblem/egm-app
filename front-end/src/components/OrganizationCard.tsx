@@ -11,7 +11,7 @@ import {
   IonButton,
   IonIcon
 } from '@ionic/react';
-import { openOutline } from 'ionicons/icons';
+import { chatbubbles, openOutline } from 'ionicons/icons';
 
 import { Organization } from 'models/organization';
 
@@ -52,7 +52,7 @@ const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, sel
         ''
       ) : (
         <IonCardContent>
-          {organization.contactEmail || organization.website ? (
+          {organization.contactEmail || organization.website || organization.contactAction ? (
             <div className="ion-text-center" style={{ marginBottom: 30 }}>
               {organization.website ? (
                 <IonButton fill="clear" color="dark" target="_blank" href={organization.website}>
@@ -61,10 +61,18 @@ const OrganizationCard: React.FC<ContainerProps> = ({ organization, preview, sel
               ) : (
                 ''
               )}
-              {organization.contactEmail ? (
-                <ContactOrganizationButton organization={organization}></ContactOrganizationButton>
+              {organization.contactAction ? (
+                <IonButton target="_blank" href={organization.contactAction}>
+                  I'd like to get in contact <IonIcon icon={chatbubbles} slot="end"></IonIcon>
+                </IonButton>
               ) : (
                 ''
+              )}
+              {true ? (
+                // disabled #45
+                ''
+              ) : (
+                <ContactOrganizationButton organization={organization!}></ContactOrganizationButton>
               )}
             </div>
           ) : (

@@ -86,7 +86,13 @@ const ManageEntityPage: React.FC = () => {
         { type: 'text', name: 'name', value: x['name'], label: 'Name', required: true },
         { type: 'textarea', name: 'description', value: x['description'], label: 'Description' },
         { type: 'url', name: 'website', value: x['website'], label: 'Website' },
-        { type: 'email', name: 'contactEmail', value: x['contactEmail'], label: 'Contact email' },
+        // { type: 'email', name: 'contactEmail', value: x['contactEmail'], label: 'Contact email' }, disabled #45
+        {
+          type: 'url',
+          name: 'contactAction',
+          value: x['contactAction'],
+          label: 'Contact action (URL, mailto, etc.)'
+        },
         { type: 'image', name: 'imageURI', value: x['imageURI'], label: 'Logo' }
       ]
     },

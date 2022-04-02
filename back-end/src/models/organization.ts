@@ -7,6 +7,7 @@ export class Organization extends Resource {
   description: string;
   website: string;
   contactEmail: string;
+  contactAction: string;
 
   load(x: any): void {
     super.load(x);
@@ -16,6 +17,7 @@ export class Organization extends Resource {
     this.description = this.clean(x.description, String);
     this.website = this.clean(x.website, String);
     this.contactEmail = this.clean(x.contactEmail, String);
+    this.contactAction = this.clean(x.contactAction, String);
   }
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
