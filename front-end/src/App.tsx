@@ -79,8 +79,10 @@ Amplify.I18n.putVocabularies({ en: { Username: 'Email' } });
 
 const App: React.FC = () => {
   const [communicationsCounter, setCommunicationsCounter] = useState(0);
+  const [pendingConnectionsCounter, setPendingConnectionsCounter] = useState(0);
 
   Hub.listen('communications', ({ payload }) => setCommunicationsCounter(payload.data.num || 0));
+  Hub.listen('connections', ({ payload }) => setPendingConnectionsCounter(payload.data.num || 0));
 
   return (
     <IonApp>
@@ -170,6 +172,13 @@ const App: React.FC = () => {
                   <IonTabButton tab="user" href="/user">
                     {isMobileMode() ? <IonIcon icon={people} /> : ''}
                     <IonLabel>You</IonLabel>
+                    {pendingConnectionsCounter > 0 ? (
+                      <IonBadge color="ESNcyan" style={{ marginLeft: 8, fontWeight: 'bold' }}>
+                        {pendingConnectionsCounter}
+                      </IonBadge>
+                    ) : (
+                      ''
+                    )}
                   </IonTabButton>
                   <IonTabButton tab="menu" href="/menu">
                     {isMobileMode() ? <IonIcon icon={menu} /> : ''}

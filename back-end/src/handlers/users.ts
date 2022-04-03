@@ -6,7 +6,7 @@ import { Location } from 'aws-sdk';
 import { Cognito, DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
 import { SignedURL } from 'idea-toolbox';
 
-import { UserProfile, UserProfileSummary } from '../models/userProfile';
+import { UserProfile, UserProfileShort } from '../models/userProfile';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -69,9 +69,9 @@ class Users extends ResourceController {
     });
   }
 
-  protected async getResources(): Promise<UserProfileSummary[]> {
+  protected async getResources(): Promise<UserProfileShort[]> {
     try {
-      let users: UserProfileSummary[];
+      let users: UserProfileShort[];
 
       if (this.queryParams.admins && this.cognitoUser.isAdmin()) {
         const admins = (await cognito.listUsersInGroup('admins', COGNITO_USER_POOL_ID)).map(x => ({
@@ -82,9 +82,7 @@ class Users extends ResourceController {
         users = await ddb.scan({ TableName: DDB_TABLES.profiles, IndexName: 'summary-index' });
       }
 
-      const filteredUsers = users
-        .map((x: UserProfileSummary) => new UserProfileSummary(x))
-        .filter(x => x.getName().length);
+      const filteredUsers = users.map((x: UserProfileShort) => new UserProfileShort(x)).filter(x => x.getName().length);
 
       const sortedUsers = filteredUsers.sort((a, b) =>
         `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`)

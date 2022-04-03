@@ -2,10 +2,10 @@
 /// IMPORTS
 ///
 
-import { Cognito, DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, RCError, ResourceController } from 'idea-aws';
 
-import { Connection } from '../models/connection';
-import { UserProfile } from '../models/userProfile';
+import { Connection, ConnectionWithUserData } from '../models/connection';
+import { UserProfileShort, UserProfileSummary } from '../models/userProfile';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -13,15 +13,12 @@ import { UserProfile } from '../models/userProfile';
 
 const PROJECT = process.env.PROJECT;
 
-const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
-
 const DDB_TABLES = {
   profiles: process.env.DDB_TABLE_userProfiles,
   connections: process.env.DDB_TABLE_connections
 };
 
 const ddb = new DynamoDB();
-const cognito = new Cognito();
 
 export const handler = (ev: any, _: any, cb: any) => new Connections(ev, cb).handleRequest();
 
@@ -30,32 +27,18 @@ export const handler = (ev: any, _: any, cb: any) => new Connections(ev, cb).han
 ///
 
 class Connections extends ResourceController {
-  target: UserProfile;
-
   constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'userId' });
+    super(event, callback, { resourceId: 'connectionId' });
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
-    const requesterProfile = new UserProfile(
+    const requesterProfile = new UserProfileSummary(
       await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.principalId } })
     );
     if (!requesterProfile.getName()) throw new RCError('Requester profile incomplete');
-
-    if (!this.resourceId) return;
-
-    try {
-      this.target = new UserProfile(
-        await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.resourceId } })
-      );
-    } catch (error) {
-      throw new RCError('Not found');
-    }
-
-    if (!this.target.getName()) throw new RCError('Target profile incomplete');
   }
 
-  protected async getResources(): Promise<UserProfile[]> {
+  protected async getResources(): Promise<ConnectionWithUserData[]> {
     try {
       const connectionsFromBothSides = await Promise.all([
         ddb.query({
@@ -72,16 +55,25 @@ class Connections extends ResourceController {
         })
       ]);
 
-      const connections = [
+      const connections: Connection[] = [...connectionsFromBothSides[0], ...connectionsFromBothSides[1]];
+      if (!connections.length) return [];
+
+      const usersProfileToGather = [
         ...connectionsFromBothSides[0].map(x => ({ userId: x.targetId })),
         ...connectionsFromBothSides[1].map(x => ({ userId: x.requesterId }))
       ];
+      const connectionsProfiles = await ddb.batchGet(DDB_TABLES.profiles, usersProfileToGather, true);
+      const userConnections = connections
+        .map(x => {
+          const otherUserId = x.requesterId === this.principalId ? x.targetId : x.requesterId;
+          const userProfile = connectionsProfiles.find(u => u.userId === otherUserId);
+          return userProfile ? new ConnectionWithUserData({ ...x, userProfile }) : null;
+        })
+        .filter(x => x?.userProfile.getName());
 
-      if (!connections) return [];
-
-      const userConnections = (await ddb.batchGet(DDB_TABLES.profiles, connections)).map(x => new UserProfile(x));
-
-      const sortedUserConnections = userConnections.sort((a, b) => a.getName().localeCompare(b.getName()));
+      const sortedUserConnections = userConnections.sort((a, b) =>
+        a.userProfile.getName().localeCompare(b.userProfile.getName())
+      );
 
       return sortedUserConnections;
     } catch (err) {
@@ -89,64 +81,77 @@ class Connections extends ResourceController {
     }
   }
 
-  protected async postResources(): Promise<UserProfile> {
-    try {
-      this.resourceId = (await cognito.getUserByEmail(this.body.username, COGNITO_USER_POOL_ID)).sub;
-    } catch (error) {
-      throw new RCError('Not found');
-    }
-    if (this.principalId === this.resourceId) throw new RCError('Same user');
+  protected async postResources(): Promise<ConnectionWithUserData> {
+    if (!this.body.userId) throw new RCError('Missing target user');
+    if (this.principalId === this.body.userId) throw new RCError('Same user');
 
+    let target: UserProfileShort;
     try {
-      this.target = new UserProfile(
-        await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.resourceId } })
+      target = new UserProfileShort(
+        await ddb.get({ TableName: DDB_TABLES.profiles, Key: { userId: this.body.userId } })
       );
     } catch (error) {
-      throw new RCError('Profile not found');
+      throw new RCError('Target profile not found');
     }
-    if (!this.target.getName()) throw new RCError('Target profile incomplete');
+    if (!target.getName()) throw new RCError('Target profile incomplete');
 
-    const existingConnection = await this.getConnectionOfUserWithTarget(this.target.userId);
-    if (existingConnection) throw new RCError('Already connected');
-
-    const connection = new Connection({
-      connectionId: await ddb.IUNID(PROJECT),
-      requesterId: this.principalId,
-      targetId: this.target.userId
-    });
+    let connection = await this.getConnectionOfUserWithTarget(target.userId);
+    if (connection) {
+      if (connection.requesterId === this.principalId) {
+        if (connection.isPending) throw new RCError('Connection is pending');
+        else throw new RCError('Already connected');
+      } else {
+        if (connection.isPending) delete connection.isPending;
+        else throw new RCError('Already connected');
+      }
+    } else {
+      connection = new Connection({
+        connectionId: await ddb.IUNID(PROJECT),
+        requesterId: this.principalId,
+        targetId: target.userId,
+        isPending: true
+      });
+    }
 
     try {
       await ddb.put({ TableName: DDB_TABLES.connections, Item: connection });
 
-      return this.target;
+      return new ConnectionWithUserData({ ...connection, userProfile: target });
     } catch (err) {
-      throw new RCError('Creation failed');
+      throw new RCError('Connection failed');
     }
   }
 
   protected async deleteResource(): Promise<void> {
-    const connection = await this.getConnectionOfUserWithTarget(this.target.userId);
-    if (!connection) throw new RCError('Not found');
+    let connection: Connection;
+    try {
+      connection = await ddb.get({ TableName: DDB_TABLES.connections, Key: { connectionId: this.resourceId } });
+    } catch (error) {
+      throw new RCError('Not found');
+    }
+
+    if (connection.requesterId !== this.principalId && connection.targetId !== this.principalId)
+      throw new RCError('Unauthorized');
 
     try {
-      await ddb.delete({ TableName: DDB_TABLES.connections, Key: { connectionId: connection.connectionId } });
+      await ddb.delete({ TableName: DDB_TABLES.connections, Key: { connectionId: this.resourceId } });
     } catch (err) {
       throw new RCError('Delete failed');
     }
   }
 
-  private async getConnectionOfUserWithTarget(targetId: string): Promise<Connection> {
+  private async getConnectionOfUserWithTarget(targetUserId: string): Promise<Connection> {
     const connectionWithUserAsRequester = await ddb.query({
       TableName: DDB_TABLES.connections,
       IndexName: 'requesterId-targetId-index',
       KeyConditionExpression: 'requesterId = :requesterId AND targetId = :targetId',
-      ExpressionAttributeValues: { ':requesterId': this.principalId, ':targetId': targetId }
+      ExpressionAttributeValues: { ':requesterId': this.principalId, ':targetId': targetUserId }
     });
     const connectionWithUserAsTarget = await ddb.query({
       TableName: DDB_TABLES.connections,
       IndexName: 'targetId-requesterId-index',
       KeyConditionExpression: 'requesterId = :requesterId AND targetId = :targetId',
-      ExpressionAttributeValues: { ':requesterId': targetId, ':targetId': this.principalId }
+      ExpressionAttributeValues: { ':requesterId': targetUserId, ':targetId': this.principalId }
     });
     const connection = connectionWithUserAsRequester[0] || connectionWithUserAsTarget[0];
 

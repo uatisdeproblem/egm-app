@@ -15,11 +15,11 @@ import {
   IonGrid,
   useIonToast,
   useIonAlert,
-  useIonModal
+  IonModal
 } from '@ionic/react';
 import { close, personAdd, removeCircleOutline, ribbon } from 'ionicons/icons';
 
-import { UserProfileSummary } from 'models/userProfile';
+import { UserProfileShort } from 'models/userProfile';
 
 import { addUserToAdminsById, getAdmins, removeUserFromAdminsById } from '../utils/data';
 
@@ -33,7 +33,9 @@ const ManageAdminsPage: React.FC = () => {
   const [showMessage] = useIonToast();
   const [showAlert] = useIonAlert();
 
-  const [admins, setAdmins] = useState<Array<UserProfileSummary>>();
+  const [showUsersListModal, setShowUsersListModal] = useState(false);
+
+  const [admins, setAdmins] = useState<Array<UserProfileShort>>();
 
   useEffect(() => {
     loadData();
@@ -44,14 +46,14 @@ const ManageAdminsPage: React.FC = () => {
     setAdmins(admins);
   };
 
-  const removeUserFromAdmins = async (user: UserProfileSummary): Promise<void> => {
+  const removeUserFromAdmins = async (user: UserProfileShort): Promise<void> => {
     await removeUserFromAdminsById(user.userId);
     if (admins) {
       admins.splice(admins.indexOf(user), 1);
       setAdmins([...admins]);
     }
   };
-  const askAndRemoveUserFromAdmins = async (user: UserProfileSummary): Promise<void> => {
+  const askAndRemoveUserFromAdmins = async (user: UserProfileShort): Promise<void> => {
     const header = 'Remove user from admins';
     const message = 'Are you sure?';
     const buttons = [
@@ -61,8 +63,8 @@ const ManageAdminsPage: React.FC = () => {
     await showAlert({ header, message, buttons });
   };
 
-  const addUserToAdmins = async (user: UserProfileSummary): Promise<void> => {
-    dismissShowUsersListModal();
+  const addUserToAdmins = async (user: UserProfileShort): Promise<void> => {
+    setShowUsersListModal(false);
 
     if (!user) return;
 
@@ -76,12 +78,6 @@ const ManageAdminsPage: React.FC = () => {
     }
   };
 
-  const [showUsersListModal, dismissShowUsersListModal] = useIonModal(UsersList, {
-    select: addUserToAdmins,
-    placeholder: 'Find a user to be administrator',
-    selectIcon: ribbon
-  });
-
   return (
     <IonPage>
       <IonHeader>
@@ -93,7 +89,7 @@ const ManageAdminsPage: React.FC = () => {
           </IonButtons>
           <IonTitle>Manage administrators</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={() => showUsersListModal()}>
+            <IonButton onClick={() => setShowUsersListModal(true)}>
               <IonIcon icon={personAdd} slot="icon-only"></IonIcon>
             </IonButton>
           </IonButtons>
@@ -121,6 +117,15 @@ const ManageAdminsPage: React.FC = () => {
           )}
         </IonList>
       </IonContent>
+      <IonModal isOpen={showUsersListModal} onDidDismiss={() => setShowUsersListModal(false)}>
+        <UsersList
+          cancel={() => setShowUsersListModal(false)}
+          select={addUserToAdmins}
+          placeholder="Find a user to be administrator"
+          selectIcon={ribbon}
+          usersToHide={admins}
+        ></UsersList>
+      </IonModal>
     </IonPage>
   );
 };

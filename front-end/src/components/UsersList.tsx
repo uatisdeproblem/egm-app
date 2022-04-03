@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router';
 import {
   IonButton,
   IonIcon,
@@ -20,9 +19,9 @@ import {
   IonRow,
   IonCol
 } from '@ionic/react';
-import { close, add } from 'ionicons/icons';
+import { addCircle, closeCircle } from 'ionicons/icons';
 
-import { UserProfileSummary } from 'models/userProfile';
+import { UserProfileShort } from 'models/userProfile';
 
 import { cleanStrForSearches } from '../utils';
 import { getUsers } from '../utils/data';
@@ -32,25 +31,32 @@ import UserProfileCard from '../components/UserProfileCard';
 const PAGINATION_NUM_MAX_ELEMENTS = 24;
 
 interface ContainerProps {
-  select: (user: UserProfileSummary) => void;
+  cancel: () => void;
+  select: (user: UserProfileShort) => void;
   selectIcon?: string;
   placeholder?: string;
+  usersToHide?: UserProfileShort[];
 }
 
-const UsersList: React.FC<ContainerProps> = ({ select, selectIcon, placeholder }) => {
-  const history = useHistory();
-
+const UsersList: React.FC<ContainerProps> = ({ cancel, select, selectIcon, placeholder, usersToHide }) => {
   const searchbar = useRef(null);
 
-  const [users, setUsers] = useState<Array<UserProfileSummary>>();
-  const [filteredUsers, setFilteredUsers] = useState<Array<UserProfileSummary>>();
+  const [users, setUsers] = useState<Array<UserProfileShort>>();
+  const [filteredUsers, setFilteredUsers] = useState<Array<UserProfileShort>>();
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async (): Promise<void> => {
-    const users = await getUsers();
+    let users: UserProfileShort[];
+    users = await getUsers();
+
+    if (usersToHide) {
+      const hideUsersWithId = new Set(usersToHide.map(x => x.userId));
+      users = users.filter(x => !hideUsersWithId.has(x.userId));
+    }
+
     setUsers(users);
     setFilteredUsers(users.slice(0, PAGINATION_NUM_MAX_ELEMENTS));
   };
@@ -58,16 +64,16 @@ const UsersList: React.FC<ContainerProps> = ({ select, selectIcon, placeholder }
   const filterUsers = (search = '', scrollToNextPage?: any): void => {
     const startPaginationAfterId = filteredUsers?.length ? filteredUsers[filteredUsers.length - 1].userId : null;
 
-    let filteredList: UserProfileSummary[];
+    let filteredList: UserProfileShort[];
 
     filteredList = (users || []).filter(x =>
       cleanStrForSearches(search)
         .toLowerCase()
         .split(' ')
         .every(searchTerm =>
-          [cleanStrForSearches(x.getName()), x.ESNCountry, x.ESNSection]
-            .filter(x => x)
-            .some(f => f.toLowerCase().includes(searchTerm))
+          [cleanStrForSearches(x.getName()), x.ESNCountry, x.ESNSection].some(
+            f => f && f.toLowerCase().includes(searchTerm)
+          )
         )
     );
 
@@ -97,8 +103,8 @@ const UsersList: React.FC<ContainerProps> = ({ select, selectIcon, placeholder }
       <IonHeader>
         <IonToolbar color="ideaToolbar">
           <IonButtons slot="start">
-            <IonButton onClick={() => history.goBack()}>
-              <IonIcon icon={close} slot="icon-only"></IonIcon>
+            <IonButton onClick={cancel}>
+              <IonIcon icon={closeCircle} slot="icon-only"></IonIcon>
             </IonButton>
           </IonButtons>
           <IonSearchbar
@@ -127,8 +133,8 @@ const UsersList: React.FC<ContainerProps> = ({ select, selectIcon, placeholder }
                   <UserProfileCard profile={user} noPopup></UserProfileCard>
                 </IonCol>
                 <IonCol size="2" className="ion-text-right">
-                  <IonButton fill="clear" onClick={() => select(user)}>
-                    <IonIcon icon={selectIcon || add} slot="icon-only"></IonIcon>
+                  <IonButton fill="clear" color="ESNcyan" onClick={() => select(user)}>
+                    <IonIcon icon={selectIcon || addCircle} slot="icon-only"></IonIcon>
                   </IonButton>
                 </IonCol>
               </IonRow>

@@ -19,7 +19,7 @@ import { parameters, environments, Stage } from './environments';
 
 const apiResources: ApiResourceController[] = [
   { name: 'users', paths: ['/users', '/users/{userId}'] },
-  { name: 'connections', paths: ['/connections', '/connections/{userId}'] },
+  { name: 'connections', paths: ['/connections', '/connections/{connectionId}'] },
   { name: 'organizations', paths: ['/organizations', '/organizations/{organizationId}'] },
   { name: 'speakers', paths: ['/speakers', '/speakers/{speakerId}'] },
   { name: 'venues', paths: ['/venues', '/venues/{venueId}'] },

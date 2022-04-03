@@ -9,32 +9,28 @@ import {
   IonAvatar,
   IonImg,
   IonCardContent,
-  useIonPopover,
-  useIonAlert,
-  useIonToast,
-  useIonLoading
+  useIonPopover
 } from '@ionic/react';
 import { call, logoFacebook, logoInstagram, logoLinkedin, logoTiktok, logoTwitter, mail, trash } from 'ionicons/icons';
 
-import { UserProfile, UserProfileSummary } from 'models/userProfile';
+import { UserProfileShort, UserProfileSummary } from 'models/userProfile';
 
-import { getImageURLByURI, usersFallbackImageURL, deleteConnection } from '../utils/data';
+import { getImageURLByURI, usersFallbackImageURL } from '../utils/data';
 import {
   getFacebookProfileURL,
   getInstagramProfileURL,
   getLinkedinProfileURL,
   getTikTokProfileURL,
-  getTwitterProfileURL,
-  toastMessageDefaults
+  getTwitterProfileURL
 } from '../utils';
 
 interface ContainerProps {
-  profile?: UserProfile | UserProfileSummary;
+  profile?: UserProfileSummary | UserProfileShort;
   noPopup?: boolean;
   showDetails?: boolean;
   isUserProfile?: boolean;
-  onDeletedConnection?: () => void;
-  onHide?: () => void;
+  dismiss?: () => void;
+  deleteConnection?: () => void;
 }
 
 const UserProfileCard: React.FC<ContainerProps> = ({
@@ -42,18 +38,14 @@ const UserProfileCard: React.FC<ContainerProps> = ({
   noPopup,
   showDetails,
   isUserProfile,
-  onDeletedConnection,
-  onHide
+  dismiss,
+  deleteConnection
 }) => {
-  const [showAlert] = useIonAlert();
-  const [showMessage] = useIonToast();
-  const [showLoading, dismissLoading] = useIonLoading();
-
   const [showPopover, dismissPopover] = useIonPopover(UserProfileCard, {
     profile,
     showDetails: true,
-    onDeletedConnection,
-    onHide: () => dismissPopover()
+    dismiss: () => dismissPopover(),
+    deleteConnection
   });
 
   const openCardWithDetails = (event: any) => {
@@ -62,30 +54,9 @@ const UserProfileCard: React.FC<ContainerProps> = ({
     showPopover({ event, cssClass: 'widePopover' });
   };
 
-  const askConfirmationToDeleteConnection = async (): Promise<void> => {
-    const header = 'Delete connection';
-    const message = 'Are you sure?';
-    const buttons = [
-      { text: 'Cancel', role: 'cancel' },
-      { text: 'Delete', handler: () => deleteConnectionWithUser(profile!.userId) }
-    ];
-    await showAlert({ header, message, buttons });
-  };
-
-  const deleteConnectionWithUser = async (userId: string): Promise<void> => {
-    await showLoading();
-    try {
-      await deleteConnection(userId);
-
-      await showMessage({ ...toastMessageDefaults, message: 'Connection removed.', color: 'success' });
-
-      if (onDeletedConnection) onDeletedConnection();
-      if (onHide) onHide();
-    } catch (e) {
-      await showMessage({ ...toastMessageDefaults, message: 'Error finding the user.', color: 'danger' });
-    } finally {
-      await dismissLoading();
-    }
+  const deleteConnectionAndDimiss = (): void => {
+    deleteConnection!();
+    dismiss!();
   };
 
   return profile ? (
@@ -110,7 +81,7 @@ const UserProfileCard: React.FC<ContainerProps> = ({
           </IonLabel>
         </IonItem>
       </IonCardHeader>
-      {showDetails && profile instanceof UserProfile ? (
+      {showDetails && profile instanceof UserProfileSummary ? (
         <IonCardContent className="ion-text-left">
           <p className="ion-text-right">
             {profile.contactPhone ? (
@@ -208,7 +179,7 @@ const UserProfileCard: React.FC<ContainerProps> = ({
             ''
           ) : (
             <p className="ion-padding ion-text-center" style={{ marginTop: 10 }}>
-              <IonButton size="small" color="danger" fill="clear" onClick={askConfirmationToDeleteConnection}>
+              <IonButton size="small" color="danger" fill="clear" onClick={deleteConnectionAndDimiss}>
                 Delete connection <IonIcon icon={trash} slot="end"></IonIcon>
               </IonButton>
             </p>

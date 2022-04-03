@@ -92,25 +92,50 @@ export class UserFavoriteSession extends Resource {
   }
 }
 
-export class UserProfileSummary extends Resource {
+export class UserProfileShort extends Resource {
   userId: string;
   firstName: string;
   lastName: string;
-  imageURI: string;
-  ESNCountry: string;
-  ESNSection: string;
+  imageURI?: string;
+  ESNCountry?: string;
+  ESNSection?: string;
 
   load(x: any): void {
     super.load(x);
     this.userId = this.clean(x.userId, String);
     this.firstName = this.clean(x.firstName, String);
     this.lastName = this.clean(x.lastName, String);
-    this.imageURI = this.clean(x.imageURI, String);
-    this.ESNCountry = this.clean(x.ESNCountry, String);
-    this.ESNSection = this.clean(x.ESNSection, String);
+    if (x.imageURI) this.imageURI = this.clean(x.imageURI, String);
+    if (x.ESNCountry) this.ESNCountry = this.clean(x.ESNCountry, String);
+    if (x.ESNSection) this.ESNSection = this.clean(x.ESNSection, String);
   }
 
   getName(): string {
     return `${this.firstName || ''} ${this.lastName || ''}`.trim();
+  }
+}
+
+export class UserProfileSummary extends UserProfileShort {
+  languages: string[];
+  contactEmail?: string;
+  contactPhone?: string;
+  bio?: string;
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
+  tiktok?: string;
+  linkedin?: string;
+
+  load(x: any): void {
+    super.load(x);
+    this.languages = this.cleanArray(x.languages, String);
+    if (x.contactEmail) this.contactEmail = this.clean(x.contactEmail, String);
+    if (x.contactPhone) this.contactPhone = this.clean(x.contactPhone, String);
+    if (x.bio) this.bio = this.clean(x.bio, String);
+    if (x.facebook) this.facebook = this.clean(x.facebook, String);
+    if (x.instagram) this.instagram = this.clean(x.instagram, String);
+    if (x.twitter) this.twitter = this.clean(x.twitter, String);
+    if (x.tiktok) this.tiktok = this.clean(x.tiktok, String);
+    if (x.linkedin) this.linkedin = this.clean(x.linkedin, String);
   }
 }

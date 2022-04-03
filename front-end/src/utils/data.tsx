@@ -2,7 +2,8 @@ import { Auth } from 'aws-amplify';
 import { isPlatform } from '@ionic/react';
 import { Browser } from '@capacitor/browser';
 
-import { UserProfile, UserProfileSummary } from 'models/userProfile';
+import { UserProfile, UserProfileShort } from 'models/userProfile';
+import { Connection, ConnectionWithUserData } from 'models/connection';
 import { Organization } from 'models/organization';
 import { Venue } from 'models/venue';
 import { Room } from 'models/room';
@@ -127,11 +128,11 @@ export const isUserAdmin = async (): Promise<boolean> => {
   return groups?.includes('admins');
 };
 
-export const getUsers = async (): Promise<UserProfileSummary[]> => {
-  return (await apiRequest('GET', 'users')).map((x: UserProfileSummary) => new UserProfileSummary(x));
+export const getUsers = async (): Promise<UserProfileShort[]> => {
+  return (await apiRequest('GET', 'users')).map((x: UserProfileShort) => new UserProfileShort(x));
 };
-export const getAdmins = async (): Promise<UserProfileSummary[]> => {
-  return (await apiRequest('GET', 'users?admins=true')).map((x: UserProfileSummary) => new UserProfileSummary(x));
+export const getAdmins = async (): Promise<UserProfileShort[]> => {
+  return (await apiRequest('GET', 'users?admins=true')).map((x: UserProfileShort) => new UserProfileShort(x));
 };
 export const addUserToAdminsById = async (userId: string): Promise<void> => {
   await apiRequest('PATCH', 'users', { action: 'ADD_ADMIN', userId });
@@ -144,14 +145,17 @@ export const removeUserFromAdminsById = async (userId: string): Promise<void> =>
 // CONNECTIONS
 //
 
-export const getConnections = async (): Promise<UserProfile[]> => {
-  return (await apiRequest('GET', 'connections')).map((x: UserProfile) => new UserProfile(x));
+export const getConnections = async (): Promise<ConnectionWithUserData[]> => {
+  return (await apiRequest('GET', 'connections')).map((x: ConnectionWithUserData) => new ConnectionWithUserData(x));
 };
-export const addConnection = async (username: string): Promise<UserProfile> => {
-  return new UserProfile(await apiRequest('POST', 'connections', { username }));
+export const sendConnectionRequestToUserId = async (userId: string): Promise<ConnectionWithUserData> => {
+  return new ConnectionWithUserData(await apiRequest('POST', 'connections', { userId }));
 };
-export const deleteConnection = async (userId: string): Promise<void> => {
-  await apiRequest('DELETE', ['connections', userId]);
+export const confirmConnectionRequestWithUserId = async (userId: string): Promise<ConnectionWithUserData> => {
+  return new ConnectionWithUserData(await apiRequest('POST', 'connections', { userId }));
+};
+export const deleteConnection = async (connection: Connection): Promise<void> => {
+  await apiRequest('DELETE', ['connections', connection.connectionId]);
 };
 
 //

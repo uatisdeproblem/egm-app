@@ -187,7 +187,7 @@ paths:
         200:
           $ref: '#/components/responses/User'
     post:
-      summary: Create a new connection between the requester user and a target user
+      summary: Create a new connection between the requester user and a target user or confirm a pending connection
       tags: [Users]
       security:
         - CognitoUserPool: []
@@ -198,22 +198,21 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                userId:
                   type: string
-                  description: User's email address
       responses:
         200:
           $ref: '#/components/responses/User'
         400:
           $ref: '#/components/responses/BadParameters'
-  /connections/{userId}:
+  /connections/{connectionId}:
     delete:
       summary: Delete the connection of a user with a target
       tags: [Users]
       security:
         - CognitoUserPool: []
       parameters:
-        - name: userId
+        - name: connectionId
           in: path
           required: true
           schema:
