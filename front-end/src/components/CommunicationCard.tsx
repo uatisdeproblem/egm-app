@@ -69,7 +69,7 @@ const CommunicationCard: React.FC<ContainerProps> = ({ communication, preview, s
         {preview ? (
           <>
             <p
-              className="ion-padding"
+              className="ion-padding forceMargins"
               style={{ textAlign: 'justify' }}
               dangerouslySetInnerHTML={{
                 __html: mdParser.render(
@@ -84,7 +84,7 @@ const CommunicationCard: React.FC<ContainerProps> = ({ communication, preview, s
             </IonButton>
           </>
         ) : (
-          <p className="ion-padding">
+          <p className="ion-padding forceMargins">
             {communication.content ? (
               <span dangerouslySetInnerHTML={{ __html: mdParser.render(communication.content) }}></span>
             ) : (

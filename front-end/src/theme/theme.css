@@ -168,3 +168,7 @@ ion-img.inGallery {
 ion-img.inGallery::part(image) {
   border-radius: 2px;
 }
+
+.forceMargins p {
+  margin: 15px 10px !important;
+}
