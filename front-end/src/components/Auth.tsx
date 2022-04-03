@@ -42,7 +42,7 @@ export const AuthFooter = () => {
         </a>
       </p>
       <p>
-        <IonText style={{ color: 'var(--ion-color-step-300)' }}>v1.1.0</IonText>
+        <IonText style={{ color: 'var(--ion-color-step-300)' }}>v{getEnv().version}</IonText>
       </p>
     </div>
   );

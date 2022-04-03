@@ -51,7 +51,7 @@ const MenuPage: React.FC = () => {
 
   const showAppInfo = async (): Promise<void> => {
     const header = 'App version';
-    const message = 'v1.1.0';
+    const message = `v${getEnv().version}`;
     const buttons = ['Got it'];
     await showAlert({ header, message, buttons });
   };

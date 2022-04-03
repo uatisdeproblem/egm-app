@@ -12,6 +12,7 @@ const environments = {
 const parameters = {
   currentStage: CURRENT_STAGE,
   stage: { url: 'placeholder' },
+  version: '1.2.0',
   supportEmail: 'egm.it@esnportugal.org',
   privacyPolicyURL: 'https://www.iubenda.com/privacy-policy/47311861',
   apiUrl: 'https://api.egm-app.link',
