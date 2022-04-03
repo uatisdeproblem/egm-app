@@ -22,10 +22,10 @@ export const AuthHeader = () => {
 };
 
 export const AuthFooter = () => {
-  const { isPending, user } = useAuthenticator();
+  const { isPending } = useAuthenticator();
 
   // fix known Cognito bug (QuotaExceededError): https://github.com/aws-amplify/amplify-js/issues/9140
-  if (isPending === false && !user && window.localStorage.length) window.localStorage.clear();
+  // if (isPending === false && !user && window.localStorage.length) window.localStorage.clear();
 
   return isPending === undefined ? (
     <></>
