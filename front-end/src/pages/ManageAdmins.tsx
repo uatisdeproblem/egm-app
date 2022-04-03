@@ -15,7 +15,7 @@ import {
   IonGrid,
   useIonToast,
   useIonAlert,
-  IonModal
+  useIonModal
 } from '@ionic/react';
 import { close, personAdd, removeCircleOutline, ribbon } from 'ionicons/icons';
 
@@ -32,8 +32,6 @@ const ManageAdminsPage: React.FC = () => {
 
   const [showMessage] = useIonToast();
   const [showAlert] = useIonAlert();
-
-  const [showUsersListModal, setShowUsersListModal] = useState(false);
 
   const [admins, setAdmins] = useState<Array<UserProfileShort>>();
 
@@ -64,7 +62,7 @@ const ManageAdminsPage: React.FC = () => {
   };
 
   const addUserToAdmins = async (user: UserProfileShort): Promise<void> => {
-    setShowUsersListModal(false);
+    dismissUsersListModal();
 
     if (!user) return;
 
@@ -78,6 +76,14 @@ const ManageAdminsPage: React.FC = () => {
     }
   };
 
+  const [showUsersListModal, dismissUsersListModal] = useIonModal(UsersList, {
+    cancel: () => dismissUsersListModal(),
+    select: addUserToAdmins,
+    placeholder: 'Find a user to be administrator',
+    selectIcon: ribbon,
+    usersToHide: admins
+  });
+
   return (
     <IonPage>
       <IonHeader>
@@ -89,7 +95,7 @@ const ManageAdminsPage: React.FC = () => {
           </IonButtons>
           <IonTitle>Manage administrators</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={() => setShowUsersListModal(true)}>
+            <IonButton onClick={() => showUsersListModal()}>
               <IonIcon icon={personAdd} slot="icon-only"></IonIcon>
             </IonButton>
           </IonButtons>
@@ -117,15 +123,6 @@ const ManageAdminsPage: React.FC = () => {
           )}
         </IonList>
       </IonContent>
-      <IonModal isOpen={showUsersListModal} onDidDismiss={() => setShowUsersListModal(false)}>
-        <UsersList
-          cancel={() => setShowUsersListModal(false)}
-          select={addUserToAdmins}
-          placeholder="Find a user to be administrator"
-          selectIcon={ribbon}
-          usersToHide={admins}
-        ></UsersList>
-      </IonModal>
     </IonPage>
   );
 };

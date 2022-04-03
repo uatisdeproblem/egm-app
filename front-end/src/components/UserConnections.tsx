@@ -11,7 +11,6 @@ import {
   IonInfiniteScrollContent,
   IonItem,
   IonLabel,
-  IonModal,
   IonRefresher,
   IonRefresherContent,
   IonRow,
@@ -20,6 +19,7 @@ import {
   RefresherEventDetail,
   useIonAlert,
   useIonLoading,
+  useIonModal,
   useIonPopover,
   useIonToast
 } from '@ionic/react';
@@ -45,8 +45,6 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
   const [showAlert] = useIonAlert();
   const [showLoading, dismissLoading] = useIonLoading();
   const [showMessage] = useIonToast();
-  const [showUsersListModal, setShowUsersListModal] = useState(false);
-  const [showPendingConnectionsModal, setShowPendingConnectionsModal] = useState(false);
 
   const [connections, setConnections] = useState<ConnectionWithUserData[]>();
   const [filteredConnections, setFilteredConnections] = useState<Array<ConnectionWithUserData>>();
@@ -116,7 +114,7 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
   const openUserCard = (event: any) => showUserCardPopover({ event, cssClass: 'widePopover' });
 
   const sendConnectionRequest = async (user: UserProfileShort): Promise<void> => {
-    setShowUsersListModal(false);
+    dismissUsersListModal();
 
     await showLoading();
     try {
@@ -180,6 +178,24 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
     }, 100);
   };
 
+  const [showUsersListModal, dismissUsersListModal] = useIonModal(UsersList, {
+    cancel: () => dismissUsersListModal(),
+    select: sendConnectionRequest,
+    placeholder: 'Find a user to connect',
+    usersToHide: [
+      { userProfile: profile },
+      ...(connections || []),
+      ...(connectionsPendingSent || []),
+      ...(connectionsPendingReceived || [])
+    ].map(x => x.userProfile)
+  });
+
+  const [showPendingConnectionsModal, dismissPendingConnectionsModal] = useIonModal(UsersPendingConnections, {
+    dismiss: () => dismissPendingConnectionsModal(),
+    sent: connectionsPendingSent || [],
+    received: connectionsPendingReceived || []
+  });
+
   return (
     <>
       <IonToolbar color={isDarkMode ? 'light' : 'medium'}>
@@ -200,7 +216,7 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
           </IonButton>
           <IonButton
             fill="clear"
-            onClick={() => setShowPendingConnectionsModal(true)}
+            onClick={() => showPendingConnectionsModal({ onDidDismiss: () => loadData() })}
             style={isMobileMode() ? { width: 70 } : {}}
           >
             {isMobileMode() ? '' : 'Pending requests'}
@@ -213,7 +229,7 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
               ''
             )}
           </IonButton>
-          <IonButton onClick={() => setShowUsersListModal(true)} style={isMobileMode() ? { width: 70 } : {}}>
+          <IonButton onClick={() => showUsersListModal()} style={isMobileMode() ? { width: 70 } : {}}>
             {isMobileMode() ? '' : 'New connection'}
             <IonIcon icon={personAdd} slot={isMobileMode() ? 'icon-only' : 'end'}></IonIcon>
           </IonButton>
@@ -254,32 +270,6 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
             </IonInfiniteScroll>
           </IonCol>
         </IonRow>
-        <IonModal isOpen={showUsersListModal} onDidDismiss={() => setShowUsersListModal(false)}>
-          <UsersList
-            cancel={() => setShowUsersListModal(false)}
-            select={sendConnectionRequest}
-            placeholder="Find a user to connect"
-            usersToHide={[
-              { userProfile: profile },
-              ...(connections || []),
-              ...(connectionsPendingSent || []),
-              ...(connectionsPendingReceived || [])
-            ].map(x => x.userProfile)}
-          ></UsersList>
-        </IonModal>
-        <IonModal
-          isOpen={showPendingConnectionsModal}
-          onDidDismiss={() => {
-            setShowPendingConnectionsModal(false);
-            loadData();
-          }}
-        >
-          <UsersPendingConnections
-            dismiss={() => setShowPendingConnectionsModal(false)}
-            sent={connectionsPendingSent || []}
-            received={connectionsPendingReceived || []}
-          ></UsersPendingConnections>
-        </IonModal>
       </IonGrid>
     </>
   );
