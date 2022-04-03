@@ -120,9 +120,14 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
 
     await showLoading();
     try {
-      await sendConnectionRequestToUserId(user.userId);
+      const connection = await sendConnectionRequestToUserId(user.userId);
 
       await showMessage({ ...toastMessageDefaults, message: 'Connection request sent.', color: 'success' });
+
+      connections!.unshift(connection);
+      connectionsPendingSent!.unshift(connection);
+      setConnections([...connections!]);
+      setConnectionsPendingSent([...connectionsPendingSent!]);
     } catch (e) {
       await showMessage({
         ...toastMessageDefaults,
