@@ -21,6 +21,9 @@ import UserProfileCard from '../components/UserProfileCard';
 import Searchbar from '../components/Searchbar';
 import AddConnectionButton from './AddConnectionButton';
 
+import { startCamera, stopCamera } from './HTML5QRCodeReader';
+import { videocam, videocamOffOutline } from 'ionicons/icons';
+
 const PAGINATION_NUM_MAX_ELEMENTS = 48;
 
 interface ContainerProps {
@@ -121,6 +124,19 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
       ) : (
         ''
       )}
+      <div id="reader"></div>
+      <IonRow style={{ display: 'flex', textAlign: 'center' }}>
+        <IonCol>
+          <IonButton onClick={() => startCamera()} shape="round" color="primary" fill="solid">
+            <IonIcon size="large" icon={videocam} />
+          </IonButton>
+        </IonCol>
+        <IonCol>
+          <IonButton onClick={() => stopCamera()} shape="round" color="primary" fill="solid">
+            <IonIcon size="large" icon={videocamOffOutline} />
+          </IonButton>
+        </IonCol>
+      </IonRow>
       <IonRow className="ion-justify-content-center">
         {!filteredConnections ? (
           [0, 1, 2, 3].map(x => (
