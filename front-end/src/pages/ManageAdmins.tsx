@@ -62,8 +62,6 @@ const ManageAdminsPage: React.FC = () => {
   };
 
   const addUserToAdmins = async (user: UserProfileShort): Promise<void> => {
-    dismissUsersListModal();
-
     if (!user) return;
 
     if (admins!.some(x => x.userId === user.userId))

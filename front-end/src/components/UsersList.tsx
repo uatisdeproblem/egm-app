@@ -32,7 +32,7 @@ const PAGINATION_NUM_MAX_ELEMENTS = 24;
 
 interface ContainerProps {
   cancel: () => void;
-  select: (user: UserProfileShort) => void;
+  select: (user: UserProfileShort) => Promise<void>;
   selectIcon?: string;
   placeholder?: string;
   usersToHide?: UserProfileShort[];
@@ -98,6 +98,15 @@ const UsersList: React.FC<ContainerProps> = ({ cancel, select, selectIcon, place
     }, 100);
   };
 
+  const selectAndUpdateList = async (user: UserProfileShort): Promise<void> => {
+    await select(user);
+
+    users!.splice(users!.indexOf(user), 1);
+    setUsers([...users!]);
+    filteredUsers!.splice(filteredUsers!.indexOf(user), 1);
+    setFilteredUsers([...filteredUsers!]);
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -133,7 +142,7 @@ const UsersList: React.FC<ContainerProps> = ({ cancel, select, selectIcon, place
                   <UserProfileCard profile={user} noPopup></UserProfileCard>
                 </IonCol>
                 <IonCol size="2" className="ion-text-right">
-                  <IonButton fill="clear" color="ESNcyan" onClick={() => select(user)}>
+                  <IonButton fill="clear" color="ESNcyan" onClick={() => selectAndUpdateList(user)}>
                     <IonIcon icon={selectIcon || addCircle} slot="icon-only"></IonIcon>
                   </IonButton>
                 </IonCol>

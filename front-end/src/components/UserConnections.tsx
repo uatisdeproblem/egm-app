@@ -114,8 +114,6 @@ const UserConnectionsComponent: React.FC<ContainerProps> = ({ profile }) => {
   const openUserCard = (event: any) => showUserCardPopover({ event, cssClass: 'widePopover' });
 
   const sendConnectionRequest = async (user: UserProfileShort): Promise<void> => {
-    dismissUsersListModal();
-
     await showLoading();
     try {
       const connection = await sendConnectionRequestToUserId(user.userId);
