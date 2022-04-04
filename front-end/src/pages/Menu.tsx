@@ -60,6 +60,8 @@ const MenuPage: React.FC = () => {
     const message = 'Are you sure?';
     const doLogout = async (): Promise<void> => {
       await Auth.signOut();
+      // fix known Cognito bug (QuotaExceededError): https://github.com/aws-amplify/amplify-js/issues/9140
+      window.localStorage.clear();
       reloadApp();
     };
     const buttons = ['Cancel', { text: 'Confirm', handler: doLogout }];

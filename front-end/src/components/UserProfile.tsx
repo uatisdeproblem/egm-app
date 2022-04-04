@@ -186,6 +186,8 @@ const UserProfileComponent: React.FC<ContainerProps> = ({ profile, onChange }) =
     try {
       await deleteUserAccount();
       await Auth.signOut();
+      // fix known Cognito bug (QuotaExceededError): https://github.com/aws-amplify/amplify-js/issues/9140
+      window.localStorage.clear();
       window.location.reload();
     } catch (err) {
       await showMessage({
