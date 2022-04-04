@@ -1,15 +1,10 @@
 import { Html5Qrcode } from 'html5-qrcode';
 
 const stopCamera = () => {
-  const html5QrCode = new Html5Qrcode(/* element id */ 'reader');
-  html5QrCode
-    .stop()
-    .then(ignore => {
-      console.log('ignore', ignore);
-    })
-    .catch(err => {
-      console.error('error', err);
-    });
+  var camera = document.getElementById('reader');
+  camera.parentNode.removeChild(camera);
+  // eslint-disable-next-line no-restricted-globals
+  location.reload();
 };
 
 const startCamera = () => {
