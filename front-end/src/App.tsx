@@ -14,7 +14,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { calendar, map, menu, people } from 'ionicons/icons';
+import { calendar, map, menu, people, clipboard } from 'ionicons/icons';
 
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
@@ -40,6 +40,7 @@ import SpeakerPage from './pages/Speaker';
 import OrganizationsPage from './pages/Organizations';
 import OrganizationPage from './pages/Organization';
 import ManageEntityPage from './pages/ManageEntity';
+import AppreciationPage from './pages/Appreciation';
 
 import { isMobileMode } from './utils';
 
@@ -113,6 +114,9 @@ const App: React.FC = () => (
                 <Route exact path="/">
                   <Redirect to="/sessions" />
                 </Route>
+                <Route path="/appreciation">
+                  <AppreciationPage />
+                </Route>
               </IonRouterOutlet>
               <IonTabBar
                 color="ideaToolbar"
@@ -131,6 +135,10 @@ const App: React.FC = () => (
                 <IonTabButton tab="user" href="/user">
                   {isMobileMode() ? <IonIcon icon={people} /> : ''}
                   <IonLabel>You</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="appreciation" href="/appreciation">
+                  {isMobileMode() ? <IonIcon icon={clipboard} /> : ''}
+                  <IonLabel>Appreciation</IonLabel>
                 </IonTabButton>
                 <IonTabButton tab="menu" href="/menu">
                   {isMobileMode() ? <IonIcon icon={menu} /> : ''}

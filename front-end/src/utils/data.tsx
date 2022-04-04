@@ -7,6 +7,7 @@ import { Organization } from 'models/organization';
 import { Venue } from 'models/venue';
 import { Speaker } from 'models/speaker';
 import { Session } from 'models/session';
+import { Message } from 'models/message';
 
 import { getEnv } from '../environment';
 
@@ -170,6 +171,25 @@ export const sendUserContactsToOrganization = async (
     sendCV,
     sendPhone
   });
+};
+
+
+//
+// MESSAGES
+//
+
+export const getMessages = async (): Promise<Message[]> => {
+  return (await apiRequest('GET', 'messages')).map((x: Message) => new Message(x));
+};
+
+export const sendMessage = async (message: Message): Promise<Message> => {
+  if (message.messageId)
+    return await apiRequest('PUT', ['messages', message.messageId], message);
+  else return await apiRequest('POST', 'messages', message);
+};
+
+export const deleteMessage  = async (message: Message): Promise<void> => {
+  return await apiRequest('DELETE', ['messages', message.messageId]);
 };
 
 //

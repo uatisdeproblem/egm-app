@@ -30,6 +30,7 @@ const apiResources: ApiResourceController[] = [
 const tables: { [tableName: string]: ApiTable } = {
   userProfiles: { PK: { name: 'userId', type: DDB.AttributeType.STRING } },
   organizations: { PK: { name: 'organizationId', type: DDB.AttributeType.STRING } },
+  messages: { PK: { name: 'messageId', type: DDB.AttributeType.STRING } },
   speakers: { PK: { name: 'speakerId', type: DDB.AttributeType.STRING } },
   venues: { PK: { name: 'venueId', type: DDB.AttributeType.STRING } },
   sessions: { PK: { name: 'sessionId', type: DDB.AttributeType.STRING } },

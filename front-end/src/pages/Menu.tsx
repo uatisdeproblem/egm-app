@@ -25,7 +25,8 @@ import {
   people,
   peopleOutline,
   person,
-  refresh
+  refresh,
+  clipboard
 } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
 
@@ -96,6 +97,10 @@ const MenuPage: React.FC = () => {
           <IonItem button color="white" routerLink="/speakers">
             <IonIcon icon={people} slot="start"></IonIcon>
             <IonLabel>Speakers</IonLabel>
+          </IonItem>
+          <IonItem button color="white" routerLink="/appreciation">
+            <IonIcon icon={clipboard} slot="start"></IonIcon>
+            <IonLabel>Appreciation</IonLabel>
           </IonItem>
           <IonItem button color="white" routerLink="/user">
             <IonIcon icon={person} slot="start"></IonIcon>
