@@ -3,15 +3,16 @@
 # project specific parameters
 S3_BUCKET_PROD='egm-prod-front-end'
 S3_BUCKET_DEV='egm-dev-front-end'
-CLOUDFRONT_DISTRIBUTION_PROD='E1SC6WGQUI6XWJ'
-CLOUDFRONT_DISTRIBUTION_DEV='E1WBM1Y7S111BZ'
-AWS_REGION='eu-central-1'
+CLOUDFRONT_DISTRIBUTION_PROD='E38L1OE756VBOX'
+CLOUDFRONT_DISTRIBUTION_DEV='E302HREE445OEZ'
 AWS_PROFILE='egm' # leave empty if not used
+
 
 # other parameters
 ACTION=$1
 SRC_FOLDER="${PWD}/src"
 BACK_END_FOLDER="back-end"
+SWAGGER_FILE="swagger.yaml"
 C='\033[4;32m' # color
 NC='\033[0m'   # reset (no color)
 
@@ -45,20 +46,26 @@ fi
 echo -e "${C}Installing npm modules...${NC}"
 npm i --silent 1>/dev/null
 
+# lint the code in search for errors
+echo -e "${C}Linting...${NC}"
+npm run lint ${SRC_FOLDER} 1>/dev/null
+
 # compile the project's typescript code
 echo -e "${C}Compiling...${NC}"
 ionic build --prod 1>/dev/null
 
 # upload the project's files to the S3 bucket
 echo -e "${C}Uploading...${NC}"
-aws s3 sync ./build ${BUCKET} --profile ${AWS_PROFILE} --region ${AWS_REGION} \
-  --exclude ".well-known/*"  1>/dev/null
+aws s3 sync ./www ${BUCKET} --profile ${AWS_PROFILE} --exclude ".well-known/*" --exclude "${SWAGGER_FILE}" 1>/dev/null
+
+# add the Swagger (OpenApi 3.0) file
+echo -e "${C}Adding API docs...${NC}"
+aws s3 cp ../${BACK_END_FOLDER}/${SWAGGER_FILE} ${BUCKET}/${SWAGGER_FILE} --profile ${AWS_PROFILE} 1>/dev/null
 
 # invalidate old common files from the CloudFront distribution
 echo -e "${C}Cleaning...${NC}"
-aws cloudfront create-invalidation --profile ${AWS_PROFILE} --region ${AWS_REGION} \
-  --distribution-id ${DISTRIBUTION} \
-  --paths "/index.html" "/assets/i18n*" \
+aws cloudfront create-invalidation --profile ${AWS_PROFILE} --distribution-id ${DISTRIBUTION} \
+  --paths "/index.html" "/assets/i18n*" "/${SWAGGER_FILE}" \
   1>/dev/null
 
 echo -e "${C}Done!${NC}"

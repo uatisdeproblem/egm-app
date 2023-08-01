@@ -1,18 +1,18 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as Cognito from 'aws-cdk-lib/aws-cognito';
-import * as IAM from 'aws-cdk-lib/aws-iam';
+// import * as IAM from 'aws-cdk-lib/aws-iam';
 import { Duration } from 'aws-cdk-lib';
 
 export interface CognitoProps extends cdk.StackProps {
   project: string;
   firstAdminEmail: string;
-  mapName: string;
 }
 
 export class CognitoStack extends cdk.Stack {
   public readonly userPool: Cognito.UserPool;
   public readonly clientFrontEnd: Cognito.UserPoolClient;
+  public readonly clientBackEnd: Cognito.UserPoolClient;
 
   constructor(scope: Construct, id: string, props: CognitoProps) {
     super(scope, id, props);
@@ -31,8 +31,12 @@ export class CognitoStack extends cdk.Stack {
         requireUppercase: false,
         tempPasswordValidity: Duration.days(100)
       },
-      accountRecovery: Cognito.AccountRecovery.EMAIL_ONLY
+      accountRecovery: Cognito.AccountRecovery.EMAIL_ONLY,
+      mfa: Cognito.Mfa.OPTIONAL,
+      mfaSecondFactor: { sms: false, otp: true }
     });
+    new cdk.CfnOutput(this, 'CognitoUserPoolId', { value: this.userPool.userPoolId });
+    new cdk.CfnOutput(this, 'UserPoolARN', { value: this.userPool.userPoolArn });
 
     this.clientFrontEnd = new Cognito.UserPoolClient(this, 'CognitoUserPoolClientFrontEnd', {
       userPool: this.userPool,
@@ -41,6 +45,40 @@ export class CognitoStack extends cdk.Stack {
       preventUserExistenceErrors: true,
       authFlows: { custom: true, userSrp: true, userPassword: true }
     });
+    new cdk.CfnOutput(this, 'ClientIdFrontEnd', { value: this.clientFrontEnd.userPoolClientId });
+
+    this.clientBackEnd = new Cognito.UserPoolClient(this, 'CognitoUserPoolClientBackEnd', {
+      userPool: this.userPool,
+      userPoolClientName: props.project.concat('-back-end'),
+      generateSecret: false,
+      preventUserExistenceErrors: true,
+      authFlows: { custom: true, userSrp: true, userPassword: true, adminUserPassword: true }
+    });
+    new cdk.CfnOutput(this, 'ClientIdBackEnd', { value: this.clientBackEnd.userPoolClientId });
+
+    const adminsGroup = new Cognito.CfnUserPoolGroup(this, 'AdminGroup', {
+      groupName: 'admins',
+      description: 'Administrators',
+      precedence: 0,
+      userPoolId: this.userPool.userPoolId
+    });
+    const user = new Cognito.CfnUserPoolUser(this, 'FirstAdminUser', {
+      userPoolId: this.userPool.userPoolId,
+      username: props.firstAdminEmail,
+      desiredDeliveryMediums: ['EMAIL'],
+      forceAliasCreation: true,
+      userAttributes: [
+        { name: 'email', value: props.firstAdminEmail },
+        { name: 'email_verified', value: 'true' }
+      ]
+    });
+    new Cognito.CfnUserPoolUserToGroupAttachment(this, 'FirstAdminInGroup', {
+      userPoolId: this.userPool.userPoolId,
+      groupName: String(adminsGroup.groupName),
+      username: user.ref
+    });
+
+    /* @idea uncomment only if you need a Cognito IdentityPool
 
     const userIdentityPool = new Cognito.CfnIdentityPool(this, 'CognitoIdentiyPool', {
       identityPoolName: props.project.concat('-identity'),
@@ -53,6 +91,7 @@ export class CognitoStack extends cdk.Stack {
         }
       ]
     });
+    new cdk.CfnOutput(this, 'IdentityPoolId', { value: userIdentityPool.ref });
 
     const unauthenticatedIdentityPoolRole = new IAM.Role(this, 'IdentityUnauthenticatedRole', {
       assumedBy: new IAM.FederatedPrincipal(
@@ -73,18 +112,7 @@ export class CognitoStack extends cdk.Stack {
           'ForAnyValue:StringLike': { 'cognito-identity.amazonaws.com:amr': 'authenticated' }
         },
         'sts:AssumeRoleWithWebIdentity'
-      ),
-      inlinePolicies: {
-        AmplifyGeoMapLocation: new IAM.PolicyDocument({
-          statements: [
-            new IAM.PolicyStatement({
-              effect: IAM.Effect.ALLOW,
-              actions: ['geo:GetMap*'],
-              resources: [`arn:aws:geo:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:map/${props.mapName}`]
-            })
-          ]
-        })
-      }
+      )
     });
 
     new Cognito.CfnIdentityPoolRoleAttachment(this, 'identity-pool-role-attachment', {
@@ -102,33 +130,6 @@ export class CognitoStack extends cdk.Stack {
           }`
         }
       }
-    });
-
-    const adminsGroup = new Cognito.CfnUserPoolGroup(this, 'AdminGroup', {
-      groupName: 'admins',
-      description: 'Administrators',
-      precedence: 0,
-      userPoolId: this.userPool.userPoolId
-    });
-    const user = new Cognito.CfnUserPoolUser(this, 'FirstAdminUser', {
-      userPoolId: this.userPool.userPoolId,
-      username: props.firstAdminEmail,
-      desiredDeliveryMediums: ['EMAIL'],
-      forceAliasCreation: true,
-      userAttributes: [
-        { name: 'email', value: props.firstAdminEmail },
-        { name: 'email_verified', value: 'true' }
-      ]
-    });
-    new Cognito.CfnUserPoolUserToGroupAttachment(this, 'FirstAdminInGroup', {
-      userPoolId: this.userPool.userPoolId,
-      groupName: adminsGroup.groupName,
-      username: user.ref
-    });
-
-    new cdk.CfnOutput(this, 'CognitoUserPoolId', { value: this.userPool.userPoolId });
-    new cdk.CfnOutput(this, 'ClientIdFrontEnd', { value: this.clientFrontEnd.userPoolClientId });
-    new cdk.CfnOutput(this, 'UserPoolARN', { value: this.userPool.userPoolArn });
-    new cdk.CfnOutput(this, 'IdentityPoolId', { value: userIdentityPool.ref });
+    });*/
   }
 }

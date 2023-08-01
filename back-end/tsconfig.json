@@ -1,5 +1,5 @@
 {
-  "extends": "./node_modules/@tsconfig/node14/tsconfig.json",
+  "extends": "./node_modules/@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
     "lib": ["es2020"],
     "module": "commonjs",
@@ -9,6 +9,5 @@
     "strictPropertyInitialization": false,
     "strictNullChecks": false
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "cdk.out"]
+  "include": ["src/**/*.ts"]
 }

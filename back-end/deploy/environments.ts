@@ -1,21 +1,27 @@
 export const parameters: Parameters = {
   project: 'egm',
-  awsAccount: '008360868121',
+  awsAccount: '767203414619',
   awsRegion: 'eu-central-1',
-  apiDomain: 'api.egm-app.link',
-  mediaDomain: 'media.egm-app.link',
-  firstAdminEmail: 'matteo.carbone@iter-idea.com'
+  apiDomain: 'api.egm-app.click',
+  mediaDomain: 'media.egm-app.click',
+  firstAdminEmail: 'egm-technical@esn.org'
 };
 
-export const environments: { [stage: string]: Stage } = {
+export const stages: { [stage: string]: Stage } = {
   prod: {
-    domain: 'egm-app.link',
+    domain: 'egm-app.click',
     destroyDataOnDelete: false
   },
   dev: {
-    domain: 'dev.egm-app.link',
+    domain: 'dev.egm-app.click',
     destroyDataOnDelete: true
   }
+};
+
+export const versionStatus: VersionStatus = {
+  latestVersion: '2.0.0',
+  minVersion: null,
+  maintenance: false
 };
 
 export interface Parameters {
@@ -55,4 +61,19 @@ export interface Stage {
    * It should be True for dev and False for prod environments.
    */
   destroyDataOnDelete: boolean;
+}
+
+export interface VersionStatus {
+  /**
+   * The latest version of the app currently available.
+   */
+  latestVersion: string;
+  /**
+   * The minimum app version required to run the front-end, if any.
+   */
+  minVersion: string | null;
+  /**
+   * Wether the app is in maintenance mode.
+   */
+  maintenance: boolean;
 }

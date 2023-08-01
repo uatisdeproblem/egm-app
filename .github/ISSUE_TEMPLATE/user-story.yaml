@@ -1,0 +1,26 @@
+name: 📒 User Story
+description: New feature request
+title: '[US]: <title>'
+body:
+  - type: textarea
+    id: feature
+    attributes:
+      label: Feature
+      description: Describe the feature on the point of view of the interested User.
+      placeholder: "As <role>, I'd like <feature/request> so that <reason/benefit>"
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance Criteria
+      description: A list of functional (and non) requirements for the feature. They are used also for testing purposes.
+      placeholder: '- [ ] Acceptance criteria #N.'
+      value: '- [ ] Acceptance criteria #N.'
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## Remember to optionally add additional labels [following the process on Notion](https://www.notion.so/iter-idea/Managing-Issues-User-Stories-bugs-etc-69c567563b6f4e05a9911190f6e451a8#20e4d3c6558547ce983bff40ef061fc1).

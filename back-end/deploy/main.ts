@@ -3,82 +3,49 @@ import * as cdk from 'aws-cdk-lib';
 import * as DDB from 'aws-cdk-lib/aws-dynamodb';
 
 import { IDEAStack } from './idea-stack';
-import { MapStack } from './map-stack';
-import { CognitoStack } from './cognito-stack';
 import { MediaStack } from './media-stack';
+import { CognitoStack } from './cognito-stack';
 import { ApiDomainStack } from './api-domain-stack';
-import { SESStack } from './ses-stack';
-import { ApiResourceController, ApiStack, ApiTable } from './api-stack';
+import { ResourceController, ApiStack, DDBTable } from './api-stack';
 import { FrontEndStack } from './front-end-stack';
 
-import { parameters, environments, Stage } from './environments';
+import { parameters, stages, Stage, versionStatus } from './environments';
 
 //
 // RESOURCES
 //
 
-const apiResources: ApiResourceController[] = [
-  { name: 'users', paths: ['/users', '/users/{userId}'] },
-  { name: 'connections', paths: ['/connections', '/connections/{connectionId}'] },
-  { name: 'organizations', paths: ['/organizations', '/organizations/{organizationId}'] },
-  { name: 'speakers', paths: ['/speakers', '/speakers/{speakerId}'] },
-  { name: 'venues', paths: ['/venues', '/venues/{venueId}'] },
-  { name: 'rooms', paths: ['/rooms', '/rooms/{roomId}'] },
-  { name: 'sessions', paths: ['/sessions', '/sessions/{sessionId}'] },
-  { name: 'communications', paths: ['/communications', '/communications/{communicationId}'] },
-  { name: 'media', paths: ['/media'] }
+const apiResources: ResourceController[] = [
+  { name: 'status', paths: ['/status'] },
+  { name: 'books', paths: ['/books', '/books/{bookId}'] }
 ];
 
-const tables: { [tableName: string]: ApiTable } = {
-  userProfiles: {
-    PK: { name: 'userId', type: DDB.AttributeType.STRING },
-    indexes: [
-      {
-        indexName: 'summary-index',
-        partitionKey: { name: 'userId', type: DDB.AttributeType.STRING },
-        projectionType: DDB.ProjectionType.INCLUDE,
-        nonKeyAttributes: ['firstName', 'lastName', 'imageURI', 'ESNCountry', 'ESNSection']
-      }
-    ]
+const tables: { [tableName: string]: DDBTable } = {
+  status: {
+    PK: { name: 'version', type: DDB.AttributeType.STRING }
   },
-  connections: {
-    PK: { name: 'connectionId', type: DDB.AttributeType.STRING },
+  books: {
+    PK: { name: 'bookId', type: DDB.AttributeType.STRING },
     indexes: [
       {
-        indexName: 'requesterId-targetId-index',
-        partitionKey: { name: 'requesterId', type: DDB.AttributeType.STRING },
-        sortKey: { name: 'targetId', type: DDB.AttributeType.STRING },
-        projectionType: DDB.ProjectionType.ALL
+        indexName: 'publisherId-publishDate-index',
+        partitionKey: { name: 'publisherId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'publishDate', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.INCLUDE,
+        nonKeyAttributes: ['title', 'genre', 'author', 'rating', 'ratingsCount']
       },
       {
-        indexName: 'targetId-requesterId-index',
-        partitionKey: { name: 'targetId', type: DDB.AttributeType.STRING },
-        sortKey: { name: 'requesterId', type: DDB.AttributeType.STRING },
-        projectionType: DDB.ProjectionType.ALL
+        indexName: 'hasRatings-rating-index',
+        partitionKey: { name: 'hasRatings', type: DDB.AttributeType.NUMBER },
+        sortKey: { name: 'rating', type: DDB.AttributeType.NUMBER },
+        projectionType: DDB.ProjectionType.INCLUDE,
+        nonKeyAttributes: ['title', 'genre', 'author', 'ratingsCount', 'coverURI']
       }
     ]
   },
-  organizations: { PK: { name: 'organizationId', type: DDB.AttributeType.STRING } },
-  speakers: { PK: { name: 'speakerId', type: DDB.AttributeType.STRING } },
-  venues: { PK: { name: 'venueId', type: DDB.AttributeType.STRING } },
-  rooms: { PK: { name: 'roomId', type: DDB.AttributeType.STRING } },
-  sessions: { PK: { name: 'sessionId', type: DDB.AttributeType.STRING } },
-  usersFavoriteSessions: {
-    PK: { name: 'userId', type: DDB.AttributeType.STRING },
-    SK: { name: 'sessionId', type: DDB.AttributeType.STRING },
-    indexes: [
-      {
-        indexName: 'inverted-index',
-        partitionKey: { name: 'sessionId', type: DDB.AttributeType.STRING },
-        sortKey: { name: 'userId', type: DDB.AttributeType.STRING },
-        projectionType: DDB.ProjectionType.ALL
-      }
-    ]
-  },
-  communications: { PK: { name: 'communicationId', type: DDB.AttributeType.STRING } },
-  usersReadCommunications: {
-    PK: { name: 'userId', type: DDB.AttributeType.STRING },
-    SK: { name: 'communicationId', type: DDB.AttributeType.STRING }
+  ratings: {
+    PK: { name: 'bookId', type: DDB.AttributeType.STRING },
+    SK: { name: 'userId', type: DDB.AttributeType.STRING }
   }
 };
 
@@ -92,8 +59,8 @@ const createApp = async (): Promise<void> => {
   const env = { account: parameters.awsAccount, region: parameters.awsRegion };
 
   const STAGE = app.node.tryGetContext('stage');
-  const ENV = (environments as any)[STAGE] as Stage;
-  if (!ENV) {
+  const STAGE_VARIABLES = (stages as any)[STAGE] as Stage;
+  if (!STAGE_VARIABLES) {
     console.log('Missing stage (environments.ts); e.g. --parameters stage=dev\n\n');
     throw new Error();
   }
@@ -104,22 +71,9 @@ const createApp = async (): Promise<void> => {
 
   new IDEAStack(app, `idea-resources`);
 
-  const mapStack = new MapStack(app, `${parameters.project}-map`, {
-    env,
-    project: parameters.project
-  });
-
-  const cognitoStack = new CognitoStack(app, `${parameters.project}-cognito`, {
-    env,
-    project: parameters.project,
-    firstAdminEmail: parameters.firstAdminEmail,
-    mapName: mapStack.map.mapName
-  });
-  cognitoStack.addDependency(mapStack);
-
   const mediaStack = new MediaStack(app, `${parameters.project}-media`, {
     env,
-    mediaBucketName: `${parameters.project}-media-bucket`,
+    mediaBucketName: `${parameters.project}-media`,
     mediaDomain: parameters.mediaDomain
   });
 
@@ -128,9 +82,10 @@ const createApp = async (): Promise<void> => {
     domain: parameters.apiDomain
   });
 
-  const sesStack = new SESStack(app, `${parameters.project}-ses`, {
+  const cognitoStack = new CognitoStack(app, `${parameters.project}-cognito`, {
     env,
-    domain: parameters.apiDomain
+    project: parameters.project,
+    firstAdminEmail: parameters.firstAdminEmail
   });
 
   //
@@ -141,27 +96,28 @@ const createApp = async (): Promise<void> => {
     env,
     project: parameters.project,
     stage: STAGE,
+    firstAdminEmail: parameters.firstAdminEmail,
+    versionStatus,
     apiDomain: parameters.apiDomain,
     apiDefinitionFile: './swagger.yaml',
     resourceControllers: apiResources,
     tables,
     mediaBucketArn: mediaStack.mediaBucketArn,
-    cognito: { userPoolId: cognitoStack.userPool.userPoolId, audience: [cognitoStack.clientFrontEnd.userPoolClientId] },
-    removalPolicy: ENV.destroyDataOnDelete ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN,
-    sesIdentityARN: sesStack.identityARN,
-    mapPlaceIndexName: mapStack.placeIndex.indexName
+    cognito: {
+      userPoolId: cognitoStack.userPool.userPoolId,
+      audience: [cognitoStack.clientFrontEnd.userPoolClientId, cognitoStack.clientBackEnd.userPoolClientId]
+    },
+    removalPolicy: STAGE_VARIABLES.destroyDataOnDelete ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN
   });
-  apiStack.addDependency(cognitoStack);
   apiStack.addDependency(mediaStack);
   apiStack.addDependency(apiDomainStack);
-  apiStack.addDependency(sesStack);
-  apiStack.addDependency(mapStack);
+  apiStack.addDependency(cognitoStack);
 
   new FrontEndStack(app, `${parameters.project}-${STAGE}-front-end`, {
     env,
     project: parameters.project,
     stage: STAGE,
-    domain: ENV.domain
+    domain: STAGE_VARIABLES.domain
   });
 };
 createApp();

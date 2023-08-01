@@ -20,8 +20,7 @@
     "front-end/www": true,
     "front-end/.sourcemaps": true,
     "front-end/.angular": true,
-    "front-end/build": true,
-    "build": true,
+    "www": true,
     ".vs": true
   },
   "files.trimTrailingWhitespace": true,
@@ -29,5 +28,6 @@
   "editor.renderLineHighlight": "all",
   "workbench.iconTheme": "vs-seti",
   "window.zoomLevel": 0,
-  "extensions.ignoreRecommendations": false
+  "extensions.ignoreRecommendations": false,
+  "editor.guides.indentation": true
 }

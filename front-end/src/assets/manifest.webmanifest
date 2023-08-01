@@ -1,0 +1,9 @@
+{
+  "background_color": "#222428",
+  "description": "EGM",
+  "display": "fullscreen",
+  "icons": [{ "src": "icons/icon-store.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "maskable" }],
+  "name": "EGM",
+  "short_name": "EGM",
+  "start_url": "../index.html"
+}

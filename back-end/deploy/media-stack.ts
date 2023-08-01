@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import * as Lambda from 'aws-cdk-lib/aws-lambda';
 import * as S3 from 'aws-cdk-lib/aws-s3';
 import * as S3N from 'aws-cdk-lib/aws-s3-notifications';
@@ -25,7 +26,6 @@ export class MediaStack extends cdk.Stack {
     const s3MediaBucket = new S3.Bucket(this, 'MediaBucket', {
       bucketName: props.mediaBucketName,
       publicReadAccess: false,
-      blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL,
       cors: [
         {
           allowedHeaders: ['*'],
@@ -35,16 +35,23 @@ export class MediaStack extends cdk.Stack {
           maxAge: 3000
         }
       ],
-      removalPolicy: RemovalPolicy.DESTROY
+      removalPolicy: RemovalPolicy.DESTROY,
+      lifecycleRules: [{ prefix: 'downloads/', expiration: cdk.Duration.days(1) }]
     });
     this.mediaBucketArn = s3MediaBucket.bucketArn;
 
-    const thumbnailerFn = createThumbnailer(this);
+    const s3BucketIDEALambdaFn = S3.Bucket.fromBucketName(
+      this,
+      'IDEALambdaFunctions',
+      `idea-lambda-functions${cdk.Stack.of(this).region === 'eu-south-1' ? '' : `-${cdk.Stack.of(this).region}`}`
+    );
+
+    const thumbnailerFn = createThumbnailer(this, s3BucketIDEALambdaFn);
     s3MediaBucket.grantReadWrite(thumbnailerFn);
     s3MediaBucket.addToResourcePolicy(
       new IAM.PolicyStatement({
         effect: IAM.Effect.ALLOW,
-        principals: [new IAM.ArnPrincipal(thumbnailerFn.role.roleArn)],
+        principals: [new IAM.ArnPrincipal(String(thumbnailerFn.role?.roleArn))],
         actions: ['s3:*'],
         resources: [
           `arn:aws:s3:::${s3MediaBucket.bucketName}/images/*`,
@@ -52,22 +59,26 @@ export class MediaStack extends cdk.Stack {
         ]
       })
     );
-
     s3MediaBucket.addEventNotification(S3.EventType.OBJECT_CREATED, new S3N.LambdaDestination(thumbnailerFn), {
       prefix: 'images/'
     });
+
+    const html2PDFFunctions = createHTMLToPDFLambdaFunctions(this, s3BucketIDEALambdaFn);
+    html2PDFFunctions.forEach(fn => s3MediaBucket.grantReadWrite(fn));
+    s3MediaBucket.addToResourcePolicy(
+      new IAM.PolicyStatement({
+        effect: IAM.Effect.ALLOW,
+        principals: html2PDFFunctions.map(fn => new IAM.ArnPrincipal(String(fn.role?.roleArn))),
+        actions: ['s3:*'],
+        resources: [`arn:aws:s3:::${s3MediaBucket.bucketName}/downloads/*`]
+      })
+    );
 
     createCloudFrontDistributionForMediaBucket(this, s3MediaBucket, props.mediaDomain);
   }
 }
 
-const createThumbnailer = (scope: Construct): Lambda.Function => {
-  const s3BucketIDEALambdaFn = S3.Bucket.fromBucketName(
-    scope,
-    'IDEALambdaFunctions',
-    `idea-lambda-functions-${cdk.Stack.of(scope).region}`
-  );
-
+const createThumbnailer = (scope: Construct, s3BucketIDEALambdaFn: S3.Bucket | cdk.aws_s3.IBucket): Lambda.Function => {
   const ghostScriptLayer = new Lambda.LayerVersion(scope, 'GhostScriptLayer', {
     description: 'To convert images',
     layerVersionName: 'idea_ghost_script',
@@ -93,16 +104,58 @@ const createThumbnailer = (scope: Construct): Lambda.Function => {
     functionName: 'idea_thumbnailer',
     environment: {
       THUMB_KEY_PREFIX: 'thumbnails/',
-      THUMB_HEIGHT: '1200',
-      THUMB_WIDTH: '1200'
+      THUMB_HEIGHT: '600',
+      THUMB_WIDTH: '600'
     },
-    layers: [ghostScriptLayer, imageMagickLayer]
+    layers: [ghostScriptLayer, imageMagickLayer],
+    logRetention: RetentionDays.TWO_WEEKS
   });
 
   return thumbnailerFn;
 };
 
-const createCloudFrontDistributionForMediaBucket = (scope: Construct, mediaBucket: S3.Bucket, mediaDomain: string) => {
+const createHTMLToPDFLambdaFunctions = (
+  scope: Construct,
+  s3BucketIDEALambdaFn: S3.Bucket | cdk.aws_s3.IBucket
+): Lambda.Function[] => {
+  const chromiumPuppetteerLayer = new Lambda.LayerVersion(scope, 'ChromiumPuppetteerLayer', {
+    description: 'Chromium and Puppetteer',
+    layerVersionName: 'idea_chromium_puppetter',
+    code: Lambda.Code.fromBucket(s3BucketIDEALambdaFn, 'layer-chromium-puppetteer.zip'),
+    compatibleRuntimes: [Lambda.Runtime.NODEJS_14_X]
+  });
+
+  const lambdaFnOptions = {
+    runtime: Lambda.Runtime.NODEJS_14_X,
+    memorySize: 1536,
+    timeout: Duration.seconds(20),
+    handler: 'index.handler',
+    layers: [chromiumPuppetteerLayer],
+    logRetention: RetentionDays.TWO_WEEKS
+  };
+
+  const htmlToPDFFunction = new Lambda.Function(scope, 'HTMLToPDFFunction', {
+    ...lambdaFnOptions,
+    description: 'Create a PDF from an HTML source',
+    functionName: 'idea_html2pdf',
+    code: Lambda.Code.fromBucket(s3BucketIDEALambdaFn, 'fn-html2pdf.zip')
+  });
+
+  const htmlToPDFFViaS3BucketFunction = new Lambda.Function(scope, 'HTMLToPDFViaS3BucketFunction', {
+    ...lambdaFnOptions,
+    description: 'Create a PDF from an HTML source and offer the result via S3 bucket',
+    functionName: 'idea_html2pdf_viaS3Bucket',
+    code: Lambda.Code.fromBucket(s3BucketIDEALambdaFn, 'fn-html2pdf_viaS3Bucket.zip')
+  });
+
+  return [htmlToPDFFunction, htmlToPDFFViaS3BucketFunction];
+};
+
+const createCloudFrontDistributionForMediaBucket = (
+  scope: Construct,
+  mediaBucket: S3.Bucket,
+  mediaDomain: string
+): void => {
   const zone = Route53.HostedZone.fromLookup(scope, 'HostedZone', {
     domainName: mediaDomain.split('.').slice(-2).join('.')
   });

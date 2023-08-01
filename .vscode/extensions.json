@@ -4,8 +4,9 @@
     "github.github-vscode-theme",
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
+    "johnpapa.angular2",
+    "angular.ng-template",
     "amazonwebservices.aws-toolkit-vscode",
-    "redhat.vscode-yaml",
     "42crunch.vscode-openapi"
   ],
   "unwantedRecommendations": []

@@ -21,11 +21,13 @@ export class FrontEndStack extends cdk.Stack {
     const frontEndBucket = new S3.Bucket(this, 'Bucket', {
       bucketName: props.project.concat('-', props.stage, '-front-end'),
       publicReadAccess: false,
-      blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL,
       websiteIndexDocument: 'index.html',
       websiteErrorDocument: 'index.html',
-      removalPolicy: RemovalPolicy.DESTROY
+      removalPolicy: RemovalPolicy.DESTROY,
+      blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL
     });
+
+    new cdk.CfnOutput(this, 'S3BucketName', { value: frontEndBucket.bucketName });
 
     const zone = Route53.HostedZone.fromLookup(this, 'HostedZone', {
       domainName: props.domain.split('.').slice(-2).join('.')
@@ -54,8 +56,12 @@ export class FrontEndStack extends cdk.Stack {
         { errorCachingMinTtl: 0, errorCode: 403, responseCode: 200, responsePagePath: '/index.html' },
         { errorCachingMinTtl: 0, errorCode: 404, responseCode: 200, responsePagePath: '/index.html' }
       ],
-      viewerCertificate: CloudFront.ViewerCertificate.fromAcmCertificate(certificate, { aliases: [props.domain] })
+      viewerCertificate: CloudFront.ViewerCertificate.fromAcmCertificate(certificate, {
+        aliases: [props.domain],
+        securityPolicy: CloudFront.SecurityPolicyProtocol.TLS_V1_2_2021
+      })
     });
+    new cdk.CfnOutput(this, 'CloudFrontDistributionID', { value: frontEndDistribution.distributionId });
     frontEndBucket.addToResourcePolicy(
       new IAM.PolicyStatement({
         actions: ['s3:GetObject'],
@@ -71,8 +77,5 @@ export class FrontEndStack extends cdk.Stack {
       recordName: props.domain,
       target: Route53.RecordTarget.fromAlias(new Route53Targets.CloudFrontTarget(frontEndDistribution))
     });
-
-    new cdk.CfnOutput(this, 'CloudFrontDistributionID', { value: frontEndDistribution.distributionId });
-    new cdk.CfnOutput(this, 'S3BucketName', { value: frontEndBucket.bucketName });
   }
 }

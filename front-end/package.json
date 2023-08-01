@@ -1,78 +1,57 @@
 {
-  "name": "egm-app",
-  "version": "1.2.1",
+  "name": "cloud-app-starter",
+  "version": "3.0.2",
+  "author": "ITER IDEA",
+  "homepage": "https://iter-idea.com/",
+  "scripts": {
+    "start": "ionic serve --host=0.0.0.0 --no-open",
+    "lint": "eslint --ext .ts",
+    "bundle-report": "ng build --stats-json && webpack-bundle-analyzer www/stats.json"
+  },
   "private": true,
   "dependencies": {
-    "@aws-amplify/ui-react": "^2.3.0",
-    "@capacitor/browser": "^1.0.7",
-    "@capacitor/core": "^3.3.3",
-    "@ionic/react": "^6.0.0",
-    "@ionic/react-router": "^6.0.0",
-    "@ionic/storage": "^3.0.6",
-    "@types/jest": "^26.0.20",
-    "@types/node": "^12.19.15",
-    "@types/react": "^16.14.3",
-    "@types/react-dom": "^16.9.10",
-    "@types/react-router": "^5.1.11",
-    "@types/react-router-dom": "^5.1.7",
-    "aws-amplify": "^4.3.14",
-    "idea-toolbox": "^6.5.13",
-    "ionicons": "^5.4.0",
-    "maplibre-gl": "^1.15.2",
-    "maplibre-gl-js-amplify": "^1.2.3",
-    "markdown-it": "^12.3.2",
-    "models": "file:../back-end/src/models",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-markdown-editor-lite": "^1.3.2",
-    "react-router": "^5.2.0",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.2",
-    "typeface-poppins": "^1.1.13",
-    "typescript": "^4.1.3",
-    "web-vitals": "^0.2.4",
-    "workbox-background-sync": "^5.1.4",
-    "workbox-broadcast-update": "^5.1.4",
-    "workbox-cacheable-response": "^5.1.4",
-    "workbox-core": "^5.1.4",
-    "workbox-expiration": "^5.1.4",
-    "workbox-google-analytics": "^5.1.4",
-    "workbox-navigation-preload": "^5.1.4",
-    "workbox-precaching": "^5.1.4",
-    "workbox-range-requests": "^5.1.4",
-    "workbox-routing": "^5.1.4",
-    "workbox-strategies": "^5.1.4",
-    "workbox-streams": "^5.1.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ],
-    "rules": {
-      "react-hooks/exhaustive-deps": "off"
-    }
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "@angular/common": "^15.0.4",
+    "@angular/core": "^15.0.4",
+    "@angular/forms": "^15.0.4",
+    "@angular/platform-browser": "^15.0.4",
+    "@angular/platform-browser-dynamic": "^15.0.4",
+    "@angular/router": "^15.0.4",
+    "@capacitor/browser": "^4.0.0",
+    "@capacitor/core": "^4.0.0",
+    "@capacitor/network": "^4.0.0",
+    "@capacitor/push-notifications": "^4.0.0",
+    "@idea-ionic/auth": "^6.x.x",
+    "@idea-ionic/common": "^6.x.x",
+    "@ionic/angular": "^6.4.1",
+    "@ionic/storage-angular": "^3.0.6",
+    "amazon-cognito-identity-js": "^6.1.1",
+    "idea-toolbox": "^6.x.x",
+    "qrcode": "^1.5.1",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.4.1",
+    "zone.js": "^0.12.0"
   },
   "devDependencies": {
-    "@capacitor/cli": "^3.3.3"
+    "@angular-devkit/build-angular": "^15.0.4",
+    "@angular-eslint/builder": "^15.1.0",
+    "@angular-eslint/eslint-plugin": "^14.4.0",
+    "@angular-eslint/eslint-plugin-template": "^15.1.0",
+    "@angular-eslint/template-parser": "^15.1.0",
+    "@angular/cli": "^15.0.4",
+    "@angular/compiler": "^15.0.4",
+    "@angular/compiler-cli": "^15.0.4",
+    "@angular/language-service": "^15.0.4",
+    "@capacitor/cli": "^4.0.0",
+    "@ionic/cli": "^6.20.6",
+    "@types/node": "^17.0.8",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
+    "eslint": "^8.30.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4",
+    "webpack-bundle-analyzer": "^4.7.0"
   },
-  "overrides": {
-    "react-error-overlay": "6.0.9"
+  "browser": {
+    "crypto": false
   }
 }

@@ -3,7 +3,7 @@
 # project-specific parameters
 PROJECT='egm'
 AWS_REGION='eu-central-1'
-AWS_PROFILE='egm' # leave empty if not used
+AWS_PROFILE='egm'
 
 # other parameters
 ACTION=$1
