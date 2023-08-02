@@ -55,6 +55,23 @@ body:
     validations:
       required: true
   - type: dropdown
+    id: environment
+    attributes:
+      label: On which environments did you encounter the bug?
+      multiple: true
+      options:
+        - dev
+        - prod
+    validations:
+      required: true
+  - type: input
+    id: team
+    attributes:
+      label: Team (or context)
+      description: The ID (or name) of the team (or context) affected by the bug, to help the developers to replicate it.
+    validations:
+      required: false
+  - type: dropdown
     id: device
     attributes:
       label: What device are you seeing the problem on?

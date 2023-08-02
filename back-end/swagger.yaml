@@ -1,194 +1,93 @@
 openapi: 3.0.3
 
-# heads-up: in this template you can't use shorcuts such has `!Sub`; use `Fn::Sub` instead.
-
 info:
-  title: EGM API
-  version: 2.1.0
+  title: EGM (CDK) API
+  version: 3.0.2
   contact:
     name: ITER IDEA
     email: help@iter-idea.com
     url: https://iter-idea.com
 
 servers:
-  - url: https://api.egm-app.link/{environment}
+  # if needed, substitute the correct API URL
+  - url: https://api.egm.link/{environment}
     variables:
       environment:
         enum: [dev, prod]
         default: dev
-    x-amazon-apigateway-endpoint-configuration:
-      disableExecuteApiEndpoint: true
+        description: The API stage
 
 externalDocs:
   description: Models documentation
-  url: https://github.com/uatisdeproblem/egm/blob/main/back-end/src/models
+  url: https://github.com/uatisdeproblem/egm/blob/main/back-end/src/models # @todo change this to ESN Repo
 
 tags:
-  - name: Users
-    description: |
-      The users of the event; note: "me" is a shortcut to the real userId
-  - name: Organizations
-    description: The organizations of the event
-  - name: Speakers
-    description: The speakers of the event
-  - name: Venues
-    description: The venues of the event
-  - name: Rooms
-    description: The rooms of the event
-  - name: Sessions
-    description: The sessions of the event
+  - name: Status
+    description: The app's status
+  - name: Books
+    description: The platform's books
 
 paths:
-  /users:
+  /status:
     get:
-      summary: Get some basic info of the platform's users (for networking purposes)
-      tags: [Users]
-      security:
-        - CognitoUserPool: []
+      summary: Get the status of the app, depending on its version
+      tags: [Status]
       parameters:
-        - name: admins
+        - name: v
           in: query
-          description: Get the administrators (only admins can request it)
+          description: App version; if not specified, targets the latest version
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/AppStatus'
+  /books:
+    get:
+      summary: Get the books
+      tags: [Books]
+      parameters:
+        - name: top
+          in: query
+          description: Top 10
           schema:
             type: boolean
-      responses:
-        200:
-          $ref: '#/components/responses/Users'
-    patch:
-      summary: Patch a user
-      description: Requires to be Admin.
-      tags: [Users]
-      security:
-        - CognitoUserPool: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum:
-                    - ADD_ADMIN
-                    - REMOVE_ADMIN
-                userId:
-                  type: string
-                  description: (ADD_ADMIN, REMOVE_ADMIN)
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /users/{userId}:
-    get:
-      summary: Get your profile
-      tags: [Users]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/User'
-    put:
-      summary: Edit your profile
-      tags: [Users]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        description: User
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/User'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Patch your profile
-      tags: [Users]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum:
-                    - GET_IMAGE_UPLOAD_URL
-                    - GET_CV_UPLOAD_URL
-                    - GET_CV_DOWNLOAD_URL
-                    - ADD_FAVORITE_SESSION
-                    - REMOVE_FAVORITE_SESSION
-                    - GET_FAVORITE_SESSIONS
-                    - SET_HOME_ADDRESS
-                sessionId:
-                  type: string
-                  description: (ADD_FAVORITE_SESSION, REMOVE_FAVORITE_SESSION)
-                address:
-                  type: string
-                  description: (SET_HOME_ADDRESS)
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Reset your profile
-      tags: [Users]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: deleteAccount
+        - name: publisherId
           in: query
+          description: Publisher ID
+          schema:
+            type: string
+        - name: paginated
+          in: query
+          description: Whether the result should be paginated
           schema:
             type: boolean
+        - name: startFromBookId
+          in: query
+          description: In case of pagination, where it should start
+          schema:
+            type: string
       responses:
         200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /connections:
-    get:
-      summary: Get the connections of a user
-      tags: [Users]
+          $ref: '#/components/responses/Books'
+    post:
+      summary: Insert a new book
+      tags: [Books]
       security:
         - CognitoUserPool: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
       responses:
         200:
-          $ref: '#/components/responses/User'
-    post:
-      summary: Create a new connection between the requester user and a target user or confirm a pending connection
-      tags: [Users]
+          $ref: '#/components/responses/Book'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on the books
+      tags: [Books]
       security:
         - CognitoUserPool: []
       requestBody:
@@ -198,104 +97,61 @@ paths:
             schema:
               type: object
               properties:
-                userId:
+                action:
                   type: string
-      responses:
-        200:
-          $ref: '#/components/responses/User'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /connections/{connectionId}:
-    delete:
-      summary: Delete the connection of a user with a target
-      tags: [Users]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: connectionId
-          in: path
-          required: true
-          schema:
-            type: string
+                  enum: [GET_COVER_UPLOAD_URL]
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
-  /organizations:
+  /books/{bookId}:
     get:
-      summary: Get the organizations
-      tags: [Organizations]
-      security:
-        - CognitoUserPool: []
-      responses:
-        200:
-          $ref: '#/components/responses/Organizations'
-    post:
-      summary: Insert a new organization
-      description: Requires to be Admin.
-      tags: [Organizations]
-      security:
-        - CognitoUserPool: []
-      requestBody:
-        required: true
-        description: Organization
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Organization'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /organizations/{organizationId}:
-    get:
-      summary: Get an organization
-      tags: [Organizations]
-      security:
-        - CognitoUserPool: []
+      summary: Get a book
+      tags: [Books]
       parameters:
-        - name: organizationId
+        - name: bookId
           in: path
+          description: Book ID
           required: true
           schema:
             type: string
       responses:
         200:
-          $ref: '#/components/responses/Organization'
+          $ref: '#/components/responses/Book'
     put:
-      summary: Edit an organization
-      description: Requires to be Admin.
-      tags: [Organizations]
+      summary: Edit a book
+      description: You can edit only your books
+      tags: [Books]
       security:
         - CognitoUserPool: []
       parameters:
-        - name: organizationId
+        - name: bookId
           in: path
+          description: Book ID
           required: true
           schema:
             type: string
       requestBody:
         required: true
-        description: Organization
         content:
           application/json:
             schema:
-              type: object
+              $ref: '#/components/schemas/Book'
       responses:
         200:
-          $ref: '#/components/responses/Organization'
+          $ref: '#/components/responses/Book'
         400:
           $ref: '#/components/responses/BadParameters'
     patch:
-      summary: Actions on an organization
-      tags: [Users]
+      summary: Actions on a book
+      tags: [Books]
       security:
         - CognitoUserPool: []
       parameters:
-        - name: organizationId
+        - name: bookId
           in: path
+          description: Book ID
           required: true
           schema:
             type: string
@@ -308,628 +164,85 @@ paths:
               properties:
                 action:
                   type: string
-                  enum:
-                    - SEND_USER_CONTACTS
-                sendCV:
-                  type: boolean
-                  description: (SEND_USER_CONTACTS)
-                sendPhone:
-                  type: boolean
-                  description: (SEND_USER_CONTACTS)
+                  enum: [RATE]
+                rating:
+                  type: number
+                  enum: [1, 2, 3, 4, 5]
+                  description: (RATE)
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
     delete:
-      summary: Delete an organization
-      description: Requires to be Admin.
-      tags: [Organizations]
+      summary: Delete a book
+      description: You can delete only your books
+      tags: [Books]
       security:
         - CognitoUserPool: []
       parameters:
-        - name: organizationId
+        - name: bookId
           in: path
+          description: Book ID
           required: true
           schema:
             type: string
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /speakers:
-    get:
-      summary: Get the speakers
-      tags: [Speakers]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: organization
-          in: query
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Speakers'
-    post:
-      summary: Insert a new speaker
-      description: Requires to be Admin.
-      tags: [Speakers]
-      security:
-        - CognitoUserPool: []
-      requestBody:
-        required: true
-        description: Speaker
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Speaker'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /speakers/{speakerId}:
-    get:
-      summary: Get a speaker
-      tags: [Speakers]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: speakerId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Speaker'
-    put:
-      summary: Edit a speaker
-      description: Requires to be Admin.
-      tags: [Speakers]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: speakerId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        description: Speaker
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Speaker'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Delete a speaker
-      description: Requires to be Admin.
-      tags: [Speakers]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: speakerId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /venues:
-    get:
-      summary: Get the venues
-      tags: [Venues]
-      security:
-        - CognitoUserPool: []
-      responses:
-        200:
-          $ref: '#/components/responses/Venues'
-    post:
-      summary: Insert a new venue
-      description: Requires to be Admin.
-      tags: [Venues]
-      security:
-        - CognitoUserPool: []
-      requestBody:
-        required: true
-        description: Venue
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Venue'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /venues/{venueId}:
-    get:
-      summary: Get a venue
-      tags: [Venues]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: venueId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Venue'
-    put:
-      summary: Edit a venue
-      description: Requires to be Admin.
-      tags: [Venues]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: venueId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        description: Venue
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Venue'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Delete a venue
-      description: Requires to be Admin.
-      tags: [Venues]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: venueId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /rooms:
-    get:
-      summary: Get the rooms
-      tags: [Rooms]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: venue
-          in: query
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Rooms'
-    post:
-      summary: Insert a new room
-      description: Requires to be Admin.
-      tags: [Rooms]
-      security:
-        - CognitoUserPool: []
-      requestBody:
-        required: true
-        description: Room
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Room'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /rooms/{roomId}:
-    get:
-      summary: Get a room
-      tags: [Rooms]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: roomId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Room'
-    put:
-      summary: Edit a room
-      description: Requires to be Admin.
-      tags: [Rooms]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: roomId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        description: Room
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Room'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Delete a room
-      description: Requires to be Admin.
-      tags: [Rooms]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: roomId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Room'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /sessions:
-    get:
-      summary: Get the sessions
-      tags: [Sessions]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: speaker
-          in: query
-          schema:
-            type: string
-        - name: venue
-          in: query
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Sessions'
-    post:
-      summary: Insert a new session
-      description: Requires to be Admin.
-      tags: [Sessions]
-      security:
-        - CognitoUserPool: []
-      requestBody:
-        required: true
-        description: Session
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Session'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /sessions/{sessionId}:
-    get:
-      summary: Get a session
-      tags: [Sessions]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: sessionId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Session'
-    put:
-      summary: Edit a session
-      description: Requires to be Admin.
-      tags: [Sessions]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: sessionId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        description: Session
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Session'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Delete a session
-      description: Requires to be Admin.
-      tags: [Sessions]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: sessionId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /communications:
-    get:
-      summary: Get the communications
-      tags: [Communications]
-      security:
-        - CognitoUserPool: []
-      responses:
-        200:
-          $ref: '#/components/responses/Communications'
-    post:
-      summary: Insert a new communication
-      description: Requires to be Admin.
-      tags: [Communications]
-      security:
-        - CognitoUserPool: []
-      requestBody:
-        required: true
-        description: Communication
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Communication'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /communications/{communicationId}:
-    get:
-      summary: Get a communication
-      tags: [Communications]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: communicationId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Communication'
-    put:
-      summary: Edit a communication
-      description: Requires to be Admin.
-      tags: [Communications]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: communicationId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        description: Communication
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Communication'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Actions on a communication
-      tags: [Communications, Users]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: communicationId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum:
-                    - MARK_AS_READ
-                    - MARK_AS_UNREAD
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Delete a communication
-      description: Requires to be Admin.
-      tags: [Communications]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: communicationId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /media:
-    post:
-      summary: Request the signed URL to upload a new media
-      description: Requires to be Admin.
-      tags: [Users, Organizations, Speakers, Venues, Sessions]
-      security:
-        - CognitoUserPool: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                type:
-                  type: string
-                  enum: [IMAGE, DOCUMENT]
-                  description: 'Default: IMAGE'
-      responses:
-        200:
-          $ref: '#/components/responses/SignedURL'
         400:
           $ref: '#/components/responses/BadParameters'
 
 components:
+  schemas:
+    AppStatus:
+      type: object
+      additionalProperties: {}
+    # choose for each project one kind of documentation style: lazy or detailed
+    # 1. lazy documentation example:
+    # Book:
+    #  type: object
+    #  additionalProperties: {}
+    # 2. detailed documentation example:
+    Book:
+      type: object
+      properties:
+        bookId:
+          type: string
+          description: The book ID.
+          example: 'abcdef123'
+        publisherId:
+          type: string
+          description: The book's publisher ID.
+          example: 00000000-0000-0000-0000-00000000000
+        title:
+          type: string
+          description: The title of the book.
+          example: Buy the milk
+
   responses:
-    User:
-      description: User profile
+    AppStatus:
+      description: The app status for the targeted version
       content:
         application/json:
           schema:
             type: object
-    Users:
-      description: User[]
+            $ref: '#/components/schemas/AppStatus'
+    Book:
+      description: A book
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/Book'
+    Books:
+      description: The books
       content:
         application/json:
           schema:
             type: array
             items:
-              type: object
-    Organization:
-      description: Organization
-      content:
-        application/json:
-          schema:
-            type: object
-    Organizations:
-      description: Organization[]
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              type: object
-    Speaker:
-      description: Speaker
-      content:
-        application/json:
-          schema:
-            type: object
-    Speakers:
-      description: Speaker[]
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              type: object
-    Venue:
-      description: Venue
-      content:
-        application/json:
-          schema:
-            type: object
-    Venues:
-      description: Venue[]
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              type: object
-    Room:
-      description: Room
-      content:
-        application/json:
-          schema:
-            type: object
-    Rooms:
-      description: Room[]
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              type: object
-    Session:
-      description: Session
-      content:
-        application/json:
-          schema:
-            type: object
-    Sessions:
-      description: Session[]
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              type: object
-    Communication:
-      description: Communication
-      content:
-        application/json:
-          schema:
-            type: object
-    Communications:
-      description: Communication[]
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              type: object
-    SignedURL:
-      description: Signed URL
-      content:
-        application/json:
-          schema:
-            type: object
+              $ref: '#/components/schemas/Book'
     BadParameters:
       description: Bad input parameters
       content:

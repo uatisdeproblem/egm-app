@@ -11,10 +11,9 @@
   ],
   "tasks": [
     {
-      "label": "Quickly deploy a stage (back-end)",
+      "label": "Login with AWS SSO",
       "type": "shell",
-      "command": "./deploy.sh",
-      "args": ["quick", "${input:environment}"],
+      "command": "npm run login",
       "group": "build",
       "options": { "cwd": "back-end" },
       "presentation": {
@@ -27,6 +26,28 @@
       "type": "shell",
       "command": "./deploy.sh",
       "args": ["${input:environment}"],
+      "group": "build",
+      "options": { "cwd": "back-end" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Quickly deploy Lambda fn source code changed (dev back-end)",
+      "type": "shell",
+      "command": "npm run deploy-quick",
+      "group": "build",
+      "options": { "cwd": "back-end" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Show logs of back-end environment (dev)",
+      "type": "shell",
+      "command": "npm run logs",
       "group": "build",
       "options": { "cwd": "back-end" },
       "presentation": {
