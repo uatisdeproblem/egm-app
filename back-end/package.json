@@ -11,14 +11,20 @@
     "deploy-quick": "npm run compile && cdk --profile iter-idea-cloud-app-starter deploy cloud-app-starter-dev-api --context stage=dev --exclusively --hotswap"
   },
   "dependencies": {
+    "axios": "^1.4.0",
     "idea-aws": "^3.x.x",
-    "idea-toolbox": "^6.x.x"
+    "idea-toolbox": "^6.x.x",
+    "jsonwebtoken": "^9.0.1",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
+    "@iter-idea/ses-verify-identities": "^1.0.2",
     "@tsconfig/node16": "^1.0.3",
     "@types/aws-lambda": "^8.10.109",
+    "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^16.18.10",
+    "@types/xml2js": "^0.4.11",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
     "aws-cdk": "^2.56.1",

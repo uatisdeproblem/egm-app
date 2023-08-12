@@ -5,6 +5,7 @@ import * as DDB from 'aws-cdk-lib/aws-dynamodb';
 import { IDEAStack } from './idea-stack';
 import { MediaStack } from './media-stack';
 import { CognitoStack } from './cognito-stack';
+import { SESStack } from './ses-stack';
 import { ApiDomainStack } from './api-domain-stack';
 import { ResourceController, ApiStack, DDBTable } from './api-stack';
 import { FrontEndStack } from './front-end-stack';
@@ -16,6 +17,8 @@ import { parameters, stages, Stage, versionStatus } from './environments';
 //
 
 const apiResources: ResourceController[] = [
+  { name: 'auth', isAuthFunction: true },
+  { name: 'login', paths: ['/login'] },
   { name: 'status', paths: ['/status'] },
   { name: 'books', paths: ['/books', '/books/{bookId}'] }
 ];
@@ -23,6 +26,9 @@ const apiResources: ResourceController[] = [
 const tables: { [tableName: string]: DDBTable } = {
   status: {
     PK: { name: 'version', type: DDB.AttributeType.STRING }
+  },
+  roles: {
+    PK: { name: 'PK', type: DDB.AttributeType.STRING }
   },
   books: {
     PK: { name: 'bookId', type: DDB.AttributeType.STRING },
@@ -88,6 +94,13 @@ const createApp = async (): Promise<void> => {
     firstAdminEmail: parameters.firstAdminEmail
   });
 
+  const sesStack = new SESStack(app, `${parameters.project}-ses`, {
+    env,
+    project: parameters.project,
+    domain: parameters.apiDomain,
+    testEmailAddress: parameters.firstAdminEmail
+  });
+
   //
   // STAGE-DEPENDANT RESOURCES
   //
@@ -103,6 +116,7 @@ const createApp = async (): Promise<void> => {
     resourceControllers: apiResources,
     tables,
     mediaBucketArn: mediaStack.mediaBucketArn,
+    ses: { identityArn: sesStack.identityArn, notificationTopicArn: sesStack.notificationTopicArn },
     cognito: {
       userPoolId: cognitoStack.userPool.userPoolId,
       audience: [cognitoStack.clientFrontEnd.userPoolClientId, cognitoStack.clientBackEnd.userPoolClientId]
@@ -112,6 +126,7 @@ const createApp = async (): Promise<void> => {
   apiStack.addDependency(mediaStack);
   apiStack.addDependency(apiDomainStack);
   apiStack.addDependency(cognitoStack);
+  apiStack.addDependency(sesStack);
 
   new FrontEndStack(app, `${parameters.project}-${STAGE}-front-end`, {
     env,

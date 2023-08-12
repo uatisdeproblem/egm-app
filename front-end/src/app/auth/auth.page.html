@@ -1,0 +1,21 @@
+<ion-content>
+  <form class="flexBox">
+    <ion-card class="authCard">
+      <ion-img [src]="app.getIcon()"></ion-img>
+      <ion-card-header>
+        <ion-card-subtitle>{{ 'AUTH.SUBTITLE' | translate }}</ion-card-subtitle>
+        <ion-card-title>{{ 'AUTH.TITLE' | translate }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button (click)="startLoginFlowWithESNAccounts()">
+          {{ 'AUTH.LOGIN_WITH_ESN_ACCOUNTS' | translate }}
+        </ion-button>
+        <p>{{ 'COMMON.OR' | translate }}</p>
+        <ion-button color="secondary" (click)="startLoginFlowAsExternal()">
+          {{ 'AUTH.LOGIN_AS_EXTERNAL' | translate }}
+        </ion-button>
+        <p class="version">v{{ version }}</p>
+      </ion-card-content>
+    </ion-card>
+  </form>
+</ion-content>

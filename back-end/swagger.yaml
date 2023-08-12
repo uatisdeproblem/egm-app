@@ -24,6 +24,8 @@ externalDocs:
 tags:
   - name: Status
     description: The app's status
+  - name: Login
+    description: Access the platform
   - name: Books
     description: The platform's books
 
@@ -41,6 +43,21 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/AppStatus'
+  /login:
+    get:
+      summary: Manage the login accepted request from ESN Accounts and prepare a token to authenticate the user
+      description: Acquire the CAS ticket, validate it, create the user (if necessary) and return a token.
+      tags: [Login]
+      parameters:
+        - name: ticket
+          in: query
+          description: The CAS ticket of successful login with ESN Accounts
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
   /books:
     get:
       summary: Get the books
@@ -73,7 +90,8 @@ paths:
       summary: Insert a new book
       tags: [Books]
       security:
-        - CognitoUserPool: []
+        # - CognitoUserPool: []
+        - AuthFunction: []
       requestBody:
         required: true
         content:
@@ -89,7 +107,8 @@ paths:
       summary: Actions on the books
       tags: [Books]
       security:
-        - CognitoUserPool: []
+        # - CognitoUserPool: []
+        - AuthFunction: []
       requestBody:
         required: true
         content:
@@ -124,7 +143,8 @@ paths:
       description: You can edit only your books
       tags: [Books]
       security:
-        - CognitoUserPool: []
+        # - CognitoUserPool: []
+        - AuthFunction: []
       parameters:
         - name: bookId
           in: path
@@ -147,7 +167,8 @@ paths:
       summary: Actions on a book
       tags: [Books]
       security:
-        - CognitoUserPool: []
+        # - CognitoUserPool: []
+        - AuthFunction: []
       parameters:
         - name: bookId
           in: path
@@ -179,7 +200,8 @@ paths:
       description: You can delete only your books
       tags: [Books]
       security:
-        - CognitoUserPool: []
+        # - CognitoUserPool: []
+        - AuthFunction: []
       parameters:
         - name: bookId
           in: path
@@ -258,6 +280,10 @@ components:
 
   securitySchemes:
     CognitoUserPool:
+      type: apiKey
+      name: Authorization
+      in: header
+    AuthFunction:
       type: apiKey
       name: Authorization
       in: header

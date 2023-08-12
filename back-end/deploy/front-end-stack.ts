@@ -18,14 +18,35 @@ export class FrontEndStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: FrontEndProps) {
     super(scope, id, props);
 
+    const corsForDocs =
+      props.stage === 'dev'
+        ? [
+            {
+              allowedHeaders: ['*'],
+              allowedMethods: [S3.HttpMethods.GET],
+              allowedOrigins: ['https://docs.iter-idea.com']
+            }
+          ]
+        : [];
+    const publicAccessForDocs = props.stage === 'dev' ? undefined : S3.BlockPublicAccess.BLOCK_ALL;
+
     const frontEndBucket = new S3.Bucket(this, 'Bucket', {
       bucketName: props.project.concat('-', props.stage, '-front-end'),
       publicReadAccess: false,
       websiteIndexDocument: 'index.html',
       websiteErrorDocument: 'index.html',
       removalPolicy: RemovalPolicy.DESTROY,
-      blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL
+      blockPublicAccess: publicAccessForDocs,
+      cors: corsForDocs
     });
+    if (props.stage === 'dev')
+      frontEndBucket.addToResourcePolicy(
+        new IAM.PolicyStatement({
+          actions: ['s3:GetObject'],
+          resources: [frontEndBucket.arnForObjects('swagger.yaml')],
+          principals: [new IAM.AnyPrincipal()]
+        })
+      );
 
     new cdk.CfnOutput(this, 'S3BucketName', { value: frontEndBucket.bucketName });
 
@@ -56,10 +77,7 @@ export class FrontEndStack extends cdk.Stack {
         { errorCachingMinTtl: 0, errorCode: 403, responseCode: 200, responsePagePath: '/index.html' },
         { errorCachingMinTtl: 0, errorCode: 404, responseCode: 200, responsePagePath: '/index.html' }
       ],
-      viewerCertificate: CloudFront.ViewerCertificate.fromAcmCertificate(certificate, {
-        aliases: [props.domain],
-        securityPolicy: CloudFront.SecurityPolicyProtocol.TLS_V1_2_2021
-      })
+      viewerCertificate: CloudFront.ViewerCertificate.fromAcmCertificate(certificate, { aliases: [props.domain] })
     });
     new cdk.CfnOutput(this, 'CloudFrontDistributionID', { value: frontEndDistribution.distributionId });
     frontEndBucket.addToResourcePolicy(

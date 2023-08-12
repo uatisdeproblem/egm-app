@@ -73,11 +73,18 @@
     "ENTER_EDIT_MODE": "Enter in edit mod",
     "SAVE_CHANGES": "Save changes",
     "NOT_FOUND": "Not found",
-    "NOT_SELECTED": "Not selected"
+    "NOT_SELECTED": "Not selected",
+    "OR": "OR"
   },
   "LANGUAGES": {
     "IT": "Italian",
     "EN": "English"
+  },
+  "AUTH": {
+    "TITLE": "Erasmus Generation Meeting",
+    "SUBTITLE": "Erasmus Student Network",
+    "LOGIN_WITH_ESN_ACCOUNTS": "Login with ESN Accounts",
+    "LOGIN_AS_EXTERNAL": "Login as external"
   },
   "BOOKS": {
     "BOOKS": "Books",

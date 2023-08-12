@@ -10,7 +10,10 @@ import * as ApiGw from 'aws-cdk-lib/aws-apigatewayv2';
 import * as DDB from 'aws-cdk-lib/aws-dynamodb';
 import * as S3 from 'aws-cdk-lib/aws-s3';
 import * as S3Deployment from 'aws-cdk-lib/aws-s3-deployment';
-
+import { Subscription, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns';
+import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction as LambdaFunctionTarget } from 'aws-cdk-lib/aws-events-targets';
+import { SnsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { VersionStatus } from './environments';
 
 export interface ApiProps extends cdk.StackProps {
@@ -23,12 +26,14 @@ export interface ApiProps extends cdk.StackProps {
   resourceControllers: ResourceController[];
   tables: { [tableName: string]: DDBTable };
   mediaBucketArn: string;
+  ses: { identityArn: string; notificationTopicArn: string };
   cognito: { userPoolId: string; audience: string[] };
   removalPolicy: RemovalPolicy;
 }
 export interface ResourceController {
   name: string;
   paths?: string[];
+  isAuthFunction?: boolean;
 }
 export interface DDBTable {
   PK: DDB.Attribute;
@@ -41,7 +46,7 @@ export interface DDBTable {
 const defaultLambdaFnProps: NodejsFunctionProps = {
   runtime: Lambda.Runtime.NODEJS_14_X,
   architecture: Lambda.Architecture.ARM_64,
-  timeout: Duration.seconds(10),
+  timeout: Duration.seconds(30),
   memorySize: 1024,
   bundling: { minify: true, sourceMap: true },
   environment: { NODE_OPTIONS: '--enable-source-maps' },
@@ -91,6 +96,11 @@ export class ApiStack extends cdk.Stack {
       otherFolders: ['attachments', 'downloads', 'images']
     });
     this.allowLambdaFunctionsToSecretsManager({ lambdaFunctions: Object.values(lambdaFunctions) });
+    this.allowLambdaFunctionsToAccessSES({
+      lambdaFunctions: Object.values(lambdaFunctions),
+      sesIdentityArn: props.ses.identityArn,
+      apiDomain: props.apiDomain
+    });
 
     this.createDDBTablesAndAllowLambdaFunctions({
       stackId: id,
@@ -105,6 +115,24 @@ export class ApiStack extends cdk.Stack {
     //
 
     // @idea insert here project-custom constructs if needed
+
+    if (lambdaFunctions['sesNotifications']) {
+      const topic = Topic.fromTopicArn(this, 'SESTopicToHandleSESBounces', props.ses.notificationTopicArn);
+      new Subscription(this, 'SESSubscriptionToHandleSESBounces', {
+        topic,
+        protocol: SubscriptionProtocol.LAMBDA,
+        endpoint: lambdaFunctions['sesNotifications'].functionArn
+      });
+      lambdaFunctions['sesNotifications'].addEventSource(new SnsEventSource(topic));
+    }
+
+    if (lambdaFunctions['scheduledOps']) {
+      const rule = new Rule(this, 'EventRuleScheduledOps', {
+        ruleName: props.project.concat('-', props.stage, '-scheduledOps'),
+        schedule: Schedule.rate(Duration.hours(1))
+      });
+      rule.addTarget(new LambdaFunctionTarget(lambdaFunctions['scheduledOps']));
+    }
   }
 
   //
@@ -210,8 +238,19 @@ export class ApiStack extends cdk.Stack {
       lambdaFn.addPermission(`${resource.name}-permission`, {
         principal: new IAM.ServicePrincipal('apigateway.amazonaws.com'),
         action: 'lambda:InvokeFunction',
-        sourceArn: `arn:aws:execute-api:${region}:${account}:${params.api.ref}/*/*/*`
+        sourceArn: `arn:aws:execute-api:${region}:${account}:${params.api.ref}/*/*`
       });
+
+      // integrate the AuthFunction into the Api definition
+      if (resource.isAuthFunction)
+        params.api.body.components.securitySchemes['AuthFunction']['x-amazon-apigateway-authorizer'] = {
+          type: 'request',
+          identitySource: '$request.header.Authorization',
+          authorizerUri: `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account}:function:${lambdaFnName}/invocations`,
+          authorizerPayloadFormatVersion: '2.0',
+          authorizerResultTtlInSeconds: 300,
+          enableSimpleResponses: true
+        };
 
       lambdaFn.addEnvironment('PROJECT', params.project);
       lambdaFn.addEnvironment('STAGE', params.stage);
@@ -313,6 +352,24 @@ export class ApiStack extends cdk.Stack {
     });
     params.lambdaFunctions.forEach(lambdaFn => {
       if (lambdaFn.role) lambdaFn.role.attachInlinePolicy(accessSecretsManagerPolicy);
+    });
+  }
+  private allowLambdaFunctionsToAccessSES(params: {
+    lambdaFunctions: NodejsFunction[];
+    sesIdentityArn: string;
+    apiDomain: string;
+  }): void {
+    const region = cdk.Stack.of(this).region;
+
+    const accessSES = new IAM.Policy(this, 'ManageSES', {
+      statements: [new IAM.PolicyStatement({ effect: IAM.Effect.ALLOW, actions: ['ses:*'], resources: ['*'] })]
+    });
+    params.lambdaFunctions.forEach(lambdaFn => {
+      if (lambdaFn.role) lambdaFn.role.attachInlinePolicy(accessSES);
+      lambdaFn.addEnvironment('SES_IDENTITY_ARN', params.sesIdentityArn);
+      const domainName = params.apiDomain.split('.').slice(-2).join('.');
+      lambdaFn.addEnvironment('SES_SOURCE_ADDRESS', `no-reply@${domainName}`);
+      lambdaFn.addEnvironment('SES_REGION', region);
     });
   }
 

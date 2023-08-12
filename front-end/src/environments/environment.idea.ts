@@ -5,7 +5,7 @@ export const environment = {
   idea: {
     project: 'egm',
     app: {
-      version: '2.0.0',
+      version: '0.1.0',
       url: 'https://egm-app.click',
       mediaUrl: 'https://media.egm-app.click',
       title: 'EGM',
