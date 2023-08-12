@@ -26,8 +26,6 @@ tags:
     description: The app's status
   - name: Login
     description: Access the platform
-  - name: Books
-    description: The platform's books
 
 paths:
   /status:
@@ -58,162 +56,6 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
-  /books:
-    get:
-      summary: Get the books
-      tags: [Books]
-      parameters:
-        - name: top
-          in: query
-          description: Top 10
-          schema:
-            type: boolean
-        - name: publisherId
-          in: query
-          description: Publisher ID
-          schema:
-            type: string
-        - name: paginated
-          in: query
-          description: Whether the result should be paginated
-          schema:
-            type: boolean
-        - name: startFromBookId
-          in: query
-          description: In case of pagination, where it should start
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Books'
-    post:
-      summary: Insert a new book
-      tags: [Books]
-      security:
-        # - CognitoUserPool: []
-        - AuthFunction: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Book'
-      responses:
-        200:
-          $ref: '#/components/responses/Book'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Actions on the books
-      tags: [Books]
-      security:
-        # - CognitoUserPool: []
-        - AuthFunction: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: [GET_COVER_UPLOAD_URL]
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /books/{bookId}:
-    get:
-      summary: Get a book
-      tags: [Books]
-      parameters:
-        - name: bookId
-          in: path
-          description: Book ID
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Book'
-    put:
-      summary: Edit a book
-      description: You can edit only your books
-      tags: [Books]
-      security:
-        # - CognitoUserPool: []
-        - AuthFunction: []
-      parameters:
-        - name: bookId
-          in: path
-          description: Book ID
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Book'
-      responses:
-        200:
-          $ref: '#/components/responses/Book'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Actions on a book
-      tags: [Books]
-      security:
-        # - CognitoUserPool: []
-        - AuthFunction: []
-      parameters:
-        - name: bookId
-          in: path
-          description: Book ID
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: [RATE]
-                rating:
-                  type: number
-                  enum: [1, 2, 3, 4, 5]
-                  description: (RATE)
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Delete a book
-      description: You can delete only your books
-      tags: [Books]
-      security:
-        # - CognitoUserPool: []
-        - AuthFunction: []
-      parameters:
-        - name: bookId
-          in: path
-          description: Book ID
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -226,21 +68,6 @@ components:
     #  type: object
     #  additionalProperties: {}
     # 2. detailed documentation example:
-    Book:
-      type: object
-      properties:
-        bookId:
-          type: string
-          description: The book ID.
-          example: 'abcdef123'
-        publisherId:
-          type: string
-          description: The book's publisher ID.
-          example: 00000000-0000-0000-0000-00000000000
-        title:
-          type: string
-          description: The title of the book.
-          example: Buy the milk
 
   responses:
     AppStatus:
@@ -250,21 +77,6 @@ components:
           schema:
             type: object
             $ref: '#/components/schemas/AppStatus'
-    Book:
-      description: A book
-      content:
-        application/json:
-          schema:
-            type: object
-            $ref: '#/components/schemas/Book'
-    Books:
-      description: The books
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/Book'
     BadParameters:
       description: Bad input parameters
       content:

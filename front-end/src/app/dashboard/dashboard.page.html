@@ -31,10 +31,6 @@
           <ion-input readonly [value]="app.user.email"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">Groups</ion-label>
-          <ion-input readonly [value]="app.user.groups"></ion-input>
-        </ion-item>
-        <ion-item>
           <ion-label position="stacked">API Token</ion-label>
           <ion-input #apiTokenElement readonly [value]="apiToken"></ion-input>
           <ion-button slot="end" (click)="copyHTMLInputText(apiTokenElement)">
@@ -43,10 +39,5 @@
         </ion-item>
       </ion-card-content>
     </ion-card>
-    <ion-row>
-      <ion-col>
-        <ion-button expand="block" routerLink="/books">{{ 'BOOKS.BOOKS' | translate }}</ion-button>
-      </ion-col>
-    </ion-row>
   </div>
 </ion-content>

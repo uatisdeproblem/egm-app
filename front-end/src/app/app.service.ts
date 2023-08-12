@@ -156,7 +156,7 @@ export class AppService {
    * Sign-out from the current user.
    */
   async logout(): Promise<void> {
-    // @todo check if we have to change this
+    // @todo check if we have to change this for login with cognito
     // const doLogout = () => this.auth.logout().finally(() => this.storage.clear().then(() => this.reloadApp()));
     const doLogout = async (): Promise<void> => {
       await this.storage.clear();

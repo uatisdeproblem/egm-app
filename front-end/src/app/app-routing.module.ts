@@ -20,11 +20,6 @@ const routes: Routes = [
     path: 'dashboard',
     loadChildren: (): Promise<any> => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
     canActivate: [InitGuard, AuthGuard]
-  },
-  {
-    path: 'books',
-    loadChildren: (): Promise<any> => import('./books/books.module').then(m => m.BooksModule),
-    canActivate: [InitGuard, AuthGuard]
   }
 ];
 
