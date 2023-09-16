@@ -23,16 +23,19 @@
       </ion-card-header>
       <ion-card-content *ngIf="app.user">
         <ion-item>
-          <ion-label position="stacked">ID</ion-label>
-          <ion-input readonly [value]="app.user.userId"></ion-input>
+          <ion-input readonly labelPlacement="floating" [value]="app.user.userId">
+            <div slot="label">ID</div>
+          </ion-input>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">Email</ion-label>
-          <ion-input readonly [value]="app.user.email"></ion-input>
+          <ion-input readonly labelPlacement="floating" [value]="app.user.email">
+            <div slot="label">Email</div>
+          </ion-input>
         </ion-item>
         <ion-item>
-          <ion-label position="stacked">API Token</ion-label>
-          <ion-input #apiTokenElement readonly [value]="apiToken"></ion-input>
+          <ion-input #apiTokenElement readonly labelPlacement="floating" [value]="apiToken">
+            <div slot="label">API Token</div>
+          </ion-input>
           <ion-button slot="end" (click)="copyHTMLInputText(apiTokenElement)">
             <ion-icon name="copy" slot="icon-only"></ion-icon>
           </ion-button>

@@ -14,7 +14,7 @@ export class DashboardPage implements OnInit {
 
   constructor(private api: IDEAApiService, private message: IDEAMessageService, public app: AppService) {}
   async ngOnInit(): Promise<void> {
-    this.apiToken = this.api.authToken;
+    this.apiToken = this.api.authToken as string;
   }
 
   async copyHTMLInputText(ionInput: IonInput): Promise<void> {

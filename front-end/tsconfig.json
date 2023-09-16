@@ -5,8 +5,9 @@
     "baseUrl": "./",
     "paths": {
       "crypto": ["node_modules/crypto-js"],
-      "@models/*": ["../back-end/src/models/*"],
-      "@env": ["../front-end/src/environments/environment.ts"]
+      "@models/*": ["../back-end/src/models/*"], // note: you may need to change this path for older projects
+      "@env": ["../front-end/src/environments/environment.ts"],
+      "@app/*": ["../front-end/src/app/*"]
     },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
@@ -15,7 +16,8 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2015",
+    "useDefineForClassFields": false,
+    "target": "es2022",
     "module": "es2020",
     "lib": ["es2018", "dom"]
   },

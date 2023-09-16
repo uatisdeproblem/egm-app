@@ -1,25 +1,25 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
-import { InitGuard } from './init.guard';
-import { AuthGuard } from './auth.guard';
+import { initGuard } from './init.guard';
+import { authGuard } from './auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   {
     path: 'app-status',
     loadChildren: (): Promise<any> => import('@idea-ionic/common').then(m => m.IDEAAppStatusModule),
-    canActivate: [InitGuard]
+    canActivate: [initGuard]
   },
   {
     path: 'auth',
     loadChildren: (): Promise<any> => import('./auth/auth.module').then(m => m.AuthModule),
-    canActivate: [InitGuard]
+    canActivate: [initGuard]
   },
   {
     path: 'dashboard',
     loadChildren: (): Promise<any> => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
-    canActivate: [InitGuard, AuthGuard]
+    canActivate: [initGuard, authGuard]
   }
 ];
 
