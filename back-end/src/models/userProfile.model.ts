@@ -1,6 +1,6 @@
 import { Resource } from 'idea-toolbox';
 
-export class User extends Resource {
+export class UserProfile extends Resource {
   /**
    * Username in ESN Accounts (lowercase).
    */
@@ -61,6 +61,28 @@ export class User extends Resource {
     this.avatarURL = this.clean(x.avatarURL, String);
     this.isExternal = this.clean(x.isExternal, Boolean);
     this.isAdministrator = this.clean(x.isAdministrator, Boolean);
+  }
+
+  safeLoad(newData: any, safeData: any): void {
+    super.safeLoad(newData, safeData);
+    this.userId = safeData.userId;
+    this.email = safeData.email;
+    this.roles = safeData.roles;
+    this.sectionCode = safeData.sectionCode;
+    this.section = safeData.section;
+    this.country = safeData.country;
+    this.isExternal = safeData.isExternal;
+    this.isAdministrator = safeData.isAdministrator;
+    if (!safeData.isExternal) {
+      this.name = safeData.name; // externals can change their name // @todo verify and check if anyhting msising
+    }
+  }
+
+  // @todo add all fields here
+  validate(): string[] {
+    const e = super.validate();
+    if (this.iE(this.userId)) e.push('userId');
+    return e;
   }
 
   /**

@@ -22,6 +22,19 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content *ngIf="app.user">
+        <ion-row>
+          <ion-col>
+            <input id="avatarInput" type="file" accept="image/*" style="display: none" (change)="setAvatar($event)" />
+            <p>
+              <idea-user-avatar
+                class="tappable"
+                size="extraLarge"
+                [src]="app.getUserImageURL(app.user)"
+                [name]="app.user.name"
+              ></idea-user-avatar>
+            </p>
+          </ion-col>
+        </ion-row>
         <ion-item>
           <ion-input readonly labelPlacement="floating" [value]="app.user.userId">
             <div slot="label">ID</div>
@@ -33,12 +46,29 @@
           </ion-input>
         </ion-item>
         <ion-item>
-          <ion-input #apiTokenElement readonly labelPlacement="floating" [value]="apiToken">
-            <div slot="label">API Token</div>
+          <ion-input readonly labelPlacement="floating" [value]="app.user.name">
+            <div slot="label">Name</div>
           </ion-input>
-          <ion-button slot="end" (click)="copyHTMLInputText(apiTokenElement)">
-            <ion-icon name="copy" slot="icon-only"></ion-icon>
-          </ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-input readonly labelPlacement="floating" [value]="app.user.sectionCode">
+            <div slot="label">Section Code</div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input readonly labelPlacement="floating" [value]="app.user.section">
+            <div slot="label">Section</div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input readonly labelPlacement="floating" [value]="app.user.country">
+            <div slot="label">Country</div>
+          </ion-input>
+        </ion-item>
+        <ion-item *ngFor="let role of app.user.roles; let i = index">
+          <ion-input readonly labelPlacement="floating" [value]="role">
+            <div slot="label">Role {{ i + 1 }}</div>
+          </ion-input>
         </ion-item>
       </ion-card-content>
     </ion-card>

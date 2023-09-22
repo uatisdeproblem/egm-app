@@ -7,7 +7,7 @@ import { parseStringPromise } from 'xml2js';
 import { sign } from 'jsonwebtoken';
 import { DynamoDB, RCError, ResourceController, SecretsManager } from 'idea-aws';
 
-import { User } from '../models/user.model';
+import { UserProfile } from '../models/userProfile.model';
 import { RoleTypes, UserRoles } from '../models/roles.model';
 
 ///
@@ -19,7 +19,10 @@ const JWT_EXPIRE_TIME = '1 day';
 
 const APP_URL = process.env.STAGE === 'prod' ? 'https://egm-app.click' : 'https://dev.egm-app.click'; // @todo change prod URL to app.erasmusgeneration.org once configured
 
-const DDB_TABLES = { roles: process.env.DDB_TABLE_roles };
+const DDB_TABLES = {
+  roles: process.env.DDB_TABLE_roles,
+  userProfiles: process.env.DDB_TABLE_userProfiles
+};
 const ddb = new DynamoDB();
 
 const SECRETS_PATH = 'egm/auth';
@@ -66,7 +69,7 @@ class Login extends ResourceController {
         await ddb.get({ TableName: DDB_TABLES.roles, Key: { PK: RoleTypes.ADMIN } })
       );
 
-      const user = new User({
+      let user = new UserProfile({
         userId,
         email: attributes['cas:mail'][0],
         sectionCode: attributes['cas:sc'][0],
@@ -79,6 +82,13 @@ class Login extends ResourceController {
         isAdministrator: administratorsIds.includes(userId)
       });
       this.logger.info('ESN Accounts login', user);
+
+      try {
+        user = new UserProfile(await ddb.get({ TableName: DDB_TABLES.userProfiles, Key: { userId } }));
+      } catch (err) {
+        if (String(err) === 'Error: Not found') await ddb.put({ TableName: DDB_TABLES.userProfiles, Item: user });
+        else throw new RCError('Profile not found');
+      }
 
       const userData = JSON.parse(JSON.stringify(user));
       const secret = await getJwtSecretFromSecretsManager();

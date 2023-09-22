@@ -6,7 +6,7 @@ import { APIGatewayProxyEventV2WithRequestContext } from 'aws-lambda';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import { DynamoDB, SecretsManager } from 'idea-aws';
 
-import { User } from '../models/user.model';
+import { UserProfile } from '../models/userProfile.model';
 import { RoleTypes, UserRoles } from '../models/roles.model';
 
 ///
@@ -43,11 +43,11 @@ const getJwtSecretFromSecretsManager = async (): Promise<string> => {
   if (!JWT_SECRET) JWT_SECRET = await secretsManager.getStringById(SECRETS_PATH);
   return JWT_SECRET;
 };
-const verifyTokenAndGetESNAccountsUser = async (token: string): Promise<User> => {
+const verifyTokenAndGetESNAccountsUser = async (token: string): Promise<UserProfile> => {
   const secret = await getJwtSecretFromSecretsManager();
   try {
     const result = verify(token, secret) as JwtPayload;
-    return new User(result);
+    return new UserProfile(result);
   } catch (error) {
     return null;
   }
@@ -64,5 +64,5 @@ const verifyIfUserIsStillAnAdministratorById = async (userId: string): Promise<b
  */
 interface AuthResult {
   isAuthorized: boolean;
-  context?: { principalId: string; user: User };
+  context?: { principalId: string; user: UserProfile };
 }

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { AlertController, NavController, Platform } from '@ionic/angular';
 import { Browser } from '@capacitor/browser';
-import { CognitoUser } from 'idea-toolbox';
 import {
   IDEAActionSheetController,
   IDEAApiService,
@@ -13,12 +12,8 @@ import {
 import { IDEAAuthService } from '@idea-ionic/auth';
 
 import { environment as env } from '@env';
-import { User } from '@models/user.model';
+import { UserProfile } from '@models/userProfile.model';
 
-/**
- * The base URLs where the thumbnails are located.
- */
-const THUMBNAILS_BASE_URL = env.idea.app.mediaUrl.concat('/thumbnails/images/', env.idea.api.stage, '/');
 /**
  * A local fallback URL for the users avatars.
  */
@@ -35,7 +30,7 @@ export class AppService {
 
   private darkMode: boolean;
 
-  user: User;
+  user: UserProfile;
 
   constructor(
     private platform: Platform,
@@ -110,17 +105,25 @@ export class AppService {
   }
 
   /**
-   * Get the URL to an image by its URI.
-   */
-  private getImageURLByURI(imageURI: string): string {
-    return THUMBNAILS_BASE_URL.concat(imageURI, '.png');
-  }
-  /**
    * Get the URL to a user's profile image (avatar).
    */
-  getUserImageURL(user: CognitoUser): string {
-    return user?.picture ? this.getImageURLByURI(user.picture) : AVATAR_FALLBACK_URL;
+  getUserImageURL(user: UserProfile): string {
+    return user?.avatarURL ? user.avatarURL : AVATAR_FALLBACK_URL;
   }
+  // ! IN CASE WE PUT ESN GALAXY AVATARS ON S3
+  //   /**
+  //  * Get the URL to an image by its URI.
+  //  */
+  //   getImageURLByURI(imageURI: string): string {
+  //     return imageURI ? THUMBNAILS_BASE_URL.concat(imageURI, '.png') : null;
+  //   }
+  //   /**
+  //    * Get the URL to a user's profile image (avatar).
+  //    */
+  //   getUserImageURL(user: User): string {
+  //     return user?.imageURI ? this.getImageURLByURI(user.imageURI) : AVATAR_FALLBACK_URL;
+  //   }
+  // ! IN CASE WE PUT ESN GALAXY AVATARS ON S3
 
   /**
    * Actions on the current user.

@@ -26,6 +26,8 @@ tags:
     description: The app's status
   - name: Login
     description: Access the platform
+  - name: Profiles
+    description: The user profiles
 
 paths:
   /status:
@@ -56,10 +58,139 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
+  /esner:
+    patch:
+      summary: Actions on the users.
+      description: For users coming from galaxy.
+      tags: [Profiles]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [GET_IMAGE_UPLOAD_URL]
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /esner/{userId}:
+    get:
+      summary: Get an ESNer's profile.
+      tags: [Profiles]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: userId
+          in: path
+          description: The user's galaxy ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/UserProfile'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Remove the user's profile.
+      description: Users can delete their own data. Assistants can delete everyone's
+      tags: [Profiles]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/UserProfile'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /external:
+    patch:
+      summary: Actions on the users.
+      description: For external users.
+      tags: [Profiles]
+      security:
+        - CognitoUserPool: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [GET_IMAGE_UPLOAD_URL]
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /external/{userId}:
+    get:
+      summary: Get an external's profile.
+      tags: [Profiles]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: userId
+          in: path
+          description: The user's Cognito userId.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/UserProfile'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Change the user's profile.
+      description: Externals can change their own data.
+      tags: [Profiles]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: userId
+          in: path
+          description: The user's Cognito userId.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      responses:
+        200:
+          $ref: '#/components/responses/UserProfile'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Remove the user's profile and Cognito credentials.
+      description: Can only delete own data!
+      tags: [Profiles]
+      security:
+        - CognitoUserPool: []
+      responses:
+        200:
+          $ref: '#/components/responses/UserProfile'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
     AppStatus:
+      type: object
+      additionalProperties: {}
+    UserProfile:
       type: object
       additionalProperties: {}
     # choose for each project one kind of documentation style: lazy or detailed
@@ -77,6 +208,13 @@ components:
           schema:
             type: object
             $ref: '#/components/schemas/AppStatus'
+    UserProfile:
+      description: A standardized user profile for both ESNers and externals
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/UserProfile'
     BadParameters:
       description: Bad input parameters
       content:
