@@ -20,7 +20,14 @@ export const environment = {
     auth: {
       registrationIsPossible: false,
       singleSimultaneousSession: false,
-      forceLoginWithMFA: false
+      forceLoginWithMFA: false,
+      passwordPolicy: {
+        minLength: 8,
+        requireLowercase: false,
+        requireDigits: false,
+        requireSymbols: false,
+        requireUppercase: false
+      }
     },
     ionicExtraModules: ['common', 'variables', 'auth'],
     website: 'https://iter-idea.com'
