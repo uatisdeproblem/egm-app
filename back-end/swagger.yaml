@@ -80,6 +80,17 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Remove the user's profile.
+      description: Users can delete their own data. Assistants can delete everyone's
+      tags: [Profiles]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/UserProfile'
+        400:
+          $ref: '#/components/responses/BadParameters'
   /esner/{userId}:
     get:
       summary: Get an ESNer's profile.
@@ -122,17 +133,6 @@ paths:
           $ref: '#/components/responses/UserProfile'
         400:
           $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Remove the user's profile.
-      description: Users can delete their own data. Assistants can delete everyone's
-      tags: [Profiles]
-      security:
-        - AuthFunction: []
-      responses:
-        200:
-          $ref: '#/components/responses/UserProfile'
-        400:
-          $ref: '#/components/responses/BadParameters'
   /external:
     patch:
       summary: Actions on the users.
@@ -168,6 +168,17 @@ paths:
           required: true
           schema:
             type: string
+      responses:
+        200:
+          $ref: '#/components/responses/UserProfile'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Remove the user's profile and Cognito credentials.
+      description: Can only delete own data!
+      tags: [Profiles]
+      security:
+        - CognitoUserPool: []
       responses:
         200:
           $ref: '#/components/responses/UserProfile'
@@ -216,17 +227,6 @@ paths:
                 role:
                   type: number
                   enum: [CHANGE_ROLE]
-      responses:
-        200:
-          $ref: '#/components/responses/UserProfile'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Remove the user's profile and Cognito credentials.
-      description: Can only delete own data!
-      tags: [Profiles]
-      security:
-        - CognitoUserPool: []
       responses:
         200:
           $ref: '#/components/responses/UserProfile'
