@@ -98,6 +98,30 @@ paths:
           $ref: '#/components/responses/UserProfile'
         400:
           $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on an user.
+      description: Only for admins.
+      tags: [Profiles]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [CHANGE_ROLE]
+                role:
+                  type: number
+                  enum: [CHANGE_ROLE]
+      responses:
+        200:
+          $ref: '#/components/responses/UserProfile'
+        400:
+          $ref: '#/components/responses/BadParameters'
     delete:
       summary: Remove the user's profile.
       description: Users can delete their own data. Assistants can delete everyone's
@@ -168,6 +192,30 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserProfile'
+      responses:
+        200:
+          $ref: '#/components/responses/UserProfile'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on an user.
+      description: Only for admins.
+      tags: [Profiles]
+      security:
+        - CognitoUserPool: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [CHANGE_ROLE]
+                role:
+                  type: number
+                  enum: [CHANGE_ROLE]
       responses:
         200:
           $ref: '#/components/responses/UserProfile'

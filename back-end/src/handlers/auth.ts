@@ -4,17 +4,13 @@
 
 import { APIGatewayProxyEventV2WithRequestContext } from 'aws-lambda';
 import { JwtPayload, verify } from 'jsonwebtoken';
-import { DynamoDB, SecretsManager } from 'idea-aws';
+import { SecretsManager } from 'idea-aws';
 
 import { UserProfile } from '../models/userProfile.model';
-import { RoleTypes, UserRoles } from '../models/roles.model';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
 ///
-
-const DDB_TABLES = { roles: process.env.DDB_TABLE_roles };
-const ddb = new DynamoDB();
 
 const SECRETS_PATH = 'esn-ga/auth';
 const secretsManager = new SecretsManager();
@@ -27,7 +23,6 @@ export const handler = async (event: APIGatewayProxyEventV2WithRequestContext<Au
   const user = await verifyTokenAndGetESNAccountsUser(authorization);
 
   if (user) {
-    if (user.isAdministrator) user.isAdministrator = await verifyIfUserIsStillAnAdministratorById(user.userId);
     result.context = { principalId: user.userId, user };
     result.isAuthorized = true;
   }
@@ -51,12 +46,6 @@ const verifyTokenAndGetESNAccountsUser = async (token: string): Promise<UserProf
   } catch (error) {
     return null;
   }
-};
-const verifyIfUserIsStillAnAdministratorById = async (userId: string): Promise<boolean> => {
-  const { userIds: administratorsIds } = new UserRoles(
-    await ddb.get({ TableName: DDB_TABLES.roles, Key: { PK: RoleTypes.ADMIN } })
-  );
-  return administratorsIds.includes(userId);
 };
 
 /**

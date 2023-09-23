@@ -27,9 +27,6 @@ const tables: { [tableName: string]: DDBTable } = {
   status: {
     PK: { name: 'version', type: DDB.AttributeType.STRING }
   },
-  roles: {
-    PK: { name: 'PK', type: DDB.AttributeType.STRING }
-  },
   userProfiles: {
     PK: { name: 'userId', type: DDB.AttributeType.STRING }
   }

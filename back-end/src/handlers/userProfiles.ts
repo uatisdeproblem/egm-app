@@ -3,7 +3,7 @@
 ///
 
 import { Cognito, DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
-import { UserProfile } from '../models/userProfile.model';
+import { Roles, UserProfile } from '../models/userProfile.model';
 import { SignedURL } from 'idea-toolbox';
 
 ///
@@ -59,8 +59,7 @@ class UserProfiles extends ResourceController {
       return;
     }
 
-    if (this.requestingUserId !== this.resourceId && !this.requestingUser.isAdministrator)
-      throw new RCError('Unauthorized');
+    if (this.requestingUserId !== this.resourceId && !this.requestingUser.isAdmin()) throw new RCError('Unauthorized');
 
     try {
       this.profile = new UserProfile(
@@ -100,6 +99,31 @@ class UserProfiles extends ResourceController {
     this.profile.safeLoad(this.body, oldProfile);
 
     return await this.putSafeResource({ noOverwrite: false });
+  }
+
+  protected async patchResource(): Promise<UserProfile> {
+    switch (this.body.action) {
+      case 'CHANGE_ROLE':
+        return await this.changeUserRole(this.body.role);
+      default:
+        throw new RCError('Unsupported action');
+    }
+  }
+
+  private async changeUserRole(role: Roles): Promise<UserProfile> {
+    if (!this.requestingUser.isAdmin()) throw new RCError('Unauthorized');
+
+    try {
+      await ddb.update({
+        TableName: DDB_TABLES.userProfiles,
+        Key: { userId: this.profile.userId },
+        UpdateExpression: `SET role = :role`,
+        ExpressionAttributeValues: { ':role': role }
+      });
+      return this.profile;
+    } catch (err) {
+      throw new RCError('Error updating user role');
+    }
   }
 
   private async putSafeResource(opts: { noOverwrite: boolean }): Promise<UserProfile> {

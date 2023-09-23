@@ -8,7 +8,6 @@ import { sign } from 'jsonwebtoken';
 import { DynamoDB, RCError, ResourceController, SecretsManager } from 'idea-aws';
 
 import { UserProfile } from '../models/userProfile.model';
-import { RoleTypes, UserRoles } from '../models/roles.model';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -65,21 +64,15 @@ class Login extends ResourceController {
       const attributes = data['cas:attributes'][0];
       const userId = data['cas:user'][0];
 
-      const { userIds: administratorsIds } = new UserRoles(
-        await ddb.get({ TableName: DDB_TABLES.roles, Key: { PK: RoleTypes.ADMIN } })
-      );
-
       let user = new UserProfile({
         userId,
         email: attributes['cas:mail'][0],
         sectionCode: attributes['cas:sc'][0],
         firstName: attributes['cas:first'][0],
         lastName: attributes['cas:last'][0],
-        roles: attributes['cas:roles'],
         section: attributes['cas:section'][0],
         country: attributes['cas:country'][0],
-        avatarURL: attributes['cas:picture'][0],
-        isAdministrator: administratorsIds.includes(userId)
+        avatarURL: attributes['cas:picture'][0]
       });
       this.logger.info('ESN Accounts login', user);
 

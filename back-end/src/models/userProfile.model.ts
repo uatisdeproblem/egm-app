@@ -14,9 +14,9 @@ export class UserProfile extends Resource {
    */
   name: string;
   /**
-   * Section code in ESN Accounts.
+   * The users role.
    */
-  roles: string[];
+  role: Roles;
   /**
    * Section code in ESN Accounts.
    */
@@ -38,11 +38,6 @@ export class UserProfile extends Resource {
    * Whether the user is from outside ESN.
    */
   isExternal: boolean;
-  /**
-   * Whether the user is administrator, based on the platform's configurations.
-   * A change in this permission will require a new sign-in to take full place.
-   */
-  isAdministrator: boolean;
 
   load(x: any): void {
     super.load(x);
@@ -54,25 +49,23 @@ export class UserProfile extends Resource {
       const lastName = this.clean(x.lastName, String);
       this.name = `${firstName} ${lastName}`.trim();
     }
-    this.roles = this.cleanArray(x.roles, String);
+    this.role = this.clean(x.role, Number, Roles.NONE);
     this.sectionCode = this.clean(x.sectionCode, String);
     this.section = this.clean(x.section, String);
     this.country = this.clean(x.country, String);
     this.avatarURL = this.clean(x.avatarURL, String);
     this.isExternal = this.clean(x.isExternal, Boolean);
-    this.isAdministrator = this.clean(x.isAdministrator, Boolean);
   }
 
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
     this.userId = safeData.userId;
     this.email = safeData.email;
-    this.roles = safeData.roles;
+    this.role = safeData.role;
     this.sectionCode = safeData.sectionCode;
     this.section = safeData.section;
     this.country = safeData.country;
     this.isExternal = safeData.isExternal;
-    this.isAdministrator = safeData.isAdministrator;
     if (!safeData.isExternal) {
       this.name = safeData.name; // externals can change their name // @todo verify and check if anyhting msising
     }
@@ -85,6 +78,10 @@ export class UserProfile extends Resource {
     return e;
   }
 
+  isAdmin(): boolean {
+    return this.role >= Roles.ADMIN;
+  }
+
   /**
    * Get a string representing the ESN Section and Country of the subject.
    * @todo to solve a known error from ESN Accounts: the Country isn't returned correctly.
@@ -93,4 +90,15 @@ export class UserProfile extends Resource {
     if (this.country === this.section) return this.section;
     return [this.country, this.section].filter(x => x).join(' - ');
   }
+}
+
+export enum Roles {
+  NONE = 0,
+  PARTICIPANT = 10,
+  DELEGATION_LEADER = 20,
+  STAFF = 30,
+  OC = 40,
+  CT = 50,
+  IB = 60,
+  ADMIN = 70
 }

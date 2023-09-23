@@ -52,9 +52,9 @@
             <div slot="label">Country</div>
           </ion-input>
         </ion-item>
-        <ion-item *ngFor="let role of app.user.roles; let i = index">
-          <ion-input readonly labelPlacement="floating" [value]="role">
-            <div slot="label">Role {{ i + 1 }}</div>
+        <ion-item>
+          <ion-input readonly labelPlacement="floating" [value]="app.user.role">
+            <div slot="label">Role</div>
           </ion-input>
         </ion-item>
       </ion-card-content>
