@@ -1,27 +1,12 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="ideaToolbar">
-    <ion-buttons slot="start">
-      <ion-button (click)="app.openUserPreferences()">
-        <ion-icon name="menu" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>EGM</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="app.reloadApp()">
-        <ion-icon name="refresh" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+  <ion-toolbar color="white">
+    <ion-title>{{ 'PROFILE.PROFILE' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content class="ion-padding">
-  <div class="maxWidthContainer">
+<ion-content>
+  <div class="maxWidthContainer" *ngIf="app.user">
     <ion-card>
-      <ion-card-header>
-        <ion-card-title class="ion-text-center">
-          <h2>Welcome <span *ngIf="app.user.name">, {{ app.user.name }}</span>!</h2>
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content *ngIf="app.user">
+      <ion-card-header color="dark">
         <ion-row>
           <ion-col>
             <input id="avatarInput" type="file" accept="image/*" style="display: none" (change)="setAvatar($event)" />
@@ -35,6 +20,8 @@
             </p>
           </ion-col>
         </ion-row>
+      </ion-card-header>
+      <ion-card-content>
         <ion-item>
           <ion-input readonly labelPlacement="floating" [value]="app.user.userId">
             <div slot="label">ID</div>
@@ -72,5 +59,29 @@
         </ion-item>
       </ion-card-content>
     </ion-card>
+    <ion-list class="aList">
+      <ion-item lines="none">
+        <ion-label color="medium">{{ 'COMMON.VERSION' | translate: { v: version } }}</ion-label>
+      </ion-item>
+      <ion-item button detail>
+        <ion-label>{{ 'PROFILE.TERMS_CONDITIONS' | translate }}</ion-label>
+      </ion-item>
+      <ion-item button detail>
+        <ion-label>{{ 'PROFILE.PRIVACY_POLICY' | translate }}</ion-label>
+      </ion-item>
+    </ion-list>
+    <div class="smallWidthContainer ion-text-center ion-padding-top">
+      <p>
+        <ion-button color="dark" expand="block" (click)="app.logout()">{{ 'COMMON.LOGOUT' | translate }}</ion-button>
+      </p>
+      <h2 class="lotOfMarginTop">
+        <ion-text color="danger">{{ 'PROFILE.DANGEROUS_AREA' | translate }}!</ion-text>
+      </h2>
+      <p>
+        <ion-button fill="outline" color="danger" expand="block" (click)="deleteAccount()">
+          {{ 'PROFILE.DELETE_ACCOUNT' | translate }}
+        </ion-button>
+      </p>
+    </div>
   </div>
 </ion-content>

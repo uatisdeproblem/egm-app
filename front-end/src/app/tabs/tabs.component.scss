@@ -1,0 +1,16 @@
+ion-tab-bar {
+  height: 60px;
+  ion-tab-button {
+    padding-top: 4px;
+    border-bottom: 3px solid transparent;
+    ion-label {
+      color: var(--ion-color-primary);
+    }
+  }
+  ion-tab-button.tab-selected {
+    border-bottom-color: var(--ion-color-primary);
+    ion-label {
+      font-weight: bold;
+    }
+  }
+}

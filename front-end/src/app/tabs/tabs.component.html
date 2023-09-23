@@ -1,0 +1,10 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom" color="white">
+    <ng-container *ngFor="let tab of tabs">
+      <ion-tab-button *ngIf="canUserSeeTabButton(tab)" [tab]="tab.id">
+        <ion-icon color="dark" [icon]="tab.icon"></ion-icon>
+      </ion-tab-button>
+    </ng-container>
+    <ion-badge class="ion-margin-end" *ngIf="isDevEnvironment()">DEV</ion-badge>
+  </ion-tab-bar>
+</ion-tabs>

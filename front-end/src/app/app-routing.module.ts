@@ -5,7 +5,7 @@ import { initGuard } from './init.guard';
 import { authGuard } from './auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: 'event', pathMatch: 'full' },
   {
     path: 'app-status',
     loadChildren: (): Promise<any> => import('@idea-ionic/common').then(m => m.IDEAAppStatusModule),
@@ -17,8 +17,8 @@ const routes: Routes = [
     canActivate: [initGuard]
   },
   {
-    path: 'dashboard',
-    loadChildren: (): Promise<any> => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
+    path: 'event',
+    loadChildren: (): Promise<any> => import('./tabs/tabs.module').then(m => m.TabsModule),
     canActivate: [initGuard, authGuard]
   }
 ];
