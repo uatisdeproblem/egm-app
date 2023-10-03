@@ -28,7 +28,7 @@ export class FrontEndStack extends cdk.Stack {
             }
           ]
         : [];
-    const publicAccessForDocs = props.stage === 'dev' ? undefined : S3.BlockPublicAccess.BLOCK_ALL;
+    const publicAccessForDocs = S3.BlockPublicAccess.BLOCK_ALL;
 
     const frontEndBucket = new S3.Bucket(this, 'Bucket', {
       bucketName: props.project.concat('-', props.stage, '-front-end'),
@@ -39,14 +39,6 @@ export class FrontEndStack extends cdk.Stack {
       blockPublicAccess: publicAccessForDocs,
       cors: corsForDocs
     });
-    if (props.stage === 'dev')
-      frontEndBucket.addToResourcePolicy(
-        new IAM.PolicyStatement({
-          actions: ['s3:GetObject'],
-          resources: [frontEndBucket.arnForObjects('swagger.yaml')],
-          principals: [new IAM.AnyPrincipal()]
-        })
-      );
 
     new cdk.CfnOutput(this, 'S3BucketName', { value: frontEndBucket.bucketName });
 
