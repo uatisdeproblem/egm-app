@@ -23,7 +23,7 @@
     "@capacitor/push-notifications": "^5.0.6",
     "@idea-ionic/auth": "^7.x.x",
     "@idea-ionic/common": "^7.x.x",
-    "@ionic/angular": "^7.0.0",
+    "@ionic/angular": "^7.4.1",
     "@ionic/storage-angular": "^4.0.0",
     "amazon-cognito-identity-js": "^6.3.1",
     "idea-toolbox": "^7.0.1",
