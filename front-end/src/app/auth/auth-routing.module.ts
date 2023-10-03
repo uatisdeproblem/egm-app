@@ -3,13 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AuthPage } from './auth.page';
 
-const routes: Routes = [
-  { path: '', component: AuthPage },
-  {
-    path: 'external',
-    loadChildren: (): Promise<any> => import('@idea-ionic/auth').then(m => m.IDEAAuthModule)
-  }
-];
+const routes: Routes = [{ path: '', component: AuthPage }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

@@ -18,15 +18,15 @@ export const environment = {
       stage: 'prod'
     },
     auth: {
-      registrationIsPossible: false,
+      registrationIsPossible: true,
       singleSimultaneousSession: false,
       forceLoginWithMFA: false,
       passwordPolicy: {
         minLength: 8,
-        requireLowercase: false,
-        requireDigits: false,
-        requireSymbols: false,
-        requireUppercase: false
+        requireLowercase: true,
+        requireDigits: true,
+        requireSymbols: true,
+        requireUppercase: true
       }
     },
     ionicExtraModules: ['common', 'variables', 'auth'],

@@ -74,13 +74,13 @@ class UserProfiles extends ResourceController {
     if (this.cognitoUser?.userId) {
       this.requestingUser = new UserProfile({
         userId: this.cognitoUser.userId,
-        name: this.cognitoUser.name,
+        name: '',
         email: this.cognitoUser.email,
         roles: [],
         sectionCode: 'EXT',
         section: 'EXTERNAL',
         country: 'EXTERNAL',
-        avatarURL: this.cognitoUser.picture,
+        avatarURL: '',
         isExternal: true,
         isAdministrator: false // externals can't be admins
       });

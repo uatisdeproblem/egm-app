@@ -26,10 +26,10 @@ export const authGuard: CanActivateFn = async (): Promise<boolean> => {
 
     api.authToken = authRes.idToken;
 
-    const { userId } = authRes.userDetails;
+    const { sub: userId } = authRes.userDetails;
 
     try {
-      app.user = new UserProfile(await api.getResource(['external', userId]));
+      app.user = new UserProfile(await api.getResource(['externals', userId]));
     } catch (err) {
       throw new Error('Profile not found');
     }
@@ -83,5 +83,5 @@ export const authGuard: CanActivateFn = async (): Promise<boolean> => {
 
   if (hasESNToken || hasCognitoToken) {
     return window.location.pathname === '/' ? navigateAndResolve([]) : navigateAndResolve();
-  } else return navigateAndResolve(['auth']);
+  } else return navigateAndResolve(['login']);
 };

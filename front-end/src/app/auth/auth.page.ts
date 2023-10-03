@@ -33,7 +33,7 @@ export class AuthPage implements OnInit {
   }
 
   startLoginFlowAsExternal(): void {
-    this.app.goTo(['auth', 'external', 'sign-in']);
+    this.app.goTo(['auth']);
   }
 
   startLoginFlowWithESNAccounts(): void {
