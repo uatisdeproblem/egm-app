@@ -5,7 +5,7 @@
 import { default as Axios } from 'axios';
 import { parseStringPromise } from 'xml2js';
 import { sign } from 'jsonwebtoken';
-import { DynamoDB, RCError, ResourceController, SecretsManager } from 'idea-aws';
+import { DynamoDB, RCError, ResourceController, SystemsManager } from 'idea-aws';
 
 import { UserProfile } from '../models/userProfile.model';
 
@@ -24,8 +24,8 @@ const DDB_TABLES = {
 };
 const ddb = new DynamoDB();
 
-const SECRETS_PATH = 'egm/auth';
-const secretsManager = new SecretsManager();
+const SECRETS_PATH = '/egm/auth';
+const ssm = new SystemsManager();
 
 let JWT_SECRET: string;
 
@@ -98,6 +98,6 @@ class Login extends ResourceController {
 }
 
 const getJwtSecretFromSecretsManager = async (): Promise<string> => {
-  if (!JWT_SECRET) JWT_SECRET = await secretsManager.getStringById(SECRETS_PATH);
+  if (!JWT_SECRET) JWT_SECRET = await ssm.getSecretByName(SECRETS_PATH);
   return JWT_SECRET;
 };

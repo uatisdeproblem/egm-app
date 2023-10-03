@@ -4,7 +4,7 @@
 
 import { APIGatewayProxyEventV2WithRequestContext } from 'aws-lambda';
 import { JwtPayload, verify } from 'jsonwebtoken';
-import { SecretsManager } from 'idea-aws';
+import { SystemsManager } from 'idea-aws';
 
 import { UserProfile } from '../models/userProfile.model';
 
@@ -12,8 +12,8 @@ import { UserProfile } from '../models/userProfile.model';
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
 ///
 
-const SECRETS_PATH = 'esn-ga/auth';
-const secretsManager = new SecretsManager();
+const SECRETS_PATH = '/egm/auth';
+const ssm = new SystemsManager();
 
 let JWT_SECRET: string;
 
@@ -35,7 +35,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithRequestContext<Au
 //
 
 const getJwtSecretFromSecretsManager = async (): Promise<string> => {
-  if (!JWT_SECRET) JWT_SECRET = await secretsManager.getStringById(SECRETS_PATH);
+  if (!JWT_SECRET) JWT_SECRET = await ssm.getSecretByName(SECRETS_PATH);
   return JWT_SECRET;
 };
 const verifyTokenAndGetESNAccountsUser = async (token: string): Promise<UserProfile> => {
