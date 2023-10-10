@@ -18,4 +18,11 @@ export class ManagePage {
     // this.message.error('COMMON.UNAUTHORIZED');
     //     this.app.closePage();
   }
+
+  goToManageUsersPage(): void {
+    this.app.goTo(['manage', 'users']);
+  }
+  goToManageRegistrationsPage(): void {
+    this.app.goTo(['manage', 'registrations']);
+  }
 }

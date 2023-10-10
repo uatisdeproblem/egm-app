@@ -11,21 +11,21 @@ export class UsersService {
    * ! Only for externals currently
    */
   async updateProfile(profile: UserProfile): Promise<void> {
-    await this.api.putResource(['external', profile.userId], { body: profile });
+    await this.api.putResource(['externals', profile.userId], { body: profile });
   }
 
   /**
    * Deletes a profile.
    */
   async deleteProfile(profile: UserProfile): Promise<void> {
-    await this.api.deleteResource([profile.isExternal ? 'external' : 'esner', profile.userId]);
+    await this.api.deleteResource([profile.isExternal ? 'externals' : 'esners', profile.userId]);
   }
 
   /**
    * Sets the image URI for the avatar.
    */
   async setImageURI(profile: UserProfile, file: File): Promise<string> {
-    const { url, id } = await this.api.patchResource([profile.isExternal ? 'external' : 'esner'], {
+    const { url, id } = await this.api.patchResource([profile.isExternal ? 'externals' : 'esners'], {
       body: { action: 'GET_IMAGE_UPLOAD_URL' }
     });
 

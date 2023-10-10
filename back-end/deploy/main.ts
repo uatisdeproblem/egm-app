@@ -20,7 +20,15 @@ const apiResources: ResourceController[] = [
   { name: 'auth', isAuthFunction: true },
   { name: 'login', paths: ['/login'] },
   { name: 'status', paths: ['/status'] },
-  { name: 'userProfiles', paths: ['/esner', '/esner/{userId}', '/external', '/external/{userId}'] }
+  { name: 'userProfiles', paths: ['/esners', '/esners/{userId}', '/externals', '/externals/{userId}'] },
+  {
+    name: 'registrations',
+    paths: [
+      '/esners/registrations',
+      '/esners/registrations/{registrationId}',
+      '/externals/registrations/{registrationId}'
+    ]
+  }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
@@ -29,6 +37,9 @@ const tables: { [tableName: string]: DDBTable } = {
   },
   userProfiles: {
     PK: { name: 'userId', type: DDB.AttributeType.STRING }
+  },
+  registrations: {
+    PK: { name: 'registrationId', type: DDB.AttributeType.STRING }
   }
 };
 

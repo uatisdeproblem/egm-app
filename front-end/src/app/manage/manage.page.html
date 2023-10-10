@@ -5,6 +5,11 @@
 </ion-header>
 <ion-content>
   <ion-list class="aList maxWidthContainer">
-    <ion-item> This is the admin page. For now it is empty. </ion-item>
+    <ion-item button detail (click)="goToManageUsersPage()">
+      <ion-label>{{ 'MANAGE_SHOP.MANAGE_USERS' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button detail (click)="goToManageRegistrationsPage()">
+      <ion-label>{{ 'MANAGE_SHOP.MANAGE_REGISTRATIONS' | translate }}</ion-label>
+    </ion-item>
   </ion-list>
 </ion-content>

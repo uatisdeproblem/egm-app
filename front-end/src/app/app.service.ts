@@ -105,6 +105,13 @@ export class AppService {
   }
 
   /**
+   * Returns the API path depending if user is external or esners
+   */
+  getUserApiPath(): string {
+    return this.user.isExternal ? 'externals' : 'esners';
+  }
+
+  /**
    * Get the URL to a user's profile image (avatar).
    */
   getUserImageURL(user: UserProfile): string {

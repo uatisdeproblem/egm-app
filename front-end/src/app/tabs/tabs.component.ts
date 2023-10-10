@@ -24,7 +24,7 @@ export class TabsComponent {
   }
 
   canUserSeeTabButton(tab: TabInterface): boolean {
-    return !tab.restricted; // || (this.app.user && this.shop?.canUserManage(this.app.user)); // @todo
+    return !tab.restricted || this.app.user.isAdmin(); // @todo check auth
   }
 
   isDevEnvironment(): boolean {

@@ -58,7 +58,7 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
-  /esner:
+  /esners:
     patch:
       summary: Actions on the users.
       description: For users coming from galaxy.
@@ -91,7 +91,7 @@ paths:
           $ref: '#/components/responses/UserProfile'
         400:
           $ref: '#/components/responses/BadParameters'
-  /esner/{userId}:
+  /esners/{userId}:
     get:
       summary: Get an ESNer's profile.
       tags: [Profiles]
@@ -133,7 +133,7 @@ paths:
           $ref: '#/components/responses/UserProfile'
         400:
           $ref: '#/components/responses/BadParameters'
-  /external:
+  /externals:
     patch:
       summary: Actions on the users.
       description: For external users.
@@ -155,7 +155,7 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
-  /external/{userId}:
+  /externals/{userId}:
     get:
       summary: Get an external's profile.
       tags: [Profiles]
@@ -232,6 +232,155 @@ paths:
           $ref: '#/components/responses/UserProfile'
         400:
           $ref: '#/components/responses/BadParameters'
+  /esners/registrations:
+    get:
+      summary: Get an all registrations.
+      description: Requires to be an admin # @todo check this permission
+      tags: [Registrations]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Registrations'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /esners/registrations/{registrationId}:
+    get:
+      summary: Get a registration.
+      tags: [Registrations]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: registrationId
+          in: path
+          description: The registration ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Update the registration.
+      description: Can only update if it hasn't been submitted yet.
+      tags: [Registrations]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: registrationId
+          in: path
+          description: The registration ID.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on a registration.
+      tags: [Profiles]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [APPROVE, SUBMIT, CANCEL]
+                status:
+                  type: number
+                  enum: [APPROVE, SUBMIT, CANCEL]
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /externals/registrations/{registrationId}:
+    get:
+      summary: Get a registration.
+      tags: [Registrations]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: registrationId
+          in: path
+          description: The registration ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Update the registration.
+      description: Can only update if it hasn't been submitted yet.
+      tags: [Registrations]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: registrationId
+          in: path
+          description: The registration ID.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on a registration.
+      tags: [Profiles]
+      security:
+        - CognitoUserPool: []
+      parameters:
+        - name: registrationId
+          in: path
+          description: The registration ID.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [APPROVE, SUBMIT, CANCEL]
+                status:
+                  type: number
+                  enum: [APPROVE, SUBMIT, CANCEL]
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -239,6 +388,9 @@ components:
       type: object
       additionalProperties: {}
     UserProfile:
+      type: object
+      additionalProperties: {}
+    Registration:
       type: object
       additionalProperties: {}
     # choose for each project one kind of documentation style: lazy or detailed
@@ -263,6 +415,20 @@ components:
           schema:
             type: object
             $ref: '#/components/schemas/UserProfile'
+    Registration:
+      description: A user's registration
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/Registration'
+    Registrations:
+      description: A list of user registrations
+      content:
+        application/json:
+          schema:
+            type: array
+            $ref: '#/components/schemas/Registration'
     BadParameters:
       description: Bad input parameters
       content:

@@ -1,0 +1,203 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="white">
+    <ion-buttons slot="start">
+      <ion-button (click)="app.closePage()"><ion-icon icon="arrow-back" slot="icon-only"></ion-icon></ion-button>
+    </ion-buttons>
+    <ion-title>
+      {{ 'REGISTRATION.' + registration?.registrationId === app.user.userId ? 'REGISTRATION' : 'MY_REGISTRATION'|
+      translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="maxWidthContainer" *ngIf="registration">
+    <ion-card>
+      <ion-card-header> STATUS </ion-card-header>
+      <ion-card-content> APPROVED </ion-card-content>
+    </ion-card>
+    <ion-list-header>
+      <h3>{{ 'REGISTRATION.PERSONAL_DATA' | translate }}</h3>
+    </ion-list-header>
+    <ion-item>
+      <ion-input
+        label="REGISTRATION.NAME"
+        labelPlacement="stacked"
+        placeholder="REGISTRATION.INSERT_NAME"
+        [(ngModel)]="registration.name"
+        type="text"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input
+        label="REGISTRATION.ID_PASSPORT"
+        labelPlacement="stacked"
+        placeholder="REGISTRATION.ID_OR_PASSPOT"
+        [(ngModel)]="registration.passportOrId"
+        type="text"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input
+        label="REGISTRATION.ESN_CARD"
+        labelPlacement="stacked"
+        placeholder="REGISTRATION.ESN_CARD_I"
+        [(ngModel)]="registration.esnCardNumber"
+        type="text"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input
+        label="REGISTRATION.EMAIL"
+        labelPlacement="stacked"
+        placeholder="REGISTRATION.INSERT_EMAIL"
+        [(ngModel)]="registration.email"
+        type="email"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input
+        label="REGISTRATION.PHONE_NR"
+        labelPlacement="stacked"
+        placeholder="REGISTRATION.INSERT_PHONE_NR"
+        [(ngModel)]="registration.phoneNr"
+        type="tel"
+      ></ion-input>
+    </ion-item>
+    <idea-address
+      lines="inset"
+      [address]="registration.personalAddress"
+      [label]="'REGISTRATION.PERSONAL_ADDRESS' | translate"
+      [placeholder]="'REGISTRATION.PERSONAL_ADDRESS_I' | translate"
+    ></idea-address>
+    <ion-item>
+      <ion-input
+        label="REGISTRATION.PRONOUNS"
+        labelPlacement="stacked"
+        placeholder="REGISTRATION.PRONOUNS"
+        [(ngModel)]="registration.pronouns"
+        type="tel"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-select label="T-Shirt size" labelPlacement="stacked" interface="popover" placeholder="Select size">
+        <ion-select-option *ngFor="let size of tshirtSizes" value="size">{{ size }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-list-header>
+      <h3>{{ 'REGISTRATION.FINANCIAL_DATA' | translate }}</h3>
+    </ion-list-header>
+    <idea-address
+      lines="inset"
+      [address]="registration.invoiceAddress"
+      [label]="'REGISTRATION.INVOICE_ADDRESS' | translate"
+      [placeholder]="'REGISTRATION.INVOICE_ADDRESS' | translate"
+    ></idea-address>
+    <ion-item>
+      <ion-label class="ion-text-wrap">{{ 'REGISTRATION.NEEDS_INV_LETTER' | translate }}</ion-label>
+      <ion-toggle
+        slot="end"
+        [checked]="registration.needsInvitationLetter"
+        [(ngModel)]="registration.needsInvitationLetter"
+      ></ion-toggle>
+    </ion-item>
+    <ion-list-header>
+      <h3>{{ 'REGISTRATION.ADDITIONAL_DATA' | translate }}</h3>
+    </ion-list-header>
+    <ion-item>
+      <ion-textarea
+        label="REGISTRATION.ACCESS_NEEDS"
+        labelPlacement="stacked"
+        placeholder="REGISTRATION.ACCESS_NEEDS"
+        [rows]="5"
+        [(ngModel)]="registration.accessNeeds"
+        type="text"
+      ></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-textarea
+        label="REGISTRATION.FOOD_RESTRICTIONS"
+        labelPlacement="stacked"
+        placeholder="REGISTRATION.FOOD_RESTRICTIONS"
+        [rows]="5"
+        [(ngModel)]="registration.foodRestrictions"
+        type="text"
+      ></ion-textarea>
+    </ion-item>
+    <ion-accordion-group>
+      <ion-accordion value="first">
+        <ion-item slot="header" color="light">
+          <ion-label>Emergency contact</ion-label>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <ion-list>
+            <ion-item>
+              <ion-input
+                label="REGISTRATION.EMERGENCY.NAME"
+                labelPlacement="stacked"
+                placeholder="REGISTRATION.ID_OR_PASSPOT"
+                [(ngModel)]="registration.emergencyContact.name"
+                type="text"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                label="REGISTRATION.EMERGENCY.RELATION"
+                labelPlacement="stacked"
+                placeholder="REGISTRATION.ID_OR_PASSPOT"
+                [(ngModel)]="registration.emergencyContact.relationship"
+                type="text"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                label="REGISTRATION.EMERGENCY.PHONE"
+                labelPlacement="stacked"
+                placeholder="REGISTRATION.ID_OR_PASSPOT"
+                [(ngModel)]="registration.emergencyContact.phoneNr"
+                type="text"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                label="REGISTRATION.EMERGENCY.NATIONALITY"
+                labelPlacement="stacked"
+                placeholder="REGISTRATION.ID_OR_PASSPOT"
+                [(ngModel)]="registration.emergencyContact.nationality"
+                type="text"
+              ></ion-input>
+            </ion-item>
+          </ion-list>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    <ion-list-header>
+      <h3>{{ 'REGISTRATION.DOCUMENTS' | translate }}</h3>
+    </ion-list-header>
+    <ion-item>
+      <ion-button fill="clear" slot="end">
+        <ion-icon slot="icon-only" icon="link-outline"></ion-icon>
+      </ion-button>
+      <ion-label class="ion-text-wrap">{{ 'REGISTRATION.AGREE_COC' | translate }}</ion-label>
+      <ion-toggle
+        slot="end"
+        [checked]="registration.agreesWithCoC"
+        [(ngModel)]="registration.agreesWithCoC"
+      ></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-button fill="clear" slot="end">
+        <ion-icon slot="icon-only" icon="link-outline"></ion-icon>
+      </ion-button>
+      <ion-label class="ion-text-wrap">{{ 'REGISTRATION.AGREE_TC' | translate }}</ion-label>
+      <ion-toggle slot="end" [checked]="registration.agreesWithTC" [(ngModel)]="registration.agreesWithTC"></ion-toggle>
+    </ion-item>
+    <ion-row class="marginTop">
+      <ion-col>
+        <ion-button expand="block" fill="outline">Save progress</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button expand="block">Submit registration</ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+</ion-content>

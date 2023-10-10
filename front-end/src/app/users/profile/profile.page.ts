@@ -70,4 +70,10 @@ export class ProfilePage {
     const alert = await this.alertCtrl.create({ header, message, buttons });
     await alert.present();
   }
+
+  goToRegistration(): void {
+    // @todo only if profile is valid
+
+    this.app.goTo(['event', 'profile', 'my-registration']);
+  }
 }
