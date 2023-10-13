@@ -73,22 +73,17 @@
     "ENTER_EDIT_MODE": "Enter in edit mod",
     "SAVE_CHANGES": "Save changes",
     "NOT_FOUND": "Not found",
-    "NOT_SELECTED": "Not selected"
+    "NOT_SELECTED": "Not selected",
+    "OR": "OR"
   },
   "LANGUAGES": {
     "IT": "Italian",
     "EN": "English"
   },
-  "BOOKS": {
-    "BOOKS": "Books",
-    "BOOK": "Book",
-    "NEW_BOOK": "New book",
-    "TITLE": "Title",
-    "GENRE": "Genre",
-    "AUTHOR": "Author",
-    "DESCRIPTION": "Description",
-    "PUBLISH_DATE": "Publish date",
-    "ALL_BOOKS": "All books",
-    "TOP_10": "Top 10"
+  "AUTH": {
+    "TITLE": "Erasmus Generation Meeting",
+    "SUBTITLE": "Erasmus Student Network",
+    "LOGIN_WITH_ESN_ACCOUNTS": "Login with ESN Accounts",
+    "LOGIN_AS_EXTERNAL": "Login as external"
   }
 }

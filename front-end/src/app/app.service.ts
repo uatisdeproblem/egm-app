@@ -13,6 +13,7 @@ import {
 import { IDEAAuthService } from '@idea-ionic/auth';
 
 import { environment as env } from '@env';
+import { User } from '@models/user.model';
 
 /**
  * The base URLs where the thumbnails are located.
@@ -22,6 +23,10 @@ const THUMBNAILS_BASE_URL = env.idea.app.mediaUrl.concat('/thumbnails/images/', 
  * A local fallback URL for the users avatars.
  */
 const AVATAR_FALLBACK_URL = './assets/imgs/no-avatar.jpg';
+/**
+ * The local URL to the icon.
+ */
+const APP_ICON_PATH = 'assets/icons/icon.svg';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
@@ -30,7 +35,7 @@ export class AppService {
 
   private darkMode: boolean;
 
-  user: CognitoUser;
+  user: User;
 
   constructor(
     private platform: Platform,
@@ -151,7 +156,12 @@ export class AppService {
    * Sign-out from the current user.
    */
   async logout(): Promise<void> {
-    const doLogout = () => this.auth.logout().finally(() => this.storage.clear().then(() => this.reloadApp()));
+    // @todo check if we have to change this for login with cognito
+    // const doLogout = () => this.auth.logout().finally(() => this.storage.clear().then(() => this.reloadApp()));
+    const doLogout = async (): Promise<void> => {
+      await this.storage.clear();
+      this.reloadApp();
+    };
 
     const header = this.t._('COMMON.LOGOUT');
     const message = this.t._('COMMON.ARE_YOU_SURE');
@@ -167,5 +177,12 @@ export class AppService {
    */
   generateNumericArray(length: number): number[] {
     return [...Array(length).keys()];
+  }
+
+  /**
+   * Get the app's main icon.
+   */
+  getIcon(): string {
+    return APP_ICON_PATH;
   }
 }

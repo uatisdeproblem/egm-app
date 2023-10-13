@@ -19,7 +19,7 @@ export const stages: { [stage: string]: Stage } = {
 };
 
 export const versionStatus: VersionStatus = {
-  latestVersion: '2.0.0',
+  latestVersion: '0.1.0',
   minVersion: null,
   maintenance: false
 };
