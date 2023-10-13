@@ -57,7 +57,13 @@ class CognitoRC extends ResourceController {
     const cognitoUser = await cognito.getUserByEmail(email, COGNITO_USER_POOL_ID);
     const userId = AuthServices.COGNITO.concat('_', cognitoUser.userId);
 
-    const user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
+    let user: User;
+    try {
+      user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
+    } catch (error) {
+      if (String(error) !== 'Error: Not found') throw error;
+      user = new User({ userId, authService: AuthServices.COGNITO, email });
+    }
     await ddb.put({ TableName: DDB_TABLES.users, Item: user });
 
     const token = await createAuthTokenWithUserId(ssm, userId);
