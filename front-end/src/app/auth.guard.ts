@@ -1,16 +1,17 @@
 import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
 import { NavController, Platform } from '@ionic/angular';
-import { IDEAApiService, IDEAStorageService } from '@idea-ionic/common';
+import { IDEAStorageService } from '@idea-ionic/common';
 
 import { AppService } from './app.service';
 import { UsersService } from './users/users.service';
+import { AuthService } from './auth/auth.service';
 
 export const authGuard: CanActivateFn = async (): Promise<boolean> => {
   const platform = inject(Platform);
   const navCtrl = inject(NavController);
   const storage = inject(IDEAStorageService);
-  const api = inject(IDEAApiService);
+  const auth = inject(AuthService);
   const _users = inject(UsersService);
   const app = inject(AppService);
 
@@ -21,8 +22,8 @@ export const authGuard: CanActivateFn = async (): Promise<boolean> => {
   //
 
   const doAuth = async (): Promise<void> => {
-    api.authToken = await storage.get('authToken');
-    if (!api.authToken) throw new Error('Missing auth token');
+    const token = await auth.loadAuthToken();
+    if (!token) throw new Error('Missing auth token');
     app.user = await _users.getCurrentUser();
   };
 

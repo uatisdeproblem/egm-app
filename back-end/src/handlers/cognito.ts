@@ -62,7 +62,7 @@ class CognitoRC extends ResourceController {
     const user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
     await ddb.put({ TableName: DDB_TABLES.users, Item: user });
 
-    const token = await createAuthTokenWithUserId(ssm, user);
+    const token = await createAuthTokenWithUserId(ssm, userId);
     return { token };
   }
   private async signUp(email: string, firstName: string, lastName: string): Promise<{ token: string }> {
@@ -81,7 +81,7 @@ class CognitoRC extends ResourceController {
       throw new RCError('Cognito sign up failed');
     }
 
-    const token = await createAuthTokenWithUserId(ssm, user);
+    const token = await createAuthTokenWithUserId(ssm, user.userId);
     return { token };
   }
   private async confirmSignUp(email: string, confirmationCode: string): Promise<void> {

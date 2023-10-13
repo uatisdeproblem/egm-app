@@ -30,7 +30,7 @@ export const environment = {
         requireUppercase: false
       }
     },
-    ionicExtraModules: ['common', 'variables', 'auth'],
+    ionicExtraModules: ['common'],
     website: 'https://iter-idea.com'
   },
   aws: {

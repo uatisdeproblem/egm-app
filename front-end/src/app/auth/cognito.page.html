@@ -1,0 +1,179 @@
+<ion-content>
+  <form class="flexBox">
+    <ion-card class="authCard" *ngIf="mode === Sections.LOGIN">
+      <ion-img [src]="app.getIcon()"></ion-img>
+      <ion-card-header>
+        <ion-card-title>{{ 'AUTH.EXTERNALS_SIGN_IN' | translate }}</ion-card-title>
+        <ion-card-subtitle>{{ 'AUTH.TITLE' | translate }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-label position="inline"><ion-icon name="person-circle" color="medium" /></ion-label>
+            <ion-input
+              type="email"
+              inputmode="email"
+              pattern="[A-Za-z0-9._%+-]{2,}@[a-zA-Z-_.]{2,}[.]{1}[a-zA-Z]{2,}"
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="email"
+              [placeholder]="'AUTH.EMAIL' | translate"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="email"
+              (keyup.enter)="signIn()"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="inline"><ion-icon name="key" color="medium" /></ion-label>
+            <ion-input
+              id="current-password"
+              type="password"
+              pattern=".{8,}"
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="current-password"
+              [clearOnEdit]="false"
+              [placeholder]="'AUTH.PASSWORD' | translate"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="password"
+              (keyup.enter)="signIn()"
+            ></ion-input>
+          </ion-item>
+          <ion-item-divider></ion-item-divider>
+          <ion-button expand="block" (click)="signIn()">{{ 'AUTH.SIGN_IN' | translate }}</ion-button>
+          <ion-item-divider>
+            <ion-label>{{ 'AUTH.OR' | translate | lowercase }}</ion-label>
+          </ion-item-divider>
+          <ion-button expand="block" color="ESNpink" (click)="mode = Sections.REGISTRATION">
+            {{ 'AUTH.CREATE_AN_ACCOUNT' | translate }}
+          </ion-button>
+          <ion-item-divider></ion-item-divider>
+          <ion-button
+            color="dark"
+            fill="clear"
+            expand="block"
+            class="normalCase"
+            (click)="mode = Sections.FORGOT_PASSWORD"
+          >
+            {{ 'AUTH.I_FORGOT_MY_PASSWORD' | translate }}
+          </ion-button>
+          <ion-item-divider></ion-item-divider>
+          <ion-button fill="clear" expand="block" class="normalCase" color="medium" (click)="goToMainAuth()">
+            {{ 'AUTH.GO_BACK' | translate }}
+          </ion-button>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    <ion-card class="authCard large" *ngIf="mode === Sections.REGISTRATION">
+      <ion-card-header>
+        <ion-card-title>{{ 'AUTH.EXTERNALS_SIGN_UP' | translate }}</ion-card-title>
+        <ion-card-subtitle>{{ 'AUTH.TITLE' | translate }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-input
+              labelPlacement="fixed"
+              [label]="('AUTH.FIRST_NAME' | translate) + ':'"
+              [placeholder]="'AUTH.FIRST_NAME_P' | translate"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="firstName"
+              [class.fieldHasError]="hasFieldAnError('firstName')"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input
+              labelPlacement="fixed"
+              [label]="('AUTH.LAST_NAME' | translate) + ':'"
+              [placeholder]="'AUTH.LAST_NAME' | translate"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="lastName"
+              [class.fieldHasError]="hasFieldAnError('lastName')"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input
+              type="email"
+              inputmode="email"
+              pattern="[A-Za-z0-9._%+-]{2,}@[a-zA-Z-_.]{2,}[.]{1}[a-zA-Z]{2,}"
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="email"
+              labelPlacement="fixed"
+              [label]="('AUTH.EMAIL' | translate) + ':'"
+              [placeholder]="'AUTH.EMAIL_P' | translate"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="email"
+              [class.fieldHasError]="hasFieldAnError('email')"
+            ></ion-input>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-input
+              id="current-password"
+              type="password"
+              pattern=".{8,}"
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="current-password"
+              labelPlacement="fixed"
+              [label]="('AUTH.PASSWORD' | translate) + ':'"
+              [placeholder]="'AUTH.PASSWORD_P' | translate"
+              [errorText]="'AUTH.PASSWORD_E' | translate"
+              [clearOnEdit]="false"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="password"
+              [class.fieldHasError]="hasFieldAnError('password')"
+            ></ion-input>
+          </ion-item>
+        </ion-list>
+        <ion-item-divider></ion-item-divider>
+        <ion-button expand="block" color="ESNpink" (click)="signUp()">
+          {{ 'AUTH.CREATE_AN_ACCOUNT' | translate }}
+        </ion-button>
+        <ion-item-divider></ion-item-divider>
+        <ion-button fill="clear" expand="block" class="normalCase" color="medium" (click)="mode = Sections.LOGIN">
+          {{ 'AUTH.GO_BACK' | translate }}
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+    <ion-card class="authCard" *ngIf="mode === Sections.FORGOT_PASSWORD">
+      <ion-card-header>
+        <ion-card-title>{{ 'AUTH.EXTERNALS_FORGOT_PASSWORD' | translate }}</ion-card-title>
+        <ion-card-subtitle>{{ 'AUTH.TITLE' | translate }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-input
+              type="email"
+              inputmode="email"
+              pattern="[A-Za-z0-9._%+-]{2,}@[a-zA-Z-_.]{2,}[.]{1}[a-zA-Z]{2,}"
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="email"
+              labelPlacement="fixed"
+              [label]="('AUTH.EMAIL' | translate) + ':'"
+              [placeholder]="'AUTH.EMAIL_P' | translate"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="email"
+              [class.fieldHasError]="hasFieldAnError('email')"
+            ></ion-input>
+          </ion-item>
+        </ion-list>
+        <ion-item-divider></ion-item-divider>
+        <ion-button expand="block" color="ESNgreen" (click)="resetPassword()">
+          {{ 'AUTH.RESET_MY_PASSWORD' | translate }}
+        </ion-button>
+        <ion-item-divider></ion-item-divider>
+        <ion-button fill="clear" expand="block" class="normalCase" color="medium" (click)="mode = Sections.LOGIN">
+          {{ 'AUTH.GO_BACK' | translate }}
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </form>
+</ion-content>

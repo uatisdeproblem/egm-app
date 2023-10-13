@@ -18,10 +18,6 @@ import { User } from '@models/user.model';
  * A local fallback URL for the users avatars.
  */
 const AVATAR_FALLBACK_URL = './assets/imgs/no-avatar.jpg';
-/**
- * The local URL to the icon.
- */
-const APP_ICON_PATH = 'assets/icons/icon.svg';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
@@ -183,7 +179,7 @@ export class AppService {
   /**
    * Get the app's main icon.
    */
-  getIcon(): string {
-    return APP_ICON_PATH;
+  getIcon(white = false): string {
+    return white ? 'assets/icons/star-white.svg' : 'assets/icons/icon.svg';
   }
 }

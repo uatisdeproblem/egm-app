@@ -1,6 +1,6 @@
 {
   "COMMON": {
-    "APP_NAME": "EGM",
+    "APP_NAME": "EGM app",
     "VERSION": "Version {{v}}",
     "ARE_YOU_SURE": "Are you sure?",
     "ACTION_IS_IRREVERSIBLE": "The action is irreversible",
@@ -76,14 +76,36 @@
     "NOT_SELECTED": "Not selected",
     "OR": "OR"
   },
-  "LANGUAGES": {
-    "IT": "Italian",
-    "EN": "English"
-  },
   "AUTH": {
     "TITLE": "Erasmus Generation Meeting",
     "SUBTITLE": "Erasmus Student Network",
-    "LOGIN_WITH_ESN_ACCOUNTS": "Login with ESN Accounts",
-    "LOGIN_AS_EXTERNAL": "Login as external"
+    "AGREEMENT_CHECK": "By accessing the platform with the buttons below, you accept our",
+    "PRIVACY_POLICY": "Privacy Policy",
+    "PRIVACY_POLICY_URL": "https://iter-idea.com",
+    "LOGIN_WITH_ESN_ACCOUNTS": "Sign in with ESN Accounts",
+    "LOGIN_WITH_EGM_ACCOUNT": "Sign in with username/password",
+    "IF_YOU_ARE": "If you are",
+    "AN_ESNER": "ESNer",
+    "AN_EXTERNAL": "External guest",
+    "EXTERNALS_SIGN_IN": "External guests",
+    "EMAIL": "Email",
+    "EMAIL_P": "john-doe@email.com",
+    "PASSWORD": "Password",
+    "PASSWORD_P": "********",
+    "PASSWORD_E": "At least 8 characters",
+    "SIGN_IN": "Sign in",
+    "CREATE_AN_ACCOUNT": "Create a new account",
+    "I_FORGOT_MY_PASSWORD": "I forgot my password",
+    "OR": "Or",
+    "SIGN_IN_FAILED": "Sign in failed",
+    "GO_BACK": "Go back",
+    "EXTERNALS_SIGN_UP": "New external guest",
+    "FIRST_NAME": "First name",
+    "FIRST_NAME_P": "John",
+    "LAST_NAME": "Last name",
+    "LAST_NAME_P": "Doe",
+    "REGISTRATION_FIELDS_INVALID": "Please check again the highlighted fields.",
+    "EXTERNALS_FORGOT_PASSWORD": "External guest password recovery",
+    "RESET_MY_PASSWORD": "Reset my password"
   }
 }

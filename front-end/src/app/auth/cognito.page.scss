@@ -3,7 +3,7 @@
 }
 .authCard {
   min-width: 400px;
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
   background-color: var(--ion-color-white);
@@ -22,35 +22,25 @@
     font-size: 1.2em;
   }
   ion-card-content {
-    .loginOptions {
-      max-width: 350px;
-      margin: 0 auto;
-      ion-item ion-label {
-        font-size: 0.8em;
-        color: var(--ion-color-medium-shade);
-        line-height: 1.2;
-      }
-      ion-checkbox {
-        margin-right: 20px;
-      }
-      ion-item-divider {
-        background-color: transparent;
-        margin-top: 16px;
-        margin-bottom: 0;
-      }
-      ion-button {
-        width: 330px;
-        height: 40px;
-        margin: 0 auto;
-        margin-top: 12px;
-        text-transform: none;
+    ion-item ion-label {
+      font-size: 0.9em;
+      color: var(--ion-color-medium-shade);
+      line-height: 1.2;
+      ion-icon {
+        margin-right: 10px;
       }
     }
-    p.version {
-      margin-top: 30px;
-      font-size: 0.9em;
+    ion-item-divider {
+      background-color: transparent;
+      border-bottom: none;
+      ion-label {
+        margin: 0 auto;
+      }
     }
   }
+}
+.authCard.large {
+  min-width: 500px;
 }
 @media only screen and (max-width: 767px) {
   .flexBox {
@@ -58,5 +48,8 @@
   }
   .authCard {
     box-shadow: none;
+  }
+  .authCard.large {
+    min-width: 400px;
   }
 }

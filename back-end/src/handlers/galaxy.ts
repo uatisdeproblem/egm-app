@@ -90,7 +90,7 @@ class GalaxyRC extends ResourceController {
       if (!firstAccess) delete putParams.ConditionExpression;
       await ddb.put(putParams);
 
-      const token = await createAuthTokenWithUserId(ssm, user);
+      const token = await createAuthTokenWithUserId(ssm, userId);
 
       // redirect to the front-end with the fresh new token (instead of resolving)
       const appURL = this.queryParams.localhost ? `http://localhost:${this.queryParams.localhost}` : APP_URL;

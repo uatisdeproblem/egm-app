@@ -35,11 +35,11 @@
 // PROJECT custom
 //
 
-@font-face {
-  font-family: 'auth-title';
-  src: url('assets/fonts/LondrinaSolid-Light.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+@import 'typeface-poppins';
+
+:root {
+  --ion-font-family: 'Poppins';
+  letter-spacing: normal;
 }
 
 .maxWidthContainer {
@@ -54,4 +54,13 @@ ion-input[fill='outline'] {
 
 ion-list.aList {
   background: transparent;
+}
+
+ion-item {
+  --highlight-color-focused: var(--ion-color-primary);
+  --highlight-color-valid: var(--ion-color-primary);
+  --highlight-color-invalid: var(--ion-color-primary);
+  ion-label p {
+    color: var(--ion-color-step-600) !important;
+  }
 }
