@@ -11,17 +11,6 @@
   ],
   "tasks": [
     {
-      "label": "Login with AWS SSO",
-      "type": "shell",
-      "command": "npm run login",
-      "group": "build",
-      "options": { "cwd": "back-end" },
-      "presentation": {
-        "reveal": "always",
-        "panel": "new"
-      }
-    },
-    {
       "label": "Deploy a back-end environment",
       "type": "shell",
       "command": "./deploy.sh",

@@ -1,12 +1,16 @@
 {
   "recommendations": [
-    "github.vscode-pull-request-github",
-    "github.github-vscode-theme",
-    "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint",
-    "johnpapa.angular2",
-    "angular.ng-template",
     "amazonwebservices.aws-toolkit-vscode",
+    "angular.ng-template",
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "github.github-vscode-theme",
+    "github.vscode-pull-request-github",
+    "gruntfuggly.todo-tree",
+    "ionic.ionic",
+    "johnpapa.angular2",
+    "redhat.vscode-yaml",
     "42crunch.vscode-openapi"
   ],
   "unwantedRecommendations": []

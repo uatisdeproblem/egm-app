@@ -114,8 +114,6 @@ export class ApiStack extends cdk.Stack {
     // PROJECT CUSTOM
     //
 
-    // @idea insert here project-custom constructs if needed
-
     if (lambdaFunctions['sesNotifications']) {
       const topic = Topic.fromTopicArn(this, 'SESTopicToHandleSESBounces', props.ses.notificationTopicArn);
       new Subscription(this, 'SESSubscriptionToHandleSESBounces', {
@@ -238,10 +236,10 @@ export class ApiStack extends cdk.Stack {
       lambdaFn.addPermission(`${resource.name}-permission`, {
         principal: new IAM.ServicePrincipal('apigateway.amazonaws.com'),
         action: 'lambda:InvokeFunction',
-        sourceArn: `arn:aws:execute-api:${region}:${account}:${params.api.ref}/*/*`
+        sourceArn: `arn:aws:execute-api:${region}:${account}:${params.api.ref}/*/*/*` // @todo check
       });
 
-      // integrate the AuthFunction into the Api definition
+      // integrate the AuthFunction into the Api definition  // @todo check
       if (resource.isAuthFunction)
         params.api.body.components.securitySchemes['AuthFunction']['x-amazon-apigateway-authorizer'] = {
           type: 'request',

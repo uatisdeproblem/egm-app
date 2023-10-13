@@ -7,7 +7,7 @@ Hello, there! This is a guide to deploy the app on a new environment; it only ta
 ## Pre-requirements
 
 1. Choose an AWS account you own, or [create a new one](https://aws.amazon.com/getting-started/).
-1. To completely automate the deployment process, make sure to [purchase a new domain name](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or import an existing one inside the [Route53](https://aws.amazon.com/route53) AWS service. _Note: for the domain `egm-app.link` purchased through Route53 we pay only 3$/year._
+1. To completely automate the deployment process, make sure to [purchase a new domain name](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or import an existing one inside the [Route53](https://aws.amazon.com/route53) AWS service. _Note: for the domain `egm-app.click` purchased through Route53 we pay only 3$/year._
 1. Identify an [AWS region](https://aws.amazon.com/about-aws/global-infrastructure/regions_az/) to use, i.e. where all your cloud resources will be deployed. Suggested regions — since they are close and they support all the cloud resources we use in the project:
    - Frankfurt (`eu-central-1`),
    - Ireland (`eu-west-1`).

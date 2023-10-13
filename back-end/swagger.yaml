@@ -1,12 +1,12 @@
 openapi: 3.0.3
 
 info:
-  title: EGM (CDK) API
+  title: EGM API
   version: 3.0.2
   contact:
-    name: ITER IDEA
-    email: help@iter-idea.com
-    url: https://iter-idea.com
+    name: EGM Technical Lead
+    email: egm-technical@esn.org
+    url: https://esn.org
 
 servers:
   # if needed, substitute the correct API URL
@@ -19,7 +19,7 @@ servers:
 
 externalDocs:
   description: Models documentation
-  url: https://github.com/uatisdeproblem/egm/blob/main/back-end/src/models # @todo change this to ESN Repo
+  url: https://github.com/uatisdeproblem/egm-app/blob/main/back-end/src/models # @todo change this to ESN Repo
 
 tags:
   - name: Status
@@ -247,7 +247,7 @@ paths:
   /esners/registrations/{registrationId}:
     get:
       summary: Get a registration.
-      tags: [Registrations]
+      tags: [Login]
       security:
         - AuthFunction: []
       parameters:
@@ -265,7 +265,7 @@ paths:
     put:
       summary: Update the registration.
       description: Can only update if it hasn't been submitted yet.
-      tags: [Registrations]
+      tags: [Login]
       security:
         - AuthFunction: []
       parameters:
@@ -393,12 +393,6 @@ components:
     Registration:
       type: object
       additionalProperties: {}
-    # choose for each project one kind of documentation style: lazy or detailed
-    # 1. lazy documentation example:
-    # Book:
-    #  type: object
-    #  additionalProperties: {}
-    # 2. detailed documentation example:
 
   responses:
     AppStatus:

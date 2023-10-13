@@ -5,7 +5,7 @@
     "baseUrl": "./",
     "paths": {
       "crypto": ["node_modules/crypto-js"],
-      "@models/*": ["../back-end/src/models/*"], // note: you may need to change this path for older projects
+      "@models/*": ["../back-end/src/models/*"],
       "@env": ["../front-end/src/environments/environment.ts"],
       "@app/*": ["../front-end/src/app/*"]
     },
