@@ -34,6 +34,7 @@ export class CognitoStack extends cdk.Stack {
       accountRecovery: Cognito.AccountRecovery.EMAIL_ONLY,
       mfa: Cognito.Mfa.OPTIONAL,
       mfaSecondFactor: { sms: false, otp: true },
+      email: Cognito.UserPoolEmail.withSES({ fromEmail: props.firstAdminEmail, fromName: 'EGM app' }),
       userVerification: {
         emailSubject: 'EGM app: password reset',
         // @todo chenge with final URL or use CognitoMessages trigger
