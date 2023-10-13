@@ -175,7 +175,7 @@
               autocorrect="off"
               autocapitalize="off"
               autocomplete="email"
-              labelPlacement="fixed"
+              [labelPlacement]="app.isInMobileMode() ? 'stacked' : 'fixed'"
               [label]="('AUTH.EMAIL' | translate) + ':'"
               [placeholder]="'AUTH.EMAIL_P' | translate"
               [ngModelOptions]="{ standalone: true }"

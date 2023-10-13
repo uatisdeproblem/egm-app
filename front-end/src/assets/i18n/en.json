@@ -79,11 +79,11 @@
   "AUTH": {
     "TITLE": "Erasmus Generation Meeting",
     "SUBTITLE": "Erasmus Student Network",
-    "AGREEMENT_CHECK": "By accessing the platform with the buttons below, you accept our",
+    "AGREEMENT_CHECK": "By accessing with the buttons below, you accept our",
     "PRIVACY_POLICY": "Privacy Policy",
     "PRIVACY_POLICY_URL": "https://iter-idea.com",
     "LOGIN_WITH_ESN_ACCOUNTS": "Sign in with ESN Accounts",
-    "LOGIN_WITH_EGM_ACCOUNT": "Sign in with username/password",
+    "LOGIN_WITH_EGM_ACCOUNT": "Guest sign in",
     "IF_YOU_ARE": "If you are",
     "AN_ESNER": "ESNer",
     "AN_EXTERNAL": "External guest",

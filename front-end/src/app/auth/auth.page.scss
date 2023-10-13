@@ -2,11 +2,8 @@
   background: var(--ion-color-white-shade);
 }
 .authCard {
-  min-width: 400px;
   max-width: 500px;
   margin: 0 auto;
-  padding: 20px;
-  background-color: var(--ion-color-white);
   border-radius: 10px;
   text-align: center;
   ion-img {
@@ -15,11 +12,14 @@
     margin: 0 auto;
     margin-bottom: 10px;
   }
-  ion-card-title {
-    font-size: 2em;
-  }
-  ion-card-subtitle {
-    font-size: 1.2em;
+  ion-card-header {
+    padding: 20px 30px;
+    ion-card-title {
+      font-size: 2em;
+    }
+    ion-card-subtitle {
+      font-size: 1.2em;
+    }
   }
   ion-card-content {
     .loginOptions {
@@ -39,7 +39,7 @@
         margin-bottom: 0;
       }
       ion-button {
-        width: 330px;
+        width: 300px;
         height: 40px;
         margin: 0 auto;
         margin-top: 12px;
@@ -53,10 +53,7 @@
   }
 }
 @media only screen and (max-width: 767px) {
-  .flexBox {
-    background-color: transparent;
-  }
   .authCard {
-    box-shadow: none;
+    margin: 10px;
   }
 }
