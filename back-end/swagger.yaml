@@ -10,7 +10,7 @@ info:
 
 servers:
   # if needed, substitute the correct API URL
-  - url: https://api.egm.link/{environment}
+  - url: https://api.egm.click/{environment}
     variables:
       environment:
         enum: [dev, prod]
@@ -24,10 +24,12 @@ externalDocs:
 tags:
   - name: Status
     description: The app's status
-  - name: Login
+  - name: Auth
     description: Access the platform
-  - name: Profiles
-    description: The user profiles
+  - name: Users
+    description: The users of the platform
+  - name: Registrations
+    description: Registrations to the main event
 
 paths:
   /status:
@@ -43,11 +45,11 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/AppStatus'
-  /login:
+  /galaxy:
     get:
-      summary: Manage the login accepted request from ESN Accounts and prepare a token to authenticate the user
+      summary: End the login flow via ESN Accounts auth service
       description: Acquire the CAS ticket, validate it, create the user (if necessary) and return a token.
-      tags: [Login]
+      tags: [Auth]
       parameters:
         - name: ticket
           in: query
@@ -58,11 +60,45 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
-  /esners:
+  /cognito:
+    post:
+      summary: Actions on Cognito auth service
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [SIGN_IN, SIGN_UP, SIGN_IN, CONFIRM_SIGN_UP, RESEND_TEMPORARY_PASSWORD]
+                email:
+                  type: string
+                  description: (SIGN_IN, SIGN_UP, SIGN_IN, CONFIRM_SIGN_UP, RESEND_TEMPORARY_PASSWORD)
+                password:
+                  type: string
+                  description: (SIGN_UP)
+                confirmationCode:
+                  type: string
+                  description: (CONFIRM_SIGN_UP)
+                firstName:
+                  type: string
+                  description: (SIGN_UP)
+                lastName:
+                  type: string
+                  description: (SIGN_UP)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /users:
     patch:
       summary: Actions on the users.
       description: For users coming from galaxy.
-      tags: [Profiles]
+      tags: [Users]
       security:
         - AuthFunction: []
       requestBody:
@@ -83,18 +119,18 @@ paths:
     delete:
       summary: Remove the user's profile.
       description: Users can delete their own data. Assistants can delete everyone's
-      tags: [Profiles]
+      tags: [Users]
       security:
         - AuthFunction: []
       responses:
         200:
-          $ref: '#/components/responses/UserProfile'
+          $ref: '#/components/responses/User'
         400:
           $ref: '#/components/responses/BadParameters'
-  /esners/{userId}:
+  /users/{userId}:
     get:
       summary: Get an ESNer's profile.
-      tags: [Profiles]
+      tags: [Users]
       security:
         - AuthFunction: []
       parameters:
@@ -106,13 +142,13 @@ paths:
             type: string
       responses:
         200:
-          $ref: '#/components/responses/UserProfile'
+          $ref: '#/components/responses/User'
         400:
           $ref: '#/components/responses/BadParameters'
     patch:
       summary: Actions on an user.
       description: Only for admins.
-      tags: [Profiles]
+      tags: [Users]
       security:
         - AuthFunction: []
       requestBody:
@@ -130,112 +166,13 @@ paths:
                   enum: [CHANGE_ROLE]
       responses:
         200:
-          $ref: '#/components/responses/UserProfile'
+          $ref: '#/components/responses/User'
         400:
           $ref: '#/components/responses/BadParameters'
-  /externals:
-    patch:
-      summary: Actions on the users.
-      description: For external users.
-      tags: [Profiles]
-      security:
-        - CognitoUserPool: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: [GET_IMAGE_UPLOAD_URL]
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /externals/{userId}:
-    get:
-      summary: Get an external's profile.
-      tags: [Profiles]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: userId
-          in: path
-          description: The user's Cognito userId.
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/UserProfile'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Remove the user's profile and Cognito credentials.
-      description: Can only delete own data!
-      tags: [Profiles]
-      security:
-        - CognitoUserPool: []
-      responses:
-        200:
-          $ref: '#/components/responses/UserProfile'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    put:
-      summary: Change the user's profile.
-      description: Externals can change their own data.
-      tags: [Profiles]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: userId
-          in: path
-          description: The user's Cognito userId.
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserProfile'
-      responses:
-        200:
-          $ref: '#/components/responses/UserProfile'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Actions on an user.
-      description: Only for admins.
-      tags: [Profiles]
-      security:
-        - CognitoUserPool: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: [CHANGE_ROLE]
-                role:
-                  type: number
-                  enum: [CHANGE_ROLE]
-      responses:
-        200:
-          $ref: '#/components/responses/UserProfile'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /esners/registrations:
+  /registrations:
     get:
       summary: Get an all registrations.
-      description: Requires to be an admin # @todo check this permission
+      description: Requires to be an admin
       tags: [Registrations]
       security:
         - AuthFunction: []
@@ -244,10 +181,10 @@ paths:
           $ref: '#/components/responses/Registrations'
         400:
           $ref: '#/components/responses/BadParameters'
-  /esners/registrations/{registrationId}:
+  /registrations/{registrationId}:
     get:
       summary: Get a registration.
-      tags: [Login]
+      tags: [Registrations]
       security:
         - AuthFunction: []
       parameters:
@@ -265,7 +202,7 @@ paths:
     put:
       summary: Update the registration.
       description: Can only update if it hasn't been submitted yet.
-      tags: [Login]
+      tags: [Registrations]
       security:
         - AuthFunction: []
       parameters:
@@ -288,81 +225,9 @@ paths:
           $ref: '#/components/responses/BadParameters'
     patch:
       summary: Actions on a registration.
-      tags: [Profiles]
+      tags: [Registrations]
       security:
         - AuthFunction: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: [APPROVE, SUBMIT, CANCEL]
-                status:
-                  type: number
-                  enum: [APPROVE, SUBMIT, CANCEL]
-      responses:
-        200:
-          $ref: '#/components/responses/Registration'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /externals/registrations/{registrationId}:
-    get:
-      summary: Get a registration.
-      tags: [Registrations]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: registrationId
-          in: path
-          description: The registration ID.
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Registration'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    put:
-      summary: Update the registration.
-      description: Can only update if it hasn't been submitted yet.
-      tags: [Registrations]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: registrationId
-          in: path
-          description: The registration ID.
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Registration'
-      responses:
-        200:
-          $ref: '#/components/responses/Registration'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Actions on a registration.
-      tags: [Profiles]
-      security:
-        - CognitoUserPool: []
-      parameters:
-        - name: registrationId
-          in: path
-          description: The registration ID.
-          required: true
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -387,7 +252,7 @@ components:
     AppStatus:
       type: object
       additionalProperties: {}
-    UserProfile:
+    User:
       type: object
       additionalProperties: {}
     Registration:
@@ -402,22 +267,22 @@ components:
           schema:
             type: object
             $ref: '#/components/schemas/AppStatus'
-    UserProfile:
-      description: A standardized user profile for both ESNers and externals
+    User:
+      description: A user of the platform
       content:
         application/json:
           schema:
             type: object
-            $ref: '#/components/schemas/UserProfile'
+            $ref: '#/components/schemas/User'
     Registration:
-      description: A user's registration
+      description: A user's registration to the main event
       content:
         application/json:
           schema:
             type: object
             $ref: '#/components/schemas/Registration'
     Registrations:
-      description: A list of user registrations
+      description: A list of user registrations to the main event
       content:
         application/json:
           schema:
@@ -437,10 +302,6 @@ components:
       description: Operation completed
 
   securitySchemes:
-    CognitoUserPool:
-      type: apiKey
-      name: Authorization
-      in: header
     AuthFunction:
       type: apiKey
       name: Authorization

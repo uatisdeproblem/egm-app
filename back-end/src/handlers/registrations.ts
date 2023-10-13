@@ -3,7 +3,7 @@
 ///
 
 import { DynamoDB, RCError, ResourceController } from 'idea-aws';
-import { UserProfile } from '../models/userProfile.model';
+import { User } from '../models/user.model';
 import { Registration, RegistrationStatus } from '../models/registration.model';
 
 ///
@@ -11,20 +11,20 @@ import { Registration, RegistrationStatus } from '../models/registration.model';
 ///
 
 const DDB_TABLES = {
-  userProfiles: process.env.DDB_TABLE_userProfiles,
+  users: process.env.DDB_TABLE_users,
   registrations: process.env.DDB_TABLE_registrations
 };
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new UserProfiles(ev, cb).handleRequest();
+export const handler = (ev: any, _: any, cb: any): Promise<void> => new RegistrationsRC(ev, cb).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
 ///
 
-class UserProfiles extends ResourceController {
+class RegistrationsRC extends ResourceController {
   requestingUserId: string;
-  profile: UserProfile;
+  profile: User;
   registration: Registration;
 
   constructor(event: any, callback: any) {
@@ -36,9 +36,7 @@ class UserProfiles extends ResourceController {
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
-      this.profile = new UserProfile(
-        await ddb.get({ TableName: DDB_TABLES.userProfiles, Key: { userId: this.requestingUserId } })
-      );
+      this.profile = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.requestingUserId } }));
     } catch (err) {
       throw new RCError('Profile not found');
     }
@@ -60,11 +58,11 @@ class UserProfiles extends ResourceController {
   private async initRegistration() {
     this.registration = new Registration({
       registrationId: this.resourceId,
-      name: this.profile.name || '',
+      name: this.profile.lastName || '',
       email: this.profile.email || '',
       sectionCode: this.profile.sectionCode,
-      section: this.profile.section,
-      country: this.profile.country
+      section: this.profile.sectionName,
+      country: this.profile.sectionCountry
     });
     await ddb.put({ TableName: DDB_TABLES.registrations, Item: this.registration });
   }

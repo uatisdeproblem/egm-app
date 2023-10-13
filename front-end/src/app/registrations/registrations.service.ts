@@ -68,7 +68,7 @@ export class RegistrationsService {
    * Get the full details of a registration by its id.
    */
   async getById(id: string): Promise<Registration> {
-    const registration = new Registration(await this.api.getResource([this.app.getUserApiPath(), 'registrations', id]));
+    const registration = new Registration(await this.api.getResource(['registrations', id]));
     return registration;
   }
 
@@ -77,7 +77,7 @@ export class RegistrationsService {
    */
   async update(registration: Registration): Promise<Registration> {
     return new Registration(
-      await this.api.putResource([this.app.getUserApiPath(), 'registrations', registration.registrationId], {
+      await this.api.putResource(['registrations', registration.registrationId], {
         body: registration
       })
     );
@@ -88,7 +88,7 @@ export class RegistrationsService {
    */
   async submit(registration: Registration): Promise<Registration> {
     return new Registration(
-      await this.api.patchResource([this.app.getUserApiPath(), 'registrations', registration.registrationId], {
+      await this.api.patchResource(['registrations', registration.registrationId], {
         body: { action: 'SUBMIT' }
       })
     );
@@ -100,7 +100,7 @@ export class RegistrationsService {
   async approve(registration: Registration): Promise<Registration> {
     // @todo check permissions
     return new Registration(
-      await this.api.patchResource([this.app.getUserApiPath(), 'registrations', registration.registrationId], {
+      await this.api.patchResource(['registrations', registration.registrationId], {
         body: { action: 'APPROVE' }
       })
     );
@@ -111,7 +111,7 @@ export class RegistrationsService {
    */
   async cancel(registration: Registration): Promise<Registration> {
     return new Registration(
-      await this.api.patchResource([this.app.getUserApiPath(), 'registrations', registration.registrationId], {
+      await this.api.patchResource(['registrations', registration.registrationId], {
         body: { action: 'CANCEL' }
       })
     );

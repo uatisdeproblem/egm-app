@@ -69,9 +69,7 @@ export class ApiStack extends cdk.Stack {
       stackId: id,
       stage: props.stage,
       apiDomain: props.apiDomain,
-      apiDefinitionFile: props.apiDefinitionFile,
-      cognitoUserPoolId: props.cognito.userPoolId,
-      cognitoAudience: props.cognito.audience
+      apiDefinitionFile: props.apiDefinitionFile
     });
     new cdk.CfnOutput(this, 'HTTPApiURL', { value: api.attrApiEndpoint });
 
@@ -85,6 +83,7 @@ export class ApiStack extends cdk.Stack {
     });
     this.allowLambdaFunctionsToAccessCognitoUserPool({
       cognitoUserPoolId: props.cognito.userPoolId,
+      cognitoBackendClientId: props.cognito.audience[1],
       lambdaFunctions: Object.values(lambdaFunctions)
     });
     this.allowLambdaFunctionsToAccessIDEATablesAndFunctions({ lambdaFunctions: Object.values(lambdaFunctions) });
@@ -142,8 +141,6 @@ export class ApiStack extends cdk.Stack {
     stage: string;
     apiDefinitionFile: string;
     apiDomain: string;
-    cognitoUserPoolId: string;
-    cognitoAudience: string[];
   }): Promise<{ api: cdk.aws_apigatewayv2.CfnApi }> {
     const api = new ApiGw.CfnApi(this, 'HttpApi');
 
@@ -153,17 +150,6 @@ export class ApiStack extends cdk.Stack {
       allowOrigins: ['*'],
       allowMethods: ['*'],
       allowHeaders: ['Content-Type', 'Authorization']
-    };
-
-    // set the Cognito authorizer in the api definition (it will be created automatically with the api)
-    const region = cdk.Stack.of(this).region;
-    apiDefinition.components.securitySchemes['CognitoUserPool']['x-amazon-apigateway-authorizer'] = {
-      type: 'jwt',
-      identitySource: '$request.header.Authorization',
-      jwtConfiguration: {
-        issuer: `https://cognito-idp.${region}.amazonaws.com/${params.cognitoUserPoolId}`,
-        audience: params.cognitoAudience
-      }
     };
 
     // set metadata to recognize the API in the API Gateway console
@@ -236,10 +222,10 @@ export class ApiStack extends cdk.Stack {
       lambdaFn.addPermission(`${resource.name}-permission`, {
         principal: new IAM.ServicePrincipal('apigateway.amazonaws.com'),
         action: 'lambda:InvokeFunction',
-        sourceArn: `arn:aws:execute-api:${region}:${account}:${params.api.ref}/*/*/*` // @todo check
+        sourceArn: `arn:aws:execute-api:${region}:${account}:${params.api.ref}/*/*`
       });
 
-      // integrate the AuthFunction into the Api definition  // @todo check
+      // integrate the AuthFunction into the Api definition
       if (resource.isAuthFunction)
         params.api.body.components.securitySchemes['AuthFunction']['x-amazon-apigateway-authorizer'] = {
           type: 'request',
@@ -265,6 +251,7 @@ export class ApiStack extends cdk.Stack {
   private allowLambdaFunctionsToAccessCognitoUserPool(params: {
     lambdaFunctions: NodejsFunction[];
     cognitoUserPoolId: string;
+    cognitoBackendClientId: string;
   }): void {
     const region = cdk.Stack.of(this).region;
     const account = cdk.Stack.of(this).account;
@@ -280,6 +267,7 @@ export class ApiStack extends cdk.Stack {
     params.lambdaFunctions.forEach(lambdaFn => {
       if (lambdaFn.role) lambdaFn.role.attachInlinePolicy(accessCognitoPolicy);
       lambdaFn.addEnvironment('COGNITO_USER_POOL_ID', params.cognitoUserPoolId);
+      lambdaFn.addEnvironment('COGNITO_USER_POOL_CLIENT_ID', params.cognitoBackendClientId);
     });
   }
   private allowLambdaFunctionsToAccessIDEATablesAndFunctions(params: { lambdaFunctions: NodejsFunction[] }): void {

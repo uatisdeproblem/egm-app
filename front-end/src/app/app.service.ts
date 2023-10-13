@@ -12,7 +12,7 @@ import {
 import { IDEAAuthService } from '@idea-ionic/auth';
 
 import { environment as env } from '@env';
-import { UserProfile } from '@models/userProfile.model';
+import { User } from '@models/user.model';
 
 /**
  * A local fallback URL for the users avatars.
@@ -30,7 +30,7 @@ export class AppService {
 
   private darkMode: boolean;
 
-  user: UserProfile;
+  user: User;
 
   constructor(
     private platform: Platform,
@@ -105,16 +105,9 @@ export class AppService {
   }
 
   /**
-   * Returns the API path depending if user is external or esners
-   */
-  getUserApiPath(): string {
-    return this.user.isExternal ? 'externals' : 'esners';
-  }
-
-  /**
    * Get the URL to a user's profile image (avatar).
    */
-  getUserImageURL(user: UserProfile): string {
+  getUserImageURL(user: User): string {
     return user?.avatarURL ? user.avatarURL : AVATAR_FALLBACK_URL;
   }
   // ! IN CASE WE PUT ESN GALAXY AVATARS ON S3
@@ -136,7 +129,7 @@ export class AppService {
    * Actions on the current user.
    */
   async openUserPreferences(): Promise<void> {
-    const header = this.user.name;
+    const header = this.user.firstName;
     const buttons = [
       { text: this.t._('COMMON.LOGOUT'), icon: 'log-out', handler: () => this.logout() },
       { text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' }
@@ -166,15 +159,10 @@ export class AppService {
    * Sign-out from the current user.
    */
   async logout(): Promise<void> {
-    const cognitoLogout = () => {
-      this.auth.logout().finally(() => this.storage.clear().then(() => this.reloadApp()));
-    };
-    const esnLogout = async (): Promise<void> => {
+    const doLogout = async (): Promise<void> => {
       await this.storage.clear();
       this.reloadApp();
     };
-
-    const doLogout = this.user.isExternal ? cognitoLogout : esnLogout;
 
     const header = this.t._('COMMON.LOGOUT');
     const message = this.t._('COMMON.ARE_YOU_SURE');

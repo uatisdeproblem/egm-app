@@ -17,25 +17,19 @@ import { parameters, stages, Stage, versionStatus } from './environments';
 //
 
 const apiResources: ResourceController[] = [
-  { name: 'auth', isAuthFunction: true },
-  { name: 'login', paths: ['/login'] },
   { name: 'status', paths: ['/status'] },
-  { name: 'userProfiles', paths: ['/esners', '/esners/{userId}', '/externals', '/externals/{userId}'] },
-  {
-    name: 'registrations',
-    paths: [
-      '/esners/registrations',
-      '/esners/registrations/{registrationId}',
-      '/externals/registrations/{registrationId}'
-    ]
-  }
+  { name: 'auth', isAuthFunction: true },
+  { name: 'cognito', paths: ['/cognito'] },
+  { name: 'galaxy', paths: ['/galaxy'] },
+  { name: 'users', paths: ['/users', '/users/{userId}'] },
+  { name: 'registrations', paths: ['/registrations', '/registrations/{registrationId}'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
   status: {
     PK: { name: 'version', type: DDB.AttributeType.STRING }
   },
-  userProfiles: {
+  users: {
     PK: { name: 'userId', type: DDB.AttributeType.STRING }
   },
   registrations: {

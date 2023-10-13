@@ -2,50 +2,26 @@
 /// IMPORTS
 ///
 
-import { APIGatewayProxyEventV2WithRequestContext } from 'aws-lambda';
-import { JwtPayload, verify } from 'jsonwebtoken';
 import { SystemsManager } from 'idea-aws';
 
-import { UserProfile } from '../models/userProfile.model';
+import { verifyAuthTokenAndGetUserId } from '../utils/auth.utils';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
 ///
 
-const SECRETS_PATH = '/egm/auth';
 const ssm = new SystemsManager();
 
-let JWT_SECRET: string;
-
-export const handler = async (event: APIGatewayProxyEventV2WithRequestContext<AuthResult>): Promise<AuthResult> => {
-  const authorization = event?.headers?.authorization;
+export const handler = async (event: any): Promise<AuthResult> => {
   const result: AuthResult = { isAuthorized: false };
-  const user = await verifyTokenAndGetESNAccountsUser(authorization);
 
-  if (user) {
-    result.context = { principalId: user.userId, user };
+  const principalId = await verifyAuthTokenAndGetUserId(ssm, event.headers.authorization);
+  if (principalId) {
+    result.context = { principalId };
     result.isAuthorized = true;
   }
 
   return result;
-};
-
-//
-// HELPERS
-//
-
-const getJwtSecretFromSecretsManager = async (): Promise<string> => {
-  if (!JWT_SECRET) JWT_SECRET = await ssm.getSecretByName(SECRETS_PATH);
-  return JWT_SECRET;
-};
-const verifyTokenAndGetESNAccountsUser = async (token: string): Promise<UserProfile> => {
-  const secret = await getJwtSecretFromSecretsManager();
-  try {
-    const result = verify(token, secret) as JwtPayload;
-    return new UserProfile(result);
-  } catch (error) {
-    return null;
-  }
 };
 
 /**
@@ -53,5 +29,5 @@ const verifyTokenAndGetESNAccountsUser = async (token: string): Promise<UserProf
  */
 interface AuthResult {
   isAuthorized: boolean;
-  context?: { principalId: string; user: UserProfile };
+  context?: { principalId: string };
 }

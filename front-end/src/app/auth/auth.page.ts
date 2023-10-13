@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IDEAStorageService } from '@idea-ionic/common';
+import { IDEAApiService, IDEAStorageService } from '@idea-ionic/common';
 
 import { AppService } from '../app.service';
 
@@ -12,49 +12,34 @@ import { environment as env } from '@env';
   styleUrls: ['auth.page.scss']
 })
 export class AuthPage implements OnInit {
-  token: string;
-
   version = env.idea.app.version;
 
-  constructor(private route: ActivatedRoute, private storage: IDEAStorageService, public app: AppService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private storage: IDEAStorageService,
+    private api: IDEAApiService,
+    public app: AppService
+  ) {}
   async ngOnInit(): Promise<void> {
-    this.token = this.route.snapshot.queryParamMap.get('token');
+    const token = this.route.snapshot.queryParamMap.get('token');
     // complete the flow from ESN Accounts
-    if (this.token) {
-      const user = parseJWT(this.token);
-      const tokenExpiresAt = user.exp * 1000;
-      if (tokenExpiresAt > Date.now()) {
-        await this.storage.set('token', this.token);
-        await this.storage.set('tokenExpiresAt', tokenExpiresAt);
-        await this.storage.set('user', user);
-      }
+    if (token) {
+      await this.storage.set('authToken', token);
       window.location.assign('');
     }
   }
 
-  startLoginFlowAsExternal(): void {
-    this.app.goTo(['auth']);
+  async startLoginFlowAsExternal(): Promise<void> {
+    const { token } = await this.api.postResource('cognito', {
+      body: { action: 'SIGN_IN', email: 'matteo.carbone@esnmodena.it', password: '12345678' }
+    });
+    await this.storage.set('authToken', token);
+    window.location.assign('');
   }
 
   startLoginFlowWithESNAccounts(): void {
-    const apiLoginURL = `https://${env.idea.api.url}/${env.idea.api.stage}/login`;
+    const apiLoginURL = `https://${env.idea.api.url}/${env.idea.api.stage}/galaxy`;
     const localhost = location.hostname.startsWith('localhost') ? '?localhost=8100' : '';
     window.location.assign(`https://accounts.esn.org/cas/login?service=${apiLoginURL}${localhost}`);
   }
 }
-
-/**
- * Parse a JWT token without using external libraries.
- */
-const parseJWT = (token: string): any => {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split('')
-      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-      .join('')
-  );
-  return JSON.parse(jsonPayload);
-};

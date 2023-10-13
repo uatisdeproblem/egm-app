@@ -15,7 +15,7 @@
                 class="tappable"
                 size="extraLarge"
                 [src]="app.getUserImageURL(app.user)"
-                [name]="app.user.name"
+                [name]="app.user.firstName"
               ></idea-user-avatar>
             </p>
           </ion-col>
@@ -33,7 +33,7 @@
           </ion-input>
         </ion-item>
         <ion-item>
-          <ion-input readonly labelPlacement="floating" [value]="app.user.name">
+          <ion-input readonly labelPlacement="floating" [value]="app.user.firstName">
             <div slot="label">Name</div>
           </ion-input>
         </ion-item>
@@ -43,12 +43,12 @@
           </ion-input>
         </ion-item>
         <ion-item>
-          <ion-input readonly labelPlacement="floating" [value]="app.user.section">
+          <ion-input readonly labelPlacement="floating" [value]="app.user.sectionName">
             <div slot="label">Section</div>
           </ion-input>
         </ion-item>
         <ion-item>
-          <ion-input readonly labelPlacement="floating" [value]="app.user.country">
+          <ion-input readonly labelPlacement="floating" [value]="app.user.sectionCountry">
             <div slot="label">Country</div>
           </ion-input>
         </ion-item>

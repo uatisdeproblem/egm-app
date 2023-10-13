@@ -12,13 +12,9 @@ const routes: Routes = [
     canActivate: [initGuard]
   },
   {
-    path: 'login',
+    path: 'auth',
     loadChildren: (): Promise<any> => import('./auth/auth.module').then(m => m.AuthModule),
     canActivate: [initGuard]
-  },
-  {
-    path: 'auth',
-    loadChildren: (): Promise<any> => import('@idea-ionic/auth').then(m => m.IDEAAuthModule)
   },
   {
     path: 'event',
