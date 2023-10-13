@@ -31,13 +31,9 @@ export class User extends Resource {
   lastName: string;
   /**
    * Email address for notifications (!== account email address).
+   * Note: if bounced, it will finish in the black list for a while (see `sesNotifications.ts`).
    */
   email: string;
-  /**
-   * Whether the user's email address for notifications is valid or should be skipped when notifications are sent.
-   * _Note: to avoid bounces; right now is managed manually (DynamoDB)._
-   */
-  emailNotValid?: boolean;
   /**
    * The URL to the user's avatar.
    */
@@ -75,7 +71,6 @@ export class User extends Resource {
     this.firstName = this.clean(x.firstName, String);
     this.lastName = this.clean(x.lastName, String);
     this.email = this.clean(x.email, String);
-    if (x.emailNotValid) this.emailNotValid = this.clean(x.emailNotValid, Boolean);
     this.avatarURL = this.clean(x.avatarURL, String);
 
     if (this.authService === AuthServices.ESN_ACCOUNTS) {
@@ -94,8 +89,6 @@ export class User extends Resource {
     this.registeredAt = safeData.registeredAt;
     this.lastSeenAt = new Date().toISOString();
     this.authService = safeData.authService;
-    // if the email is changed, reset the flag
-    if (newData.email === safeData.email && safeData.emailNotValid) this.emailNotValid = safeData.emailNotValid;
 
     if (this.authService === AuthServices.ESN_ACCOUNTS) {
       this.sectionCode = safeData.sectionCode;

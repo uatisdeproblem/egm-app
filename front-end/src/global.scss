@@ -64,3 +64,7 @@ ion-item {
     color: var(--ion-color-step-600) !important;
   }
 }
+.formWithLongFixedText .input-label-placement-fixed .label-text {
+  min-width: 150px !important;
+  max-width: 150px !important;
+}

@@ -104,8 +104,14 @@
     "FIRST_NAME_P": "John",
     "LAST_NAME": "Last name",
     "LAST_NAME_P": "Doe",
-    "REGISTRATION_FIELDS_INVALID": "Please check again the highlighted fields.",
+    "AUTH_FIELDS_INVALID": "Please check again the highlighted fields.",
     "EXTERNALS_FORGOT_PASSWORD": "External guest password recovery",
-    "RESET_MY_PASSWORD": "Reset my password"
+    "RESET_MY_PASSWORD": "Reset my password",
+    "CONFIRM_EMAIL": "Confirm email",
+    "YOU_CAN_SIGN_IN_WITH_NEW_PASSWORD": "You can now sign in with your new password",
+    "CHOOSE_A_NEW_PASSWORD": "Choose a new password",
+    "CONFIRM_NEW_PASSWORD": "Confirm new password",
+    "ACCOUNT_NOT_FOUND": "Account not found",
+    "RESET_PASSWORD_INSTRUCTIONS_TO_YOUR_EMAIL": "You received instructions to reset the password to your email address. Please, check your spam folder."
   }
 }

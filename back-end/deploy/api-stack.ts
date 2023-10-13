@@ -11,8 +11,6 @@ import * as DDB from 'aws-cdk-lib/aws-dynamodb';
 import * as S3 from 'aws-cdk-lib/aws-s3';
 import * as S3Deployment from 'aws-cdk-lib/aws-s3-deployment';
 import { Subscription, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns';
-import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
-import { LambdaFunction as LambdaFunctionTarget } from 'aws-cdk-lib/aws-events-targets';
 import { SnsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { VersionStatus } from './environments';
 
@@ -121,14 +119,6 @@ export class ApiStack extends cdk.Stack {
         endpoint: lambdaFunctions['sesNotifications'].functionArn
       });
       lambdaFunctions['sesNotifications'].addEventSource(new SnsEventSource(topic));
-    }
-
-    if (lambdaFunctions['scheduledOps']) {
-      const rule = new Rule(this, 'EventRuleScheduledOps', {
-        ruleName: props.project.concat('-', props.stage, '-scheduledOps'),
-        schedule: Schedule.rate(Duration.hours(1))
-      });
-      rule.addTarget(new LambdaFunctionTarget(lambdaFunctions['scheduledOps']));
     }
   }
 

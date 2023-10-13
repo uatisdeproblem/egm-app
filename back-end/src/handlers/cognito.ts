@@ -12,8 +12,6 @@ import { AuthServices, User } from '../models/user.model';
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
 ///
 
-const DEFAULT_PASSWORD_LENGTH = 8;
-
 const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
 const COGNITO_USER_POOL_CLIENT_ID = process.env.COGNITO_USER_POOL_CLIENT_ID;
 const cognito = new Cognito();
@@ -39,11 +37,11 @@ class CognitoRC extends ResourceController {
       case 'SIGN_IN':
         return this.signIn(this.body.email, this.body.password);
       case 'SIGN_UP':
-        return this.signUp(this.body.email, this.body.firstName, this.body.lastName);
-      case 'CONFIRM_SIGN_UP':
-        return this.confirmSignUp(this.body.email, this.body.confirmationCode);
-      case 'RESEND_TEMPORARY_PASSWORD':
-        return this.resendTemporaryPassword(this.body.email);
+        return this.signUp(this.body.email, this.body.password, this.body.firstName, this.body.lastName);
+      case 'RESET_PASSWORD':
+        return this.startResetPassword(this.body.email);
+      case 'RESET_PASSWORD_CONFIRM':
+        return this.confirmResetPassword(this.body.email, this.body.password, this.body.confirmationCode);
       default:
         throw new RCError('Unsupported action');
     }
@@ -65,17 +63,26 @@ class CognitoRC extends ResourceController {
     const token = await createAuthTokenWithUserId(ssm, userId);
     return { token };
   }
-  private async signUp(email: string, firstName: string, lastName: string): Promise<{ token: string }> {
+  private async signUp(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ): Promise<{ token: string }> {
     const user = new User({ authService: AuthServices.COGNITO, firstName, lastName, email });
 
     const errors = user.validate();
     if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
 
     try {
-      const cognitoUserId = await cognito.createUser(email, COGNITO_USER_POOL_ID);
+      const cognitoUserId = await cognito.createUser(email, COGNITO_USER_POOL_ID, {
+        temporaryPassword: password,
+        skipNotification: true
+      });
+      await cognito.setPassword(email, COGNITO_USER_POOL_ID, { password, permanent: true });
       user.userId = AuthServices.COGNITO.concat('_', cognitoUserId);
 
-      await ddb.put({ TableName: DDB_TABLES.users, Item: user, ConditionExpression: 'attribute_not_exists(userId)' });
+      await ddb.put({ TableName: DDB_TABLES.users, Item: user });
     } catch (error) {
       this.logger.error('Cognito sign up failed', error);
       throw new RCError('Cognito sign up failed');
@@ -84,11 +91,10 @@ class CognitoRC extends ResourceController {
     const token = await createAuthTokenWithUserId(ssm, user.userId);
     return { token };
   }
-  private async confirmSignUp(email: string, confirmationCode: string): Promise<void> {
-    await cognito.confirmSignUp(email, confirmationCode, COGNITO_USER_POOL_ID);
+  private async startResetPassword(email: string): Promise<void> {
+    await cognito.forgotPassword(email, COGNITO_USER_POOL_CLIENT_ID);
   }
-  private async resendTemporaryPassword(email: string): Promise<void> {
-    const temporaryPassword = Math.random().toString(36).substring(4).slice(0, DEFAULT_PASSWORD_LENGTH);
-    await cognito.resendPassword(email, COGNITO_USER_POOL_ID, { temporaryPassword });
+  private async confirmResetPassword(email: string, newPassword: string, confirmationCode: string): Promise<void> {
+    await cognito.confirmForgotPassword(email, newPassword, confirmationCode, COGNITO_USER_POOL_CLIENT_ID);
   }
 }

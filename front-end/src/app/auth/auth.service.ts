@@ -51,6 +51,28 @@ export class AuthService {
     const { token } = await this.api.postResource('cognito', { body });
     await this.saveAuthToken(token);
   }
+  /**
+   * Start the flow to sign-up with Cognito.
+   */
+  async cognitoSignUp(email: string, password: string, firstName: string, lastName: string): Promise<void> {
+    const body = { action: 'SIGN_UP', email, password, firstName, lastName };
+    const { token } = await this.api.postResource('cognito', { body });
+    await this.saveAuthToken(token);
+  }
+  /**
+   * Start the flow to reset the Cognito password.
+   */
+  async resetPassword(email: string): Promise<void> {
+    const body = { action: 'RESET_PASSWORD', email };
+    await this.api.postResource('cognito', { body });
+  }
+  /**
+   * Complete the flow to reset the Cognito password.
+   */
+  async resetPasswordConfirm(email: string, password: string, confirmationCode: string): Promise<void> {
+    const body = { action: 'RESET_PASSWORD_CONFIRM', email, password, confirmationCode };
+    await this.api.postResource('cognito', { body });
+  }
 
   // -----
 

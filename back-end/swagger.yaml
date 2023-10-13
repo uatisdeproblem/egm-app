@@ -73,16 +73,16 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: [SIGN_IN, SIGN_UP, SIGN_IN, CONFIRM_SIGN_UP, RESEND_TEMPORARY_PASSWORD]
+                  enum: [SIGN_IN, SIGN_UP, RESET_PASSWORD, RESET_PASSWORD_CONFIRM]
                 email:
                   type: string
-                  description: (SIGN_IN, SIGN_UP, SIGN_IN, CONFIRM_SIGN_UP, RESEND_TEMPORARY_PASSWORD)
+                  description: (SIGN_IN, SIGN_UP, RESET_PASSWORD, RESET_PASSWORD_CONFIRM)
                 password:
                   type: string
-                  description: (SIGN_UP)
+                  description: (SIGN_IN, SIGN_UP)
                 confirmationCode:
                   type: string
-                  description: (CONFIRM_SIGN_UP)
+                  description: (RESET_PASSWORD_CONFIRM)
                 firstName:
                   type: string
                   description: (SIGN_UP)
