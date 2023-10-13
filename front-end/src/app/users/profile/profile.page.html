@@ -58,32 +58,30 @@
           </ion-input>
         </ion-item>
         <ion-item button detail color="primary" (click)="goToRegistration()">
-          <ion-label>{{ 'REGISTRATION.MY_REGISTRATION' | translate }}</ion-label>
+          <ion-label>My registration</ion-label>
         </ion-item>
       </ion-card-content>
     </ion-card>
     <ion-list class="aList">
       <ion-item lines="none">
-        <ion-label color="medium">{{ 'COMMON.VERSION' | translate: { v: version } }}</ion-label>
+        <ion-label color="medium">Version {{ version }}</ion-label>
       </ion-item>
       <ion-item button detail>
-        <ion-label>{{ 'PROFILE.TERMS_CONDITIONS' | translate }}</ion-label>
+        <ion-label>Terms and Conditions</ion-label>
       </ion-item>
       <ion-item button detail>
-        <ion-label>{{ 'PROFILE.PRIVACY_POLICY' | translate }}</ion-label>
+        <ion-label>Privacy Policy</ion-label>
       </ion-item>
     </ion-list>
     <div class="smallWidthContainer ion-text-center ion-padding-top">
       <p>
-        <ion-button color="dark" expand="block" (click)="app.logout()">{{ 'COMMON.LOGOUT' | translate }}</ion-button>
+        <ion-button color="dark" expand="block" (click)="app.logout()">Logout</ion-button>
       </p>
       <h2 class="lotOfMarginTop">
-        <ion-text color="danger">{{ 'PROFILE.DANGEROUS_AREA' | translate }}!</ion-text>
+        <ion-text color="danger">DANGEROUS!</ion-text>
       </h2>
       <p>
-        <ion-button fill="outline" color="danger" expand="block" (click)="deleteAccount()">
-          {{ 'PROFILE.DELETE_ACCOUNT' | translate }}
-        </ion-button>
+        <ion-button fill="outline" color="danger" expand="block" (click)="deleteAccount()"> Delete account </ion-button>
       </p>
     </div>
   </div>

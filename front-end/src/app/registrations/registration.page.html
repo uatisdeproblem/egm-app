@@ -3,62 +3,63 @@
     <ion-buttons slot="start">
       <ion-button (click)="app.closePage()"><ion-icon icon="arrow-back" slot="icon-only"></ion-icon></ion-button>
     </ion-buttons>
-    <ion-title>
-      {{ 'REGISTRATION.' + registration?.registrationId === app.user.userId ? 'REGISTRATION' : 'MY_REGISTRATION'|
-      translate }}
-    </ion-title>
+    <ion-title> {{ registration?.registrationId === app.user.userId ? 'My Registration' : 'Registration' }} </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <div class="maxWidthContainer" *ngIf="registration">
-    <ion-card>
-      <ion-card-header> STATUS </ion-card-header>
-      <ion-card-content> APPROVED </ion-card-content>
+    <ion-card *ngIf="registration.submitted">
+      <ion-card-content>
+        <ion-item>
+          <ion-label>STATUS:</ion-label>
+          <ion-chip>{{ registration.status }}</ion-chip>
+        </ion-item>
+      </ion-card-content>
     </ion-card>
     <ion-list-header>
-      <h3>{{ 'REGISTRATION.PERSONAL_DATA' | translate }}</h3>
+      <h3>Personal Data</h3>
     </ion-list-header>
     <ion-item>
       <ion-input
-        label="REGISTRATION.NAME"
+        label="Name"
         labelPlacement="stacked"
-        placeholder="REGISTRATION.INSERT_NAME"
+        placeholder="Insert name"
         [(ngModel)]="registration.name"
         type="text"
       ></ion-input>
     </ion-item>
     <ion-item>
       <ion-input
-        label="REGISTRATION.ID_PASSPORT"
+        label="Passport"
         labelPlacement="stacked"
-        placeholder="REGISTRATION.ID_OR_PASSPOT"
+        placeholder="ID or Passport"
         [(ngModel)]="registration.passportOrId"
         type="text"
       ></ion-input>
     </ion-item>
-    <ion-item>
+    <ion-item *ngIf="!app.user?.isExternal">
       <ion-input
-        label="REGISTRATION.ESN_CARD"
+        label="ESNcard"
         labelPlacement="stacked"
-        placeholder="REGISTRATION.ESN_CARD_I"
+        placeholder="Insert your ESNcard number"
         [(ngModel)]="registration.esnCardNumber"
         type="text"
       ></ion-input>
     </ion-item>
     <ion-item>
       <ion-input
-        label="REGISTRATION.EMAIL"
+        label="Email"
         labelPlacement="stacked"
-        placeholder="REGISTRATION.INSERT_EMAIL"
+        placeholder="Insert email"
         [(ngModel)]="registration.email"
         type="email"
       ></ion-input>
     </ion-item>
     <ion-item>
       <ion-input
-        label="REGISTRATION.PHONE_NR"
+        label="Phone number"
         labelPlacement="stacked"
-        placeholder="REGISTRATION.INSERT_PHONE_NR"
+        placeholder="Insert phone number"
         [(ngModel)]="registration.phoneNr"
         type="tel"
       ></ion-input>
@@ -66,16 +67,15 @@
     <idea-address
       lines="inset"
       [address]="registration.personalAddress"
-      [label]="'REGISTRATION.PERSONAL_ADDRESS' | translate"
-      [placeholder]="'REGISTRATION.PERSONAL_ADDRESS_I' | translate"
+      label="'Personal address"
+      placeholder="Insert your address"
     ></idea-address>
     <ion-item>
       <ion-input
-        label="REGISTRATION.PRONOUNS"
+        label="Pronouns"
         labelPlacement="stacked"
-        placeholder="REGISTRATION.PRONOUNS"
+        placeholder="Insert your pronouns"
         [(ngModel)]="registration.pronouns"
-        type="tel"
       ></ion-input>
     </ion-item>
     <ion-item>
@@ -84,16 +84,16 @@
       </ion-select>
     </ion-item>
     <ion-list-header>
-      <h3>{{ 'REGISTRATION.FINANCIAL_DATA' | translate }}</h3>
+      <h3>Financial data</h3>
     </ion-list-header>
     <idea-address
       lines="inset"
       [address]="registration.invoiceAddress"
-      [label]="'REGISTRATION.INVOICE_ADDRESS' | translate"
-      [placeholder]="'REGISTRATION.INVOICE_ADDRESS' | translate"
+      label="Invoice address"
+      placeholder="Insert your invoice address"
     ></idea-address>
     <ion-item>
-      <ion-label class="ion-text-wrap">{{ 'REGISTRATION.NEEDS_INV_LETTER' | translate }}</ion-label>
+      <ion-label class="ion-text-wrap">Do you need an invitation letter?</ion-label>
       <ion-toggle
         slot="end"
         [checked]="registration.needsInvitationLetter"
@@ -101,13 +101,13 @@
       ></ion-toggle>
     </ion-item>
     <ion-list-header>
-      <h3>{{ 'REGISTRATION.ADDITIONAL_DATA' | translate }}</h3>
+      <h3>Additional data</h3>
     </ion-list-header>
     <ion-item>
       <ion-textarea
-        label="REGISTRATION.ACCESS_NEEDS"
+        label="Access needs"
         labelPlacement="stacked"
-        placeholder="REGISTRATION.ACCESS_NEEDS"
+        placeholder="Insert your access needs"
         [rows]="5"
         [(ngModel)]="registration.accessNeeds"
         type="text"
@@ -115,9 +115,9 @@
     </ion-item>
     <ion-item>
       <ion-textarea
-        label="REGISTRATION.FOOD_RESTRICTIONS"
+        label="Food restrictions"
         labelPlacement="stacked"
-        placeholder="REGISTRATION.FOOD_RESTRICTIONS"
+        placeholder="Insert your food restrictions, if any"
         [rows]="5"
         [(ngModel)]="registration.foodRestrictions"
         type="text"
@@ -132,36 +132,36 @@
           <ion-list>
             <ion-item>
               <ion-input
-                label="REGISTRATION.EMERGENCY.NAME"
+                label="Name"
                 labelPlacement="stacked"
-                placeholder="REGISTRATION.ID_OR_PASSPOT"
+                placeholder="Emergency contact name"
                 [(ngModel)]="registration.emergencyContact.name"
                 type="text"
               ></ion-input>
             </ion-item>
             <ion-item>
               <ion-input
-                label="REGISTRATION.EMERGENCY.RELATION"
+                label="Relationship"
                 labelPlacement="stacked"
-                placeholder="REGISTRATION.ID_OR_PASSPOT"
+                placeholder="Emergency contact relationship"
                 [(ngModel)]="registration.emergencyContact.relationship"
                 type="text"
               ></ion-input>
             </ion-item>
             <ion-item>
               <ion-input
-                label="REGISTRATION.EMERGENCY.PHONE"
+                label="Phone number"
                 labelPlacement="stacked"
-                placeholder="REGISTRATION.ID_OR_PASSPOT"
+                placeholder="Emergency contact phone nr."
                 [(ngModel)]="registration.emergencyContact.phoneNr"
                 type="text"
               ></ion-input>
             </ion-item>
             <ion-item>
               <ion-input
-                label="REGISTRATION.EMERGENCY.NATIONALITY"
+                label="Nationality"
                 labelPlacement="stacked"
-                placeholder="REGISTRATION.ID_OR_PASSPOT"
+                placeholder="Emergency contact nationality"
                 [(ngModel)]="registration.emergencyContact.nationality"
                 type="text"
               ></ion-input>
@@ -171,13 +171,13 @@
       </ion-accordion>
     </ion-accordion-group>
     <ion-list-header>
-      <h3>{{ 'REGISTRATION.DOCUMENTS' | translate }}</h3>
+      <h3>Documents</h3>
     </ion-list-header>
     <ion-item>
       <ion-button fill="clear" slot="end">
         <ion-icon slot="icon-only" icon="link-outline"></ion-icon>
       </ion-button>
-      <ion-label class="ion-text-wrap">{{ 'REGISTRATION.AGREE_COC' | translate }}</ion-label>
+      <ion-label class="ion-text-wrap">I agree with the Code of Conduct</ion-label>
       <ion-toggle
         slot="end"
         [checked]="registration.agreesWithCoC"
@@ -188,15 +188,15 @@
       <ion-button fill="clear" slot="end">
         <ion-icon slot="icon-only" icon="link-outline"></ion-icon>
       </ion-button>
-      <ion-label class="ion-text-wrap">{{ 'REGISTRATION.AGREE_TC' | translate }}</ion-label>
+      <ion-label class="ion-text-wrap">I agree with the Terms and Conditions</ion-label>
       <ion-toggle slot="end" [checked]="registration.agreesWithTC" [(ngModel)]="registration.agreesWithTC"></ion-toggle>
     </ion-item>
     <ion-row class="marginTop">
       <ion-col>
-        <ion-button expand="block" fill="outline">Save progress</ion-button>
+        <ion-button expand="block" fill="outline" (click)="saveProgress()">Save progress</ion-button>
       </ion-col>
       <ion-col>
-        <ion-button expand="block">Submit registration</ion-button>
+        <ion-button expand="block" (click)="submitRegistration()">Submit registration</ion-button>
       </ion-col>
     </ion-row>
   </div>

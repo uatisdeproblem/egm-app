@@ -6,6 +6,18 @@ export class Registration extends Resource {
    */
   registrationId: string;
   /**
+   * Section code in ESN Accounts.
+   */
+  sectionCode: string;
+  /**
+   * ESN Section.
+   */
+  section: string;
+  /**
+   * ESN Country.
+   */
+  country: string;
+  /**
    * The user's identity number or passport.
    */
   passportOrId: string;
@@ -19,7 +31,7 @@ export class Registration extends Resource {
   email: string;
   /**
    * The user's phone number.
-   */ 
+   */
   phoneNr: string;
   /**
    * The user's personal address.
@@ -79,6 +91,9 @@ export class Registration extends Resource {
     this.registrationId = this.clean(x.registrationId, String);
     this.passportOrId = this.clean(x.passportOrId, String);
     this.name = this.clean(x.name, String);
+    this.sectionCode = this.clean(x.sectionCode, String);
+    this.section = this.clean(x.section, String);
+    this.country = this.clean(x.country, String);
     this.email = this.clean(x.email, String);
     this.phoneNr = this.clean(x.phoneNr, String);
     this.esnCardNumber = this.clean(x.esnCardNumber, String);

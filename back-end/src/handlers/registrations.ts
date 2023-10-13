@@ -59,7 +59,12 @@ class UserProfiles extends ResourceController {
 
   private async initRegistration() {
     this.registration = new Registration({
-      registrationId: this.resourceId
+      registrationId: this.resourceId,
+      name: this.profile.name || '',
+      email: this.profile.email || '',
+      sectionCode: this.profile.sectionCode,
+      section: this.profile.section,
+      country: this.profile.country
     });
     await ddb.put({ TableName: DDB_TABLES.registrations, Item: this.registration });
   }
@@ -71,16 +76,13 @@ class UserProfiles extends ResourceController {
   protected async putResource(): Promise<Registration> {
     if (this.registration.submitted) throw new RCError('Registration is already submitted!'); // @todo check this
 
-    const oldRegistration = new Registration(this.profile);
+    const oldRegistration = new Registration(this.registration);
     this.registration.safeLoad(this.body, oldRegistration);
 
     return await this.putSafeResource({ noOverwrite: false });
   }
 
   private async putSafeResource(opts: { noOverwrite: boolean }): Promise<Registration> {
-    const errors = this.registration.validate();
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
-
     const putParams: any = { TableName: DDB_TABLES.registrations, Item: this.registration };
     if (opts.noOverwrite) putParams.ConditionExpression = 'attribute_not_exists(registrationId)';
     await ddb.put(putParams);
@@ -94,7 +96,7 @@ class UserProfiles extends ResourceController {
         if (!this.profile.isAdmin()) throw new RCError('Unauthorized');
         return await this.setRegistrationStatus(RegistrationStatus.APPROVED);
       case 'SUBMIT':
-        return await this.setRegistrationStatus(RegistrationStatus.AWAITING_APPROVAL);
+        return this.submitRegistration();
       case 'CANCEL':
         // @todo see how this affects the rest
         // @todo both the user and admin can do this
@@ -104,8 +106,17 @@ class UserProfiles extends ResourceController {
     }
   }
 
+  private async submitRegistration(): Promise<Registration> {
+    const errors = this.registration.validate();
+    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+
+    this.registration.submitted = true;
+    return await this.setRegistrationStatus(RegistrationStatus.AWAITING_APPROVAL);
+  }
+
   private async setRegistrationStatus(status: RegistrationStatus): Promise<Registration> {
     if (!this.registration.submitted) throw new RCError('Registration not submitted yet!');
+    // @todo does this error make sense??
     if (this.registration.status !== RegistrationStatus.AWAITING_APPROVAL)
       throw new RCError('Registration is not awaiting approval');
 

@@ -20,6 +20,7 @@ export class RegistrationsService {
    */
   private async loadList(): Promise<void> {
     let registrations: Registration[] = await this.api.getResource(['esners', 'registrations']);
+    // @todo
   }
 
   /**
@@ -41,13 +42,16 @@ export class RegistrationsService {
 
     let filteredList = this.registrations.slice();
 
-    // @todo add filters and search -> modify model accordingly
-    // if (options.search)
-    //   filteredList = filteredList.filter(x =>
-    //     options.search
-    //       .split(' ')
-    //       .every(searchTerm => [x.name].filter(f => f).some(f => f.toLowerCase().includes(searchTerm)))
-    //   );
+    if (options.search)
+      filteredList = filteredList.filter(x =>
+        options.search
+          .split(' ')
+          .every(searchTerm =>
+            [x.name, x.email, x.phoneNr, x.country, x.sectionCode, x.sectionCode]
+              .filter(f => f)
+              .some(f => f.toLowerCase().includes(searchTerm))
+          )
+      );
 
     if (options.withPagination && filteredList.length > this.MAX_PAGE_SIZE) {
       let indexOfLastOfPreviousPage = 0;

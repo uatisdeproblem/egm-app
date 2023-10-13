@@ -47,4 +47,35 @@ export class RegistrationPage {
       this.loading.hide();
     }
   }
+
+  async saveProgress(): Promise<void> {
+    try {
+      this.loading.show();
+      this.registration = await this._registrations.update(this.registration);
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
+  }
+
+  async submitRegistration(): Promise<void> {
+    // @todo validate and show errors on form
+    // this.errors = new Set(this.editedBanner.validate());
+    //   if (this.errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
+
+    const errors = new Set(this.registration.validate());
+    if (errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
+
+    try {
+      this.loading.show();
+      // @todo add alert!
+      this.registration = await this._registrations.update(this.registration);
+      this.registration = await this._registrations.submit(this.registration);
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
+  }
 }
