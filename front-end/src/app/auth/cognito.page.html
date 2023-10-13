@@ -194,7 +194,7 @@
         </ion-button>
       </ion-card-content>
     </ion-card>
-    <ion-card class="authCard" *ngIf="mode === Sections.FORGOT_PASSWORD_CONFIRM">
+    <ion-card class="authCard large formWithLongFixedText" *ngIf="mode === Sections.FORGOT_PASSWORD_CONFIRM">
       <ion-card-header>
         <ion-card-title>{{ 'AUTH.CHOOSE_A_NEW_PASSWORD' | translate }}</ion-card-title>
         <ion-card-subtitle>{{ 'AUTH.TITLE' | translate }}</ion-card-subtitle>
@@ -202,7 +202,23 @@
       <ion-card-content>
         <ion-list>
           <ion-item>
-            <ion-label position="inline"><ion-icon name="key" color="medium" /></ion-label>
+            <ion-input
+              type="email"
+              inputmode="email"
+              pattern="[A-Za-z0-9._%+-]{2,}@[a-zA-Z-_.]{2,}[.]{1}[a-zA-Z]{2,}"
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="email"
+              [labelPlacement]="app.isInMobileMode() ? 'stacked' : 'fixed'"
+              [label]="('AUTH.EMAIL' | translate) + ':'"
+              [placeholder]="'AUTH.EMAIL_P' | translate"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="email"
+              [class.fieldHasError]="hasFieldAnError('email')"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
             <ion-input
               id="new-password"
               type="password"
@@ -212,7 +228,10 @@
               autocapitalize="off"
               autocomplete="new-password"
               [clearOnEdit]="false"
-              [placeholder]="'AUTH.PASSWORD' | translate"
+              [labelPlacement]="app.isInMobileMode() ? 'stacked' : 'fixed'"
+              [label]="('AUTH.NEW_PASSWORD' | translate) + ':'"
+              [placeholder]="'AUTH.PASSWORD_P' | translate"
+              [errorText]="'AUTH.PASSWORD_E' | translate"
               [ngModelOptions]="{ standalone: true }"
               [(ngModel)]="password"
               [class.fieldHasError]="hasFieldAnError('password')"

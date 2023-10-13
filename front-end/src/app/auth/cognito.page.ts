@@ -102,7 +102,6 @@ export class AuthCognitoPage implements OnInit {
     if (isEmpty(this.email, 'email')) this.errors.add('email');
     if (isEmpty(this.password)) this.errors.add('password');
     if (isEmpty(this.confirmationCode)) this.errors.add('confirmationCode');
-    console.log(this.errors);
     if (this.errors.size) return this.message.error('AUTH.AUTH_FIELDS_INVALID');
 
     try {

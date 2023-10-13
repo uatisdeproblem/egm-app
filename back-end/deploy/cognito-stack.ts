@@ -33,7 +33,13 @@ export class CognitoStack extends cdk.Stack {
       },
       accountRecovery: Cognito.AccountRecovery.EMAIL_ONLY,
       mfa: Cognito.Mfa.OPTIONAL,
-      mfaSecondFactor: { sms: false, otp: true }
+      mfaSecondFactor: { sms: false, otp: true },
+      userVerification: {
+        emailSubject: 'EGM app: password reset',
+        // @todo chenge with final URL or use CognitoMessages trigger
+        emailBody:
+          'Here is the verification link to reset your password: https://egm-app.click/auth/cognito?forgotPasswordCode={####}'
+      }
     });
     new cdk.CfnOutput(this, 'CognitoUserPoolId', { value: this.userPool.userPoolId });
     new cdk.CfnOutput(this, 'UserPoolARN', { value: this.userPool.userPoolArn });

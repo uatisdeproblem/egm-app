@@ -112,6 +112,7 @@
     "CHOOSE_A_NEW_PASSWORD": "Choose a new password",
     "CONFIRM_NEW_PASSWORD": "Confirm new password",
     "ACCOUNT_NOT_FOUND": "Account not found",
-    "RESET_PASSWORD_INSTRUCTIONS_TO_YOUR_EMAIL": "You received instructions to reset the password to your email address. Please, check your spam folder."
+    "RESET_PASSWORD_INSTRUCTIONS_TO_YOUR_EMAIL": "You received instructions to reset the password to your email address. Please, check your spam folder.",
+    "NEW_PASSWORD": "New password"
   }
 }
