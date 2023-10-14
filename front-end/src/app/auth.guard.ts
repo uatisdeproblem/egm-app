@@ -3,9 +3,9 @@ import { CanActivateFn } from '@angular/router';
 import { NavController, Platform } from '@ionic/angular';
 import { IDEAStorageService } from '@idea-ionic/common';
 
-import { AppService } from './app.service';
-import { UsersService } from './users/users.service';
-import { AuthService } from './auth/auth.service';
+import { AppService } from '@app/app.service';
+import { UsersService } from '@app/users/users.service';
+import { AuthService } from '@app/auth/auth.service';
 
 export const authGuard: CanActivateFn = async (): Promise<boolean> => {
   const platform = inject(Platform);

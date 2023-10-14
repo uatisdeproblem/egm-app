@@ -10,8 +10,7 @@
   ion-img {
     width: 150px;
     display: block;
-    margin: 0 auto;
-    margin-bottom: 10px;
+    margin: 10px auto;
   }
   ion-card-header {
     padding: 20px 40px;
@@ -47,6 +46,9 @@
   .authCard {
     margin: 10px;
     min-width: auto;
+    ion-img {
+      width: 80px;
+    }
   }
   .authCard.large {
     min-width: auto;
