@@ -47,7 +47,7 @@ export class RegistrationsPage implements OnInit {
     this.setTableHeight();
 
     try {
-      this.loading.show();
+      await this.loading.show();
       this.users = await this._users.getList();
       this.updateFilter();
     } catch (error) {
