@@ -51,6 +51,16 @@ export class ProfilePage {
     }
   }
 
+  getPrintablePermissions(): string {
+    if (this.app.user.permissions.isAdmin) return this.t._('PROFILE.ADMINISTRATOR');
+    const permissions = [];
+    if (this.app.user.permissions.isCountryLeader) permissions.push(this.t._('PROFILE.DELEGATION_LEADER'));
+    if (this.app.user.permissions.canManageRegistrations)
+      permissions.push(this.t._('PROFILE.CAN_MANAGE_REGISTRATIONS'));
+    if (this.app.user.permissions.canManageContents) permissions.push(this.t._('PROFILE.CAN_MANAGE_CONTENTS'));
+    return permissions.join(', ');
+  }
+
   startEditProfile(): void {
     this.entityBeforeChange = new User(this.app.user);
     this.editProfileMode = true;

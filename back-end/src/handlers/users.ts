@@ -5,7 +5,7 @@
 import { Cognito, DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
 import { SignedURL } from 'idea-toolbox';
 
-import { AuthServices, Roles, User } from '../models/user.model';
+import { AuthServices, User, UserPermissions } from '../models/user.model';
 import { Configuration } from '../models/configuration.model';
 
 ///
@@ -53,7 +53,11 @@ class UsersRC extends ResourceController {
       return;
     }
 
-    if (this.principalId !== this.resourceId && !this.reqUser.isAdmin()) throw new RCError('Unauthorized');
+    if (
+      this.principalId !== this.resourceId &&
+      !(this.reqUser.permissions.isAdmin || this.reqUser.permissions.canManageRegistrations)
+    )
+      throw new RCError('Unauthorized');
 
     try {
       this.targetUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.resourceId } }));
@@ -90,8 +94,8 @@ class UsersRC extends ResourceController {
         return await this.getSignedURLToUploadAvatar();
       case 'REGISTER_TO_EVENT':
         return await this.registerToEvent(this.body.registrationForm, this.body.isDraft);
-      case 'CHANGE_ROLE':
-        return await this.changeUserRole(this.body.role);
+      case 'CHANGE_PERMISSIONS':
+        return await this.changeUserPermissions(this.body.permissions);
       default:
         throw new RCError('Unsupported action');
     }
@@ -106,7 +110,10 @@ class UsersRC extends ResourceController {
     return signedURL;
   }
   private async registerToEvent(registrationForm: any, isDraft: boolean): Promise<User> {
-    if (this.targetUser.registrationAt && !this.reqUser.isAdmin())
+    if (
+      this.targetUser.registrationAt &&
+      !(this.reqUser.permissions.isAdmin || this.reqUser.permissions.canManageRegistrations)
+    )
       throw new RCError("Can't edit a submitted registration");
 
     const configurations = new Configuration(
@@ -131,14 +138,14 @@ class UsersRC extends ResourceController {
 
     return this.targetUser;
   }
-  private async changeUserRole(role: Roles): Promise<User> {
-    if (!this.reqUser.isAdmin()) throw new RCError('Unauthorized');
+  private async changeUserPermissions(permissions: UserPermissions): Promise<User> {
+    if (!this.reqUser.permissions.isAdmin) throw new RCError('Unauthorized');
 
     await ddb.update({
       TableName: DDB_TABLES.users,
       Key: { userId: this.targetUser.userId },
-      UpdateExpression: 'SET role = :role',
-      ExpressionAttributeValues: { ':role': role }
+      UpdateExpression: 'SET permissions = :permissions',
+      ExpressionAttributeValues: { ':permissions': permissions }
     });
     return this.targetUser;
   }
@@ -154,7 +161,8 @@ class UsersRC extends ResourceController {
   }
 
   protected async getResources(): Promise<User[]> {
-    if (!this.reqUser.isAdmin()) throw new RCError('Unauthorized');
+    if (!this.reqUser.permissions.isAdmin || this.reqUser.permissions.canManageRegistrations)
+      throw new RCError('Unauthorized');
 
     return (await ddb.scan({ TableName: DDB_TABLES.users })).map(x => new User(x));
   }

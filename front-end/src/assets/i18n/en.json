@@ -124,7 +124,6 @@
     "FIRST_NAME": "First name",
     "LAST_NAME": "Last name",
     "EMAIL_FOR_NOTIFICATIONS": "Email address for notifications",
-    "ROLE": "Role",
     "EVENT_REGISTRATION": "Event registration",
     "OTHER_ACTIONS": "Other actions",
     "VERSION": "Version",
@@ -142,7 +141,11 @@
     "EXTERNAL_GUEST": "External guest",
     "UPLOAD_PROOF_PAYMENT": "Upload your proof of payment",
     "DOWNLOAD_PROOF_PAYMENT": "Download your proof of payment",
-    "DOWNLOAD_INFO_TO_PAY": "Download information to pay"
+    "DOWNLOAD_INFO_TO_PAY": "Download information to pay",
+    "ADMINISTRATOR": "Administrator",
+    "DELEGATION_LEADER": "Delegation leader",
+    "CAN_MANAGE_REGISTRATIONS": "Can manage registrations",
+    "CAN_MANAGE_CONTENTS": "Can manage contents"
   },
   "EVENT_REGISTRATIONS": {
     "REGISTRATIONS": "Registrations",

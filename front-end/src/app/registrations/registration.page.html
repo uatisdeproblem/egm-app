@@ -28,7 +28,7 @@
       <ion-button
         slot="end"
         fill="clear"
-        *ngIf="app.user.isAdmin()"
+        *ngIf="app.user.permissions.isAdmin"
         (click)="app.openUserProfileInESNAccounts(app.user)"
       >
         <ion-icon icon="open-outline" slot="icon-only"></ion-icon>

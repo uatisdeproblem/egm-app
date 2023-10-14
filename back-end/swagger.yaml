@@ -161,16 +161,16 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: [GET_AVATAR_UPLOAD_URL, REGISTER_TO_EVENT, CHANGE_ROLE]
+                  enum: [GET_AVATAR_UPLOAD_URL, REGISTER_TO_EVENT, CHANGE_PERMISSIONS]
                 registrationForm:
                   type: number
                   description: (REGISTER_TO_EVENT)
                 isDraft:
                   type: boolean
                   description: (REGISTER_TO_EVENT)
-                role:
+                permissions:
                   type: number
-                  description: (CHANGE_ROLE)
+                  description: (CHANGE_PERMISSIONS)
       responses:
         200:
           $ref: '#/components/responses/User'

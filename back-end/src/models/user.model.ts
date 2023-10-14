@@ -52,10 +52,9 @@ export class User extends Resource {
   sectionName?: string;
 
   /**
-   * The users role.
-   * @todo TBD
+   * The permissions of the user on the app.
    */
-  role: Roles;
+  permissions: UserPermissions;
 
   /**
    * A custom block containing custom sections and fields for the registration form.
@@ -96,7 +95,7 @@ export class User extends Resource {
       this.sectionName = this.clean(x.sectionName, String);
     }
 
-    this.role = this.clean(x.role, Number, Roles.NONE);
+    this.permissions = new UserPermissions(x.permissions);
 
     this.registrationForm = x.registrationForm ?? {};
     if (x.registrationAt) this.registrationAt = this.clean(x.registrationAt, t => new Date(t).toISOString());
@@ -118,7 +117,7 @@ export class User extends Resource {
       this.sectionName = safeData.sectionName;
     }
 
-    this.role = safeData.role;
+    this.permissions = safeData.permissions;
 
     if (safeData.registrationForm) this.registrationForm = safeData.registrationForm;
     if (safeData.registrationAt) this.registrationAt = safeData.registrationAt;
@@ -132,14 +131,6 @@ export class User extends Resource {
     if (this.iE(this.lastName)) e.push('lastName');
     if (this.iE(this.email, 'email')) e.push('email');
     return e;
-  }
-
-  /**
-   * Whether the user is an administrator.
-   * @todo TBD
-   */
-  isAdmin(): boolean {
-    return this.role >= Roles.ADMIN;
   }
 
   /**
@@ -173,15 +164,44 @@ export enum AuthServices {
 }
 
 /**
- * The possible roles for the user.
- * @todo TBD
+ * The permissions a user can have.
  */
-export enum Roles {
-  NONE = 0,
-  DELEGATION_LEADER = 10,
-  STAFF = 20,
-  OC = 30,
-  CT = 40,
-  IB = 50,
-  ADMIN = 60
+export class UserPermissions {
+  /**
+   * Whether the user can manage spots assigned to their ESN country.
+   */
+  isCountryLeader: boolean;
+  /**
+   * Whether the user has administrative permissions on the registrations.
+   */
+  canManageRegistrations: boolean;
+  /**
+   * Whether the user havs administrative permissions on the contents (speakers, sessions, etc.).
+   */
+  canManageContents: boolean;
+  /**
+   * Whether the user has maximum permissions over the app.
+   * If this is true, all other permissions are.
+   */
+  protected _isAdmin: boolean;
+  get isAdmin(): boolean {
+    return this._isAdmin;
+  }
+  set isAdmin(isAdmin: boolean) {
+    this._isAdmin = isAdmin;
+    if (isAdmin) {
+      this.isCountryLeader = true;
+      this.canManageRegistrations = true;
+      this.canManageContents = true;
+    }
+  }
+
+  constructor(x?: any) {
+    x = x || {};
+    this.isCountryLeader = Boolean(x.isCountryLeader);
+    this.canManageRegistrations = Boolean(x.canManageRegistrations);
+    this.canManageContents = Boolean(x.canManageContents);
+    // as last, to change any other attribute in case it's `true`
+    this.isAdmin = Boolean(x._isAdmin);
+  }
 }
