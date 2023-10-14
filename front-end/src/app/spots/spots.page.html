@@ -11,11 +11,11 @@
 </ion-header>
 <ion-content>
   <ngx-datatable
-    #usersTable
+    #spotsTable
     class="fullscreen"
     [class.material]="!app.isInDarkMode()"
     [class.dark]="app.isInDarkMode()"
-    [rows]="filteredUsers"
+    [rows]="filteredSpots"
     [limit]="limit"
     [rowHeight]="rowHeight"
     [headerHeight]="headerHeight"
@@ -54,7 +54,7 @@
           [size]="pageSize"
           [count]="rowCount"
           [hidden]="!(rowCount / pageSize > 1)"
-          (change)="usersTable.onFooterPage($event)"
+          (change)="spotsTable.onFooterPage($event)"
         >
         </datatable-pager>
       </ng-template>

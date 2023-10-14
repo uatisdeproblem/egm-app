@@ -28,6 +28,8 @@ tags:
     description: Access the platform
   - name: Users
     description: The users of the platform
+  - name: Event
+    description: The event-related actions
 
 paths:
   /status:
@@ -187,6 +189,72 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /event-spots:
+    get:
+      summary: Get the spots available for the event
+      description: Requires to be admin
+      tags: [Event]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/EventSpots'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /event-spots/{spotId}:
+    get:
+      summary: Get a spot to the event
+      description: Requires to be admin
+      tags: [Event]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: spotId
+          in: path
+          description: The spot ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/EventSpot'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit a spot to the event
+      description: Requires to be admin
+      tags: [Event]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: spotId
+          in: path
+          description: The spot ID.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventSpot'
+      responses:
+        200:
+          $ref: '#/components/responses/EventSpot'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Remove a spot to the event
+      description: Requires to be admin
+      tags: [Event]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -194,6 +262,9 @@ components:
       type: object
       additionalProperties: {}
     User:
+      type: object
+      additionalProperties: {}
+    EventSpot:
       type: object
       additionalProperties: {}
 
@@ -220,6 +291,21 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/User'
+    EventSpot:
+      description: A spot for the event
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/EventSpot'
+    EventSpots:
+      description: The spots for the event
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/EventSpot'
     BadParameters:
       description: Bad input parameters
       content:

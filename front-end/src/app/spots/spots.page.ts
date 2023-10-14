@@ -3,10 +3,10 @@ import { IonSearchbar } from '@ionic/angular';
 import { ColumnMode, SelectionType, TableColumn, DatatableComponent } from '@swimlane/ngx-datatable';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
-import { AppService } from 'src/app/app.service';
+import { AppService } from '@app/app.service';
+import { SpotsService } from './spots.service';
 
-import { User } from '@models/user.model';
-import { UsersService } from '../users/users.service';
+import { EventSpot } from '@models/eventSpot.model';
 
 @Component({
   selector: 'event-spots',
@@ -27,28 +27,29 @@ export class SpotsPage implements OnInit {
   headerHeight = 50;
   footerHeight = 80;
 
-  users: User[];
-  filteredUsers: User[];
+  spots: EventSpot[];
+  filteredSpots: EventSpot[];
 
   constructor(
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     private t: IDEATranslationsService,
-    private _users: UsersService,
+    private _spots: SpotsService,
     public app: AppService
   ) {}
   async ngOnInit(): Promise<void> {
     this.col = [
-      { prop: 'firstName', name: this.t._('PROFILE.FIRST_NAME') },
-      { prop: 'lastName', name: this.t._('PROFILE.LAST_NAME') },
-      { prop: 'email', name: this.t._('PROFILE.EMAIL') }
+      { prop: 'spotId', name: this.t._('EVENT_REGISTRATIONS.SPOT_ID') },
+      { prop: 'type', name: this.t._('EVENT_REGISTRATIONS.SPOT_TYPE') },
+      { prop: 'sectionCountry', name: this.t._('EVENT_REGISTRATIONS.ASSIGNED_TO_COUNTRY') },
+      { prop: 'userName', name: this.t._('EVENT_REGISTRATIONS.ASSIGNED_TO_USER') }
     ];
     this.col.forEach(c => (c.resizeable = false));
     this.setTableHeight();
 
     try {
       await this.loading.show();
-      this.users = await this._users.getList();
+      this.spots = await this._spots.getList();
       this.updateFilter();
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
@@ -64,15 +65,17 @@ export class SpotsPage implements OnInit {
     this.limit = Math.floor(heightAvailableInPx / this.rowHeight);
   }
 
-  rowIdentity(row: User): string {
-    return row.userId;
+  rowIdentity(row: EventSpot): string {
+    return row.spotId;
   }
 
   updateFilter(searchText?: string): void {
     searchText = (searchText ?? '').toLowerCase();
 
-    this.filteredUsers = this.users.filter(x =>
-      [x.firstName, x.lastName, x.email].filter(f => f).some(f => String(f).toLowerCase().includes(searchText))
+    this.filteredSpots = this.spots.filter(x =>
+      [x.spotId, x.type, x.sectionCountry, x.userName]
+        .filter(f => f)
+        .some(f => String(f).toLowerCase().includes(searchText))
     );
 
     // whenever the filter changes, always go back to the first page

@@ -8,11 +8,20 @@
 </ion-header>
 <ion-content>
   <ion-list class="aList maxWidthContainer">
-    <ion-item button detail (click)="app.goToInTabs(['users'])">
-      <ion-label>{{ 'CONFIGURATIONS.USERS_AND_REGISTRATIONS' | translate }}</ion-label>
-    </ion-item>
-    <ion-item button detail (click)="app.goToInTabs(['spots'])">
-      <ion-label>{{ 'CONFIGURATIONS.SPOTS_MANAGEMENT' | translate }}</ion-label>
-    </ion-item>
+    <ng-container *ngIf="app.user.permissions.isAdmin || app.user.permissions.canManageRegistrations">
+      <ion-list-header>
+        <ion-label>
+          <h2>{{ 'CONFIGURATIONS.USERS_AND_EVENT' | translate }}</h2>
+        </ion-label>
+      </ion-list-header>
+      <ion-item button detail (click)="app.goToInTabs(['users'])">
+        <ion-icon slot="start" icon="people-outline"></ion-icon>
+        <ion-label>{{ 'CONFIGURATIONS.USERS_AND_REGISTRATIONS' | translate }}</ion-label>
+      </ion-item>
+      <ion-item button detail (click)="app.goToInTabs(['spots'])">
+        <ion-icon slot="start" icon="ticket-outline"></ion-icon>
+        <ion-label>{{ 'CONFIGURATIONS.SPOTS_MANAGEMENT' | translate }}</ion-label>
+      </ion-item>
+    </ng-container>
   </ion-list>
 </ion-content>

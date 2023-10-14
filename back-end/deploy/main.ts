@@ -21,7 +21,8 @@ const apiResources: ResourceController[] = [
   { name: 'auth', isAuthFunction: true },
   { name: 'cognito', paths: ['/cognito'] },
   { name: 'galaxy', paths: ['/galaxy'] },
-  { name: 'users', paths: ['/users', '/users/{userId}'] }
+  { name: 'users', paths: ['/users', '/users/{userId}'] },
+  { name: 'eventSpots', paths: ['/event-spots', '/event-spots/{spotId}'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
@@ -33,6 +34,9 @@ const tables: { [tableName: string]: DDBTable } = {
   },
   users: {
     PK: { name: 'userId', type: DDB.AttributeType.STRING }
+  },
+  eventSpots: {
+    PK: { name: 'spotId', type: DDB.AttributeType.STRING }
   }
 };
 

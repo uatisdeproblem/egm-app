@@ -6,7 +6,7 @@
     <ion-tab-button tab="profile">
       <ion-label>{{ 'TABS.PROFILE' | translate }}</ion-label>
     </ion-tab-button>
-    <ion-tab-button tab="configurations" *ngIf="app.user.permissions.isAdmin">
+    <ion-tab-button tab="configurations" *ngIf="userCanManageSomething()">
       <ion-label>{{ 'TABS.CONFIGURATIONS' | translate }}</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
@@ -17,7 +17,7 @@
     <ion-tab-button tab="profile">
       <ion-icon icon="person"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button tab="configurations" *ngIf="app.user.permissions.isAdmin">
+    <ion-tab-button tab="configurations" *ngIf="userCanManageSomething()">
       <ion-icon icon="settings"></ion-icon>
     </ion-tab-button>
   </ion-tab-bar>

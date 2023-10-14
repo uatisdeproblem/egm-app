@@ -3,10 +3,10 @@ import { IonSearchbar } from '@ionic/angular';
 import { ColumnMode, SelectionType, TableColumn, DatatableComponent } from '@swimlane/ngx-datatable';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
-import { AppService } from 'src/app/app.service';
+import { AppService } from '@app/app.service';
+import { UsersService } from '@app/users/users.service';
 
 import { User } from '@models/user.model';
-import { UsersService } from '../users/users.service';
 
 @Component({
   selector: 'users',

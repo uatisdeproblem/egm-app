@@ -152,9 +152,14 @@
     "REGISTRATION": "Registration",
     "SAVE_DRAFT": "Save draft",
     "SUBMIT_REGISTRATION": "Submit registration",
-    "REGISTRATION_OF": "Registration of"
+    "REGISTRATION_OF": "Registration of",
+    "SPOT_ID": "Spot ID",
+    "SPOT_TYPE": "Type",
+    "ASSIGNED_TO_COUNTRY": "Assigned to country",
+    "ASSIGNED_TO_USER": "Assigned to user"
   },
   "CONFIGURATIONS": {
+    "USERS_AND_EVENT": "Users and event",
     "USERS_AND_REGISTRATIONS": "Users and event registrations",
     "SPOTS_MANAGEMENT": "Spots management"
   }
