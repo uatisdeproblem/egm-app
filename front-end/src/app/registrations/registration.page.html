@@ -16,20 +16,20 @@
     <ion-item>
       <ion-avatar slot="start">
         <ion-img
-          [src]="app.user.avatarURL ?? app.getAvatarFallbackURL()"
+          [src]="user.avatarURL ?? app.getAvatarFallbackURL()"
           (ionError)="app.fallbackAvatar($event?.target)"
         ></ion-img>
       </ion-avatar>
       <ion-label>
-        {{ app.user.firstName }} {{ app.user.lastName }}
-        <p *ngIf="app.user.isExternal()"><i>{{ 'PROFILE.EXTERNAL_GUEST' | translate }}</i></p>
-        <p *ngIf="!app.user.isExternal()">{{ app.user.getSectionCountry() }}</p>
+        {{ user.firstName }} {{ user.lastName }}
+        <p *ngIf="user.isExternal()"><i>{{ 'PROFILE.EXTERNAL_GUEST' | translate }}</i></p>
+        <p *ngIf="!user.isExternal()">{{ user.getSectionCountry() }}</p>
       </ion-label>
       <ion-button
         slot="end"
         fill="clear"
-        *ngIf="app.user.permissions.isAdmin"
-        (click)="app.openUserProfileInESNAccounts(app.user)"
+        *ngIf="user.permissions.isAdmin"
+        (click)="app.openUserProfileInESNAccounts(user)"
       >
         <ion-icon icon="open-outline" slot="icon-only"></ion-icon>
       </ion-button>

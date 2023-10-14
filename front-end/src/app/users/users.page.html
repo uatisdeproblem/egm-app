@@ -28,6 +28,7 @@
     [selectionType]="selectionType"
     [selectAllRowsOnPage]="false"
     [messages]="{ emptyMessage: 'COMMON.NO_ELEMENT_FOUND' | translate }"
+    (select)="openDetail($event)"
   >
     <ngx-datatable-column
       *ngFor="let column of col; let i = index"

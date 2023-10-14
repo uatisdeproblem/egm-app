@@ -78,4 +78,9 @@ export class UsersPage implements OnInit {
     // whenever the filter changes, always go back to the first page
     this.table.offset = 0;
   }
+
+  async openDetail({ selected }: { selected: User[] }): Promise<void> {
+    if (!selected.length) return;
+    this.app.goToInTabs(['event-registrations', selected[0].userId]);
+  }
 }

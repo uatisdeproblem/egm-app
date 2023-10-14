@@ -161,7 +161,7 @@ class UsersRC extends ResourceController {
   }
 
   protected async getResources(): Promise<User[]> {
-    if (!this.reqUser.permissions.isAdmin || this.reqUser.permissions.canManageRegistrations)
+    if (!(this.reqUser.permissions.isAdmin || this.reqUser.permissions.canManageRegistrations))
       throw new RCError('Unauthorized');
 
     return (await ddb.scan({ TableName: DDB_TABLES.users })).map(x => new User(x));

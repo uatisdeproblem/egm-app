@@ -17,6 +17,13 @@ export class UsersService {
   }
 
   /**
+   * Get a user's data by its id.
+   */
+  async getById(userId: string): Promise<User> {
+    return new User(await this.api.getResource(['users', userId]));
+  }
+
+  /**
    * Updates a user's data.
    */
   async update(user: User): Promise<User> {

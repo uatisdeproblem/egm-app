@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { RegistrationPage } from './registration.page';
 
-const routes: Routes = [{ path: ':registrationId', component: RegistrationPage }];
+const routes: Routes = [{ path: ':userId', component: RegistrationPage }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
