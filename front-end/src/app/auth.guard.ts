@@ -24,7 +24,9 @@ export const authGuard: CanActivateFn = async (): Promise<boolean> => {
   const doAuth = async (): Promise<void> => {
     const token = await auth.loadAuthToken();
     if (!token) throw new Error('Missing auth token');
-    app.user = await _users.getCurrentUser();
+    const { user, configurations } = await _users.getCurrentUserAndConfiguration();
+    app.user = user;
+    app.configurations = configurations;
   };
 
   const navigateAndResolve = (navigationPath?: string[]): boolean => {

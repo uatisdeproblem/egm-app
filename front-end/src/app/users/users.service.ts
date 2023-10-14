@@ -2,16 +2,18 @@ import { Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { User } from '@models/user.model';
+import { Configuration } from '@models/configuration.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   constructor(private api: IDEAApiService) {}
 
   /**
-   * Get the current user.
+   * Get the current user and app configuration.
    */
-  async getCurrentUser(): Promise<User> {
-    return new User(await this.api.getResource(['users', 'me']));
+  async getCurrentUserAndConfiguration(): Promise<{ user: User; configurations: Configuration }> {
+    const res = await this.api.getResource(['users', 'me']);
+    return { user: new User(res), configurations: new Configuration(res.configurations) };
   }
 
   /**
@@ -36,5 +38,13 @@ export class UsersService {
    */
   async delete(user: User): Promise<void> {
     await this.api.deleteResource(['users', user.userId]);
+  }
+
+  /**
+   * Register the user to the event.
+   */
+  async registerToEvent(user: User, registrationForm: any, isDraft: boolean): Promise<User> {
+    const body = { action: 'REGISTER_TO_EVENT', registrationForm, isDraft };
+    return new User(await this.api.patchResource(['users', user.userId], { body }));
   }
 }

@@ -85,6 +85,16 @@ export class ProfilePage {
     this.app.goToInTabs(['event-registrations', 'me']);
   }
 
+  uploadProofOfPayment(): void {
+    // @todo
+  }
+  downloadProofOfPayment(): void {
+    // @todo
+  }
+  downloadInfoToPay(): void {
+    // @todo
+  }
+
   async openPrivacyPolicy(): Promise<void> {
     await this.app.openURL(this.t._('AUTH.PRIVACY_POLICY_URL'));
   }

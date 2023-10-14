@@ -6,13 +6,14 @@ import { Cognito, DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
 import { SignedURL } from 'idea-toolbox';
 
 import { AuthServices, Roles, User } from '../models/user.model';
+import { Configuration } from '../models/configuration.model';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
 ///
 
 const PROJECT = process.env.PROJECT;
-const DDB_TABLES = { users: process.env.DDB_TABLE_users };
+const DDB_TABLES = { users: process.env.DDB_TABLE_users, configurations: process.env.DDB_TABLE_configurations };
 const ddb = new DynamoDB();
 
 const S3_BUCKET_MEDIA = process.env.S3_BUCKET_MEDIA;
@@ -62,6 +63,10 @@ class UsersRC extends ResourceController {
   }
 
   protected async getResource(): Promise<User> {
+    const configurations = new Configuration(
+      await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configuration.PK } })
+    );
+    (this.targetUser as any).configurations = configurations;
     return this.targetUser;
   }
 
@@ -83,11 +88,47 @@ class UsersRC extends ResourceController {
     switch (this.body.action) {
       case 'GET_AVATAR_UPLOAD_URL':
         return await this.getSignedURLToUploadAvatar();
+      case 'REGISTER_TO_EVENT':
+        return await this.registerToEvent(this.body.registrationForm, this.body.isDraft);
       case 'CHANGE_ROLE':
         return await this.changeUserRole(this.body.role);
       default:
         throw new RCError('Unsupported action');
     }
+  }
+  private async getSignedURLToUploadAvatar(): Promise<SignedURL> {
+    if (this.reqUser !== this.targetUser) throw new RCError('Unauthorized');
+
+    const imageURI = await ddb.IUNID(PROJECT.concat('-avatar-'));
+    const key = `${S3_IMAGES_FOLDER}/${imageURI}.png`;
+    const signedURL = await s3.signedURLPut(S3_BUCKET_MEDIA, key);
+    signedURL.id = imageURI;
+    return signedURL;
+  }
+  private async registerToEvent(registrationForm: any, isDraft: boolean): Promise<User> {
+    if (this.targetUser.registrationAt && isDraft) throw new RCError("Can't go back to draft");
+
+    const configurations = new Configuration(
+      await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configuration.PK } })
+    );
+
+    this.targetUser.registrationForm = configurations.registrationFormDef.loadSections(registrationForm);
+
+    if (isDraft) this.targetUser.registrationAt = null;
+    else {
+      const errors = configurations.registrationFormDef.validateSections(this.targetUser.registrationForm);
+      if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+      this.targetUser.registrationAt = new Date().toISOString();
+    }
+
+    await ddb.update({
+      TableName: DDB_TABLES.users,
+      Key: { userId: this.targetUser.userId },
+      UpdateExpression: 'SET registrationForm = :form, registrationAt = :at',
+      ExpressionAttributeValues: { ':form': this.targetUser.registrationForm, ':at': this.targetUser.registrationAt }
+    });
+
+    return this.targetUser;
   }
   private async changeUserRole(role: Roles): Promise<User> {
     if (!this.reqUser.isAdmin()) throw new RCError('Unauthorized');
@@ -99,15 +140,6 @@ class UsersRC extends ResourceController {
       ExpressionAttributeValues: { ':role': role }
     });
     return this.targetUser;
-  }
-  private async getSignedURLToUploadAvatar(): Promise<SignedURL> {
-    if (this.reqUser !== this.targetUser) throw new RCError('Unauthorized');
-
-    const imageURI = await ddb.IUNID(PROJECT.concat('-avatar-'));
-    const key = `${S3_IMAGES_FOLDER}/${imageURI}.png`;
-    const signedURL = await s3.signedURLPut(S3_BUCKET_MEDIA, key);
-    signedURL.id = imageURI;
-    return signedURL;
   }
 
   protected async deleteResource(): Promise<void> {

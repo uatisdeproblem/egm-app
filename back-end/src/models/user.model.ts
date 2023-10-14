@@ -6,9 +6,9 @@ export class User extends Resource {
    */
   userId: string;
   /**
-   * Timestamp of when the user registered.
+   * Timestamp of when the user signed-up.
    */
-  registeredAt: epochISOString;
+  createdAt: epochISOString;
   /**
    * Timestamp of the last time the user did something.
    */
@@ -57,10 +57,31 @@ export class User extends Resource {
    */
   role: Roles;
 
+  /**
+   * A custom block containing custom sections and fields for the registration form.
+   */
+  registrationForm: Record<string, any>;
+  /**
+   * The timestamp when the registration was submitted (if it was).
+   */
+  registrationAt?: epochISOString;
+  /**
+   * The spot assigned for the event, if any.
+   */
+  spot?: string;
+  /**
+   * The URI to the proof of payment, if it has been uploaded.
+   */
+  proofOfPaymentURI?: string;
+  /**
+   * Whether the participation and the payment of the user have been confirmed.
+   */
+  confirmedAt?: string;
+
   load(x: any): void {
     super.load(x);
     this.userId = this.clean(x.userId, String);
-    this.registeredAt = this.clean(x.registeredAt, t => new Date(t).toISOString(), new Date().toISOString());
+    this.createdAt = this.clean(x.createdAt, t => new Date(t).toISOString(), new Date().toISOString());
     this.lastSeenAt = new Date().toISOString();
     this.authService = this.clean(x.authService, String);
     this.firstName = this.clean(x.firstName, String);
@@ -75,12 +96,18 @@ export class User extends Resource {
     }
 
     this.role = this.clean(x.role, Number, Roles.NONE);
+
+    this.registrationForm = x.registrationForm ?? {};
+    if (x.registrationAt) this.registrationAt = this.clean(x.registrationAt, t => new Date(t).toISOString());
+    if (x.spot) this.spot = this.clean(x.spot, String);
+    if (x.proofOfPaymentURI) this.proofOfPaymentURI = this.clean(x.proofOfPaymentURI, String);
+    if (x.confirmedAt) this.confirmedAt = this.clean(x.confirmedAt, d => new Date(d).toISOString());
   }
 
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
     this.userId = safeData.userId;
-    this.registeredAt = safeData.registeredAt;
+    this.createdAt = safeData.createdAt;
     this.lastSeenAt = new Date().toISOString();
     this.authService = safeData.authService;
 
@@ -91,6 +118,11 @@ export class User extends Resource {
     }
 
     this.role = safeData.role;
+
+    if (safeData.registrationForm) this.registrationForm = safeData.registrationForm;
+    if (safeData.registrationAt) this.registrationAt = safeData.registrationAt;
+    if (safeData.spot) this.spot = safeData.spot;
+    if (safeData.proofOfPaymentURI) this.proofOfPaymentURI = safeData.proofOfPaymentURI;
   }
 
   validate(): string[] {
@@ -103,6 +135,7 @@ export class User extends Resource {
 
   /**
    * Whether the user is an administrator.
+   * @todo TBD
    */
   isAdmin(): boolean {
     return this.role >= Roles.ADMIN;
@@ -121,21 +154,13 @@ export class User extends Resource {
   getSectionCountry(): string {
     return [this.sectionCountry, this.sectionName].filter(x => x).join(' - ');
   }
-}
 
-/**
- * The possible roles for the user.
- * @todo TBD
- */
-export enum Roles {
-  NONE = 0,
-  PARTICIPANT = 10,
-  DELEGATION_LEADER = 20,
-  STAFF = 30,
-  OC = 40,
-  CT = 50,
-  IB = 60,
-  ADMIN = 70
+  /**
+   * Whether the user is considered an external guest.
+   */
+  isExternal(): boolean {
+    return this.authService !== AuthServices.ESN_ACCOUNTS;
+  }
 }
 
 /**
@@ -144,4 +169,18 @@ export enum Roles {
 export enum AuthServices {
   ESN_ACCOUNTS = 'EA', // aka Galaxy
   COGNITO = 'CO'
+}
+
+/**
+ * The possible roles for the user.
+ * @todo TBD
+ */
+export enum Roles {
+  NONE = 0,
+  DELEGATION_LEADER = 10,
+  STAFF = 20,
+  OC = 30,
+  CT = 40,
+  IB = 50,
+  ADMIN = 60
 }

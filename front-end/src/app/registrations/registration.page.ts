@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AlertController } from '@ionic/angular';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
 
 import { AppService } from '@app/app.service';
-
-import { Registration, TShirtSizes } from '@models/registration.model';
-import { RegistrationsService } from './registrations.service';
+import { UsersService } from '@app/users/users.service';
 
 @Component({
   selector: 'registration',
@@ -14,67 +11,42 @@ import { RegistrationsService } from './registrations.service';
   styleUrls: ['registration.page.scss']
 })
 export class RegistrationPage {
-  registration: Registration;
-
-  tshirtSizes = Object.keys(TShirtSizes).filter(s => isNaN(Number(s)));
-
-  // @todo add methods and populate UI
+  form: Record<string, any>;
+  errors = new Set<string>();
+  editMode = true;
 
   constructor(
     private route: ActivatedRoute,
-    private alertCtrl: AlertController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
-    private _registrations: RegistrationsService,
-    private t: IDEATranslationsService,
+    private _users: UsersService,
     public app: AppService
   ) {}
-
   async ionViewWillEnter(): Promise<void> {
     let registrationId = this.route.snapshot.paramMap.get('registrationId');
     if (registrationId === 'me') registrationId = this.app.user.userId;
 
-    if (!this.app.user.isAdmin() && registrationId) {
-      // @todo add auth control
-    }
+    // @todo now it only works on self
 
-    await this.loadRegistration(registrationId);
-  }
-  private async loadRegistration(registrationId: string): Promise<void> {
-    try {
-      this.loading.show();
-      this.registration = await this._registrations.getById(registrationId);
-    } catch (error) {
-      this.message.error('COMMON.NOT_FOUND');
-    } finally {
-      this.loading.hide();
-    }
+    this.form = this.app.configurations.loadRegistrationForm(
+      this.app.configurations.registrationFormDef,
+      this.app.user.registrationForm
+    );
+    if (this.app.user.registrationAt) this.editMode = false;
   }
 
-  async saveProgress(): Promise<void> {
-    try {
-      this.loading.show();
-      this.registration = await this._registrations.update(this.registration);
-    } catch (error) {
-      this.message.error('COMMON.OPERATION_FAILED');
-    } finally {
-      this.loading.hide();
+  async save(isDraft = false): Promise<void> {
+    this.errors = new Set();
+    if (!isDraft) {
+      this.app.configurations.registrationFormDef
+        .validateSections(this.form)
+        .forEach(ea => this.errors.add(`sections.${ea}`));
     }
-  }
-
-  async submitRegistration(): Promise<void> {
-    // @todo validate and show errors on form
-    // this.errors = new Set(this.editedBanner.validate());
-    //   if (this.errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
-
-    const errors = new Set(this.registration.validate());
-    if (errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
+    if (this.errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
 
     try {
       this.loading.show();
-      // @todo add alert!
-      this.registration = await this._registrations.update(this.registration);
-      this.registration = await this._registrations.submit(this.registration);
+      this.app.user.load(await this._users.registerToEvent(this.app.user, this.form, isDraft));
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {

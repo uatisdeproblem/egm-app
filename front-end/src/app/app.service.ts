@@ -2,17 +2,11 @@ import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { AlertController, NavController, Platform } from '@ionic/angular';
 import { Browser } from '@capacitor/browser';
-import {
-  IDEAActionSheetController,
-  IDEAApiService,
-  IDEAMessageService,
-  IDEAStorageService,
-  IDEATranslationsService
-} from '@idea-ionic/common';
-import { IDEAAuthService } from '@idea-ionic/auth';
+import { IDEAApiService, IDEAMessageService } from '@idea-ionic/common';
 
 import { environment as env } from '@env';
 import { AuthServices, User } from '@models/user.model';
+import { Configuration } from '@models/configuration.model';
 
 /**
  * The base URLs where the thumbnails are located.
@@ -39,17 +33,14 @@ export class AppService {
   private darkMode: boolean;
 
   user: User;
+  configurations: Configuration;
 
   constructor(
     private platform: Platform,
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private message: IDEAMessageService,
-    private storage: IDEAStorageService,
-    private actionSheetCtrl: IDEAActionSheetController,
-    private auth: IDEAAuthService,
-    private api: IDEAApiService,
-    private t: IDEATranslationsService
+    private api: IDEAApiService
   ) {
     this.darkMode = this.respondToColorSchemePreferenceChanges();
   }

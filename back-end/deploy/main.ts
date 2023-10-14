@@ -21,19 +21,18 @@ const apiResources: ResourceController[] = [
   { name: 'auth', isAuthFunction: true },
   { name: 'cognito', paths: ['/cognito'] },
   { name: 'galaxy', paths: ['/galaxy'] },
-  { name: 'users', paths: ['/users', '/users/{userId}'] },
-  { name: 'registrations', paths: ['/registrations', '/registrations/{registrationId}'] }
+  { name: 'users', paths: ['/users', '/users/{userId}'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
   status: {
     PK: { name: 'version', type: DDB.AttributeType.STRING }
   },
+  configurations: {
+    PK: { name: 'PK', type: DDB.AttributeType.STRING }
+  },
   users: {
     PK: { name: 'userId', type: DDB.AttributeType.STRING }
-  },
-  registrations: {
-    PK: { name: 'registrationId', type: DDB.AttributeType.STRING }
   }
 };
 

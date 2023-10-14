@@ -28,8 +28,6 @@ tags:
     description: Access the platform
   - name: Users
     description: The users of the platform
-  - name: Registrations
-    description: Registrations to the main event
 
 paths:
   /status:
@@ -151,7 +149,13 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: [CHANGE_ROLE, GET_AVATAR_UPLOAD_URL]
+                  enum: [GET_AVATAR_UPLOAD_URL, REGISTER_TO_EVENT, CHANGE_ROLE]
+                registrationForm:
+                  type: number
+                  description: (REGISTER_TO_EVENT)
+                isDraft:
+                  type: boolean
+                  description: (REGISTER_TO_EVENT)
                 role:
                   type: number
                   description: (CHANGE_ROLE)
@@ -171,83 +175,6 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
-  /registrations:
-    get:
-      summary: Get an all registrations.
-      description: Requires to be an admin
-      tags: [Registrations]
-      security:
-        - AuthFunction: []
-      responses:
-        200:
-          $ref: '#/components/responses/Registrations'
-        400:
-          $ref: '#/components/responses/BadParameters'
-  /registrations/{registrationId}:
-    get:
-      summary: Get a registration.
-      tags: [Registrations]
-      security:
-        - AuthFunction: []
-      parameters:
-        - name: registrationId
-          in: path
-          description: The registration ID.
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/Registration'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    put:
-      summary: Update the registration.
-      description: Can only update if it hasn't been submitted yet.
-      tags: [Registrations]
-      security:
-        - AuthFunction: []
-      parameters:
-        - name: registrationId
-          in: path
-          description: The registration ID.
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Registration'
-      responses:
-        200:
-          $ref: '#/components/responses/Registration'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    patch:
-      summary: Actions on a registration.
-      tags: [Registrations]
-      security:
-        - AuthFunction: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: [APPROVE, SUBMIT, CANCEL]
-                status:
-                  type: number
-                  enum: [APPROVE, SUBMIT, CANCEL]
-      responses:
-        200:
-          $ref: '#/components/responses/Registration'
-        400:
-          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -255,9 +182,6 @@ components:
       type: object
       additionalProperties: {}
     User:
-      type: object
-      additionalProperties: {}
-    Registration:
       type: object
       additionalProperties: {}
 
@@ -276,20 +200,6 @@ components:
           schema:
             type: object
             $ref: '#/components/schemas/User'
-    Registration:
-      description: A user's registration to the main event
-      content:
-        application/json:
-          schema:
-            type: object
-            $ref: '#/components/schemas/Registration'
-    Registrations:
-      description: A list of user registrations to the main event
-      content:
-        application/json:
-          schema:
-            type: array
-            $ref: '#/components/schemas/Registration'
     BadParameters:
       description: Bad input parameters
       content:
