@@ -116,7 +116,8 @@
     "NEW_PASSWORD": "New password"
   },
   "TABS": {
-    "PROFILE": "Profile"
+    "PROFILE": "Profile",
+    "CONFIGURATIONS": "Configurations"
   },
   "PROFILE": {
     "ESN_ACCOUNTS": "ESN Accounts",
@@ -144,9 +145,13 @@
     "DOWNLOAD_INFO_TO_PAY": "Download information to pay"
   },
   "EVENT_REGISTRATIONS": {
+    "REGISTRATIONS": "Registrations",
     "REGISTRATION": "Registration",
     "SAVE_DRAFT": "Save draft",
     "SUBMIT_REGISTRATION": "Submit registration",
     "REGISTRATION_OF": "Registration of"
+  },
+  "CONFIGURATIONS": {
+    "EVENT_REGISTRATIONS": "Event registrations"
   }
 }

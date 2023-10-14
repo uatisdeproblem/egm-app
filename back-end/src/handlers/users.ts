@@ -151,4 +151,10 @@ class UsersRC extends ResourceController {
     await ddb.delete({ TableName: DDB_TABLES.users, Key: { userId: this.targetUser.userId } });
     // @todo delete all user-related data
   }
+
+  protected async getResources(): Promise<User[]> {
+    if (!this.reqUser.isAdmin()) throw new RCError('Unauthorized');
+
+    return (await ddb.scan({ TableName: DDB_TABLES.users })).map(x => new User(x));
+  }
 }

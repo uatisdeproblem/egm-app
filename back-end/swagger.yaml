@@ -92,6 +92,18 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /users:
+    get:
+      summary: Get the users of the app
+      description: Requires to be admin
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Users'
+        400:
+          $ref: '#/components/responses/BadParameters'
   /users/{userId}:
     get:
       summary: Get a user's profile
@@ -200,6 +212,14 @@ components:
           schema:
             type: object
             $ref: '#/components/schemas/User'
+    Users:
+      description: The users of the platform
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
     BadParameters:
       description: Bad input parameters
       content:

@@ -6,7 +6,7 @@ import { AppService } from '@app/app.service';
 import { UsersService } from '@app/users/users.service';
 
 @Component({
-  selector: 'registration',
+  selector: 'event-registration',
   templateUrl: 'registration.page.html',
   styleUrls: ['registration.page.scss']
 })

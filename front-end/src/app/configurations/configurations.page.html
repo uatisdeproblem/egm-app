@@ -1,0 +1,15 @@
+<ion-header class="ion-no-border" *ngIf="app.isInMobileMode()">
+  <ion-toolbar color="ideaToolbar">
+    <ion-buttons slot="start">
+      <ion-img [src]="app.getIcon()"></ion-img>
+    </ion-buttons>
+    <ion-title>{{ 'TABS.CONFIGURATIONS' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list class="aList maxWidthContainer">
+    <ion-item button detail (click)="app.goToInTabs(['event-registrations'])">
+      <ion-label>{{ 'CONFIGURATIONS.EVENT_REGISTRATIONS' | translate }}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
