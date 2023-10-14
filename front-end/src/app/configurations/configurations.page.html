@@ -8,8 +8,11 @@
 </ion-header>
 <ion-content>
   <ion-list class="aList maxWidthContainer">
-    <ion-item button detail (click)="app.goToInTabs(['event-registrations'])">
-      <ion-label>{{ 'CONFIGURATIONS.EVENT_REGISTRATIONS' | translate }}</ion-label>
+    <ion-item button detail (click)="app.goToInTabs(['users'])">
+      <ion-label>{{ 'CONFIGURATIONS.USERS_AND_REGISTRATIONS' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button detail (click)="app.goToInTabs(['spots'])">
+      <ion-label>{{ 'CONFIGURATIONS.SPOTS_MANAGEMENT' | translate }}</ion-label>
     </ion-item>
   </ion-list>
 </ion-content>

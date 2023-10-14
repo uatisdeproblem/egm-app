@@ -9,13 +9,13 @@ import { User } from '@models/user.model';
 import { UsersService } from '../users/users.service';
 
 @Component({
-  selector: 'event-registrations',
-  templateUrl: 'registrations.page.html',
-  styleUrls: ['registrations.page.scss']
+  selector: 'users',
+  templateUrl: 'users.page.html',
+  styleUrls: ['users.page.scss']
 })
-export class RegistrationsPage implements OnInit {
+export class UsersPage implements OnInit {
   @ViewChild(IonSearchbar) searchbar: IonSearchbar;
-  @ViewChild('promotionRequestsTable') table: DatatableComponent;
+  @ViewChild('usersTable') table: DatatableComponent;
 
   col: TableColumn[];
   selectionType = SelectionType.single;
@@ -76,6 +76,6 @@ export class RegistrationsPage implements OnInit {
     );
 
     // whenever the filter changes, always go back to the first page
-    if (this.table) this.table.offset = 0;
+    this.table.offset = 0;
   }
 }

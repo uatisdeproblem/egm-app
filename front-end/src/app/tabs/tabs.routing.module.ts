@@ -21,6 +21,14 @@ const routes: Routes = [
       {
         path: 'event-registrations',
         loadChildren: (): Promise<any> => import('../registrations/registration.module').then(m => m.RegistrationModule)
+      },
+      {
+        path: 'users',
+        loadChildren: (): Promise<any> => import('../users/users.module').then(m => m.UsersModule)
+      },
+      {
+        path: 'spots',
+        loadChildren: (): Promise<any> => import('../spots/spots.module').then(m => m.SpotsModule)
       }
     ]
   }

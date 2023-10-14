@@ -1,0 +1,63 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="ideaToolbar" *ngIf="app.isInMobileMode()">
+    <ion-buttons slot="start">
+      <ion-button (click)="app.closePage()"><ion-icon icon="arrow-back" slot="icon-only"></ion-icon></ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'EVENT_REGISTRATIONS.REGISTRATIONS' | translate }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="ideaToolbar">
+    <ion-searchbar (ionInput)="updateFilter($event?.target?.value)"></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ngx-datatable
+    #usersTable
+    class="fullscreen"
+    [class.material]="!app.isInDarkMode()"
+    [class.dark]="app.isInDarkMode()"
+    [rows]="filteredUsers"
+    [limit]="limit"
+    [rowHeight]="rowHeight"
+    [headerHeight]="headerHeight"
+    [footerHeight]="footerHeight"
+    [scrollbarH]="true"
+    [columnMode]="columnMode"
+    [reorderable]="false"
+    [rowIdentity]="rowIdentity"
+    [trackByProp]="trackByProp"
+    [selectionType]="selectionType"
+    [selectAllRowsOnPage]="false"
+    [messages]="{ emptyMessage: 'COMMON.NO_ELEMENT_FOUND' | translate }"
+  >
+    <ngx-datatable-column
+      *ngFor="let column of col; let i = index"
+      [name]="column.name"
+      [prop]="column.prop"
+      [pipe]="column.pipe"
+    >
+    </ngx-datatable-column>
+    <ngx-datatable-footer>
+      <ng-template
+        ngx-datatable-footer-template
+        let-rowCount="rowCount"
+        let-pageSize="pageSize"
+        let-selectedCount="selectedCount"
+        let-curPage="curPage"
+        let-offset="offset"
+      >
+        <datatable-pager
+          [pagerLeftArrowIcon]="'datatable-icon-left'"
+          [pagerRightArrowIcon]="'datatable-icon-right'"
+          [pagerPreviousIcon]="'datatable-icon-prev'"
+          [pagerNextIcon]="'datatable-icon-skip'"
+          [page]="curPage"
+          [size]="pageSize"
+          [count]="rowCount"
+          [hidden]="!(rowCount / pageSize > 1)"
+          (change)="usersTable.onFooterPage($event)"
+        >
+        </datatable-pager>
+      </ng-template>
+    </ngx-datatable-footer>
+  </ngx-datatable>
+</ion-content>

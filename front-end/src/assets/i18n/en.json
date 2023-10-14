@@ -152,6 +152,7 @@
     "REGISTRATION_OF": "Registration of"
   },
   "CONFIGURATIONS": {
-    "EVENT_REGISTRATIONS": "Event registrations"
+    "USERS_AND_REGISTRATIONS": "Users and event registrations",
+    "SPOTS_MANAGEMENT": "Spots management"
   }
 }
