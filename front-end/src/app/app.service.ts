@@ -160,4 +160,19 @@ export class AppService {
   getIcon(white = false): string {
     return white ? APP_ICON_WHITE_PATH : APP_ICON_PATH;
   }
+
+  /**
+   * Open a new window in the browser to download some data as a file.
+   */
+  downloadDataAsFile(data: any, type: string, fileName: string): void {
+    const uri = `data:${type};charset=utf-8,${encodeURIComponent(data)}`;
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = uri;
+    downloadLink.download = fileName;
+
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  }
 }

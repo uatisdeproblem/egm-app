@@ -29,6 +29,10 @@ const routes: Routes = [
       {
         path: 'spots',
         loadChildren: (): Promise<any> => import('../spots/spots.module').then(m => m.SpotsModule)
+      },
+      {
+        path: 'emails',
+        loadChildren: (): Promise<any> => import('../configurations/emails/emails.module').then(m => m.EmailsModule)
       }
     ]
   }

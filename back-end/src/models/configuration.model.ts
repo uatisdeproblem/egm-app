@@ -63,3 +63,12 @@ export class Configuration extends Resource {
     return existingForm ? registrationDef.loadSections(existingForm) : registrationDef.setSectionsDefaultValues();
   }
 }
+
+/**
+ * The types of email templates available.
+ */
+export enum EmailTemplates { // @todo add a 'transfered spot template"?
+  REGISTRATION_APPROVED = 'REGISTRATION_APPROVED',
+  REGISTRATION_REFUSED = 'REGISTRATION_REFUSED',
+  INVOICE = 'INVOICE'
+}

@@ -26,6 +26,8 @@ tags:
     description: The app's status
   - name: Auth
     description: Access the platform
+  - name: Configurations
+    description: The platfrom's configurations
   - name: Users
     description: The users of the platform
   - name: Event
@@ -89,6 +91,45 @@ paths:
                 lastName:
                   type: string
                   description: (SIGN_UP)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /configurations:
+    patch:
+      summary: Set specific configurations
+      tags: [Configurations]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum:
+                    - GET_EMAIL_TEMPLATE_REGISTRATION_APPROVED
+                    - SET_EMAIL_TEMPLATE_REGISTRATION_APPROVED
+                    - RESET_EMAIL_TEMPLATE_REGISTRATION_APPROVED
+                    - TEST_EMAIL_TEMPLATE_REGISTRATION_APPROVED
+                    - GET_EMAIL_TEMPLATE_REGISTRATION_REFUSED
+                    - SET_EMAIL_TEMPLATE_REGISTRATION_REFUSED
+                    - RESET_EMAIL_TEMPLATE_REGISTRATION_REFUSED
+                    - TEST_EMAIL_TEMPLATE_REGISTRATION_REFUSED
+                    - GET_EMAIL_TEMPLATE_INVOICE
+                    - SET_EMAIL_TEMPLATE_INVOICE
+                    - RESET_EMAIL_TEMPLATE_INVOICE
+                    - TEST_EMAIL_TEMPLATE_INVOICE
+                subject:
+                  type: string
+                  description: (SET_EMAIL_TEMPLATE_REGISTRATION_APPROVED, SET_EMAIL_TEMPLATE_REGISTRATION_REFUSED,SET_EMAIL_TEMPLATE_INVOICE)
+                content:
+                  type: string
+                  description: (SET_EMAIL_TEMPLATE_REGISTRATION_APPROVED, SET_EMAIL_TEMPLATE_REGISTRATION_REFUSED,SET_EMAIL_TEMPLATE_INVOICE)
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
