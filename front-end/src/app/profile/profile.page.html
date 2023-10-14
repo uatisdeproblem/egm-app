@@ -10,7 +10,7 @@
   <div class="maxWidthContainer" *ngIf="app.user">
     <ion-list class="aList" [class.viewMode]="!editProfileMode">
       <p>
-        <ion-avatar class="tappable" (click)="avatarInput.click()">
+        <ion-avatar [class.tappable]="!editProfileMode" (click)="editProfileMode ? null : avatarInput.click()">
           <input #avatarInput type="file" accept="image/*" style="display: none" (change)="changeAvatar($event)" />
           <ion-img
             [src]="app.user.avatarURL ?? app.getAvatarFallbackURL()"
@@ -28,41 +28,47 @@
           slot="end"
           color="white"
           style="text-transform: none"
+          *ngIf="!app.isInMobileMode()"
           (click)="app.openUserProfileInESNAccounts(app.user)"
         >
-          <ion-text class="ion-hide-sm-down">{{ 'PROFILE.ESN_ACCOUNTS' | translate }}</ion-text>
-          <ion-icon icon="open-outline" slot="end"></ion-icon>
+          {{ 'PROFILE.ESN_ACCOUNTS' | translate }} <ion-icon icon="open-outline" slot="end"></ion-icon>
+        </ion-button>
+        <ion-button
+          slot="end"
+          fill="clear"
+          *ngIf="app.isInMobileMode()"
+          [color]="app.isInDarkMode() ? 'dark' : 'white'"
+          (click)="app.openUserProfileInESNAccounts(app.user)"
+        >
+          <ion-icon icon="open-outline" slot="icon-only"></ion-icon>
         </ion-button>
       </ion-item>
       <ion-item>
         <ion-input
           labelPlacement="stacked"
+          [label]="'PROFILE.FIRST_NAME' | translate"
           [disabled]="!editProfileMode"
           [(ngModel)]="app.user.firstName"
           [class.fieldHasError]="hasFieldAnError('firstName')"
-        >
-          <div slot="label">{{ 'PROFILE.FIRST_NAME' | translate }}</div>
-        </ion-input>
+        />
       </ion-item>
       <ion-item>
         <ion-input
           labelPlacement="stacked"
+          [label]="'PROFILE.LAST_NAME' | translate"
           [disabled]="!editProfileMode"
           [(ngModel)]="app.user.lastName"
           [class.fieldHasError]="hasFieldAnError('lastName')"
-        >
-          <div slot="label">{{ 'PROFILE.LAST_NAME' | translate }}</div>
-        </ion-input>
+        />
       </ion-item>
       <ion-item>
         <ion-input
           labelPlacement="stacked"
+          [label]="'PROFILE.EMAIL_FOR_NOTIFICATIONS' | translate"
           [disabled]="!editProfileMode"
           [(ngModel)]="app.user.email"
           [class.fieldHasError]="hasFieldAnError('email')"
-        >
-          <div slot="label">{{ 'PROFILE.EMAIL_FOR_NOTIFICATIONS' | translate }}</div>
-        </ion-input>
+        />
       </ion-item>
       <ion-item></ion-item>
       <ion-item color="medium" lines="full">
