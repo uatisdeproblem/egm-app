@@ -47,6 +47,8 @@ export class RegistrationPage {
     try {
       this.loading.show();
       this.app.user.load(await this._users.registerToEvent(this.app.user, this.form, isDraft));
+      this.message.success('COMMON.OPERATION_COMPLETED');
+      if (!isDraft) this.app.goToInTabs(['profile'], { back: true });
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {

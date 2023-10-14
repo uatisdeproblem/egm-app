@@ -63,6 +63,7 @@ export class User extends Resource {
   registrationForm: Record<string, any>;
   /**
    * The timestamp when the registration was submitted (if it was).
+   * If set, the registration is considered completed.
    */
   registrationAt?: epochISOString;
   /**

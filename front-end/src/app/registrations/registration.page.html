@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list class="aList maxWidthContainer" *ngIf="form">
+  <ion-list class="aList maxWidthContainer" *ngIf="form" [class.viewMode]="!editMode">
     <ion-list-header *ngIf="!app.isInMobileMode()">
       <ion-label>
         <h2>{{ 'EVENT_REGISTRATIONS.REGISTRATION_OF' | translate }}</h2>
@@ -40,7 +40,7 @@
       [errors]="errors"
       [disabled]="!editMode"
     />
-    <ion-row class="ion-margin-top">
+    <ion-row class="ion-margin-top" *ngIf="editMode">
       <ion-col>
         <ion-button expand="block" fill="clear" (click)="save(true)">
           {{ 'EVENT_REGISTRATIONS.SAVE_DRAFT' | translate }}

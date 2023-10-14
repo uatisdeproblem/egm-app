@@ -106,7 +106,8 @@ class UsersRC extends ResourceController {
     return signedURL;
   }
   private async registerToEvent(registrationForm: any, isDraft: boolean): Promise<User> {
-    if (this.targetUser.registrationAt && isDraft) throw new RCError("Can't go back to draft");
+    if (this.targetUser.registrationAt && !this.reqUser.isAdmin())
+      throw new RCError("Can't edit a submitted registration");
 
     const configurations = new Configuration(
       await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configuration.PK } })
