@@ -1,0 +1,137 @@
+<ion-header class="ion-no-border" *ngIf="app.isInMobileMode()">
+  <ion-toolbar color="ideaToolbar">
+    <ion-buttons slot="start">
+      <ion-img [src]="app.getIcon()"></ion-img>
+    </ion-buttons>
+    <ion-title>{{ 'TABS.PROFILE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="maxWidthContainer" *ngIf="app.user">
+    <ion-list class="aList" [class.viewMode]="!editProfileMode">
+      <p>
+        <ion-avatar class="tappable" (click)="avatarInput.click()">
+          <input #avatarInput type="file" accept="image/*" style="display: none" (change)="changeAvatar($event)" />
+          <ion-img
+            [src]="app.user.avatarURL ?? app.getAvatarFallbackURL()"
+            (ionError)="app.fallbackAvatar($event?.target)"
+          ></ion-img>
+        </ion-avatar>
+      </p>
+      <ion-item color="ESNcyan" lines="none" *ngIf="app.user.authService === AuthServices.ESN_ACCOUNTS">
+        <ion-icon slot="start" [icon]="app.getIcon(true)"></ion-icon>
+        <ion-label>
+          <ion-text style="font-weight: 600">{{ app.user.sectionName }}</ion-text>
+          <p><ion-text style="font-weight: 500">{{ app.user.sectionCountry }}</ion-text></p>
+        </ion-label>
+        <ion-button
+          slot="end"
+          color="white"
+          style="text-transform: none"
+          (click)="app.openUserProfileInESNAccounts(app.user)"
+        >
+          <ion-text class="ion-hide-sm-down">{{ 'PROFILE.ESN_ACCOUNTS' | translate }}</ion-text>
+          <ion-icon icon="open-outline" slot="end"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          labelPlacement="stacked"
+          [disabled]="!editProfileMode"
+          [(ngModel)]="app.user.firstName"
+          [class.fieldHasError]="hasFieldAnError('firstName')"
+        >
+          <div slot="label">{{ 'PROFILE.FIRST_NAME' | translate }}</div>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          labelPlacement="stacked"
+          [disabled]="!editProfileMode"
+          [(ngModel)]="app.user.lastName"
+          [class.fieldHasError]="hasFieldAnError('lastName')"
+        >
+          <div slot="label">{{ 'PROFILE.LAST_NAME' | translate }}</div>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          labelPlacement="stacked"
+          [disabled]="!editProfileMode"
+          [(ngModel)]="app.user.email"
+          [class.fieldHasError]="hasFieldAnError('email')"
+        >
+          <div slot="label">{{ 'PROFILE.EMAIL_FOR_NOTIFICATIONS' | translate }}</div>
+        </ion-input>
+      </ion-item>
+      <ion-item></ion-item>
+      <ion-item color="medium" lines="full">
+        <ion-button slot="start" fill="clear" color="white" *ngIf="!editProfileMode" (click)="startEditProfile()">
+          <ion-icon icon="pencil" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button slot="start" fill="clear" color="white" *ngIf="editProfileMode" (click)="exitEditProfile()">
+          <ion-icon icon="close" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button slot="start" fill="clear" color="white" *ngIf="editProfileMode" (click)="saveProfile()">
+          <ion-icon icon="checkmark" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-label class="ion-text-right" *ngIf="app.user.role >= 0">Delegation Leader<!-- @todo --></ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-list class="aList">
+      <ion-list-header>
+        <ion-label>
+          <h2>{{ 'PROFILE.EVENT_REGISTRATION' | translate }}</h2>
+        </ion-label>
+      </ion-list-header>
+      <ion-item color="danger" *ngIf="app.user.validate().length">
+        <ion-label class="ion-text-wrap">{{ 'PROFILE.COMPLETE_PROFILE_TO_REGISTER_TO_EVENT' | translate }}</ion-label>
+      </ion-item>
+      <ng-container *ngIf="!app.user.validate().length">
+        <ion-item>
+          <ion-label>{{ 'PROFILE.YOU_ARE_NOT_REGISTERED' | translate }}</ion-label>
+        </ion-item>
+        <ion-item button detail color="ESNpink" *ngIf="!app.user.validate().length" (click)="goToUserRegistration()">
+          <ion-label>{{ 'PROFILE.REGISTER_TO_EVENT' | translate }}<!-- @todo distinguish if has reg --></ion-label>
+        </ion-item>
+      </ng-container>
+
+      <ion-list class="aList">
+        <ion-list-header>
+          <ion-label>
+            <h2>{{ 'PROFILE.OTHER_ACTIONS' | translate }}</h2>
+          </ion-label>
+        </ion-list-header>
+        <ion-item button detail (click)="openPrivacyPolicy()">
+          <ion-icon name="document-outline" slot="start"></ion-icon>
+          <ion-label>{{ 'PROFILE.PRIVACY_POLICY' | translate }}</ion-label>
+        </ion-item>
+        <ion-item button detail (click)="logout()">
+          <ion-icon name="exit-outline" slot="start"></ion-icon>
+          <ion-label>{{ 'COMMON.LOGOUT' | translate }}</ion-label>
+        </ion-item>
+        <p class="ion-text-center">
+          <ion-text color="medium">{{ 'PROFILE.VERSION' | translate }} {{ version }}</ion-text>
+        </p>
+      </ion-list>
+
+      <ion-list class="aList dangerous">
+        <h3 class="ion-text-center">
+          <ion-text color="danger">{{ 'PROFILE.DANGEROUS_AREA' | translate }}</ion-text>
+        </h3>
+        <p>
+          <ion-button
+            fill="outline"
+            color="danger"
+            expand="block"
+            style="text-transform: none"
+            (click)="deleteAccount()"
+          >
+            {{ 'PROFILE.DELETE_MY_DATA' | translate }}
+          </ion-button>
+        </p>
+      </ion-list>
+    </ion-list>
+  </div>
+</ion-content>

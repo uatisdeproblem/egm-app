@@ -28,13 +28,6 @@ export class AuthService {
   }
 
   /**
-   * Get the current user.
-   */
-  async getCurrentUser(): Promise<User> {
-    return new User(await this.api.getResource(['users', 'me']));
-  }
-
-  /**
    * Get the URL to follow to start a new sign-in flow with ESN Accounts.
    */
   getURLToStartSignInWithESNAccounts(): string {
@@ -74,33 +67,11 @@ export class AuthService {
     await this.api.postResource('cognito', { body });
   }
 
-  // -----
-
   /**
-   * Updates a profile.
-   * ! Only for externals currently
+   * Sign-out the current user.
    */
-  async updateProfile(profile: User): Promise<void> {
-    await this.api.putResource(['externals', profile.userId], { body: profile });
-  }
-
-  /**
-   * Deletes a profile.
-   */
-  async deleteProfile(profile: User): Promise<void> {
-    await this.api.deleteResource(['users', profile.userId]);
-  }
-
-  /**
-   * Sets the image URI for the avatar.
-   */
-  async setImageURI(profile: User, file: File): Promise<string> {
-    const { url, id } = await this.api.patchResource(['users'], {
-      body: { action: 'GET_IMAGE_UPLOAD_URL' }
-    });
-
-    await fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
-
-    return id;
+  async logout(): Promise<void> {
+    await this.storage.clear();
+    window.location.assign('');
   }
 }

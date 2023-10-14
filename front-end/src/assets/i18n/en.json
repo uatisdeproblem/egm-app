@@ -114,5 +114,24 @@
     "ACCOUNT_NOT_FOUND": "Account not found",
     "RESET_PASSWORD_INSTRUCTIONS_TO_YOUR_EMAIL": "You received instructions to reset the password to your email address. Please, check your spam folder.",
     "NEW_PASSWORD": "New password"
+  },
+  "TABS": {
+    "PROFILE": "Profile"
+  },
+  "PROFILE": {
+    "ESN_ACCOUNTS": "ESN Accounts",
+    "FIRST_NAME": "First name",
+    "LAST_NAME": "Last name",
+    "EMAIL_FOR_NOTIFICATIONS": "Email address for notifications",
+    "ROLE": "Role",
+    "EVENT_REGISTRATION": "Event registration",
+    "OTHER_ACTIONS": "Other actions",
+    "VERSION": "Version",
+    "PRIVACY_POLICY": "Privacy Policy",
+    "DELETE_MY_DATA": "Delete my account and data",
+    "DANGEROUS_AREA": "Dangerous area",
+    "COMPLETE_PROFILE_TO_REGISTER_TO_EVENT": "Complete the profile above to register to the event",
+    "YOU_ARE_NOT_REGISTERED": "You are not registered to the event",
+    "REGISTER_TO_EVENT": "Tap to register for the event"
   }
 }

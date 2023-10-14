@@ -3,13 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { ProfilePage } from './profile.page';
 
-const routes: Routes = [
-  { path: '', component: ProfilePage },
-  {
-    path: 'my-registration',
-    loadChildren: () => import('../../registrations/registration.module').then(m => m.RegistrationModule)
-  }
-];
+const routes: Routes = [{ path: '', component: ProfilePage }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

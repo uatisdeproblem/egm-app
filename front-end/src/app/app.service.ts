@@ -12,12 +12,24 @@ import {
 import { IDEAAuthService } from '@idea-ionic/auth';
 
 import { environment as env } from '@env';
-import { User } from '@models/user.model';
+import { AuthServices, User } from '@models/user.model';
 
+/**
+ * The base URLs where the thumbnails are located.
+ */
+const THUMBNAILS_BASE_URL = env.idea.app.mediaUrl.concat('/images/', env.idea.api.stage, '/');
 /**
  * A local fallback URL for the users avatars.
  */
 const AVATAR_FALLBACK_URL = './assets/imgs/no-avatar.jpg';
+/**
+ * The local URL to the icon.
+ */
+const APP_ICON_PATH = './assets/icons/icon.svg';
+/**
+ * The local URL to the icon.
+ */
+const APP_ICON_WHITE_PATH = './assets/icons/star-white.svg';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
@@ -89,6 +101,12 @@ export class AppService {
     else this.navCtrl.navigateForward(path, options);
   }
   /**
+   * Navigate to a page in the tabs routing by its path.
+   */
+  goToInTabs(path: string[], options: { back?: boolean; root?: boolean; queryParams?: Params } = {}): void {
+    this.goTo(['t', ...path], options);
+  }
+  /**
    * Close the current page and navigate back, optionally displaying an error message.
    */
   closePage(errorMessage?: string, pathBack?: string[]): void {
@@ -101,71 +119,40 @@ export class AppService {
   }
 
   /**
-   * Get the URL to a user's profile image (avatar).
+   * Get the URL to an image by its URI.
    */
-  getUserImageURL(user: User): string {
-    return user?.avatarURL ? user.avatarURL : AVATAR_FALLBACK_URL;
-  }
-  // ! IN CASE WE PUT ESN GALAXY AVATARS ON S3
-  //   /**
-  //  * Get the URL to an image by its URI.
-  //  */
-  //   getImageURLByURI(imageURI: string): string {
-  //     return imageURI ? THUMBNAILS_BASE_URL.concat(imageURI, '.png') : null;
-  //   }
-  //   /**
-  //    * Get the URL to a user's profile image (avatar).
-  //    */
-  //   getUserImageURL(user: User): string {
-  //     return user?.imageURI ? this.getImageURLByURI(user.imageURI) : AVATAR_FALLBACK_URL;
-  //   }
-  // ! IN CASE WE PUT ESN GALAXY AVATARS ON S3
-
-  /**
-   * Actions on the current user.
-   */
-  async openUserPreferences(): Promise<void> {
-    const header = this.user.firstName;
-    const buttons = [
-      { text: this.t._('COMMON.LOGOUT'), icon: 'log-out', handler: () => this.logout() },
-      { text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' }
-    ];
-
-    const actions = await this.actionSheetCtrl.create({ header, buttons });
-    actions.present();
+  getImageURLByURI(imageURI: string): string {
+    return THUMBNAILS_BASE_URL.concat(imageURI, '.png');
   }
   /**
-   * Show some app's info.
+   * Load a fallback URL when an avatar is missing.
    */
-  async info(): Promise<void> {
-    const openPrivacyPolicy = () => Browser.open({ url: this.t._('IDEA_VARIABLES.PRIVACY_POLICY_URL') });
-
-    const header = this.t._('COMMON.APP_NAME');
-    const message = this.t._('COMMON.VERSION', { v: env.idea.app.version });
-    const buttons = [
-      { text: this.t._('IDEA_AUTH.PRIVACY_POLICY'), handler: openPrivacyPolicy },
-      { text: this.t._('COMMON.CLOSE') }
-    ];
-
-    const alert = await this.alertCtrl.create({ header, message, buttons });
-    alert.present();
+  fallbackAvatar(targetImg: any, star = false): void {
+    const fallbackURL = star ? APP_ICON_WHITE_PATH : AVATAR_FALLBACK_URL;
+    if (targetImg && targetImg.src !== fallbackURL) targetImg.src = AVATAR_FALLBACK_URL;
+  }
+  /**
+   * Get the URL to the fallback avatar's image.
+   */
+  getAvatarFallbackURL(star = false): string {
+    return star ? APP_ICON_WHITE_PATH : AVATAR_FALLBACK_URL;
   }
 
   /**
-   * Sign-out from the current user.
+   * Open the URL in the browser.
    */
-  async logout(): Promise<void> {
-    const doLogout = async (): Promise<void> => {
-      await this.storage.clear();
-      this.reloadApp();
-    };
-
-    const header = this.t._('COMMON.LOGOUT');
-    const message = this.t._('COMMON.ARE_YOU_SURE');
-    const buttons = [{ text: this.t._('COMMON.CANCEL') }, { text: this.t._('COMMON.LOGOUT'), handler: doLogout }];
-
-    const alert = await this.alertCtrl.create({ header, message, buttons });
-    alert.present();
+  async openURL(url: string): Promise<void> {
+    const windowName = this.platform.is('ios') ? '_parent' : '_blank';
+    await Browser.open({ url, windowName });
+  }
+  /**
+   * Open a user's profile on ESN Accounts.
+   */
+  async openUserProfileInESNAccounts(user: User): Promise<void> {
+    if (user.authService !== AuthServices.ESN_ACCOUNTS) return;
+    const galaxyId = user.getAuthServiceUserId();
+    const cleanESNAccountsIdForURL = (id: string): string => id.replace(/[._@]/gm, '').replace(/\s/gm, '-');
+    await this.openURL('https://accounts.esn.org/user/'.concat(cleanESNAccountsIdForURL(galaxyId)));
   }
 
   /**
@@ -180,6 +167,6 @@ export class AppService {
    * Get the app's main icon.
    */
   getIcon(white = false): string {
-    return white ? 'assets/icons/star-white.svg' : 'assets/icons/icon.svg';
+    return white ? APP_ICON_WHITE_PATH : APP_ICON_PATH;
   }
 }

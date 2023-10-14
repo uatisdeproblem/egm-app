@@ -6,10 +6,6 @@ export class User extends Resource {
    */
   userId: string;
   /**
-   * Whether the user profile is complete.
-   */
-  profileComplete: boolean;
-  /**
    * Timestamp of when the user registered.
    */
   registeredAt: epochISOString;
@@ -64,7 +60,6 @@ export class User extends Resource {
   load(x: any): void {
     super.load(x);
     this.userId = this.clean(x.userId, String);
-    this.profileComplete = this.clean(x.profileComplete, Boolean, false);
     this.registeredAt = this.clean(x.registeredAt, t => new Date(t).toISOString(), new Date().toISOString());
     this.lastSeenAt = new Date().toISOString();
     this.authService = this.clean(x.authService, String);
@@ -85,7 +80,6 @@ export class User extends Resource {
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
     this.userId = safeData.userId;
-    this.profileComplete = safeData.profileComplete;
     this.registeredAt = safeData.registeredAt;
     this.lastSeenAt = new Date().toISOString();
     this.authService = safeData.authService;
@@ -112,6 +106,13 @@ export class User extends Resource {
    */
   isAdmin(): boolean {
     return this.role >= Roles.ADMIN;
+  }
+
+  /**
+   * Get the original user ID in the AuthService.
+   */
+  getAuthServiceUserId(): string {
+    return this.userId.slice(this.authService.concat('_').length);
   }
 
   /**

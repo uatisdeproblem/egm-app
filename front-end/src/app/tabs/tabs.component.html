@@ -1,10 +1,18 @@
-<ion-tabs>
-  <ion-tab-bar slot="bottom" color="white">
-    <ng-container *ngFor="let tab of tabs">
-      <ion-tab-button *ngIf="canUserSeeTabButton(tab)" [tab]="tab.id">
-        <ion-icon color="dark" [icon]="tab.icon"></ion-icon>
-      </ion-tab-button>
-    </ng-container>
-    <ion-badge class="ion-margin-end" *ngIf="isDevEnvironment()">DEV</ion-badge>
+<ion-tabs class="desktopTabs" *ngIf="!app.isInMobileMode()">
+  <ion-tab-bar color="ideaToolbar" slot="top">
+    <ion-tab-button (click)="app.goTo([''])">
+      <ion-img [src]="app.getIcon()"></ion-img>
+    </ion-tab-button>
+    <ion-tab-button tab="profile">
+      <ion-label>{{ 'TABS.PROFILE' | translate }}</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+
+<ion-tabs class="mobileTabs" *ngIf="app.isInMobileMode()">
+  <ion-tab-bar color="ideaToolbar" slot="bottom">
+    <ion-tab-button tab="profile">
+      <ion-icon icon="person"></ion-icon>
+    </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

@@ -94,49 +94,17 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
-  /users:
-    patch:
-      summary: Actions on the users.
-      description: For users coming from galaxy.
-      tags: [Users]
-      security:
-        - AuthFunction: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: [GET_IMAGE_UPLOAD_URL]
-      responses:
-        200:
-          $ref: '#/components/responses/OperationCompleted'
-        400:
-          $ref: '#/components/responses/BadParameters'
-    delete:
-      summary: Remove the user's profile.
-      description: Users can delete their own data. Assistants can delete everyone's
-      tags: [Users]
-      security:
-        - AuthFunction: []
-      responses:
-        200:
-          $ref: '#/components/responses/User'
-        400:
-          $ref: '#/components/responses/BadParameters'
   /users/{userId}:
     get:
-      summary: Get an ESNer's profile.
+      summary: Get a user's profile
+      description: Requires to be the requesting user or admin
       tags: [Users]
       security:
         - AuthFunction: []
       parameters:
         - name: userId
           in: path
-          description: The user's galaxy ID.
+          description: The user ID.
           required: true
           schema:
             type: string
@@ -145,9 +113,32 @@ paths:
           $ref: '#/components/responses/User'
         400:
           $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit a user's data
+      description: Requires to be the requesting user or admin
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: userId
+          in: path
+          description: The user ID.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+        400:
+          $ref: '#/components/responses/BadParameters'
     patch:
-      summary: Actions on an user.
-      description: Only for admins.
+      summary: Actions on an user
       tags: [Users]
       security:
         - AuthFunction: []
@@ -160,13 +151,24 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: [CHANGE_ROLE]
+                  enum: [CHANGE_ROLE, GET_AVATAR_UPLOAD_URL]
                 role:
                   type: number
-                  enum: [CHANGE_ROLE]
+                  description: (CHANGE_ROLE)
       responses:
         200:
           $ref: '#/components/responses/User'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Remove a user's profile and data
+      description: Requires to be the requesting user or admin
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
   /registrations:

@@ -31,10 +31,13 @@ export class RegistrationPage {
   ) {}
 
   async ionViewWillEnter(): Promise<void> {
-    if (!this.app.user.isAdmin() && this.route.snapshot.paramMap.get('registrationId')) {
+    let registrationId = this.route.snapshot.paramMap.get('registrationId');
+    if (registrationId === 'me') registrationId = this.app.user.userId;
+
+    if (!this.app.user.isAdmin() && registrationId) {
       // @todo add auth control
     }
-    const registrationId = this.route.snapshot.paramMap.get('registrationId') || this.app.user.userId;
+
     await this.loadRegistration(registrationId);
   }
   private async loadRegistration(registrationId: string): Promise<void> {

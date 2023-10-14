@@ -2,9 +2,10 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
-import { Roles, User } from '../models/user.model';
+import { Cognito, DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
 import { SignedURL } from 'idea-toolbox';
+
+import { AuthServices, Roles, User } from '../models/user.model';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -18,6 +19,9 @@ const S3_BUCKET_MEDIA = process.env.S3_BUCKET_MEDIA;
 const S3_IMAGES_FOLDER = process.env.S3_IMAGES_FOLDER;
 const s3 = new S3();
 
+const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
+const cognito = new Cognito();
+
 export const handler = (ev: any, _: any, cb: any): Promise<void> => new UsersRC(ev, cb).handleRequest();
 
 ///
@@ -25,7 +29,7 @@ export const handler = (ev: any, _: any, cb: any): Promise<void> => new UsersRC(
 ///
 
 class UsersRC extends ResourceController {
-  requestingUser: User;
+  reqUser: User;
   targetUser: User;
 
   constructor(event: any, callback: any) {
@@ -34,7 +38,7 @@ class UsersRC extends ResourceController {
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
-      this.requestingUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
+      this.reqUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
       throw new RCError('Requesting user not found');
     }
@@ -44,11 +48,11 @@ class UsersRC extends ResourceController {
     if (!this.resourceId) return;
 
     if (this.principalId === this.resourceId) {
-      this.targetUser = this.requestingUser;
+      this.targetUser = this.reqUser;
       return;
     }
 
-    if (this.principalId !== this.resourceId && !this.requestingUser.isAdmin()) throw new RCError('Unauthorized');
+    if (this.principalId !== this.resourceId && !this.reqUser.isAdmin()) throw new RCError('Unauthorized');
 
     try {
       this.targetUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.resourceId } }));
@@ -62,71 +66,57 @@ class UsersRC extends ResourceController {
   }
 
   protected async putResource(): Promise<User> {
-    const oldProfile = new User(this.targetUser);
-    this.targetUser.safeLoad(this.body, oldProfile);
+    const oldUser = new User(this.targetUser);
+    this.targetUser.safeLoad(this.body, oldUser);
 
-    return await this.putSafeResource({ noOverwrite: false });
+    return await this.putSafeResource();
+  }
+  private async putSafeResource(): Promise<User> {
+    const errors = this.targetUser.validate();
+    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+
+    await ddb.put({ TableName: DDB_TABLES.users, Item: this.targetUser });
+    return this.targetUser;
   }
 
-  protected async patchResource(): Promise<User> {
+  protected async patchResource(): Promise<User | SignedURL> {
     switch (this.body.action) {
+      case 'GET_AVATAR_UPLOAD_URL':
+        return await this.getSignedURLToUploadAvatar();
       case 'CHANGE_ROLE':
         return await this.changeUserRole(this.body.role);
       default:
         throw new RCError('Unsupported action');
     }
   }
-
   private async changeUserRole(role: Roles): Promise<User> {
-    if (!this.requestingUser.isAdmin()) throw new RCError('Unauthorized');
+    if (!this.reqUser.isAdmin()) throw new RCError('Unauthorized');
 
-    try {
-      await ddb.update({
-        TableName: DDB_TABLES.users,
-        Key: { userId: this.targetUser.userId },
-        UpdateExpression: `SET role = :role`,
-        ExpressionAttributeValues: { ':role': role }
-      });
-      return this.targetUser;
-    } catch (err) {
-      throw new RCError('Error updating user role');
-    }
-  }
-
-  private async putSafeResource(opts: { noOverwrite: boolean }): Promise<User> {
-    const errors = this.targetUser.validate();
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
-
-    const putParams: any = { TableName: DDB_TABLES.users, Item: this.targetUser };
-    if (opts.noOverwrite) putParams.ConditionExpression = 'attribute_not_exists(userId)';
-    await ddb.put(putParams);
-
+    await ddb.update({
+      TableName: DDB_TABLES.users,
+      Key: { userId: this.targetUser.userId },
+      UpdateExpression: 'SET role = :role',
+      ExpressionAttributeValues: { ':role': role }
+    });
     return this.targetUser;
   }
+  private async getSignedURLToUploadAvatar(): Promise<SignedURL> {
+    if (this.reqUser !== this.targetUser) throw new RCError('Unauthorized');
 
-  protected async deleteResources(): Promise<void> {
-    await ddb.delete({
-      TableName: DDB_TABLES.users,
-      Key: { userId: this.targetUser.userId }
-    });
-  }
-
-  protected async patchResources(): Promise<SignedURL> {
-    switch (this.body.action) {
-      case 'GET_IMAGE_UPLOAD_URL':
-        return await this.getSignedURLToUploadImage();
-      default:
-        throw new RCError('Unsupported action');
-    }
-  }
-
-  private async getSignedURLToUploadImage(): Promise<SignedURL> {
     const imageURI = await ddb.IUNID(PROJECT.concat('-avatar-'));
-
     const key = `${S3_IMAGES_FOLDER}/${imageURI}.png`;
-    const signedURL = await s3.signedURLPut(S3_BUCKET_MEDIA, key, { filename: `${this.targetUser.userId}-avatar.png` });
+    const signedURL = await s3.signedURLPut(S3_BUCKET_MEDIA, key);
     signedURL.id = imageURI;
-
     return signedURL;
+  }
+
+  protected async deleteResource(): Promise<void> {
+    if (this.targetUser.authService === AuthServices.COGNITO) {
+      const cognitoUserId = this.targetUser.getAuthServiceUserId();
+      const { email: cognitoUserEmail } = await cognito.getUserBySub(cognitoUserId, COGNITO_USER_POOL_ID);
+      await cognito.deleteUser(cognitoUserEmail, COGNITO_USER_POOL_ID);
+    }
+    await ddb.delete({ TableName: DDB_TABLES.users, Key: { userId: this.targetUser.userId } });
+    // @todo delete all user-related data
   }
 }
