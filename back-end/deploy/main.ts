@@ -118,7 +118,9 @@ const createApp = async (): Promise<void> => {
     env,
     project: parameters.project,
     stage: STAGE,
-    domain: STAGE_VARIABLES.domain
+    domain: STAGE_VARIABLES.domain,
+    alternativeDomain: STAGE_VARIABLES.alternativeDomain || '',
+    certificateARN: STAGE_VARIABLES.frontEndCertificateARN
   });
 };
 createApp();

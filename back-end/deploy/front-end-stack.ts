@@ -12,6 +12,8 @@ export interface FrontEndProps extends cdk.StackProps {
   project: string;
   stage: string;
   domain: string;
+  alternativeDomain: string;
+  certificateARN: string;
 }
 
 export class FrontEndStack extends cdk.Stack {
@@ -33,11 +35,7 @@ export class FrontEndStack extends cdk.Stack {
       domainName: props.domain.split('.').slice(-2).join('.')
     });
 
-    const certificate = new ACM.DnsValidatedCertificate(this, 'Certificate', {
-      domainName: props.domain,
-      hostedZone: zone,
-      region: 'us-east-1'
-    });
+    const certificate = ACM.Certificate.fromCertificateArn(this, 'CloudFrontCertificate', props.certificateARN);
 
     const frontEndDistributionOAI = new CloudFront.OriginAccessIdentity(this, 'DistributionOAI', {
       comment: `OAI for https://${props.domain}`
@@ -57,7 +55,7 @@ export class FrontEndStack extends cdk.Stack {
         { errorCachingMinTtl: 0, errorCode: 404, responseCode: 200, responsePagePath: '/index.html' }
       ],
       viewerCertificate: CloudFront.ViewerCertificate.fromAcmCertificate(certificate, {
-        aliases: [props.domain],
+        aliases: props.alternativeDomain ? [props.domain, props.alternativeDomain] : [props.domain],
         securityPolicy: CloudFront.SecurityPolicyProtocol.TLS_V1_2_2021
       })
     });
