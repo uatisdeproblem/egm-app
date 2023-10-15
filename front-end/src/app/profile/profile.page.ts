@@ -121,8 +121,11 @@ export class ProfilePage {
   }
 
   async deleteAccount(): Promise<void> {
-    const doDelete = async (): Promise<void> => {
+    const confirmKey = this.t._('COMMON.CONFIRM').toLowerCase();
+    const doDelete = async (data: any): Promise<void> => {
       try {
+        const typedKey = data?.confirmKey?.trim();
+        if (typedKey !== confirmKey) return;
         await this.loading.show();
         await this._users.delete(this.app.user);
         await this.auth.logout();
@@ -135,13 +138,14 @@ export class ProfilePage {
     };
     const header = this.t._('PROFILE.DELETE_MY_DATA');
     const subHeader = this.t._('COMMON.ARE_YOU_SURE');
-    const message = this.t._('COMMON.ACTION_IS_IRREVERSIBLE');
+    const message = this.t._('PROFILE.DELETE_MY_DATA_MSG', { confirmKey });
+    const inputs: any = [{ name: 'confirmKey', type: 'text', placeholder: confirmKey }];
     const buttons = [
       { text: this.t._('COMMON.CANCEL'), role: 'cancel' },
       { text: this.t._('COMMON.DELETE'), role: 'destructive', handler: doDelete }
     ];
 
-    const alert = await this.alertCtrl.create({ header, subHeader, message, buttons });
+    const alert = await this.alertCtrl.create({ header, subHeader, message, inputs, buttons });
     await alert.present();
   }
 }

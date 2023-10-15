@@ -129,6 +129,7 @@
     "VERSION": "Version",
     "PRIVACY_POLICY": "Privacy Policy",
     "DELETE_MY_DATA": "Delete my account and data",
+    "DELETE_MY_DATA_MSG": "The action is irreversible! Please, if you are sure, confirm the operation by typing \"{{confirmKey}}\" here below:",
     "DANGEROUS_AREA": "Dangerous area",
     "COMPLETE_PROFILE_TO_REGISTER_TO_EVENT": "Complete the profile above to register to the event",
     "YOU_ARE_NOT_REGISTERED": "You are not registered to the event",
