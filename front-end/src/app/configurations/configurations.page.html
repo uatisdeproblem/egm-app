@@ -13,12 +13,13 @@
     >
       <ion-list-header>
         <ion-label>
-          <h2>{{ 'CONFIGURATIONS.USERS_AND_EVENT' | translate }}</h2>
+          <h2>{{ 'CONFIGURATIONS.USERS_AND_REGISTRATIONS' | translate }}</h2>
+          <p>{{ 'CONFIGURATIONS.USERS_AND_REGISTRATIONS_I' | translate }}</p>
         </ion-label>
       </ion-list-header>
       <ion-item button detail (click)="app.goToInTabs(['users'])">
         <ion-icon slot="start" icon="people-outline"></ion-icon>
-        <ion-label>{{ 'CONFIGURATIONS.USERS_AND_REGISTRATIONS' | translate }}</ion-label>
+        <ion-label>{{ 'CONFIGURATIONS.USERS_LIST' | translate }}</ion-label>
       </ion-item>
       <ng-container *ngIf="app.user.permissions.isAdmin || app.user.permissions.canManageRegistrations">
         <ion-item button detail (click)="app.goToInTabs(['spots'])">
@@ -35,6 +36,7 @@
       <ion-list-header>
         <ion-label>
           <h2>{{ 'CONFIGURATIONS.CONTENTS' | translate }}</h2>
+          <p>{{ 'CONFIGURATIONS.CONTENTS_I' | translate }}</p>
         </ion-label>
       </ion-list-header>
       <ion-item>
@@ -58,6 +60,7 @@
       <ion-list-header>
         <ion-label>
           <h2>{{ 'CONFIGURATIONS.EMAIL_TEMPLATES' | translate }}</h2>
+          <p>{{ 'CONFIGURATIONS.EMAIL_TEMPLATES_I' | translate }}</p>
         </ion-label>
       </ion-list-header>
       <ion-item button detail (click)="app.goToInTabs(['emails'])">

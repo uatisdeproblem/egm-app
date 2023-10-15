@@ -159,8 +159,9 @@
     "ASSIGNED_TO_USER": "Assigned to user"
   },
   "CONFIGURATIONS": {
-    "USERS_AND_EVENT": "Users and event",
     "USERS_AND_REGISTRATIONS": "Users and event registrations",
+    "USERS_AND_REGISTRATIONS_I": "Manage the users and everything related to the event registrations.",
+    "USERS_LIST": "Users list",
     "SPOTS_MANAGEMENT": "Spots management",
     "EMAIL_TEMPLATES": "Email templates",
     "EMAIL_TEMPLATES_I": "Set the templates for the following notification emails",
@@ -171,6 +172,7 @@
     },
     "REGISTRATIONS_SETTINGS": "Registrations settings",
     "CONTENTS": "Contents",
+    "CONTENTS_I": "Create and organise the contents of the event.",
     "COMMUNICATIONS": "Communications",
     "SPEAKERS": "Speakers",
     "ORGANIZATIONS": "Organisations",
