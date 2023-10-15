@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { AlertController, NavController, Platform } from '@ionic/angular';
 import { Browser } from '@capacitor/browser';
-import { IDEAApiService, IDEAMessageService } from '@idea-ionic/common';
+import { IDEAApiService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { environment as env } from '@env';
-import { AuthServices, User } from '@models/user.model';
+import { AuthServices, User, UserPermissions } from '@models/user.model';
 import { Configurations } from '@models/configurations.model';
 
 /**
@@ -40,6 +40,7 @@ export class AppService {
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private message: IDEAMessageService,
+    private t: IDEATranslationsService,
     private api: IDEAApiService
   ) {
     this.darkMode = this.respondToColorSchemePreferenceChanges();
@@ -173,5 +174,17 @@ export class AppService {
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
+  }
+
+  /**
+   * Get the permissions of a user as printable string.
+   */
+  getUserPermissionsString(permissions: UserPermissions): string {
+    if (permissions.isAdmin) return this.t._('PROFILE.ADMINISTRATOR');
+    const arrPermissions = [];
+    if (permissions.isCountryLeader) arrPermissions.push(this.t._('PROFILE.DELEGATION_LEADER'));
+    if (permissions.canManageRegistrations) arrPermissions.push(this.t._('PROFILE.CAN_MANAGE_REGISTRATIONS'));
+    if (permissions.canManageContents) arrPermissions.push(this.t._('PROFILE.CAN_MANAGE_CONTENTS'));
+    return arrPermissions.join(', ');
   }
 }

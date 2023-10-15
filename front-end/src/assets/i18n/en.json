@@ -123,6 +123,8 @@
     "ESN_ACCOUNTS": "ESN Accounts",
     "FIRST_NAME": "First name",
     "LAST_NAME": "Last name",
+    "ESN_SECTION": "ESN section",
+    "ESN_COUNTRY": "ESN country",
     "EMAIL_FOR_NOTIFICATIONS": "Email address for notifications",
     "EVENT_REGISTRATION": "Event registration",
     "OTHER_ACTIONS": "Other actions",
@@ -162,7 +164,16 @@
     "ACCEPT_TC": "I read and I agree with the event's Terms and Conditions",
     "TC_URL": "https://docs.google.com/document/d/1BgmXJTmoHSvCYrZe7ibScXVJmC_RpboeC1Bzwku8b6g/edit?usp=sharing",
     "ACCEPT_COC": "I read and I agree with the event's Code of Conduct",
-    "COC_URL": "https://egm-app.click/assets/docs/egm-24-coc.pdf"
+    "COC_URL": "https://egm-app.click/assets/docs/egm-24-coc.pdf",
+    "REGISTERED": "Registered",
+    "SPOT": "Spot",
+    "PAID": "Paid",
+    "CONFIRMED": "Confirmed",
+    "PERMISSIONS": "Permissions",
+    "NUM_ROWS_SELECTED": "{{num}} rows selected",
+    "ACTIONS_ON_NUM_ROWS": "Actions on {{num}} rows",
+    "SELECTED": "Selected",
+    "USERS": "Users"
   },
   "CONFIGURATIONS": {
     "USERS_AND_REGISTRATIONS": "Users and event registrations",
@@ -172,13 +183,13 @@
     "EMAIL_TEMPLATES": "Email templates",
     "EMAIL_TEMPLATES_I": "Set the templates for the following notification emails",
     "EMAIL_TEMPLATES_TYPES": {
-      "SPOT_ASSIGNED": "A spot has been assigned to a user.",
+      "SPOT_ASSIGNED": "A spot has been assigned to a user",
       "REGISTRATION_CONFIRMED": "A user's spot has been paid and confirmed"
     },
     "DOCUMENT_TEMPLATES": "Document templates",
     "DOCUMENT_TEMPLATES_I": "Set the templates for the following documents",
     "DOCUMENT_TEMPLATES_TYPES": {
-      "INVOICE": "The invoice for user spot payment."
+      "INVOICE": "The invoice for user spot payment"
     },
     "REGISTRATIONS_SETTINGS": "Registrations settings",
     "CONTENTS": "Contents",

@@ -81,7 +81,7 @@
         <ion-button slot="start" fill="clear" color="white" *ngIf="editProfileMode" (click)="saveProfile()">
           <ion-icon icon="checkmark" slot="icon-only"></ion-icon>
         </ion-button>
-        <ion-label class="ion-text-right">{{ getPrintablePermissions() }}</ion-label>
+        <ion-label class="ion-text-right">{{ app.getUserPermissionsString(app.user.permissions) }}</ion-label>
       </ion-item>
     </ion-list>
 

@@ -50,7 +50,7 @@ export class SpotsPage implements OnInit {
     try {
       await this.loading.show();
       this.spots = await this._spots.getList();
-      this.updateFilter();
+      this.filter();
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
     } finally {
@@ -69,7 +69,7 @@ export class SpotsPage implements OnInit {
     return row.spotId;
   }
 
-  updateFilter(searchText?: string): void {
+  filter(searchText?: string): void {
     searchText = (searchText ?? '').toLowerCase();
 
     this.filteredSpots = this.spots.filter(x =>

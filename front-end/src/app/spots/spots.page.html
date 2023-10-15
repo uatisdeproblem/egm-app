@@ -6,7 +6,7 @@
     <ion-title>{{ 'EVENT_REGISTRATIONS.REGISTRATIONS' | translate }}</ion-title>
   </ion-toolbar>
   <ion-toolbar color="ideaToolbar">
-    <ion-searchbar (ionInput)="updateFilter($event?.target?.value)"></ion-searchbar>
+    <ion-searchbar (ionInput)="filter($event?.target?.value)"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 <ion-content>

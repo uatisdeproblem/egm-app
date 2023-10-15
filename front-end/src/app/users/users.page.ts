@@ -1,12 +1,17 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { IonSearchbar } from '@ionic/angular';
 import { ColumnMode, SelectionType, TableColumn, DatatableComponent } from '@swimlane/ngx-datatable';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import {
+  IDEAActionSheetController,
+  IDEALoadingService,
+  IDEAMessageService,
+  IDEATranslationsService
+} from '@idea-ionic/common';
 
 import { AppService } from '@app/app.service';
 import { UsersService } from '@app/users/users.service';
 
-import { User } from '@models/user.model';
+import { User, UserPermissions } from '@models/user.model';
 
 @Component({
   selector: 'users',
@@ -18,8 +23,8 @@ export class UsersPage implements OnInit {
   @ViewChild('usersTable') table: DatatableComponent;
 
   col: TableColumn[];
-  selectionType = SelectionType.single;
-  trackByProp = 'requestId';
+  selectionType = SelectionType.checkbox;
+  trackByProp = 'userId';
   columnMode = ColumnMode.force;
   limit = 10;
 
@@ -29,19 +34,51 @@ export class UsersPage implements OnInit {
 
   users: User[];
   filteredUsers: User[];
+  filters: RowsFilters = { registered: null, spot: null, paid: null, confirmed: null };
+
+  numRegistered = 0;
+  numWithSpot = 0;
+  numWhoPaid = 0;
+  numConfirmed = 0;
 
   constructor(
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     private t: IDEATranslationsService,
+    private actionsCtrl: IDEAActionSheetController,
     private _users: UsersService,
     public app: AppService
   ) {}
   async ngOnInit(): Promise<void> {
     this.col = [
+      { width: 40, sortable: false, headerCheckboxable: true, checkboxable: true },
       { prop: 'firstName', name: this.t._('PROFILE.FIRST_NAME') },
       { prop: 'lastName', name: this.t._('PROFILE.LAST_NAME') },
-      { prop: 'email', name: this.t._('PROFILE.EMAIL') }
+      { prop: 'sectionCountry', name: this.t._('PROFILE.ESN_COUNTRY') },
+      { prop: 'sectionName', name: this.t._('PROFILE.ESN_SECTION') },
+      {
+        prop: 'registrationAt',
+        name: this.t._('EVENT_REGISTRATIONS.REGISTERED'),
+        pipe: { transform: x => this.t.formatDate(x) }
+      },
+      { prop: 'spot', name: this.t._('EVENT_REGISTRATIONS.SPOT') },
+      {
+        prop: 'proofOfPaymentURI',
+        name: this.t._('EVENT_REGISTRATIONS.PAID'),
+        pipe: { transform: x => (x ? !!x : '') }
+      },
+      {
+        prop: 'confirmedAt',
+        name: this.t._('EVENT_REGISTRATIONS.CONFIRMED'),
+        pipe: { transform: x => (x ? !!x : '') }
+      },
+      {
+        prop: 'permissions',
+        name: this.t._('PROFILE.PERMISSIONS'),
+        comparator: (a: UserPermissions, b: UserPermissions): number =>
+          this.app.getUserPermissionsString(a).localeCompare(this.app.getUserPermissionsString(b)),
+        pipe: { transform: x => this.app.getUserPermissionsString(x) }
+      }
     ];
     this.col.forEach(c => (c.resizeable = false));
     this.setTableHeight();
@@ -49,7 +86,7 @@ export class UsersPage implements OnInit {
     try {
       await this.loading.show();
       this.users = await this._users.getList();
-      this.updateFilter();
+      this.filter();
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
     } finally {
@@ -68,19 +105,69 @@ export class UsersPage implements OnInit {
     return row.userId;
   }
 
-  updateFilter(searchText?: string): void {
+  filter(searchText?: string): void {
     searchText = (searchText ?? '').toLowerCase();
 
-    this.filteredUsers = this.users.filter(x =>
+    this.filteredUsers = this.users.slice();
+
+    this.filteredUsers = this.filteredUsers.filter(x =>
       [x.firstName, x.lastName, x.email].filter(f => f).some(f => String(f).toLowerCase().includes(searchText))
     );
+    if (this.filters.registered)
+      this.filteredUsers = this.filteredUsers.filter(x =>
+        this.filters.registered === 'yes' ? !!x.registrationAt : !x.registrationAt
+      );
+    if (this.filters.spot) this.filteredUsers = this.filteredUsers.filter(x => this.filters.spot === x.spot);
+    if (this.filters.paid)
+      this.filteredUsers = this.filteredUsers.filter(x =>
+        this.filters.paid === 'yes' ? !!x.proofOfPaymentURI : !x.proofOfPaymentURI
+      );
+    if (this.filters.confirmed)
+      this.filteredUsers = this.filteredUsers.filter(x =>
+        this.filters.confirmed === 'yes' ? !!x.confirmedAt : !x.confirmedAt
+      );
+
+    this.calcFooterTotals();
 
     // whenever the filter changes, always go back to the first page
     this.table.offset = 0;
   }
 
-  async openDetail({ selected }: { selected: User[] }): Promise<void> {
-    if (!selected.length) return;
-    this.app.goToInTabs(['event-registrations', selected[0].userId]);
+  async actionsOnSelectedRows(): Promise<void> {
+    if (!this.table.selected.length) return;
+
+    const header = this.t._('EVENT_REGISTRATIONS.ACTIONS_ON_NUM_ROWS', { num: this.table.selected.length });
+    const buttons = [];
+    buttons.push({ text: 'Assign spot', icon: 'ticket' }); // @todo
+    if (this.table.selected.length === 1) buttons.push({ text: 'Assign country spot', icon: 'earth' }); // @todo
+    buttons.push({ text: 'Confirm participation', icon: 'checkmark-done' }); // @todo
+    buttons.push({ text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' });
+
+    const actions = await this.actionsCtrl.create({ header, buttons });
+    actions.present();
   }
+
+  async openRegistrationOfUser(user: User): Promise<void> {
+    this.app.goToInTabs(['event-registrations', user.userId]);
+  }
+
+  calcFooterTotals(): void {
+    this.numRegistered = 0;
+    this.numWithSpot = 0;
+    this.numWhoPaid = 0;
+    this.numConfirmed = 0;
+    this.filteredUsers.forEach(user => {
+      if (!!user.registrationAt) this.numRegistered++;
+      if (!!user.spot) this.numWithSpot++;
+      if (!!user.proofOfPaymentURI) this.numWhoPaid++;
+      if (!!user.confirmedAt) this.numConfirmed++;
+    });
+  }
+}
+
+interface RowsFilters {
+  registered: null | 'yes' | 'no';
+  spot: null | string;
+  paid: null | 'yes' | 'no';
+  confirmed: null | 'yes' | 'no';
 }
