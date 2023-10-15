@@ -8,6 +8,7 @@ import { ConfigurationsRoutingModule } from './configurations.routing.module';
 import { ConfigurationsPage } from './configurations.page';
 import { EmailsConfigurationsPage } from './emails/emailsConfig.page';
 import { RegistrationsConfigurationsPage } from './registrations/registrationsConfig.page';
+import { EmailTemplateModule } from './emails/emailTemplate/emailTemplate.module';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import { RegistrationsConfigurationsPage } from './registrations/registrationsCo
     IonicModule,
     IDEATranslationsModule,
     IDEACustomFieldsModule,
-    ConfigurationsRoutingModule
+    ConfigurationsRoutingModule,
+    EmailTemplateModule
   ],
   declarations: [ConfigurationsPage, EmailsConfigurationsPage, RegistrationsConfigurationsPage]
 })
