@@ -147,42 +147,36 @@
           </ion-label>
         </ion-item>
       </ng-container>
+    </ion-list>
 
-      <ion-list class="aList">
-        <ion-list-header>
-          <ion-label>
-            <h2>{{ 'PROFILE.OTHER_ACTIONS' | translate }}</h2>
-          </ion-label>
-        </ion-list-header>
-        <ion-item button detail (click)="openPrivacyPolicy()">
-          <ion-icon name="document-outline" slot="start"></ion-icon>
-          <ion-label>{{ 'PROFILE.PRIVACY_POLICY' | translate }}</ion-label>
-        </ion-item>
-        <ion-item button detail (click)="logout()">
-          <ion-icon name="exit-outline" slot="start"></ion-icon>
-          <ion-label>{{ 'COMMON.LOGOUT' | translate }}</ion-label>
-        </ion-item>
-        <p class="ion-text-center">
-          <ion-text color="medium">{{ 'PROFILE.VERSION' | translate }} {{ version }}</ion-text>
-        </p>
-      </ion-list>
+    <ion-list class="aList">
+      <ion-list-header>
+        <ion-label>
+          <h2>{{ 'PROFILE.OTHER_ACTIONS' | translate }}</h2>
+        </ion-label>
+      </ion-list-header>
+      <ion-item button detail (click)="openPrivacyPolicy()">
+        <ion-icon name="document-outline" slot="start"></ion-icon>
+        <ion-label>{{ 'PROFILE.PRIVACY_POLICY' | translate }}</ion-label>
+      </ion-item>
+      <ion-item button detail (click)="logout()">
+        <ion-icon name="exit-outline" slot="start"></ion-icon>
+        <ion-label>{{ 'COMMON.LOGOUT' | translate }}</ion-label>
+      </ion-item>
+      <p class="ion-text-center">
+        <ion-text color="medium">{{ 'PROFILE.VERSION' | translate }} {{ version }}</ion-text>
+      </p>
+    </ion-list>
 
-      <ion-list class="aList dangerous">
-        <h3 class="ion-text-center">
-          <ion-text color="danger">{{ 'PROFILE.DANGEROUS_AREA' | translate }}</ion-text>
-        </h3>
-        <p>
-          <ion-button
-            fill="outline"
-            color="danger"
-            expand="block"
-            style="text-transform: none"
-            (click)="deleteAccount()"
-          >
-            {{ 'PROFILE.DELETE_MY_DATA' | translate }}
-          </ion-button>
-        </p>
-      </ion-list>
+    <ion-list class="aList dangerous">
+      <h3 class="ion-text-center">
+        <ion-text color="danger">{{ 'PROFILE.DANGEROUS_AREA' | translate }}</ion-text>
+      </h3>
+      <p>
+        <ion-button fill="outline" color="danger" expand="block" style="text-transform: none" (click)="deleteAccount()">
+          {{ 'PROFILE.DELETE_MY_DATA' | translate }}
+        </ion-button>
+      </p>
     </ion-list>
   </div>
 </ion-content>
