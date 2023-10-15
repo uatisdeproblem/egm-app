@@ -133,8 +133,7 @@ export class AppService {
    * Open the URL in the browser.
    */
   async openURL(url: string): Promise<void> {
-    const windowName = this.platform.is('ios') ? '_parent' : '_blank';
-    await Browser.open({ url, windowName });
+    await Browser.open({ url, windowName: '_blank' });
   }
   /**
    * Open a user's profile on ESN Accounts.
