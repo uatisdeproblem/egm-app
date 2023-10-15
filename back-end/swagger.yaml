@@ -97,8 +97,37 @@ paths:
         400:
           $ref: '#/components/responses/BadParameters'
   /configurations:
+    get:
+      summary: Get the platform's configurations
+      description: Requires to be admin
+      tags: [Configurations]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Configurations'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit the platform's configurations
+      description: Requires to be admin
+      tags: [Configurations]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configurations'
+      responses:
+        200:
+          $ref: '#/components/responses/Configurations'
+        400:
+          $ref: '#/components/responses/BadParameters'
     patch:
       summary: Set specific configurations
+      description: Requires to be admin
       tags: [Configurations]
       security:
         - AuthFunction: []
@@ -302,6 +331,9 @@ components:
     AppStatus:
       type: object
       additionalProperties: {}
+    Configurations:
+      type: object
+      additionalProperties: {}
     User:
       type: object
       additionalProperties: {}
@@ -317,6 +349,13 @@ components:
           schema:
             type: object
             $ref: '#/components/schemas/AppStatus'
+    Configurations:
+      description: The platform's configurations
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/Configurations'
     User:
       description: A user of the platform
       content:

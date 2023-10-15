@@ -4,7 +4,7 @@
 
 import { DynamoDB, GetObjectTypes, RCError, ResourceController, S3, SES } from 'idea-aws';
 
-import { Configuration } from '../models/configuration.model';
+import { Configurations } from '../models/configurations.model';
 import { User } from '../models/user.model';
 
 ///
@@ -47,7 +47,7 @@ export const handler = (ev: any, _: any, cb: any): Promise<void> => new Configur
 
 class ConfigurationsRC extends ResourceController {
   user: User;
-  configurations: Configuration;
+  configurations: Configurations;
 
   constructor(event: any, callback: any) {
     super(event, callback);
@@ -59,6 +59,34 @@ class ConfigurationsRC extends ResourceController {
     } catch (err) {
       throw new RCError('User not found');
     }
+
+    if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
+
+    try {
+      this.configurations = new Configurations(
+        await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
+      );
+    } catch (err) {
+      throw new RCError('Configuration not found');
+    }
+  }
+
+  protected async getResources(): Promise<Configurations> {
+    return this.configurations;
+  }
+
+  protected async putResources(): Promise<Configurations> {
+    const oldConfig = new Configurations(this.configurations);
+    this.configurations.safeLoad(this.body, oldConfig);
+
+    return await this.putSafeResource();
+  }
+  private async putSafeResource(): Promise<Configurations> {
+    const errors = this.configurations.validate();
+    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+
+    await ddb.put({ TableName: DDB_TABLES.configurations, Item: this.configurations });
+    return this.configurations;
   }
 
   protected async patchResources(): Promise<{ subject: string; content: string } | void> {

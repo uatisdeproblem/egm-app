@@ -6,7 +6,7 @@ import { Cognito, DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
 import { SignedURL } from 'idea-toolbox';
 
 import { AuthServices, User, UserPermissions } from '../models/user.model';
-import { Configuration } from '../models/configuration.model';
+import { Configurations } from '../models/configurations.model';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -67,8 +67,8 @@ class UsersRC extends ResourceController {
   }
 
   protected async getResource(): Promise<User> {
-    const configurations = new Configuration(
-      await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configuration.PK } })
+    const configurations = new Configurations(
+      await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
     );
     (this.targetUser as any).configurations = configurations;
     return this.targetUser;
@@ -110,15 +110,14 @@ class UsersRC extends ResourceController {
     return signedURL;
   }
   private async registerToEvent(registrationForm: any, isDraft: boolean): Promise<User> {
-    if (
-      this.targetUser.registrationAt &&
-      !(this.reqUser.permissions.isAdmin || this.reqUser.permissions.canManageRegistrations)
-    )
-      throw new RCError("Can't edit a submitted registration");
-
-    const configurations = new Configuration(
-      await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configuration.PK } })
+    const configurations = new Configurations(
+      await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
     );
+
+    const userCanManage = this.reqUser.permissions.isAdmin || this.reqUser.permissions.canManageRegistrations;
+
+    if (!configurations.isRegistrationOpen && !userCanManage) throw new RCError('Registrations are closed');
+    if (this.targetUser.registrationAt && !userCanManage) throw new RCError("Can't edit a submitted registration");
 
     this.targetUser.registrationForm = configurations.registrationFormDef.loadSections(registrationForm);
 

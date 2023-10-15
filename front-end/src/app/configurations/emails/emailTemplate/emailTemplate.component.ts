@@ -6,7 +6,7 @@ import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from 
 import { AppService } from '@app/app.service';
 import { ConfigurationsService } from '../../configurations.service';
 
-import { EmailTemplates } from '@models/configuration.model';
+import { EmailTemplates } from '@models/configurations.model';
 
 @Component({
   selector: 'app-email-template',

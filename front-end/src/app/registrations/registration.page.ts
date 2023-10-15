@@ -55,7 +55,7 @@ export class RegistrationPage {
     if (this.errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
 
     try {
-      this.loading.show();
+      await this.loading.show();
       this.user.load(await this._users.registerToEvent(this.user, this.form, isDraft));
       if (this.app.user.userId === this.user.userId) this.app.user.load(this.user);
       this.message.success('COMMON.OPERATION_COMPLETED');

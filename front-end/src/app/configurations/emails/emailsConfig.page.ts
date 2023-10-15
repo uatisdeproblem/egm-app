@@ -5,14 +5,14 @@ import { EmailTemplateComponent } from './emailTemplate/emailTemplate.component'
 
 import { AppService } from '@app/app.service';
 
-import { EmailTemplates } from '@models/configuration.model';
+import { EmailTemplates } from '@models/configurations.model';
 
 @Component({
-  selector: 'event-emails',
-  templateUrl: 'emails.page.html',
-  styleUrls: ['emails.page.scss']
+  selector: 'emails-configurations',
+  templateUrl: 'emailsConfig.page.html',
+  styleUrls: ['emailsConfig.page.scss']
 })
-export class EmailsPage {
+export class EmailsConfigurationsPage {
   EmailTemplates = EmailTemplates;
 
   constructor(private modalCtrl: ModalController, public app: AppService) {}

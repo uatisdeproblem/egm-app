@@ -26,7 +26,7 @@
           <ion-icon slot="start" icon="ticket-outline"></ion-icon>
           <ion-label>{{ 'CONFIGURATIONS.SPOTS_MANAGEMENT' | translate }}</ion-label>
         </ion-item>
-        <ion-item button detail (click)="app.goToInTabs(['event-configurations'])">
+        <ion-item button detail (click)="app.goToInTabs(['configurations', 'registrations'])">
           <ion-icon slot="start" icon="settings-outline"></ion-icon>
           <ion-label>{{ 'CONFIGURATIONS.REGISTRATIONS_SETTINGS' | translate }}</ion-label>
         </ion-item>
@@ -63,7 +63,7 @@
           <p>{{ 'CONFIGURATIONS.EMAIL_TEMPLATES_I' | translate }}</p>
         </ion-label>
       </ion-list-header>
-      <ion-item button detail (click)="app.goToInTabs(['emails'])">
+      <ion-item button detail (click)="app.goToInTabs(['configurations', 'emails'])">
         <ion-icon slot="start" icon="mail-unread-outline"></ion-icon>
         <ion-label>{{ 'CONFIGURATIONS.EMAIL_TEMPLATES' | translate }}</ion-label>
       </ion-item>

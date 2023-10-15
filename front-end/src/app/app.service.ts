@@ -6,7 +6,7 @@ import { IDEAApiService, IDEAMessageService } from '@idea-ionic/common';
 
 import { environment as env } from '@env';
 import { AuthServices, User } from '@models/user.model';
-import { Configuration } from '@models/configuration.model';
+import { Configurations } from '@models/configurations.model';
 
 /**
  * The base URLs where the thumbnails are located.
@@ -33,7 +33,7 @@ export class AppService {
   private darkMode: boolean;
 
   user: User;
-  configurations: Configuration;
+  configurations: Configurations;
 
   constructor(
     private platform: Platform,

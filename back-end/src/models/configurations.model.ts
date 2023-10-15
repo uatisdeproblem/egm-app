@@ -4,7 +4,7 @@ import { ServiceLanguages } from './serviceLanguages.enum';
 
 export const LANGUAGES = new Languages({ default: ServiceLanguages.English, available: [ServiceLanguages.English] });
 
-export class Configuration extends Resource {
+export class Configurations extends Resource {
   static PK = 'EGM';
 
   /**
@@ -34,14 +34,14 @@ export class Configuration extends Resource {
 
   load(x: any): void {
     super.load(x);
-    this.PK = Configuration.PK;
+    this.PK = Configurations.PK;
     this.isRegistrationOpen = this.clean(x.isRegistrationOpen, Boolean);
     this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);
     this.currency = this.clean(x.currency, String);
     this.spotTypes = this.cleanArray(x.spotTypes, String);
     this.pricePerSpotTypes = {};
     if (x.pricePerSpotTypes)
-      this.spotTypes.forEach(st => (this.pricePerSpotTypes[st] = this.clean(x.pricePerSpotTypes[st], Number)));
+      this.spotTypes.forEach(st => (this.pricePerSpotTypes[st] = this.clean(x.pricePerSpotTypes[st], Number, 0)));
     this.spotTypes = this.cleanArray(x.spotTypes, String);
   }
 

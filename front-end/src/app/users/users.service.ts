@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { User } from '@models/user.model';
-import { Configuration } from '@models/configuration.model';
+import { Configurations } from '@models/configurations.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
@@ -11,9 +11,9 @@ export class UsersService {
   /**
    * Get the current user and app configuration.
    */
-  async getCurrentUserAndConfiguration(): Promise<{ user: User; configurations: Configuration }> {
+  async getCurrentUserAndConfiguration(): Promise<{ user: User; configurations: Configurations }> {
     const res = await this.api.getResource(['users', 'me']);
-    return { user: new User(res), configurations: new Configuration(res.configurations) };
+    return { user: new User(res), configurations: new Configurations(res.configurations) };
   }
 
   /**

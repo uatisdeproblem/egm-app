@@ -176,7 +176,18 @@
     "COMMUNICATIONS": "Communications",
     "SPEAKERS": "Speakers",
     "ORGANIZATIONS": "Organisations",
-    "SESSIONS": "Sessions"
+    "SESSIONS": "Sessions",
+    "REGISTRATIONS_OPTIONS": "Registrations options",
+    "REGISTRATIONS_OPTIONS_I": "Open/close the registrations and other options.",
+    "ALLOW_REGISTRATIONS": "Allow registrations",
+    "REGISTRATION_FORM": "Registration form",
+    "REGISTRATION_FORM_I": "Add, manage and remove the fields requested during the registration.",
+    "EVENT_SPOTS": "Spot types",
+    "EVENT_SPOTS_I": "Decide the spot types available for this event.",
+    "EVENT_SPOTS_II": "It is adviced NOT to change the spot types in any way during the registrations.",
+    "ADD_SPOT_TYPE": "Add a spot type",
+    "SPOT_TYPE_NAME": "Spot type name",
+    "SPOT_TYPE_PRICE": "Spot type price ({{currency}})"
   },
   "EMAIL_TEMPLATE": {
     "HTML": "Template for emails",
