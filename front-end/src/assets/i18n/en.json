@@ -81,7 +81,7 @@
     "SUBTITLE": "Erasmus Student Network",
     "AGREEMENT_CHECK": "By accessing with the buttons below, you accept our",
     "PRIVACY_POLICY": "Privacy Policy",
-    "PRIVACY_POLICY_URL": "https://iter-idea.com",
+    "PRIVACY_POLICY_URL": "https://meeting.erasmusgeneration.org/policy",
     "LOGIN_WITH_ESN_ACCOUNTS": "Sign in with ESN Accounts",
     "LOGIN_WITH_EGM_ACCOUNT": "Guest sign in",
     "IF_YOU_ARE": "If you are",
@@ -160,9 +160,9 @@
     "ASSIGNED_TO_USER": "Assigned to user",
     "CONFIRM_YOUR_REGISTRATION": "Confirm your registration",
     "ACCEPT_TC": "I read and I agree with the event's Terms and Conditions",
-    "TC_URL": "https://iter-idea.com",
+    "TC_URL": "https://docs.google.com/document/d/1BgmXJTmoHSvCYrZe7ibScXVJmC_RpboeC1Bzwku8b6g/edit?usp=sharing",
     "ACCEPT_COC": "I read and I agree with the event's Code of Conduct",
-    "COC_URL": "https://iter-idea.com"
+    "COC_URL": "https://egm-app.click/assets/docs/egm-24-coc.pdf"
   },
   "CONFIGURATIONS": {
     "USERS_AND_REGISTRATIONS": "Users and event registrations",
