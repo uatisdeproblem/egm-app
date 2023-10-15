@@ -8,7 +8,9 @@
 </ion-header>
 <ion-content>
   <ion-list class="aList maxWidthContainer">
-    <ng-container *ngIf="app.user.permissions.isAdmin || app.user.permissions.canManageRegistrations">
+    <ng-container
+      *ngIf="app.user.permissions.isAdmin || app.user.permissions.canManageRegistrations || app.user.permissions.isCountryLeader"
+    >
       <ion-list-header>
         <ion-label>
           <h2>{{ 'CONFIGURATIONS.USERS_AND_EVENT' | translate }}</h2>
@@ -18,10 +20,46 @@
         <ion-icon slot="start" icon="people-outline"></ion-icon>
         <ion-label>{{ 'CONFIGURATIONS.USERS_AND_REGISTRATIONS' | translate }}</ion-label>
       </ion-item>
-      <ion-item button detail (click)="app.goToInTabs(['spots'])">
-        <ion-icon slot="start" icon="ticket-outline"></ion-icon>
-        <ion-label>{{ 'CONFIGURATIONS.SPOTS_MANAGEMENT' | translate }}</ion-label>
+      <ng-container *ngIf="app.user.permissions.isAdmin || app.user.permissions.canManageRegistrations">
+        <ion-item button detail (click)="app.goToInTabs(['spots'])">
+          <ion-icon slot="start" icon="ticket-outline"></ion-icon>
+          <ion-label>{{ 'CONFIGURATIONS.SPOTS_MANAGEMENT' | translate }}</ion-label>
+        </ion-item>
+        <ion-item button detail (click)="app.goToInTabs(['event-configurations'])">
+          <ion-icon slot="start" icon="settings-outline"></ion-icon>
+          <ion-label>{{ 'CONFIGURATIONS.REGISTRATIONS_SETTINGS' | translate }}</ion-label>
+        </ion-item>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="app.user.permissions.isAdmin || app.user.permissions.canManageContents">
+      <ion-list-header>
+        <ion-label>
+          <h2>{{ 'CONFIGURATIONS.CONTENTS' | translate }}</h2>
+        </ion-label>
+      </ion-list-header>
+      <ion-item>
+        <ion-icon slot="start" icon="volume-high-outline"></ion-icon>
+        <ion-label>{{ 'CONFIGURATIONS.COMMUNICATIONS' | translate }}</ion-label>
       </ion-item>
+      <ion-item>
+        <ion-icon slot="start" icon="flame-outline"></ion-icon>
+        <ion-label>{{ 'CONFIGURATIONS.SESSIONS' | translate }}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-icon slot="start" icon="mic-outline"></ion-icon>
+        <ion-label>{{ 'CONFIGURATIONS.SPEAKERS' | translate }}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-icon slot="start" icon="briefcase-outline"></ion-icon>
+        <ion-label>{{ 'CONFIGURATIONS.ORGANIZATIONS' | translate }}</ion-label>
+      </ion-item>
+    </ng-container>
+    <ng-container *ngIf="app.user.permissions.isAdmin">
+      <ion-list-header>
+        <ion-label>
+          <h2>{{ 'CONFIGURATIONS.EMAIL_TEMPLATES' | translate }}</h2>
+        </ion-label>
+      </ion-list-header>
       <ion-item button detail (click)="app.goToInTabs(['emails'])">
         <ion-icon slot="start" icon="mail-unread-outline"></ion-icon>
         <ion-label>{{ 'CONFIGURATIONS.EMAIL_TEMPLATES' | translate }}</ion-label>

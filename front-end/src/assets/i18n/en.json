@@ -168,7 +168,13 @@
       "REGISTRATION_APPROVED": "Registration is approved",
       "REGISTRATION_REFUSED": "Registration is refused",
       "INVOICE": "The payment invoice"
-    }
+    },
+    "REGISTRATIONS_SETTINGS": "Registrations settings",
+    "CONTENTS": "Contents",
+    "COMMUNICATIONS": "Communications",
+    "SPEAKERS": "Speakers",
+    "ORGANIZATIONS": "Organisations",
+    "SESSIONS": "Sessions"
   },
   "EMAIL_TEMPLATE": {
     "HTML": "Template for emails",
