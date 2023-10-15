@@ -91,31 +91,31 @@ class ConfigurationsRC extends ResourceController {
 
   protected async patchResources(): Promise<{ subject: string; content: string } | void> {
     switch (this.body.action) {
-      case 'GET_EMAIL_TEMPLATE_REGISTRATION_APPROVED':
-        return await this.getEmailTemplate('registration-approved');
-      case 'SET_EMAIL_TEMPLATE_REGISTRATION_APPROVED':
-        return await this.setEmailTemplate('registration-approved', this.body.subject, this.body.content);
-      case 'RESET_EMAIL_TEMPLATE_REGISTRATION_APPROVED':
-        return await this.resetEmailTemplate('registration-approved');
-      case 'TEST_EMAIL_TEMPLATE_REGISTRATION_APPROVED':
-        return await this.testEmailTemplate('registration-approved');
-      case 'GET_EMAIL_TEMPLATE_REGISTRATION_REFUSED':
-        return await this.getEmailTemplate('registration-refused');
-      case 'SET_EMAIL_TEMPLATE_REGISTRATION_REFUSED':
-        return await this.setEmailTemplate('registration-refused', this.body.subject, this.body.content);
-      case 'RESET_EMAIL_TEMPLATE_REGISTRATION_REFUSED':
-        return await this.resetEmailTemplate('registration-refused');
-      case 'TEST_EMAIL_TEMPLATE_REGISTRATION_REFUSED':
-        return await this.testEmailTemplate('registration-refused');
-      // @todo are invoices sent as email or just used to generate PDF and put attachment?
-      case 'GET_EMAIL_TEMPLATE_INVOICE':
-        return await this.getEmailTemplate('payment-invoice');
-      case 'SET_EMAIL_TEMPLATE_INVOICE':
-        return await this.setEmailTemplate('payment-invoice', this.body.subject, this.body.content);
-      case 'RESET_EMAIL_TEMPLATE_INVOICE':
-        return await this.resetEmailTemplate('payment-invoice');
-      case 'TEST_EMAIL_TEMPLATE_INVOICE':
-        return await this.testEmailTemplate('payment-invoice');
+      case 'GET_EMAIL_TEMPLATE_SPOT_ASSIGNED':
+        return await this.getEmailTemplate('spot-assigned');
+      case 'SET_EMAIL_TEMPLATE_SPOT_ASSIGNED':
+        return await this.setEmailTemplate('spot-assigned', this.body.subject, this.body.content);
+      case 'RESET_EMAIL_TEMPLATE_SPOT_ASSIGNED':
+        return await this.resetEmailTemplate('spot-assigned');
+      case 'TEST_EMAIL_TEMPLATE_SPOT_ASSIGNED':
+        return await this.testEmailTemplate('spot-assigned');
+      case 'GET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
+        return await this.getEmailTemplate('registration-confirmed');
+      case 'SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
+        return await this.setEmailTemplate('registration-confirmed', this.body.subject, this.body.content);
+      case 'RESET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
+        return await this.resetEmailTemplate('registration-confirmed');
+      case 'TEST_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
+        return await this.testEmailTemplate('registration-confirmed');
+      // @todo move thsi to document template
+      case 'GET_DOCUMENT_TEMPLATE_INVOICE':
+        return await this.getDocumentTemplate('payment-invoice');
+      case 'SET_DOCUMENT_TEMPLATE_INVOICE':
+        return await this.setDocumentTemplate('payment-invoice', this.body.content);
+      case 'RESET_DOCUMENT_TEMPLATE_INVOICE':
+        return await this.resetDocumentTemplate('payment-invoice');
+      case 'TEST_DOCUMENT_TEMPLATE_INVOICE':
+        return await this.testDocumentTemplate('payment-invoice');
       default:
         throw new RCError('Unsupported action');
     }
@@ -169,5 +169,18 @@ class ConfigurationsRC extends ResourceController {
       type: GetObjectTypes.TEXT
     })) as string;
     await ses.setTemplate(`${emailTemplate}-${STAGE}`, subject, content, true);
+  }
+
+  private async getDocumentTemplate(documentTemplate: string) {
+    // @todo
+  }
+  private async setDocumentTemplate(documentTemplate: string, content: string): Promise<void> {
+    // @todo
+  }
+  private async testDocumentTemplate(documentTemplate: string): Promise<void> {
+    // @todo
+  }
+  private async resetDocumentTemplate(documentTemplate: string): Promise<void> {
+    // @todo
   }
 }

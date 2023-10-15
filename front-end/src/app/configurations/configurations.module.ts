@@ -6,9 +6,9 @@ import { IDEACustomFieldsModule, IDEATranslationsModule } from '@idea-ionic/comm
 
 import { ConfigurationsRoutingModule } from './configurations.routing.module';
 import { ConfigurationsPage } from './configurations.page';
-import { EmailsConfigurationsPage } from './emails/emailsConfig.page';
 import { RegistrationsConfigurationsPage } from './registrations/registrationsConfig.page';
-import { EmailTemplateModule } from './emails/emailTemplate/emailTemplate.module';
+import { EmailTemplateModule } from './emailTemplate/emailTemplate.module';
+import { DocumentTemplateModule } from './documentTemplate/documentTemplate.module';
 
 @NgModule({
   imports: [
@@ -18,8 +18,9 @@ import { EmailTemplateModule } from './emails/emailTemplate/emailTemplate.module
     IDEATranslationsModule,
     IDEACustomFieldsModule,
     ConfigurationsRoutingModule,
-    EmailTemplateModule
+    EmailTemplateModule,
+    DocumentTemplateModule
   ],
-  declarations: [ConfigurationsPage, EmailsConfigurationsPage, RegistrationsConfigurationsPage]
+  declarations: [ConfigurationsPage, RegistrationsConfigurationsPage]
 })
 export class ConfigurationsModule {}

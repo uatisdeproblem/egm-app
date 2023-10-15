@@ -67,8 +67,14 @@ export class Configurations extends Resource {
 /**
  * The types of email templates available.
  */
-export enum EmailTemplates { // @todo add a 'transfered spot template"?
-  REGISTRATION_APPROVED = 'REGISTRATION_APPROVED',
-  REGISTRATION_REFUSED = 'REGISTRATION_REFUSED',
+export enum EmailTemplates {
+  SPOT_ASSIGNED = 'SPOT_ASSIGNED',
+  REGISTRATION_CONFIRMED = 'REGISTRATION_CONFIRMED'
+}
+
+/**
+ * The types of document templates available.
+ */
+export enum DocumentTemplates {
   INVOICE = 'INVOICE'
 }

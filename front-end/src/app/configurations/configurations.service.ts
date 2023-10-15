@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
-import { Configurations, EmailTemplates } from '@models/configurations.model';
+import { Configurations, DocumentTemplates, EmailTemplates } from '@models/configurations.model';
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationsService {
@@ -38,8 +38,37 @@ export class ConfigurationsService {
   /**
    * Test the email template.
    */
-  async testEmaiTemplate(template: EmailTemplates): Promise<void> {
+  async testEmailTemplate(template: EmailTemplates): Promise<void> {
     const action = 'TEST_EMAIL_TEMPLATE_'.concat(template);
+    return await this.api.patchResource('configurations', { body: { action } });
+  }
+
+  /**
+   * Set a new document template.
+   */
+  async setDocumentTemplate(template: DocumentTemplates, content: string): Promise<void> {
+    const action = 'SET_DOCUMENT_TEMPLATE_'.concat(template);
+    await this.api.patchResource('configurations', { body: { action, content } });
+  }
+  /**
+   * Reset the document template.
+   */
+  async resetDocumentTemplate(template: DocumentTemplates): Promise<void> {
+    const action = 'RESET_DOCUMENT_TEMPLATE_'.concat(template);
+    await this.api.patchResource('configurations', { body: { action } });
+  }
+  /**
+   * Get the document template.
+   */
+  async getDocumentTemplate(template: DocumentTemplates): Promise<{ subject: string; content: string }> {
+    const action = 'GET_DOCUMENT_TEMPLATE_'.concat(template);
+    return await this.api.patchResource('configurations', { body: { action } });
+  }
+  /**
+   * Test the document template.
+   */
+  async testDocumentTemplate(template: DocumentTemplates): Promise<void> {
+    const action = 'TEST_DOCUMENT_TEMPLATE_'.concat(template);
     return await this.api.patchResource('configurations', { body: { action } });
   }
 }

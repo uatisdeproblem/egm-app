@@ -4,7 +4,7 @@ import { isEmpty } from 'idea-toolbox';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { AppService } from '@app/app.service';
-import { ConfigurationsService } from '../../configurations.service';
+import { ConfigurationsService } from '../configurations.service';
 
 import { EmailTemplates } from '@models/configurations.model';
 
@@ -36,11 +36,15 @@ export class EmailTemplateComponent implements OnInit {
     private app: AppService
   ) {}
   async ngOnInit(): Promise<void> {
-    console.log('getting template...');
-    const { subject, content } = await this.getTemplate();
-    this.subject = subject;
-    this.content = content;
-    console.log('getting variables');
+    try {
+      const { subject, content } = await this.getTemplate();
+      this.subject = subject;
+      this.content = content;
+    } catch (error) {
+      this.subject = '';
+      this.content = '';
+    }
+
     this.variables = [
       { code: 'user', description: this.t._('EMAIL_TEMPLATE.VARIABLES.USER') },
       { code: 'country', description: this.t._('EMAIL_TEMPLATE.VARIABLES.COUNTRY') },
@@ -125,7 +129,7 @@ export class EmailTemplateComponent implements OnInit {
     const doSend = async (): Promise<void> => {
       try {
         await this.loading.show();
-        await this._configurations.testEmaiTemplate(this.template);
+        await this._configurations.testEmailTemplate(this.template);
         this.message.success('EMAIL_TEMPLATE.EMAIL_SENT');
       } catch (error) {
         this.message.error('EMAIL_TEMPLATE.BAD_TEMPLATE');
