@@ -40,6 +40,39 @@
       [errors]="errors"
       [disabled]="!editMode"
     />
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'EVENT_REGISTRATIONS.CONFIRM_YOUR_REGISTRATION' | translate }}</h2>
+      </ion-label>
+    </ion-list-header>
+    <ion-item [class.fieldHasError]="hasFieldAnError('tc')">
+      <ion-checkbox slot="start" [disabled]="!editMode" [(ngModel)]="acceptTC"></ion-checkbox>
+      <ion-label class="ion-text-wrap">
+        {{ 'EVENT_REGISTRATIONS.ACCEPT_TC' | translate }} <ion-text class="obligatoryDot"></ion-text>
+      </ion-label>
+      <ion-button
+        slot="end"
+        fill="clear"
+        color="medium"
+        (click)="openDocumentByTranslationKey('EVENT_REGISTRATIONS.TC_URL')"
+      >
+        <ion-icon slot="icon-only" icon="eye"></ion-icon>
+      </ion-button>
+    </ion-item>
+    <ion-item [class.fieldHasError]="hasFieldAnError('coc')">
+      <ion-checkbox slot="start" [disabled]="!editMode" [(ngModel)]="acceptCOC"></ion-checkbox>
+      <ion-label class="ion-text-wrap">
+        {{ 'EVENT_REGISTRATIONS.ACCEPT_COC' | translate }} <ion-text class="obligatoryDot"></ion-text>
+      </ion-label>
+      <ion-button
+        slot="end"
+        fill="clear"
+        color="medium"
+        (click)="openDocumentByTranslationKey('EVENT_REGISTRATIONS.COC_URL')"
+      >
+        <ion-icon slot="icon-only" icon="eye"></ion-icon>
+      </ion-button>
+    </ion-item>
     <ion-row class="ion-margin-top" *ngIf="editMode">
       <ion-col>
         <ion-button expand="block" fill="clear" (click)="save(true)">

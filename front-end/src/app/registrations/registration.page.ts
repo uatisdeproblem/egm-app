@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { AppService } from '@app/app.service';
 import { UsersService } from '@app/users/users.service';
@@ -18,10 +18,14 @@ export class RegistrationPage {
   errors = new Set<string>();
   editMode = true;
 
+  acceptCOC = false;
+  acceptTC = false;
+
   constructor(
     private route: ActivatedRoute,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
+    private t: IDEATranslationsService,
     private _users: UsersService,
     public app: AppService
   ) {}
@@ -36,7 +40,11 @@ export class RegistrationPage {
         this.app.configurations.registrationFormDef,
         this.user.registrationForm
       );
-      if (this.user.registrationAt) this.editMode = false;
+      if (this.user.registrationAt) {
+        this.editMode = false;
+        this.acceptTC = true;
+        this.acceptCOC = true;
+      }
     } catch (error) {
       this.app.closePage('COMMON.SOMETHING_WENT_WRONG');
       throw error;
@@ -51,6 +59,8 @@ export class RegistrationPage {
       this.app.configurations.registrationFormDef
         .validateSections(this.form)
         .forEach(ea => this.errors.add(`sections.${ea}`));
+      if (!this.acceptCOC) this.errors.add('coc');
+      if (!this.acceptTC) this.errors.add('tc');
     }
     if (this.errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
 
@@ -65,5 +75,12 @@ export class RegistrationPage {
     } finally {
       this.loading.hide();
     }
+  }
+  hasFieldAnError(field: string): boolean {
+    return this.errors.has(field);
+  }
+
+  async openDocumentByTranslationKey(translationKey: string): Promise<void> {
+    await this.app.openURL(this.t._(translationKey));
   }
 }

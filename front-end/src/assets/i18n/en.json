@@ -156,7 +156,12 @@
     "SPOT_ID": "Spot ID",
     "SPOT_TYPE": "Type",
     "ASSIGNED_TO_COUNTRY": "Assigned to country",
-    "ASSIGNED_TO_USER": "Assigned to user"
+    "ASSIGNED_TO_USER": "Assigned to user",
+    "CONFIRM_YOUR_REGISTRATION": "Confirm your registration",
+    "ACCEPT_TC": "I read and I agree with the event's Terms and Conditions",
+    "TC_URL": "https://iter-idea.com",
+    "ACCEPT_COC": "I read and I agree with the event's Code of Conduct",
+    "COC_URL": "https://iter-idea.com"
   },
   "CONFIGURATIONS": {
     "USERS_AND_REGISTRATIONS": "Users and event registrations",
