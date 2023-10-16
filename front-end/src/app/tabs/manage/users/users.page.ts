@@ -51,27 +51,15 @@ export class UsersPage implements OnInit {
   ) {}
   async ngOnInit(): Promise<void> {
     this.col = [
-      { width: 40, sortable: false, headerCheckboxable: true, checkboxable: true },
+      { maxWidth: 50, sortable: false, headerCheckboxable: true, checkboxable: true },
       { prop: 'firstName', name: this.t._('USER.FIRST_NAME') },
       { prop: 'lastName', name: this.t._('USER.LAST_NAME') },
       { prop: 'sectionCountry', name: this.t._('USER.ESN_COUNTRY') },
       { prop: 'sectionName', name: this.t._('USER.ESN_SECTION') },
-      {
-        prop: 'registrationAt',
-        name: this.t._('USERS.REGISTERED'),
-        pipe: { transform: x => this.t.formatDate(x) }
-      },
-      { prop: 'spot', name: this.t._('USERS.SPOT') },
-      {
-        prop: 'proofOfPaymentURI',
-        name: this.t._('USERS.PAID'),
-        pipe: { transform: x => (x ? !!x : '') }
-      },
-      {
-        prop: 'confirmedAt',
-        name: this.t._('USERS.CONFIRMED'),
-        pipe: { transform: x => (x ? !!x : '') }
-      },
+      { prop: 'registrationAt', name: this.t._('USERS.REGISTERED'), pipe: { transform: x => this.t.formatDate(x) } },
+      { prop: 'spot.type', name: this.t._('USERS.SPOT') },
+      { prop: 'spot.proofOfPaymentURI', name: this.t._('USERS.PAID'), pipe: { transform: x => (x ? !!x : '') } },
+      { prop: 'confirmedAt', name: this.t._('USERS.CONFIRMED'), pipe: { transform: x => (x ? !!x : '') } },
       {
         prop: 'permissions',
         name: this.t._('USER.PERMISSIONS'),
@@ -121,10 +109,11 @@ export class UsersPage implements OnInit {
       this.filteredUsers = this.filteredUsers.filter(x =>
         this.filters.registered === 'yes' ? !!x.registrationAt : !x.registrationAt
       );
-    if (this.filters.spot) this.filteredUsers = this.filteredUsers.filter(x => this.filters.spot === x.spot);
+    if (this.filters.spot)
+      this.filteredUsers = this.filteredUsers.filter(x => x.spot && this.filters.spot === x.spot.type);
     if (this.filters.paid)
       this.filteredUsers = this.filteredUsers.filter(x =>
-        this.filters.paid === 'yes' ? !!x.proofOfPaymentURI : !x.proofOfPaymentURI
+        this.filters.paid === 'yes' ? !!x.spot?.proofOfPaymentURI : !x.spot?.proofOfPaymentURI
       );
     if (this.filters.confirmed)
       this.filteredUsers = this.filteredUsers.filter(x =>
@@ -163,7 +152,7 @@ export class UsersPage implements OnInit {
     this.filteredUsers.forEach(user => {
       if (!!user.registrationAt) this.numRegistered++;
       if (!!user.spot) this.numWithSpot++;
-      if (!!user.proofOfPaymentURI) this.numWhoPaid++;
+      if (!!user.spot?.proofOfPaymentURI) this.numWhoPaid++;
       if (!!user.confirmedAt) this.numConfirmed++;
     });
   }

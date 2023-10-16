@@ -31,6 +31,10 @@ export class Configurations extends Resource {
    * The price for each spot type.
    */
   pricePerSpotTypes: Record<string, number>;
+  /**
+   * The list of all the current ESN countries.
+   */
+  sectionCountries: string[];
 
   load(x: any): void {
     super.load(x);
@@ -42,7 +46,7 @@ export class Configurations extends Resource {
     this.pricePerSpotTypes = {};
     if (x.pricePerSpotTypes)
       this.spotTypes.forEach(st => (this.pricePerSpotTypes[st] = this.clean(x.pricePerSpotTypes[st], Number, 0)));
-    this.spotTypes = this.cleanArray(x.spotTypes, String);
+    this.sectionCountries = this.cleanArray(x.sectionCountries, String);
   }
 
   safeLoad(newData: any, safeData: any): void {

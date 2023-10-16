@@ -167,7 +167,7 @@ paths:
   /users:
     get:
       summary: Get the users of the app
-      description: Requires to be admin
+      description: Requires canManageRegistrations permission
       tags: [Users]
       security:
         - AuthFunction: []
@@ -179,7 +179,7 @@ paths:
   /users/{userId}:
     get:
       summary: Get a user's profile
-      description: Requires to be the requesting user or admin
+      description: Requires to be the requesting user or canManageRegistrations permission
       tags: [Users]
       security:
         - AuthFunction: []
@@ -197,7 +197,7 @@ paths:
           $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit a user's data
-      description: Requires to be the requesting user or admin
+      description: Requires to be the requesting user or canManageRegistrations permission
       tags: [Users]
       security:
         - AuthFunction: []
@@ -250,7 +250,7 @@ paths:
           $ref: '#/components/responses/BadParameters'
     delete:
       summary: Remove a user's profile and data
-      description: Requires to be the requesting user or admin
+      description: Requires to be the requesting user or canManageRegistrations permission
       tags: [Users]
       security:
         - AuthFunction: []
@@ -271,10 +271,27 @@ paths:
           $ref: '#/components/responses/EventSpots'
         400:
           $ref: '#/components/responses/BadParameters'
+    post:
+      summary: Add a batch of new spots
+      description: Requires to be admin or canManageRegistrations permission
+      tags: [Event]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventSpot'
+      responses:
+        200:
+          $ref: '#/components/responses/EventSpots'
+        400:
+          $ref: '#/components/responses/BadParameters'
   /event-spots/{spotId}:
     get:
       summary: Get a spot to the event
-      description: Requires to be admin
+      description: Requires to be admin or canManageRegistrations permission
       tags: [Event]
       security:
         - AuthFunction: []
@@ -292,7 +309,7 @@ paths:
           $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit a spot to the event
-      description: Requires to be admin
+      description: Requires to be admin or canManageRegistrations permission
       tags: [Event]
       security:
         - AuthFunction: []
@@ -315,7 +332,7 @@ paths:
         400:
           $ref: '#/components/responses/BadParameters'
     delete:
-      summary: Remove a spot to the event
+      summary: Remove a spot to the event or canManageRegistrations permission
       description: Requires to be admin
       tags: [Event]
       security:

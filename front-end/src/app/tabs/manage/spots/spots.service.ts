@@ -14,4 +14,13 @@ export class SpotsService {
     const spots: EventSpot[] = await this.api.getResource('event-spots');
     return spots.map(s => new EventSpot(s));
   }
+
+  /**
+   * Add a batch of spots to the ones available for the event.
+   */
+  async add(spot: EventSpot, numOfSpots = 1): Promise<EventSpot[]> {
+    const body = { ...spot, numOfSpots };
+    const spots: EventSpot[] = await this.api.postResource('event-spots', { body });
+    return spots.map(s => new EventSpot(s));
+  }
 }

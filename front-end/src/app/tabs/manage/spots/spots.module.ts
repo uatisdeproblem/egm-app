@@ -8,8 +8,18 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { SpotsRoutingModule } from './spots-routing.module';
 import { SpotsPage } from './spots.page';
 
+import { AddSpotsModule } from './addSpots.module';
+
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, NgxDatatableModule, IDEATranslationsModule, SpotsRoutingModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    NgxDatatableModule,
+    IDEATranslationsModule,
+    SpotsRoutingModule,
+    AddSpotsModule
+  ],
   declarations: [SpotsPage]
 })
 export class SpotsModule {}

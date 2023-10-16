@@ -104,18 +104,18 @@
         <ion-item
           color="ESNorange"
           lines="none"
-          *ngIf="app.user.registrationAt && app.user.spot && !app.user.proofOfPaymentURI"
+          *ngIf="app.user.registrationAt && app.user.spot && !app.user.spot.proofOfPaymentURI"
         >
           <ion-label class="ion-text-wrap">{{ 'USER.YOU_HAVE_A_SPOT_BUT_NO_PROOF_PAYMENT' | translate }}</ion-label>
-          <ion-badge slot="end" color="white">{{ app.user.spot }}</ion-badge>
+          <ion-badge slot="end" color="white">{{ app.user.spot.type }}</ion-badge>
         </ion-item>
         <ion-item
           color="ESNcyan"
           lines="none"
-          *ngIf="app.user.registrationAt && app.user.spot && app.user.proofOfPaymentURI && !app.user.confirmedAt"
+          *ngIf="app.user.registrationAt && app.user.spot && app.user.spot.proofOfPaymentURI && !app.user.confirmedAt"
         >
           <ion-label class="ion-text-wrap">{{ 'USER.YOU_HAVE_SPOT_PROOF_BUT_NO_CONFIRM' | translate }}</ion-label>
-          <ion-badge slot="end" color="white">{{ app.user.spot }}</ion-badge>
+          <ion-badge slot="end" color="white">{{ app.user.spot.type }}</ion-badge>
         </ion-item>
         <ion-item
           color="ESNgreen"
@@ -123,7 +123,7 @@
           *ngIf="app.user.registrationAt && app.user.spot && app.user.confirmedAt"
         >
           <ion-label class="ion-text-wrap">{{ 'USER.YOU_ARE_CONFIRMED' | translate }}</ion-label>
-          <ion-badge slot="end" color="white">{{ app.user.spot }}</ion-badge>
+          <ion-badge slot="end" color="white">{{ app.user.spot.type }}</ion-badge>
         </ion-item>
         <ng-container *ngIf="app.user.spot && !app.user.confirmedAt">
           <ion-item button detail color="white" (click)="downloadInfoToPay()">
@@ -133,7 +133,13 @@
             <ion-label class="ion-text-wrap"> {{ 'USER.UPLOAD_PROOF_PAYMENT' | translate }} </ion-label>
           </ion-item>
         </ng-container>
-        <ion-item button detail color="white" *ngIf="app.user.proofOfPaymentURI" (click)="downloadProofOfPayment()">
+        <ion-item
+          button
+          detail
+          color="white"
+          *ngIf="app.user.spot?.proofOfPaymentURI"
+          (click)="downloadProofOfPayment()"
+        >
           <ion-label class="ion-text-wrap"> {{ 'USER.DOWNLOAD_PROOF_PAYMENT' | translate }} </ion-label>
         </ion-item>
         <ion-item

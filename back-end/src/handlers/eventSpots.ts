@@ -71,4 +71,27 @@ class EventSpotsRC extends ResourceController {
   protected async getResources(): Promise<EventSpot[]> {
     return (await ddb.scan({ TableName: DDB_TABLES.eventSpots })).map(x => new EventSpot(x));
   }
+
+  protected async postResources(): Promise<EventSpot[]> {
+    const numOfSpots = Number(this.body.numOfSpots ?? 1);
+    this.spot = new EventSpot({
+      type: this.body.type,
+      description: this.body.description,
+      sectionCountry: this.body.sectionCountry
+    });
+
+    const errors = this.spot.validate();
+    if (numOfSpots < 1) errors.push('numOfSpots');
+    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+
+    const batchId = Math.round(Date.now() / 1000).toString();
+    const spotsToAdd: EventSpot[] = [];
+    for (let i = 0; i < numOfSpots; i++) {
+      const spotToAdd = new EventSpot(this.spot);
+      spotToAdd.spotId = batchId.concat('_', '0000'.concat((i + 1).toString()).slice(-4));
+      spotsToAdd.push(spotToAdd);
+    }
+    await ddb.batchPut(DDB_TABLES.eventSpots, spotsToAdd);
+    return spotsToAdd;
+  }
 }

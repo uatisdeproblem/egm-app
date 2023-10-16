@@ -1,5 +1,7 @@
 import { Resource, epochISOString } from 'idea-toolbox';
 
+import { EventSpotAttached } from './eventSpot.model';
+
 export class User extends Resource {
   /**
    * The ID of the user; it's the concatenation of the key of the auth service and the username there.
@@ -68,11 +70,7 @@ export class User extends Resource {
   /**
    * The spot assigned for the event, if any.
    */
-  spot?: string;
-  /**
-   * The URI to the proof of payment, if it has been uploaded.
-   */
-  proofOfPaymentURI?: string;
+  spot?: EventSpotAttached;
   /**
    * Whether the participation and the payment of the user have been confirmed.
    */
@@ -99,8 +97,7 @@ export class User extends Resource {
 
     this.registrationForm = x.registrationForm ?? {};
     if (x.registrationAt) this.registrationAt = this.clean(x.registrationAt, t => new Date(t).toISOString());
-    if (x.spot) this.spot = this.clean(x.spot, String);
-    if (x.proofOfPaymentURI) this.proofOfPaymentURI = this.clean(x.proofOfPaymentURI, String);
+    if (x.spot) this.spot = new EventSpotAttached(x.spot);
     if (x.confirmedAt) this.confirmedAt = this.clean(x.confirmedAt, d => new Date(d).toISOString());
   }
 
@@ -122,7 +119,6 @@ export class User extends Resource {
     if (safeData.registrationForm) this.registrationForm = safeData.registrationForm;
     if (safeData.registrationAt) this.registrationAt = safeData.registrationAt;
     if (safeData.spot) this.spot = safeData.spot;
-    if (safeData.proofOfPaymentURI) this.proofOfPaymentURI = safeData.proofOfPaymentURI;
   }
 
   validate(): string[] {

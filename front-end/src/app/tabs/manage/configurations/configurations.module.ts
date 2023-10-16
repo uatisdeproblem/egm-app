@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { IDEACustomFieldsModule, IDEATranslationsModule } from '@idea-ionic/common';
+import { IDEACustomFieldsModule, IDEAListModule, IDEATranslationsModule } from '@idea-ionic/common';
 
 import { ConfigurationsRoutingModule } from './configurations-routing.module';
 
@@ -17,6 +17,7 @@ import { DocumentTemplateModule } from './documentTemplate/documentTemplate.modu
     IonicModule,
     IDEATranslationsModule,
     IDEACustomFieldsModule,
+    IDEAListModule,
     ConfigurationsRoutingModule,
     EmailTemplateModule,
     DocumentTemplateModule

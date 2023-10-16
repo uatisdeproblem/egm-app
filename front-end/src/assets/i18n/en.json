@@ -163,9 +163,21 @@
   "SPOTS": {
     "SPOTS": "Event spots",
     "SPOT_ID": "Spot ID",
-    "SPOT_TYPE": "Type",
+    "TYPE": "Type",
     "ASSIGNED_TO_COUNTRY": "Assigned to country",
-    "ASSIGNED_TO_USER": "Assigned to user"
+    "ASSIGNED_TO_USER": "Assigned to user",
+    "ADD_SPOTS": "Add spots",
+    "CREATED_ON": "Created",
+    "DESCRIPTION": "Description",
+    "NUM_ROWS_SELECTED": "{{num}} spots selected",
+    "ACTIONS_ON_NUM_ROWS": "Actions on {{num}} spots",
+    "TOTAL": "Total",
+    "PAID": "Paid",
+    "NUM_TO_ADD": "Number of spots to add",
+    "BRIEF_DESCRIPTION": "Brief description (optional)",
+    "BRIEF_DESCRIPTION_P": "Spot for external guests",
+    "ASSIGN_TO_COUNTRY": "Assign to country (optional)",
+    "GENERATE_NUM_SPOTS": "Generate {{num}} spots"
   },
   "USERS": {
     "USERS": "Users",
@@ -174,9 +186,8 @@
     "PAID": "Paid",
     "CONFIRMED": "Confirmed",
     "PERMISSIONS": "Permissions",
-    "NUM_ROWS_SELECTED": "{{num}} rows selected",
-    "ACTIONS_ON_NUM_ROWS": "Actions on {{num}} rows",
-    "SELECTED": "Selected"
+    "NUM_ROWS_SELECTED": "{{num}} users selected",
+    "ACTIONS_ON_NUM_ROWS": "Actions on {{num}} users"
   },
   "MANAGE": {
     "USERS_AND_REGISTRATIONS": "Users and event registrations",
@@ -257,6 +268,8 @@
         "PRICE": "The price of the spot for the user target of the notification",
         "URL": "The link to the question"
       }
-    }
+    },
+    "OTHER_CONFIGURATIONS": "Other configurations",
+    "LIST_OF_ESN_COUNTRIES": "List of current ESN countries"
   }
 }
