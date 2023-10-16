@@ -37,9 +37,8 @@ export class CognitoStack extends cdk.Stack {
       email: Cognito.UserPoolEmail.withSES({ fromEmail: props.firstAdminEmail, fromName: 'EGM app' }),
       userVerification: {
         emailSubject: 'EGM app: password reset',
-        // @todo chenge with final URL or use CognitoMessages trigger
         emailBody:
-          'Here is the verification link to reset your password: https://egm-app.click/auth/cognito?forgotPasswordCode={####}'
+          'Here is the verification link to reset your password: https://app.erasmusgeneration.org/auth/cognito?forgotPasswordCode={####}'
       }
     });
     new cdk.CfnOutput(this, 'CognitoUserPoolId', { value: this.userPool.userPoolId });
