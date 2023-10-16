@@ -9,8 +9,4 @@ import { AppService } from '@app/app.service';
 })
 export class TabsComponent {
   constructor(public app: AppService) {}
-
-  userCanManageSomething(): boolean {
-    return Object.values(this.app.user.permissions).some(x => x === true);
-  }
 }

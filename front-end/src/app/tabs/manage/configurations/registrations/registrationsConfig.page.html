@@ -1,0 +1,67 @@
+<ion-header class="ion-no-border" *ngIf="app.isInMobileMode()">
+  <ion-toolbar color="ideaToolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="app.closePage()"><ion-icon icon="arrow-back" slot="icon-only"></ion-icon></ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'MANAGE.REGISTRATIONS_SETTINGS' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list class="aList maxWidthContainer" [class.viewMode]="!editMode">
+    <ion-toolbar color="transparent">
+      <ion-buttons slot="end">
+        <ion-button *ngIf="editMode" (click)="exitEditMode()">
+          <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="editMode" (click)="save()">
+          <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="!editMode" (click)="enterEditMode()">
+          <ion-icon slot="icon-only" name="pencil"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'MANAGE.REGISTRATIONS_OPTIONS' | translate }}</h2>
+        <p>{{ 'MANAGE.REGISTRATIONS_OPTIONS_I' | translate }}</p>
+      </ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.isRegistrationOpen">
+        {{ 'MANAGE.ALLOW_REGISTRATIONS' | translate }}
+      </ion-checkbox>
+    </ion-item>
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'MANAGE.REGISTRATION_FORM' | translate }}</h2>
+        <p>{{ 'MANAGE.REGISTRATION_FORM_I' | translate }}</p>
+      </ion-label>
+    </ion-list-header>
+    <idea-custom-block-meta
+      [block]="configurations.registrationFormDef"
+      [disabled]="!editMode"
+      [lines]="editMode ? 'inset' : 'none'"
+    ></idea-custom-block-meta>
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'MANAGE.EVENT_SPOTS' | translate }}</h2>
+        <p>{{ 'MANAGE.EVENT_SPOTS_I' | translate }}</p>
+        <p>{{ 'MANAGE.EVENT_SPOTS_II' | translate }}</p>
+      </ion-label>
+    </ion-list-header>
+    <ion-reorder-group [disabled]="!editMode" (ionItemReorder)="reorderSpotTypes($event)">
+      <ion-item *ngFor="let st of configurations.spotTypes">
+        <ion-reorder slot="start" *ngIf="editMode"></ion-reorder>
+        <ion-label>{{ st }}</ion-label>
+        <ion-badge slot="end">{{ configurations.pricePerSpotTypes[st] | currency: configurations.currency }}</ion-badge>
+        <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeSpotType(st)">
+          <ion-icon icon="trash" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-reorder-group>
+    <p class="ion-text-center" *ngIf="editMode">
+      <ion-button size="small" (click)="addSpotType()">{{ 'MANAGE.ADD_SPOT_TYPE' | translate }}</ion-button>
+    </p>
+  </ion-list>
+</ion-content>

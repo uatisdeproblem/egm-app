@@ -5,8 +5,11 @@
 
 ## Dictionary
 
-- Participant (User): an ESNer joining the event.
-- Admin: a User part of the group "admins", i.e. able to manage resources (Organizations, Speakers, Venues, Rooms, Sessions, etc.).
+- Participant (User): an ESNer or External guest joining the event.
+- Administrator: User able to manage all lists, contents and configurations.
+- User w/canManageRegistrations: User able to see and manage all users and spots to the event.
+- User w/canManafeContents: User able to see and manage all the contents of the event (speakers, sessions, communications, etc.).
+- Delegation leader: User able to see and anage the list of her/his ESN Country's users and spots to the vent.
 - Organization: a company or entity that participates in the job fair and possibly holds some job/interview offer.
 - Speaker: a person (not a user) holding a Session during the event.
 - Venue: a physical location of the event; it can contain Rooms.

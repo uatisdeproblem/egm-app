@@ -180,11 +180,18 @@ export class AppService {
    * Get the permissions of a user as printable string.
    */
   getUserPermissionsString(permissions: UserPermissions): string {
-    if (permissions.isAdmin) return this.t._('PROFILE.ADMINISTRATOR');
+    if (permissions.isAdmin) return this.t._('USER.ADMINISTRATOR');
     const arrPermissions = [];
-    if (permissions.isCountryLeader) arrPermissions.push(this.t._('PROFILE.DELEGATION_LEADER'));
-    if (permissions.canManageRegistrations) arrPermissions.push(this.t._('PROFILE.CAN_MANAGE_REGISTRATIONS'));
-    if (permissions.canManageContents) arrPermissions.push(this.t._('PROFILE.CAN_MANAGE_CONTENTS'));
+    if (permissions.isCountryLeader) arrPermissions.push(this.t._('USER.DELEGATION_LEADER'));
+    if (permissions.canManageRegistrations) arrPermissions.push(this.t._('USER.CAN_MANAGE_REGISTRATIONS'));
+    if (permissions.canManageContents) arrPermissions.push(this.t._('USER.CAN_MANAGE_CONTENTS'));
     return arrPermissions.join(', ');
+  }
+  /**
+   * Whether the user is administrator or can manage some of the sections.
+   */
+  userCanManageSomething(): boolean {
+    const p = this.user.permissions;
+    return p.isAdmin || p.canManageRegistrations || p.canManageContents;
   }
 }

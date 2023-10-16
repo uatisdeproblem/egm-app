@@ -7,7 +7,8 @@
       "crypto": ["node_modules/crypto-js"],
       "@models/*": ["../back-end/src/models/*"],
       "@env": ["../front-end/src/environments/environment.ts"],
-      "@app/*": ["../front-end/src/app/*"]
+      "@app/*": ["../front-end/src/app/*"],
+      "@tabs/*": ["../front-end/src/app/tabs/*"]
     },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,

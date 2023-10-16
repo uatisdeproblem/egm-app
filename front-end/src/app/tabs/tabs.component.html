@@ -3,21 +3,21 @@
     <ion-tab-button (click)="app.goTo([''])">
       <ion-img [src]="app.getIcon()"></ion-img>
     </ion-tab-button>
-    <ion-tab-button tab="profile">
-      <ion-label>{{ 'TABS.PROFILE' | translate }}</ion-label>
+    <ion-tab-button tab="user">
+      <ion-label>{{ 'TABS.USER' | translate }}</ion-label>
     </ion-tab-button>
-    <ion-tab-button tab="configurations" *ngIf="userCanManageSomething()">
-      <ion-label>{{ 'TABS.CONFIGURATIONS' | translate }}</ion-label>
+    <ion-tab-button tab="manage" *ngIf="app.userCanManageSomething()">
+      <ion-label>{{ 'TABS.MANAGE' | translate }}</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
 
 <ion-tabs class="mobileTabs" *ngIf="app.isInMobileMode()">
   <ion-tab-bar color="ideaToolbar" slot="bottom">
-    <ion-tab-button tab="profile">
+    <ion-tab-button tab="user">
       <ion-icon icon="person"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button tab="configurations" *ngIf="userCanManageSomething()">
+    <ion-tab-button tab="manage" *ngIf="app.userCanManageSomething()">
       <ion-icon icon="settings"></ion-icon>
     </ion-tab-button>
   </ion-tab-bar>
