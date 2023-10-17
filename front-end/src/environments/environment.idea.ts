@@ -5,9 +5,9 @@ export const environment = {
   idea: {
     project: 'egm-app',
     app: {
-      version: '3.0.2',
+      version: '3.1.0',
       bundle: 'com.esn.egmapp',
-      url: 'https://egm-app.click',
+      url: 'https://app.erasmusgeneration.org',
       mediaUrl: 'https://media.egm-app.click',
       title: 'EGM app',
       appleStoreURL: '',
