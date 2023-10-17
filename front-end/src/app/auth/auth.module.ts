@@ -6,9 +6,10 @@ import { IDEATranslationsModule } from '@idea-ionic/common';
 
 import { AuthRoutingModule } from './auth-routing.module';
 import { AuthPage } from './auth.page';
+import { AuthCognitoPage } from './cognito.page';
 
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, AuthRoutingModule],
-  declarations: [AuthPage]
+  declarations: [AuthPage, AuthCognitoPage]
 })
 export class AuthModule {}

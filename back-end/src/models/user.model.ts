@@ -1,74 +1,203 @@
-import { Resource } from 'idea-toolbox';
+import { Resource, epochISOString } from 'idea-toolbox';
+
+import { EventSpotAttached } from './eventSpot.model';
 
 export class User extends Resource {
   /**
-   * Username in ESN Accounts (lowercase).
+   * The ID of the user; it's the concatenation of the key of the auth service and the username there.
    */
   userId: string;
   /**
-   * Email address.
+   * Timestamp of when the user signed-up.
+   */
+  createdAt: epochISOString;
+  /**
+   * Timestamp of the last time the user did something.
+   */
+  lastSeenAt: epochISOString;
+  /**
+   * The service used to authenticate.
+   */
+  authService: AuthServices;
+  /**
+   * The first name of the user.
+   */
+  firstName: string;
+  /**
+   * The last name of the user.
+   */
+  lastName: string;
+  /**
+   * Email address for notifications (!== account email address).
+   * Note: if bounced, it will finish in the black list for a while (see `sesNotifications.ts`).
    */
   email: string;
-  /**
-   * The name.
-   */
-  name: string;
-  /**
-   * Section code in ESN Accounts.
-   */
-  roles: string[];
-  /**
-   * Section code in ESN Accounts.
-   */
-  sectionCode: string;
-  /**
-   * ESN Section.
-   */
-  section: string;
-  /**
-   * ESN Country.
-   * @todo there's a known error from ESN Accounts: here is returned the Section and not the Country.
-   */
-  country: string;
   /**
    * The URL to the user's avatar.
    */
   avatarURL: string;
+
   /**
-   * Whether the user is from outside ESN.
+   * ESN section code in ESN Accounts.
+   * Set only for `AuthService.ESN_ACCOUNTS`.
    */
-  isExternal: boolean;
+  sectionCode?: string;
   /**
-   * Whether the user is administrator, based on the platform's configurations.
-   * A change in this permission will require a new sign-in to take full place.
+   * ESN country.
+   * Set only for `AuthService.ESN_ACCOUNTS`.
    */
-  isAdministrator: boolean;
+  sectionCountry?: string;
+  /**
+   * ESN section name.
+   * Set only for `AuthService.ESN_ACCOUNTS`.
+   */
+  sectionName?: string;
+
+  /**
+   * The permissions of the user on the app.
+   */
+  permissions: UserPermissions;
+
+  /**
+   * A custom block containing custom sections and fields for the registration form.
+   */
+  registrationForm: Record<string, any>;
+  /**
+   * The timestamp when the registration was submitted (if it was).
+   * If set, the registration is considered completed.
+   */
+  registrationAt?: epochISOString;
+  /**
+   * The spot assigned for the event, if any.
+   */
+  spot?: EventSpotAttached;
+  /**
+   * Whether the participation and the payment of the user have been confirmed.
+   */
+  confirmedAt?: string;
 
   load(x: any): void {
     super.load(x);
-    this.userId = this.clean(x.userId, String)?.toLowerCase();
+    this.userId = this.clean(x.userId, String);
+    this.createdAt = this.clean(x.createdAt, t => new Date(t).toISOString(), new Date().toISOString());
+    this.lastSeenAt = new Date().toISOString();
+    this.authService = this.clean(x.authService, String);
+    this.firstName = this.clean(x.firstName, String);
+    this.lastName = this.clean(x.lastName, String);
     this.email = this.clean(x.email, String);
-    if (x.name) this.name = this.clean(x.name, String);
-    else {
-      const firstName = this.clean(x.firstName, String);
-      const lastName = this.clean(x.lastName, String);
-      this.name = `${firstName} ${lastName}`.trim();
-    }
-    this.roles = this.cleanArray(x.roles, String);
-    this.sectionCode = this.clean(x.sectionCode, String);
-    this.section = this.clean(x.section, String);
-    this.country = this.clean(x.country, String);
     this.avatarURL = this.clean(x.avatarURL, String);
-    this.isExternal = this.clean(x.isExternal, Boolean);
-    this.isAdministrator = this.clean(x.isAdministrator, Boolean);
+
+    if (this.authService === AuthServices.ESN_ACCOUNTS) {
+      this.sectionCode = this.clean(x.sectionCode, String);
+      this.sectionCountry = this.clean(x.sectionCountry, String);
+      this.sectionName = this.clean(x.sectionName, String);
+    }
+
+    this.permissions = new UserPermissions(x.permissions);
+
+    this.registrationForm = x.registrationForm ?? {};
+    if (x.registrationAt) this.registrationAt = this.clean(x.registrationAt, t => new Date(t).toISOString());
+    if (x.spot) this.spot = new EventSpotAttached(x.spot);
+    if (x.confirmedAt) this.confirmedAt = this.clean(x.confirmedAt, d => new Date(d).toISOString());
+  }
+
+  safeLoad(newData: any, safeData: any): void {
+    super.safeLoad(newData, safeData);
+    this.userId = safeData.userId;
+    this.createdAt = safeData.createdAt;
+    this.lastSeenAt = new Date().toISOString();
+    this.authService = safeData.authService;
+
+    if (this.authService === AuthServices.ESN_ACCOUNTS) {
+      this.sectionCode = safeData.sectionCode;
+      this.sectionCountry = safeData.sectionCountry;
+      this.sectionName = safeData.sectionName;
+    }
+
+    this.permissions = safeData.permissions;
+
+    if (safeData.registrationForm) this.registrationForm = safeData.registrationForm;
+    if (safeData.registrationAt) this.registrationAt = safeData.registrationAt;
+    if (safeData.spot) this.spot = safeData.spot;
+  }
+
+  validate(): string[] {
+    const e = super.validate();
+    if (this.iE(this.firstName)) e.push('firstName');
+    if (this.iE(this.lastName)) e.push('lastName');
+    if (this.iE(this.email, 'email')) e.push('email');
+    return e;
   }
 
   /**
-   * Get a string representing the ESN Section and Country of the subject.
-   * @todo to solve a known error from ESN Accounts: the Country isn't returned correctly.
+   * Get the original user ID in the AuthService.
+   */
+  getAuthServiceUserId(): string {
+    return this.userId.slice(this.authService.concat('_').length);
+  }
+
+  /**
+   * Get a string representing the ESN section and country of the user.
    */
   getSectionCountry(): string {
-    if (this.country === this.section) return this.section;
-    return [this.country, this.section].filter(x => x).join(' - ');
+    return [this.sectionCountry, this.sectionName].filter(x => x).join(' - ');
+  }
+
+  /**
+   * Whether the user is considered an external guest.
+   */
+  isExternal(): boolean {
+    return this.authService !== AuthServices.ESN_ACCOUNTS;
+  }
+}
+
+/**
+ * The authentication services for the platform.
+ */
+export enum AuthServices {
+  ESN_ACCOUNTS = 'EA', // aka Galaxy
+  COGNITO = 'CO'
+}
+
+/**
+ * The permissions a user can have.
+ */
+export class UserPermissions {
+  /**
+   * Whether the user can manage spots assigned to their ESN country.
+   */
+  isCountryLeader: boolean;
+  /**
+   * Whether the user has administrative permissions on the registrations.
+   */
+  canManageRegistrations: boolean;
+  /**
+   * Whether the user havs administrative permissions on the contents (speakers, sessions, etc.).
+   */
+  canManageContents: boolean;
+  /**
+   * Whether the user has maximum permissions over the app.
+   * If this is true, all other permissions are.
+   */
+  protected _isAdmin: boolean;
+  get isAdmin(): boolean {
+    return this._isAdmin;
+  }
+  set isAdmin(isAdmin: boolean) {
+    this._isAdmin = isAdmin;
+    if (isAdmin) {
+      this.isCountryLeader = true;
+      this.canManageRegistrations = true;
+      this.canManageContents = true;
+    }
+  }
+
+  constructor(x?: any) {
+    x = x || {};
+    this.isCountryLeader = Boolean(x.isCountryLeader);
+    this.canManageRegistrations = Boolean(x.canManageRegistrations);
+    this.canManageContents = Boolean(x.canManageContents);
+    // as last, to change any other attribute in case it's `true`
+    this.isAdmin = Boolean(x._isAdmin);
   }
 }

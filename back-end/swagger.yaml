@@ -1,16 +1,16 @@
 openapi: 3.0.3
 
 info:
-  title: EGM (CDK) API
+  title: EGM API
   version: 3.0.2
   contact:
-    name: ITER IDEA
-    email: help@iter-idea.com
-    url: https://iter-idea.com
+    name: EGM Technical Lead
+    email: egm-technical@esn.org
+    url: https://esn.org
 
 servers:
   # if needed, substitute the correct API URL
-  - url: https://api.egm.link/{environment}
+  - url: https://api.egm.click/{environment}
     variables:
       environment:
         enum: [dev, prod]
@@ -19,13 +19,19 @@ servers:
 
 externalDocs:
   description: Models documentation
-  url: https://github.com/uatisdeproblem/egm/blob/main/back-end/src/models # @todo change this to ESN Repo
+  url: https://github.com/uatisdeproblem/egm-app/blob/main/back-end/src/models # @todo change this to ESN Repo
 
 tags:
   - name: Status
     description: The app's status
-  - name: Login
+  - name: Auth
     description: Access the platform
+  - name: Configurations
+    description: The platfrom's configurations
+  - name: Users
+    description: The users of the platform
+  - name: Event
+    description: The event-related actions
 
 paths:
   /status:
@@ -41,11 +47,11 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/AppStatus'
-  /login:
+  /galaxy:
     get:
-      summary: Manage the login accepted request from ESN Accounts and prepare a token to authenticate the user
+      summary: End the login flow via ESN Accounts auth service
       description: Acquire the CAS ticket, validate it, create the user (if necessary) and return a token.
-      tags: [Login]
+      tags: [Auth]
       parameters:
         - name: ticket
           in: query
@@ -56,18 +62,301 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
+  /cognito:
+    post:
+      summary: Actions on Cognito auth service
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [SIGN_IN, SIGN_UP, RESET_PASSWORD, RESET_PASSWORD_CONFIRM]
+                email:
+                  type: string
+                  description: (SIGN_IN, SIGN_UP, RESET_PASSWORD, RESET_PASSWORD_CONFIRM)
+                password:
+                  type: string
+                  description: (SIGN_IN, SIGN_UP)
+                confirmationCode:
+                  type: string
+                  description: (RESET_PASSWORD_CONFIRM)
+                firstName:
+                  type: string
+                  description: (SIGN_UP)
+                lastName:
+                  type: string
+                  description: (SIGN_UP)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /configurations:
+    get:
+      summary: Get the platform's configurations
+      description: Requires to be admin
+      tags: [Configurations]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Configurations'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit the platform's configurations
+      description: Requires to be admin
+      tags: [Configurations]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configurations'
+      responses:
+        200:
+          $ref: '#/components/responses/Configurations'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Set specific configurations
+      description: Requires to be admin
+      tags: [Configurations]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum:
+                    - GET_EMAIL_TEMPLATE_SPOT_ASSIGNED
+                    - SET_EMAIL_TEMPLATE_SPOT_ASSIGNED
+                    - RESET_EMAIL_TEMPLATE_SPOT_ASSIGNED
+                    - TEST_EMAIL_TEMPLATE_SPOT_ASSIGNED
+                    - GET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
+                    - SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
+                    - RESET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
+                    - TEST_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
+                    - GET_DOCUMENT_TEMPLATE_INVOICE
+                    - SET_DOCUMENT_TEMPLATE_INVOICE
+                    - RESET_DOCUMENT_TEMPLATE_INVOICE
+                    - TEST_DOCUMENT_TEMPLATE_INVOICE
+                subject:
+                  type: string
+                  description: (SET_EMAIL_TEMPLATE_SPOT_ASSIGNED, SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED)
+                content:
+                  type: string
+                  description: (SET_EMAIL_TEMPLATE_SPOT_ASSIGNED, SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED, SET_DOCUMENT_TEMPLATE_INVOICE)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /users:
+    get:
+      summary: Get the users of the app
+      description: Requires canManageRegistrations permission
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Users'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /users/{userId}:
+    get:
+      summary: Get a user's profile
+      description: Requires to be the requesting user or canManageRegistrations permission
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: userId
+          in: path
+          description: The user ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit a user's data
+      description: Requires to be the requesting user or canManageRegistrations permission
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: userId
+          in: path
+          description: The user ID.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on an user
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [GET_AVATAR_UPLOAD_URL, REGISTER_TO_EVENT, CHANGE_PERMISSIONS]
+                registrationForm:
+                  type: number
+                  description: (REGISTER_TO_EVENT)
+                isDraft:
+                  type: boolean
+                  description: (REGISTER_TO_EVENT)
+                permissions:
+                  type: number
+                  description: (CHANGE_PERMISSIONS)
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Remove a user's profile and data
+      description: Requires to be the requesting user or canManageRegistrations permission
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /event-spots:
+    get:
+      summary: Get the spots available for the event
+      description: Requires to be admin
+      tags: [Event]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/EventSpots'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    post:
+      summary: Add a batch of new spots
+      description: Requires to be admin or canManageRegistrations permission
+      tags: [Event]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventSpot'
+      responses:
+        200:
+          $ref: '#/components/responses/EventSpots'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /event-spots/{spotId}:
+    get:
+      summary: Get a spot to the event
+      description: Requires to be admin or canManageRegistrations permission
+      tags: [Event]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: spotId
+          in: path
+          description: The spot ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/EventSpot'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit a spot to the event
+      description: Requires to be admin or canManageRegistrations permission
+      tags: [Event]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: spotId
+          in: path
+          description: The spot ID.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventSpot'
+      responses:
+        200:
+          $ref: '#/components/responses/EventSpot'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Remove a spot to the event or canManageRegistrations permission
+      description: Requires to be admin
+      tags: [Event]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
     AppStatus:
       type: object
       additionalProperties: {}
-    # choose for each project one kind of documentation style: lazy or detailed
-    # 1. lazy documentation example:
-    # Book:
-    #  type: object
-    #  additionalProperties: {}
-    # 2. detailed documentation example:
+    Configurations:
+      type: object
+      additionalProperties: {}
+    User:
+      type: object
+      additionalProperties: {}
+    EventSpot:
+      type: object
+      additionalProperties: {}
 
   responses:
     AppStatus:
@@ -77,6 +366,43 @@ components:
           schema:
             type: object
             $ref: '#/components/schemas/AppStatus'
+    Configurations:
+      description: The platform's configurations
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/Configurations'
+    User:
+      description: A user of the platform
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/User'
+    Users:
+      description: The users of the platform
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+    EventSpot:
+      description: A spot for the event
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/EventSpot'
+    EventSpots:
+      description: The spots for the event
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/EventSpot'
     BadParameters:
       description: Bad input parameters
       content:
@@ -91,10 +417,6 @@ components:
       description: Operation completed
 
   securitySchemes:
-    CognitoUserPool:
-      type: apiKey
-      name: Authorization
-      in: header
     AuthFunction:
       type: apiKey
       name: Authorization

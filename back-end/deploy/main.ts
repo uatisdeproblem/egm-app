@@ -17,17 +17,27 @@ import { parameters, stages, Stage, versionStatus } from './environments';
 //
 
 const apiResources: ResourceController[] = [
+  { name: 'status', paths: ['/status'] },
   { name: 'auth', isAuthFunction: true },
-  { name: 'login', paths: ['/login'] },
-  { name: 'status', paths: ['/status'] }
+  { name: 'cognito', paths: ['/cognito'] },
+  { name: 'galaxy', paths: ['/galaxy'] },
+  { name: 'configurations', paths: ['/configurations'] },
+  { name: 'users', paths: ['/users', '/users/{userId}'] },
+  { name: 'eventSpots', paths: ['/event-spots', '/event-spots/{spotId}'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
   status: {
     PK: { name: 'version', type: DDB.AttributeType.STRING }
   },
-  roles: {
+  configurations: {
     PK: { name: 'PK', type: DDB.AttributeType.STRING }
+  },
+  users: {
+    PK: { name: 'userId', type: DDB.AttributeType.STRING }
+  },
+  eventSpots: {
+    PK: { name: 'spotId', type: DDB.AttributeType.STRING }
   }
 };
 
@@ -108,7 +118,9 @@ const createApp = async (): Promise<void> => {
     env,
     project: parameters.project,
     stage: STAGE,
-    domain: STAGE_VARIABLES.domain
+    domain: STAGE_VARIABLES.domain,
+    alternativeDomain: STAGE_VARIABLES.alternativeDomain || '',
+    certificateARN: STAGE_VARIABLES.frontEndCertificateARN
   });
 };
 createApp();

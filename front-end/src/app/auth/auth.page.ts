@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IDEAStorageService } from '@idea-ionic/common';
 
-import { AppService } from '../app.service';
+import { AppService } from '@app/app.service';
+import { AuthService } from './auth.service';
 
 import { environment as env } from '@env';
 
@@ -12,49 +12,25 @@ import { environment as env } from '@env';
   styleUrls: ['auth.page.scss']
 })
 export class AuthPage implements OnInit {
-  token: string;
-
   version = env.idea.app.version;
 
-  constructor(private route: ActivatedRoute, private storage: IDEAStorageService, public app: AppService) {}
+  agreementCheck = true;
+
+  constructor(private route: ActivatedRoute, private auth: AuthService, public app: AppService) {}
   async ngOnInit(): Promise<void> {
-    this.token = this.route.snapshot.queryParamMap.get('token');
     // complete the flow from ESN Accounts
-    if (this.token) {
-      const user = parseJWT(this.token);
-      const tokenExpiresAt = user.exp * 1000;
-      if (tokenExpiresAt > Date.now()) {
-        await this.storage.set('token', this.token);
-        await this.storage.set('tokenExpiresAt', tokenExpiresAt);
-        await this.storage.set('user', user);
-      }
+    const token = this.route.snapshot.queryParamMap.get('token');
+    if (token) {
+      await this.auth.saveAuthToken(token);
       window.location.assign('');
     }
   }
 
-  startLoginFlowAsExternal(): void {
-    this.app.goTo(['auth', 'external', 'sign-in']);
+  startSignInFlowWithESNAccounts(): void {
+    window.location.assign(this.auth.getURLToStartSignInWithESNAccounts());
   }
 
-  startLoginFlowWithESNAccounts(): void {
-    const apiLoginURL = `https://${env.idea.api.url}/${env.idea.api.stage}/login`;
-    const localhost = location.hostname.startsWith('localhost') ? '?localhost=8100' : '';
-    window.location.assign(`https://accounts.esn.org/cas/login?service=${apiLoginURL}${localhost}`);
+  goToCognitoAuth(): void {
+    this.app.goTo(['auth', 'cognito']);
   }
 }
-
-/**
- * Parse a JWT token without using external libraries.
- */
-const parseJWT = (token: string): any => {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split('')
-      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-      .join('')
-  );
-  return JSON.parse(jsonPayload);
-};

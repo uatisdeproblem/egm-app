@@ -2,13 +2,11 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { AuthPage } from './auth.page';
+import { AuthCognitoPage } from './cognito.page';
 
 const routes: Routes = [
   { path: '', component: AuthPage },
-  {
-    path: 'external',
-    loadChildren: (): Promise<any> => import('@idea-ionic/auth').then(m => m.IDEAAuthModule)
-  }
+  { path: 'cognito', component: AuthCognitoPage }
 ];
 
 @NgModule({

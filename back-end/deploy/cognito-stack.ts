@@ -33,7 +33,13 @@ export class CognitoStack extends cdk.Stack {
       },
       accountRecovery: Cognito.AccountRecovery.EMAIL_ONLY,
       mfa: Cognito.Mfa.OPTIONAL,
-      mfaSecondFactor: { sms: false, otp: true }
+      mfaSecondFactor: { sms: false, otp: true },
+      email: Cognito.UserPoolEmail.withSES({ fromEmail: props.firstAdminEmail, fromName: 'EGM app' }),
+      userVerification: {
+        emailSubject: 'EGM app: password reset',
+        emailBody:
+          'Here is the verification link to reset your password: https://app.erasmusgeneration.org/auth/cognito?forgotPasswordCode={####}'
+      }
     });
     new cdk.CfnOutput(this, 'CognitoUserPoolId', { value: this.userPool.userPoolId });
     new cdk.CfnOutput(this, 'UserPoolARN', { value: this.userPool.userPoolArn });

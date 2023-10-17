@@ -1,0 +1,138 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="ideaToolbar" *ngIf="app.isInMobileMode()">
+    <ion-buttons slot="start">
+      <ion-button (click)="app.closePage()"><ion-icon icon="arrow-back" slot="icon-only"></ion-icon></ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'SPOTS.SPOTS' | translate }}</ion-title>
+  </ion-toolbar>
+  <div class="filters">
+    <ion-item color="ideaToolbar" lines="none" *ngIf="!spotsTable.selected.length" button (click)="addSpots()">
+      <ion-icon name="add" slot="start" color="ESNgreen"></ion-icon>
+      <ion-label>{{ 'SPOTS.ADD_SPOTS' | translate }}</ion-label>
+    </ion-item>
+    <ion-item color="ideaToolbar" lines="none" *ngIf="spotsTable.selected.length">
+      <ion-button
+        slot="start"
+        color="ESNgreen"
+        fill="clear"
+        *ngIf="spotsTable.selected.length === 1"
+        (click)="manageSpot(spotsTable.selected[0])"
+      >
+        <ion-icon name="pencil" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button slot="start" color="ESNgreen" (click)="actionsOnSelectedRows()">
+        <ion-icon name="flash" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-label>
+        <i>{{ 'SPOTS.NUM_ROWS_SELECTED' | translate : { num: spotsTable.selected.length } }}</i>
+      </ion-label>
+    </ion-item>
+    <ion-item color="ideaToolbar" lines="none">
+      <ion-icon icon="filter" slot="start" size="small"></ion-icon>
+      <ion-select
+        interface="popover"
+        [label]="('SPOTS.TYPE' | translate) + ':'"
+        [(ngModel)]="filters.spot"
+        (ionChange)="filter()"
+      >
+        <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
+        <ion-select-option *ngFor="let st of app.configurations.spotTypes" [value]="st">{{ st }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item color="ideaToolbar" lines="none">
+      <ion-select
+        interface="popover"
+        [label]="('SPOTS.ASSIGNED_TO_COUNTRY' | translate) + ':'"
+        [(ngModel)]="filters.assignedToCountry"
+        (ionChange)="filter()"
+      >
+        <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
+        <ion-select-option *ngFor="let country of app.configurations.sectionCountries" [value]="country">
+          {{ country }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item color="ideaToolbar" lines="none">
+      <ion-select
+        interface="popover"
+        [label]="('SPOTS.ASSIGNED_TO_USER' | translate) + ':'"
+        [(ngModel)]="filters.assignedToUser"
+        (ionChange)="filter()"
+      >
+        <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
+        <ion-select-option value="yes">{{ 'COMMON.YES' | translate }}</ion-select-option>
+        <ion-select-option value="no">{{ 'COMMON.NO' | translate }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item color="ideaToolbar" lines="none">
+      <ion-select
+        interface="popover"
+        [label]="('SPOTS.PAID' | translate) + ':'"
+        [(ngModel)]="filters.paid"
+        (ionChange)="filter()"
+      >
+        <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
+        <ion-select-option value="yes">{{ 'COMMON.YES' | translate }}</ion-select-option>
+        <ion-select-option value="no">{{ 'COMMON.NO' | translate }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item color="ideaToolbar" lines="none">
+      <ion-searchbar (ionInput)="filter($event.target.value)"></ion-searchbar>
+    </ion-item>
+  </div>
+</ion-header>
+<ion-content>
+  <ngx-datatable
+    #spotsTable
+    class="fullscreen"
+    [class.material]="!app.isInDarkMode()"
+    [class.dark]="app.isInDarkMode()"
+    [columns]="col"
+    [rows]="filteredSpots"
+    [limit]="limit"
+    [rowHeight]="rowHeight"
+    [headerHeight]="headerHeight"
+    [footerHeight]="footerHeight"
+    [scrollbarH]="true"
+    [columnMode]="columnMode"
+    [reorderable]="false"
+    [rowIdentity]="rowIdentity"
+    [trackByProp]="trackByProp"
+    [selectionType]="selectionType"
+    [scrollbarH]="true"
+    [selectAllRowsOnPage]="false"
+    [messages]="{ emptyMessage: 'COMMON.NO_ELEMENT_FOUND' | translate }"
+  >
+    <ngx-datatable-footer>
+      <ng-template
+        ngx-datatable-footer-template
+        let-rowCount="rowCount"
+        let-pageSize="pageSize"
+        let-selectedCount="selectedCount"
+        let-curPage="curPage"
+        let-offset="offset"
+      >
+        <div class="footerTotals" *ngIf="!app.isInMobileMode()">
+          <ng-container>
+            <span><strong>{{ 'SPOTS.TOTAL' | translate }}</strong>: {{ spots?.length ?? 0 }}</span>
+            <span><strong>{{ 'SPOTS.ASSIGNED_TO_COUNTRY' | translate }}</strong>: {{ numAssignedToCountry }}</span>
+            <span><strong>{{ 'SPOTS.ASSIGNED_TO_USER' | translate }}</strong>: {{ numAssignedToUser }}</span>
+            <span><strong>{{ 'SPOTS.PAID' | translate }}</strong>: {{ numPaid }}</span>
+          </ng-container>
+        </div>
+        <datatable-pager
+          [pagerLeftArrowIcon]="'datatable-icon-left'"
+          [pagerRightArrowIcon]="'datatable-icon-right'"
+          [pagerPreviousIcon]="'datatable-icon-prev'"
+          [pagerNextIcon]="'datatable-icon-skip'"
+          [page]="curPage"
+          [size]="pageSize"
+          [count]="rowCount"
+          [hidden]="!(rowCount / pageSize > 1)"
+          (change)="spotsTable.onFooterPage($event)"
+        >
+        </datatable-pager>
+      </ng-template>
+    </ngx-datatable-footer>
+  </ngx-datatable>
+</ion-content>

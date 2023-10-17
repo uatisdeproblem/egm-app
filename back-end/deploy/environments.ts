@@ -10,10 +10,13 @@ export const parameters: Parameters = {
 export const stages: { [stage: string]: Stage } = {
   prod: {
     domain: 'egm-app.click',
+    alternativeDomain: 'app.erasmusgeneration.org',
+    frontEndCertificateARN: 'arn:aws:acm:us-east-1:767203414619:certificate/a82a1829-9d1b-4e0e-a2e7-fda8ef7a72d6',
     destroyDataOnDelete: false
   },
   dev: {
     domain: 'dev.egm-app.click',
+    frontEndCertificateARN: 'arn:aws:acm:us-east-1:767203414619:certificate/fb400353-44df-4148-a1f7-53f180c7db70',
     destroyDataOnDelete: true
   }
 };
@@ -56,6 +59,14 @@ export interface Stage {
    * The domain name where to reach the front-end.
    */
   domain: string;
+  /**
+   * An alternative domain name where to reach the front-end.
+   */
+  alternativeDomain?: string;
+  /**
+   * The ARN of the certificate to use for the front-end's CloudFront distribution.
+   */
+  frontEndCertificateARN: string;
   /**
    * Whether to delete the data when the environment is deleted.
    * It should be True for dev and False for prod environments.

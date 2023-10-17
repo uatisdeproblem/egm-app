@@ -6,33 +6,31 @@
     "compile": "tsc --build",
     "deploy": "cdk deploy",
     "cdk": "cdk",
-    "login": "aws sso login --profile iter-idea-cloud-app-starter && yawsso -p iter-idea-cloud-app-starter",
-    "logs": "sam logs --tail --profile iter-idea-cloud-app-starter --stack-name cloud-app-starter-dev-api",
-    "deploy-quick": "npm run compile && cdk --profile iter-idea-cloud-app-starter deploy cloud-app-starter-dev-api --context stage=dev --exclusively --hotswap"
+    "logs": "sam logs --tail --profile egm --stack-name egm-dev-api",
+    "deploy-quick": "npm run compile && cdk --profile egm deploy egm-dev-api --context stage=dev --exclusively --hotswap"
   },
   "dependencies": {
-    "axios": "^1.4.0",
-    "idea-aws": "^3.x.x",
-    "idea-toolbox": "^6.x.x",
-    "jsonwebtoken": "^9.0.1",
+    "axios": "^1.5.1",
+    "idea-aws": "^4.2.1",
+    "idea-toolbox": "^7.0.1",
+    "jsonwebtoken": "^9.0.2",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
     "@iter-idea/ses-verify-identities": "^1.0.2",
-    "@tsconfig/node16": "^1.0.3",
-    "@types/aws-lambda": "^8.10.109",
-    "@types/jsonwebtoken": "^9.0.2",
-    "@types/node": "^16.18.10",
-    "@types/xml2js": "^0.4.11",
+    "@tsconfig/node18": "^18.2.0",
+    "@types/aws-lambda": "^8.10.119",
+    "@types/jsonwebtoken": "^9.0.3",
+    "@types/node": "^18.17.4",
+    "@types/xml2js": "^0.4.12",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
-    "aws-cdk": "^2.56.1",
-    "aws-cdk-lib": "^2.56.1",
-    "aws-sdk": "^2.1282.0",
-    "constructs": "^10.1.199",
-    "esbuild": "^0.16.10",
-    "eslint": "^8.30.0",
-    "typescript": "^4.8.4"
+    "aws-cdk": "^2.90.0",
+    "aws-cdk-lib": "^2.90.0",
+    "constructs": "^10.2.69",
+    "esbuild": "^0.19.0",
+    "eslint": "^8.46.0",
+    "typescript": "^5.1.6"
   }
 }

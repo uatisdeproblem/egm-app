@@ -7,13 +7,39 @@
         <ion-card-title>{{ 'AUTH.TITLE' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-button (click)="startLoginFlowWithESNAccounts()">
-          {{ 'AUTH.LOGIN_WITH_ESN_ACCOUNTS' | translate }}
-        </ion-button>
-        <p>{{ 'COMMON.OR' | translate }}</p>
-        <ion-button color="secondary" (click)="startLoginFlowAsExternal()">
-          {{ 'AUTH.LOGIN_AS_EXTERNAL' | translate }}
-        </ion-button>
+        <ion-list class="loginOptions">
+          <ion-item color="transparent" lines="none">
+            <ion-checkbox
+              slot="start"
+              [(ngModel)]="agreementCheck"
+              [ngModelOptions]="{ standalone: true }"
+            ></ion-checkbox>
+            <ion-label class="ion-text-wrap">
+              {{ 'AUTH.AGREEMENT_CHECK' | translate }}
+              <a [href]="'AUTH.PRIVACY_POLICY_URL' | translate" target="_blank">
+                <ion-text color="primary">{{ 'AUTH.PRIVACY_POLICY' | translate }}</ion-text>
+              </a>
+            </ion-label>
+          </ion-item>
+          <ion-item-divider>
+            <ion-label>{{ 'AUTH.IF_YOU_ARE' | translate }}: <b>{{ 'AUTH.AN_ESNER' | translate }}</b>...</ion-label>
+          </ion-item-divider>
+          <ion-button
+            expand="block"
+            color="primary"
+            [disabled]="!agreementCheck"
+            (click)="startSignInFlowWithESNAccounts()"
+          >
+            <ion-icon slot="start" [icon]="app.getIcon(true)"></ion-icon>
+            {{ 'AUTH.LOGIN_WITH_ESN_ACCOUNTS' | translate }}
+          </ion-button>
+          <ion-item-divider>
+            <ion-label>{{ 'AUTH.IF_YOU_ARE' | translate }}: <b>{{ 'AUTH.AN_EXTERNAL' | translate }}</b>...</ion-label>
+          </ion-item-divider>
+          <ion-button expand="block" color="medium" [disabled]="!agreementCheck" (click)="goToCognitoAuth()">
+            <ion-icon slot="start" name="log-in"></ion-icon>{{ 'AUTH.LOGIN_WITH_EGM_ACCOUNT' | translate }}
+          </ion-button>
+        </ion-list>
         <p class="version">v{{ version }}</p>
       </ion-card-content>
     </ion-card>

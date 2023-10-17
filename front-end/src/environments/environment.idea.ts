@@ -3,27 +3,33 @@
  */
 export const environment = {
   idea: {
-    project: 'egm',
+    project: 'egm-app',
     app: {
-      version: '0.1.0',
+      version: '3.0.2',
+      bundle: 'com.esn.egmapp',
       url: 'https://egm-app.click',
       mediaUrl: 'https://media.egm-app.click',
-      title: 'EGM',
-      hasIntroPage: false,
+      title: 'EGM app',
       appleStoreURL: '',
       googleStoreURL: ''
     },
     api: {
       url: 'api.egm-app.click',
-      stage: 'dev'
+      stage: 'prod'
     },
     auth: {
-      registrationIsPossible: false,
+      registrationIsPossible: true,
       singleSimultaneousSession: false,
-      forceLoginWithMFA: false
+      forceLoginWithMFA: false,
+      passwordPolicy: {
+        minLength: 8,
+        requireLowercase: false,
+        requireDigits: false,
+        requireSymbols: false,
+        requireUppercase: false
+      }
     },
-    ionicExtraModules: ['common', 'variables', 'auth'],
-    website: 'https://iter-idea.com'
+    ionicExtraModules: ['common']
   },
   aws: {
     cognito: {

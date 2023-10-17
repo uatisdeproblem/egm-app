@@ -2,23 +2,16 @@ import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { AlertController, NavController, Platform } from '@ionic/angular';
 import { Browser } from '@capacitor/browser';
-import { CognitoUser } from 'idea-toolbox';
-import {
-  IDEAActionSheetController,
-  IDEAApiService,
-  IDEAMessageService,
-  IDEAStorageService,
-  IDEATranslationsService
-} from '@idea-ionic/common';
-import { IDEAAuthService } from '@idea-ionic/auth';
+import { IDEAApiService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { environment as env } from '@env';
-import { User } from '@models/user.model';
+import { AuthServices, User, UserPermissions } from '@models/user.model';
+import { Configurations } from '@models/configurations.model';
 
 /**
  * The base URLs where the thumbnails are located.
  */
-const THUMBNAILS_BASE_URL = env.idea.app.mediaUrl.concat('/thumbnails/images/', env.idea.api.stage, '/');
+const THUMBNAILS_BASE_URL = env.idea.app.mediaUrl.concat('/images/', env.idea.api.stage, '/');
 /**
  * A local fallback URL for the users avatars.
  */
@@ -26,7 +19,11 @@ const AVATAR_FALLBACK_URL = './assets/imgs/no-avatar.jpg';
 /**
  * The local URL to the icon.
  */
-const APP_ICON_PATH = 'assets/icons/icon.svg';
+const APP_ICON_PATH = './assets/icons/icon.svg';
+/**
+ * The local URL to the icon.
+ */
+const APP_ICON_WHITE_PATH = './assets/icons/star-white.svg';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
@@ -36,17 +33,15 @@ export class AppService {
   private darkMode: boolean;
 
   user: User;
+  configurations: Configurations;
 
   constructor(
     private platform: Platform,
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private message: IDEAMessageService,
-    private storage: IDEAStorageService,
-    private actionSheetCtrl: IDEAActionSheetController,
-    private auth: IDEAAuthService,
-    private api: IDEAApiService,
-    private t: IDEATranslationsService
+    private t: IDEATranslationsService,
+    private api: IDEAApiService
   ) {
     this.darkMode = this.respondToColorSchemePreferenceChanges();
   }
@@ -65,7 +60,7 @@ export class AppService {
    * Open an alert to get the token for running requests against this project's API.
    */
   async getTokenId(): Promise<void> {
-    const message = this.api.authToken;
+    const message = this.api.authToken as string;
     const alert = await this.alertCtrl.create({ message, buttons: ['Thanks 🙌'], cssClass: 'selectable' });
     alert.present();
   }
@@ -98,6 +93,12 @@ export class AppService {
     else this.navCtrl.navigateForward(path, options);
   }
   /**
+   * Navigate to a page in the tabs routing by its path.
+   */
+  goToInTabs(path: string[], options: { back?: boolean; root?: boolean; queryParams?: Params } = {}): void {
+    this.goTo(['t', ...path], options);
+  }
+  /**
    * Close the current page and navigate back, optionally displaying an error message.
    */
   closePage(errorMessage?: string, pathBack?: string[]): void {
@@ -112,63 +113,37 @@ export class AppService {
   /**
    * Get the URL to an image by its URI.
    */
-  private getImageURLByURI(imageURI: string): string {
+  getImageURLByURI(imageURI: string): string {
     return THUMBNAILS_BASE_URL.concat(imageURI, '.png');
   }
   /**
-   * Get the URL to a user's profile image (avatar).
+   * Load a fallback URL when an avatar is missing.
    */
-  getUserImageURL(user: CognitoUser): string {
-    return user?.picture ? this.getImageURLByURI(user.picture) : AVATAR_FALLBACK_URL;
+  fallbackAvatar(targetImg: any, star = false): void {
+    const fallbackURL = star ? APP_ICON_WHITE_PATH : AVATAR_FALLBACK_URL;
+    if (targetImg && targetImg.src !== fallbackURL) targetImg.src = AVATAR_FALLBACK_URL;
+  }
+  /**
+   * Get the URL to the fallback avatar's image.
+   */
+  getAvatarFallbackURL(star = false): string {
+    return star ? APP_ICON_WHITE_PATH : AVATAR_FALLBACK_URL;
   }
 
   /**
-   * Actions on the current user.
+   * Open the URL in the browser.
    */
-  async openUserPreferences(): Promise<void> {
-    const header = this.user.name;
-    const buttons = [
-      { text: this.t._('COMMON.LOGOUT'), icon: 'log-out', handler: () => this.logout() },
-      { text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' }
-    ];
-
-    const actions = await this.actionSheetCtrl.create({ header, buttons });
-    actions.present();
+  async openURL(url: string): Promise<void> {
+    await Browser.open({ url, windowName: '_blank' });
   }
   /**
-   * Show some app's info.
+   * Open a user's profile on ESN Accounts.
    */
-  async info(): Promise<void> {
-    const openPrivacyPolicy = () => Browser.open({ url: this.t._('IDEA_VARIABLES.PRIVACY_POLICY_URL') });
-
-    const header = this.t._('COMMON.APP_NAME');
-    const message = this.t._('COMMON.VERSION', { v: env.idea.app.version });
-    const buttons = [
-      { text: this.t._('IDEA_AUTH.PRIVACY_POLICY'), handler: openPrivacyPolicy },
-      { text: this.t._('COMMON.CLOSE') }
-    ];
-
-    const alert = await this.alertCtrl.create({ header, message, buttons });
-    alert.present();
-  }
-
-  /**
-   * Sign-out from the current user.
-   */
-  async logout(): Promise<void> {
-    // @todo check if we have to change this for login with cognito
-    // const doLogout = () => this.auth.logout().finally(() => this.storage.clear().then(() => this.reloadApp()));
-    const doLogout = async (): Promise<void> => {
-      await this.storage.clear();
-      this.reloadApp();
-    };
-
-    const header = this.t._('COMMON.LOGOUT');
-    const message = this.t._('COMMON.ARE_YOU_SURE');
-    const buttons = [{ text: this.t._('COMMON.CANCEL') }, { text: this.t._('COMMON.LOGOUT'), handler: doLogout }];
-
-    const alert = await this.alertCtrl.create({ header, message, buttons });
-    alert.present();
+  async openUserProfileInESNAccounts(user: User): Promise<void> {
+    if (user.authService !== AuthServices.ESN_ACCOUNTS) return;
+    const galaxyId = user.getAuthServiceUserId();
+    const cleanESNAccountsIdForURL = (id: string): string => id.replace(/[._@]/gm, '').replace(/\s/gm, '-');
+    await this.openURL('https://accounts.esn.org/user/'.concat(cleanESNAccountsIdForURL(galaxyId)));
   }
 
   /**
@@ -182,7 +157,41 @@ export class AppService {
   /**
    * Get the app's main icon.
    */
-  getIcon(): string {
-    return APP_ICON_PATH;
+  getIcon(white = false): string {
+    return white ? APP_ICON_WHITE_PATH : APP_ICON_PATH;
+  }
+
+  /**
+   * Open a new window in the browser to download some data as a file.
+   */
+  downloadDataAsFile(data: any, type: string, fileName: string): void {
+    const uri = `data:${type};charset=utf-8,${encodeURIComponent(data)}`;
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = uri;
+    downloadLink.download = fileName;
+
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  }
+
+  /**
+   * Get the permissions of a user as printable string.
+   */
+  getUserPermissionsString(permissions: UserPermissions): string {
+    if (permissions.isAdmin) return this.t._('USER.ADMINISTRATOR');
+    const arrPermissions = [];
+    if (permissions.isCountryLeader) arrPermissions.push(this.t._('USER.DELEGATION_LEADER'));
+    if (permissions.canManageRegistrations) arrPermissions.push(this.t._('USER.CAN_MANAGE_REGISTRATIONS'));
+    if (permissions.canManageContents) arrPermissions.push(this.t._('USER.CAN_MANAGE_CONTENTS'));
+    return arrPermissions.join(', ');
+  }
+  /**
+   * Whether the user is administrator or can manage some of the sections.
+   */
+  userCanManageSomething(): boolean {
+    const p = this.user.permissions;
+    return p.isAdmin || p.canManageRegistrations || p.canManageContents;
   }
 }

@@ -11,8 +11,6 @@ import * as DDB from 'aws-cdk-lib/aws-dynamodb';
 import * as S3 from 'aws-cdk-lib/aws-s3';
 import * as S3Deployment from 'aws-cdk-lib/aws-s3-deployment';
 import { Subscription, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns';
-import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
-import { LambdaFunction as LambdaFunctionTarget } from 'aws-cdk-lib/aws-events-targets';
 import { SnsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { VersionStatus } from './environments';
 
@@ -44,7 +42,7 @@ export interface DDBTable {
 }
 
 const defaultLambdaFnProps: NodejsFunctionProps = {
-  runtime: Lambda.Runtime.NODEJS_14_X,
+  runtime: Lambda.Runtime.NODEJS_18_X,
   architecture: Lambda.Architecture.ARM_64,
   timeout: Duration.seconds(30),
   memorySize: 1024,
@@ -69,9 +67,7 @@ export class ApiStack extends cdk.Stack {
       stackId: id,
       stage: props.stage,
       apiDomain: props.apiDomain,
-      apiDefinitionFile: props.apiDefinitionFile,
-      cognitoUserPoolId: props.cognito.userPoolId,
-      cognitoAudience: props.cognito.audience
+      apiDefinitionFile: props.apiDefinitionFile
     });
     new cdk.CfnOutput(this, 'HTTPApiURL', { value: api.attrApiEndpoint });
 
@@ -85,6 +81,7 @@ export class ApiStack extends cdk.Stack {
     });
     this.allowLambdaFunctionsToAccessCognitoUserPool({
       cognitoUserPoolId: props.cognito.userPoolId,
+      cognitoBackendClientId: props.cognito.audience[1],
       lambdaFunctions: Object.values(lambdaFunctions)
     });
     this.allowLambdaFunctionsToAccessIDEATablesAndFunctions({ lambdaFunctions: Object.values(lambdaFunctions) });
@@ -95,7 +92,7 @@ export class ApiStack extends cdk.Stack {
       assetsFolder: 'assets',
       otherFolders: ['attachments', 'downloads', 'images']
     });
-    this.allowLambdaFunctionsToSecretsManager({ lambdaFunctions: Object.values(lambdaFunctions) });
+    this.allowLambdaFunctionsToSystemsManager({ lambdaFunctions: Object.values(lambdaFunctions) });
     this.allowLambdaFunctionsToAccessSES({
       lambdaFunctions: Object.values(lambdaFunctions),
       sesIdentityArn: props.ses.identityArn,
@@ -114,8 +111,6 @@ export class ApiStack extends cdk.Stack {
     // PROJECT CUSTOM
     //
 
-    // @idea insert here project-custom constructs if needed
-
     if (lambdaFunctions['sesNotifications']) {
       const topic = Topic.fromTopicArn(this, 'SESTopicToHandleSESBounces', props.ses.notificationTopicArn);
       new Subscription(this, 'SESSubscriptionToHandleSESBounces', {
@@ -124,14 +119,6 @@ export class ApiStack extends cdk.Stack {
         endpoint: lambdaFunctions['sesNotifications'].functionArn
       });
       lambdaFunctions['sesNotifications'].addEventSource(new SnsEventSource(topic));
-    }
-
-    if (lambdaFunctions['scheduledOps']) {
-      const rule = new Rule(this, 'EventRuleScheduledOps', {
-        ruleName: props.project.concat('-', props.stage, '-scheduledOps'),
-        schedule: Schedule.rate(Duration.hours(1))
-      });
-      rule.addTarget(new LambdaFunctionTarget(lambdaFunctions['scheduledOps']));
     }
   }
 
@@ -144,8 +131,6 @@ export class ApiStack extends cdk.Stack {
     stage: string;
     apiDefinitionFile: string;
     apiDomain: string;
-    cognitoUserPoolId: string;
-    cognitoAudience: string[];
   }): Promise<{ api: cdk.aws_apigatewayv2.CfnApi }> {
     const api = new ApiGw.CfnApi(this, 'HttpApi');
 
@@ -155,17 +140,6 @@ export class ApiStack extends cdk.Stack {
       allowOrigins: ['*'],
       allowMethods: ['*'],
       allowHeaders: ['Content-Type', 'Authorization']
-    };
-
-    // set the Cognito authorizer in the api definition (it will be created automatically with the api)
-    const region = cdk.Stack.of(this).region;
-    apiDefinition.components.securitySchemes['CognitoUserPool']['x-amazon-apigateway-authorizer'] = {
-      type: 'jwt',
-      identitySource: '$request.header.Authorization',
-      jwtConfiguration: {
-        issuer: `https://cognito-idp.${region}.amazonaws.com/${params.cognitoUserPoolId}`,
-        audience: params.cognitoAudience
-      }
     };
 
     // set metadata to recognize the API in the API Gateway console
@@ -267,6 +241,7 @@ export class ApiStack extends cdk.Stack {
   private allowLambdaFunctionsToAccessCognitoUserPool(params: {
     lambdaFunctions: NodejsFunction[];
     cognitoUserPoolId: string;
+    cognitoBackendClientId: string;
   }): void {
     const region = cdk.Stack.of(this).region;
     const account = cdk.Stack.of(this).account;
@@ -282,6 +257,7 @@ export class ApiStack extends cdk.Stack {
     params.lambdaFunctions.forEach(lambdaFn => {
       if (lambdaFn.role) lambdaFn.role.attachInlinePolicy(accessCognitoPolicy);
       lambdaFn.addEnvironment('COGNITO_USER_POOL_ID', params.cognitoUserPoolId);
+      lambdaFn.addEnvironment('COGNITO_USER_POOL_CLIENT_ID', params.cognitoBackendClientId);
     });
   }
   private allowLambdaFunctionsToAccessIDEATablesAndFunctions(params: { lambdaFunctions: NodejsFunction[] }): void {
@@ -340,18 +316,14 @@ export class ApiStack extends cdk.Stack {
       destinationKeyPrefix: params.assetsFolder.concat('/', params.stage)
     });
   }
-  private allowLambdaFunctionsToSecretsManager(params: { lambdaFunctions: NodejsFunction[] }): void {
-    const accessSecretsManagerPolicy = new IAM.Policy(this, 'AccessSecretsManager', {
+  private allowLambdaFunctionsToSystemsManager(params: { lambdaFunctions: NodejsFunction[] }): void {
+    const accessSystemsManagerPolicy = new IAM.Policy(this, 'AccessSystemsManager', {
       statements: [
-        new IAM.PolicyStatement({
-          effect: IAM.Effect.ALLOW,
-          actions: ['secretsmanager:GetSecretValue'],
-          resources: ['*']
-        })
+        new IAM.PolicyStatement({ effect: IAM.Effect.ALLOW, actions: ['ssm:GetParameter'], resources: ['*'] })
       ]
     });
     params.lambdaFunctions.forEach(lambdaFn => {
-      if (lambdaFn.role) lambdaFn.role.attachInlinePolicy(accessSecretsManagerPolicy);
+      if (lambdaFn.role) lambdaFn.role.attachInlinePolicy(accessSystemsManagerPolicy);
     });
   }
   private allowLambdaFunctionsToAccessSES(params: {

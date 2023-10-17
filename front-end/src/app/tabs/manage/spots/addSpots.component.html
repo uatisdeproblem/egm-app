@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar color="ideaToolbar">
+    <ion-buttons slot="start">
+      <ion-button [title]="'COMMON.CLOSE' | translate" (click)="close()">
+        <ion-icon icon="close-circle-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'SPOTS.ADD_SPOTS' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list class="aList">
+    <ion-item>
+      <ion-input
+        type="number"
+        inputmode="numeric"
+        min="1"
+        step="1"
+        labelPlacement="stacked"
+        [label]="'SPOTS.NUM_TO_ADD' | translate"
+        [(ngModel)]="numOfSpots"
+        [class.fieldHasError]="hasFieldAnError('numOfSpots')"
+      />
+    </ion-item>
+    <ion-item [class.fieldHasError]="hasFieldAnError('type')">
+      <ion-select
+        interface="popover"
+        labelPlacement="stacked"
+        [label]="'SPOTS.TYPE' | translate"
+        [(ngModel)]="spot.type"
+      >
+        <ion-select-option *ngFor="let st of app.configurations.spotTypes" [value]="st">{{ st }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-select
+        interface="popover"
+        labelPlacement="stacked"
+        [label]="'SPOTS.ASSIGN_TO_COUNTRY' | translate"
+        [(ngModel)]="spot.sectionCountry"
+        [class.fieldHasError]="hasFieldAnError('sectionCountry')"
+      >
+        <ion-select-option *ngFor="let country of app.configurations.sectionCountries" [value]="country">
+          {{ country }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-input
+        maxlength="100"
+        labelPlacement="stacked"
+        [label]="'SPOTS.BRIEF_DESCRIPTION' | translate"
+        [placeholder]="'SPOTS.BRIEF_DESCRIPTION_P' | translate"
+        [(ngModel)]="spot.description"
+        [class.fieldHasError]="hasFieldAnError('description')"
+      />
+    </ion-item>
+    <p class="ion-text-right ion-padding" (click)="save()">
+      <ion-button color="ESNgreen">{{ 'SPOTS.GENERATE_NUM_SPOTS' | translate : { num: numOfSpots } }}</ion-button>
+    </p>
+  </ion-list>
+</ion-content>
