@@ -116,10 +116,10 @@
     "NEW_PASSWORD": "New password"
   },
   "TABS": {
-    "PROFILE": "Profile",
-    "CONFIGURATIONS": "Configurations"
+    "USER": "You",
+    "MANAGE": "Manage"
   },
-  "PROFILE": {
+  "USER": {
     "ESN_ACCOUNTS": "ESN Accounts",
     "FIRST_NAME": "First name",
     "LAST_NAME": "Last name",
@@ -148,46 +148,60 @@
     "ADMINISTRATOR": "Administrator",
     "DELEGATION_LEADER": "Delegation leader",
     "CAN_MANAGE_REGISTRATIONS": "Can manage registrations",
-    "CAN_MANAGE_CONTENTS": "Can manage contents"
-  },
-  "EVENT_REGISTRATIONS": {
-    "REGISTRATIONS": "Registrations",
-    "REGISTRATION": "Registration",
+    "CAN_MANAGE_CONTENTS": "Can manage contents",
+    "COUNTRY_LEADER_MANAGE_USERS": "Manage delegation",
+    "REGISTRATION": "Event registration",
     "SAVE_DRAFT": "Save draft",
     "SUBMIT_REGISTRATION": "Submit registration",
-    "REGISTRATION_OF": "Registration of",
-    "SPOT_ID": "Spot ID",
-    "SPOT_TYPE": "Type",
-    "ASSIGNED_TO_COUNTRY": "Assigned to country",
-    "ASSIGNED_TO_USER": "Assigned to user",
+    "REGISTRATION_OF": "User registration",
     "CONFIRM_YOUR_REGISTRATION": "Confirm your registration",
     "ACCEPT_TC": "I read and I agree with the event's Terms and Conditions",
     "TC_URL": "https://egm-app.click/assets/docs/egm-24-tc.pdf",
     "ACCEPT_COC": "I read and I agree with the event's Code of Conduct",
-    "COC_URL": "https://egm-app.click/assets/docs/egm-24-coc.pdf",
+    "COC_URL": "https://egm-app.click/assets/docs/egm-24-coc.pdf"
+  },
+  "SPOTS": {
+    "SPOTS": "Event spots",
+    "SPOT_ID": "Spot ID",
+    "TYPE": "Type",
+    "ASSIGNED_TO_COUNTRY": "Assigned to country",
+    "ASSIGNED_TO_USER": "Assigned to user",
+    "ADD_SPOTS": "Add spots",
+    "CREATED_ON": "Created",
+    "DESCRIPTION": "Description",
+    "NUM_ROWS_SELECTED": "{{num}} spots selected",
+    "ACTIONS_ON_NUM_ROWS": "Actions on {{num}} spots",
+    "TOTAL": "Total",
+    "PAID": "Paid",
+    "NUM_TO_ADD": "Number of spots to add",
+    "BRIEF_DESCRIPTION": "Brief description (optional)",
+    "BRIEF_DESCRIPTION_P": "Spot for external guests",
+    "ASSIGN_TO_COUNTRY": "Assign to country (optional)",
+    "GENERATE_NUM_SPOTS": "Generate {{num}} spots"
+  },
+  "USERS": {
+    "USERS": "Users",
     "REGISTERED": "Registered",
     "SPOT": "Spot",
     "PAID": "Paid",
     "CONFIRMED": "Confirmed",
     "PERMISSIONS": "Permissions",
-    "NUM_ROWS_SELECTED": "{{num}} rows selected",
-    "ACTIONS_ON_NUM_ROWS": "Actions on {{num}} rows",
-    "SELECTED": "Selected",
-    "USERS": "Users"
+    "NUM_ROWS_SELECTED": "{{num}} users selected",
+    "ACTIONS_ON_NUM_ROWS": "Actions on {{num}} users"
   },
-  "CONFIGURATIONS": {
+  "MANAGE": {
     "USERS_AND_REGISTRATIONS": "Users and event registrations",
     "USERS_AND_REGISTRATIONS_I": "Manage the users and everything related to the event registrations.",
     "USERS_LIST": "Users list",
     "SPOTS_MANAGEMENT": "Spots management",
     "EMAIL_TEMPLATES": "Email templates",
-    "EMAIL_TEMPLATES_I": "Set the templates for the following notification emails",
+    "EMAIL_TEMPLATES_I": "Set the templates for the following notification emails.",
     "EMAIL_TEMPLATES_TYPES": {
       "SPOT_ASSIGNED": "A spot has been assigned to a user",
       "REGISTRATION_CONFIRMED": "A user's spot has been paid and confirmed"
     },
     "DOCUMENT_TEMPLATES": "Document templates",
-    "DOCUMENT_TEMPLATES_I": "Set the templates for the following documents",
+    "DOCUMENT_TEMPLATES_I": "Set the templates for the following documents.",
     "DOCUMENT_TEMPLATES_TYPES": {
       "INVOICE": "The invoice for user spot payment"
     },
@@ -208,52 +222,54 @@
     "EVENT_SPOTS_II": "It is adviced NOT to change the spot types in any way during the registrations.",
     "ADD_SPOT_TYPE": "Add a spot type",
     "SPOT_TYPE_NAME": "Spot type name",
-    "SPOT_TYPE_PRICE": "Spot type price ({{currency}})"
-  },
-  "EMAIL_TEMPLATE": {
-    "HTML": "Template for emails",
-    "HTML_I": "Set an HTML template for the email to send.",
-    "VARIABLES_ALLOWED": "The template can contain the following variables:",
-    "SUBJECT": "Subject",
-    "CONTENT": "Content",
-    "CONTENT_FROM_FILE": "Load from HTML file",
-    "TEMPLATE_RESET": "Reset (use default template)",
-    "EMAIL_SENT": "Email sent",
-    "BAD_TEMPLATE": "The template seems to have some problems. Please check its correctness.",
-    "TEST_TEMPLATE": "Test active template",
-    "TEST_TEMPLATE_I": "A test email with the template currently active will be sent to your email address.",
-    "RESET": "Reset to default",
-    "DOWNLOAD_TEMPLATE": "Download active template",
-    "VARIABLES": {
-      "USER": "The full name of the user target of the notification",
-      "COUNTRY": "The country of the user target of the notification",
-      "SECTION": "The section of the user target of the notification",
-      "SPOT_TYPE": "The spot type of the user target of the notification",
-      "SPOT_ID": "The spot ID (reference) of the user target of the notification",
-      "PRICE": "The price of the spot for the user target of the notification",
-      "URL": "The link to the question"
-    }
-  },
-  "DOCUMENT_TEMPLATE": {
-    "HTML": "Template for documents",
-    "HTML_I": "Set an HTML template to serve as the base for the PDF document.",
-    "VARIABLES_ALLOWED": "The template can contain the following variables:",
-    "CONTENT": "Content",
-    "CONTENT_FROM_FILE": "Load from HTML file",
-    "TEMPLATE_RESET": "Reset (use default template)",
-    "BAD_TEMPLATE": "The template seems to have some problems. Please check its correctness.",
-    "TEST_TEMPLATE": "Test active template",
-    "TEST_TEMPLATE_I": "A test document with the template currently active will be downloaded to your device.",
-    "RESET": "Reset to default",
-    "DOWNLOAD_TEMPLATE": "Download active template",
-    "VARIABLES": {
-      "USER": "The full name of the user target of the notification",
-      "COUNTRY": "The country of the user target of the notification",
-      "SECTION": "The section of the user target of the notification",
-      "SPOT_TYPE": "The spot type of the user target of the notification",
-      "SPOT_ID": "The spot ID (reference) of the user target of the notification",
-      "PRICE": "The price of the spot for the user target of the notification",
-      "URL": "The link to the question"
-    }
+    "SPOT_TYPE_PRICE": "Spot type price ({{currency}})",
+    "EMAIL_TEMPLATE": {
+      "HTML": "Template for emails",
+      "HTML_I": "Set an HTML template for the email to send.",
+      "VARIABLES_ALLOWED": "The template can contain the following variables:",
+      "SUBJECT": "Subject",
+      "CONTENT": "Content",
+      "CONTENT_FROM_FILE": "Load from HTML file",
+      "TEMPLATE_RESET": "Reset (use default template)",
+      "EMAIL_SENT": "Email sent",
+      "BAD_TEMPLATE": "The template seems to have some problems. Please check its correctness.",
+      "TEST_TEMPLATE": "Test active template",
+      "TEST_TEMPLATE_I": "A test email with the template currently active will be sent to your email address.",
+      "RESET": "Reset to default",
+      "DOWNLOAD_TEMPLATE": "Download active template",
+      "VARIABLES": {
+        "USER": "The full name of the user target of the notification",
+        "COUNTRY": "The country of the user target of the notification",
+        "SECTION": "The section of the user target of the notification",
+        "SPOT_TYPE": "The spot type of the user target of the notification",
+        "SPOT_ID": "The spot ID (reference) of the user target of the notification",
+        "PRICE": "The price of the spot for the user target of the notification",
+        "URL": "The link to the question"
+      }
+    },
+    "DOCUMENT_TEMPLATE": {
+      "HTML": "Template for documents",
+      "HTML_I": "Set an HTML template to serve as the base for the PDF document.",
+      "VARIABLES_ALLOWED": "The template can contain the following variables:",
+      "CONTENT": "Content",
+      "CONTENT_FROM_FILE": "Load from HTML file",
+      "TEMPLATE_RESET": "Reset (use default template)",
+      "BAD_TEMPLATE": "The template seems to have some problems. Please check its correctness.",
+      "TEST_TEMPLATE": "Test active template",
+      "TEST_TEMPLATE_I": "A test document with the template currently active will be downloaded to your device.",
+      "RESET": "Reset to default",
+      "DOWNLOAD_TEMPLATE": "Download active template",
+      "VARIABLES": {
+        "USER": "The full name of the user target of the notification",
+        "COUNTRY": "The country of the user target of the notification",
+        "SECTION": "The section of the user target of the notification",
+        "SPOT_TYPE": "The spot type of the user target of the notification",
+        "SPOT_ID": "The spot ID (reference) of the user target of the notification",
+        "PRICE": "The price of the spot for the user target of the notification",
+        "URL": "The link to the question"
+      }
+    },
+    "OTHER_CONFIGURATIONS": "Other configurations",
+    "LIST_OF_ESN_COUNTRIES": "List of current ESN countries"
   }
 }

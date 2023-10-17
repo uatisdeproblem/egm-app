@@ -53,17 +53,20 @@ class UsersRC extends ResourceController {
       return;
     }
 
-    if (
-      this.principalId !== this.resourceId &&
-      !(this.reqUser.permissions.isAdmin || this.reqUser.permissions.canManageRegistrations)
-    )
-      throw new RCError('Unauthorized');
-
     try {
       this.targetUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.resourceId } }));
     } catch (error) {
       throw new RCError('Target user not found');
     }
+
+    if (this.principalId !== this.resourceId && !this.canReqUserManageUser(this.targetUser))
+      throw new RCError('Unauthorized');
+  }
+  private canReqUserManageUser(user: User): boolean {
+    return (
+      this.reqUser.permissions.canManageRegistrations ||
+      (this.reqUser.permissions.isCountryLeader && this.reqUser.sectionCountry === user.sectionCountry)
+    );
   }
 
   protected async getResource(): Promise<User> {
@@ -114,10 +117,10 @@ class UsersRC extends ResourceController {
       await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
     );
 
-    const userCanManage = this.reqUser.permissions.isAdmin || this.reqUser.permissions.canManageRegistrations;
-
-    if (!configurations.isRegistrationOpen && !userCanManage) throw new RCError('Registrations are closed');
-    if (this.targetUser.registrationAt && !userCanManage) throw new RCError("Can't edit a submitted registration");
+    if (!configurations.isRegistrationOpen && !this.reqUser.permissions.canManageRegistrations)
+      throw new RCError('Registrations are closed');
+    if (this.targetUser.registrationAt && !this.reqUser.permissions.canManageRegistrations)
+      throw new RCError("Can't edit a submitted registration");
 
     this.targetUser.registrationForm = configurations.registrationFormDef.loadSections(registrationForm);
 
@@ -160,9 +163,13 @@ class UsersRC extends ResourceController {
   }
 
   protected async getResources(): Promise<User[]> {
-    if (!(this.reqUser.permissions.isAdmin || this.reqUser.permissions.canManageRegistrations))
+    if (!(this.reqUser.permissions.canManageRegistrations || this.reqUser.permissions.isCountryLeader))
       throw new RCError('Unauthorized');
 
-    return (await ddb.scan({ TableName: DDB_TABLES.users })).map(x => new User(x));
+    let users = (await ddb.scan({ TableName: DDB_TABLES.users })).map(x => new User(x));
+    if (!this.reqUser.permissions.canManageRegistrations)
+      users = users.filter(x => x.sectionCountry === this.reqUser.sectionCountry);
+
+    return users;
   }
 }

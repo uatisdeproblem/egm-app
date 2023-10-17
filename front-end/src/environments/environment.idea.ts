@@ -10,7 +10,6 @@ export const environment = {
       url: 'https://egm-app.click',
       mediaUrl: 'https://media.egm-app.click',
       title: 'EGM app',
-      hasIntroPage: false,
       appleStoreURL: '',
       googleStoreURL: ''
     },
@@ -30,8 +29,7 @@ export const environment = {
         requireUppercase: false
       }
     },
-    ionicExtraModules: ['common'],
-    website: 'https://iter-idea.com'
+    ionicExtraModules: ['common']
   },
   aws: {
     cognito: {
