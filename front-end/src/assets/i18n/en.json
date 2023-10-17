@@ -156,9 +156,9 @@
     "REGISTRATION_OF": "User registration",
     "CONFIRM_YOUR_REGISTRATION": "Confirm your registration",
     "ACCEPT_TC": "I read and I agree with the event's Terms and Conditions",
-    "TC_URL": "https://egm-app.click/assets/docs/egm-24-tc.pdf",
+    "TC_URL": "https://app.erasmusgeneration.org/assets/docs/egm-24-tc.pdf",
     "ACCEPT_COC": "I read and I agree with the event's Code of Conduct",
-    "COC_URL": "https://egm-app.click/assets/docs/egm-24-coc.pdf"
+    "COC_URL": "https://app.erasmusgeneration.org/assets/docs/egm-24-coc.pdf"
   },
   "SPOTS": {
     "SPOTS": "Event spots",
