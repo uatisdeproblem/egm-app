@@ -47,8 +47,9 @@
         <ion-input
           labelPlacement="stacked"
           [label]="'USER.FIRST_NAME' | translate"
-          [disabled]="!editProfileMode"
+          [disabled]="!canEditName()"
           [(ngModel)]="app.user.firstName"
+          [class.editMode]="canEditName()"
           [class.fieldHasError]="hasFieldAnError('firstName')"
         />
       </ion-item>
@@ -56,8 +57,9 @@
         <ion-input
           labelPlacement="stacked"
           [label]="'USER.LAST_NAME' | translate"
-          [disabled]="!editProfileMode"
+          [disabled]="!canEditName()"
           [(ngModel)]="app.user.lastName"
+          [class.editMode]="canEditName()"
           [class.fieldHasError]="hasFieldAnError('lastName')"
         />
       </ion-item>
@@ -67,6 +69,7 @@
           [label]="'USER.EMAIL_FOR_NOTIFICATIONS' | translate"
           [disabled]="!editProfileMode"
           [(ngModel)]="app.user.email"
+          [class.editMode]="editProfileMode"
           [class.fieldHasError]="hasFieldAnError('email')"
         />
       </ion-item>
