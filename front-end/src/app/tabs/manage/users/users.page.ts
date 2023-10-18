@@ -34,7 +34,7 @@ export class UsersPage implements OnInit {
 
   users: User[];
   filteredUsers: User[];
-  filters: RowsFilters = { registered: null, spot: null, paid: null, confirmed: null };
+  filters: RowsFilters = { registered: null, spot: null, paid: null, confirmed: null, sectionCountry: null };
 
   numRegistered = 0;
   numWithSpot = 0;
@@ -103,7 +103,9 @@ export class UsersPage implements OnInit {
     this.filteredUsers = this.users.slice();
 
     this.filteredUsers = this.filteredUsers.filter(x =>
-      [x.firstName, x.lastName, x.email].filter(f => f).some(f => String(f).toLowerCase().includes(searchText))
+      [x.firstName, x.lastName, x.email, x.sectionCountry, x.sectionName]
+        .filter(f => f)
+        .some(f => String(f).toLowerCase().includes(searchText))
     );
     if (this.filters.registered)
       this.filteredUsers = this.filteredUsers.filter(x =>
@@ -118,6 +120,10 @@ export class UsersPage implements OnInit {
     if (this.filters.confirmed)
       this.filteredUsers = this.filteredUsers.filter(x =>
         this.filters.confirmed === 'yes' ? !!x.confirmedAt : !x.confirmedAt
+      );
+    if (this.filters.sectionCountry)
+      this.filteredUsers = this.filteredUsers.filter(x =>
+        this.filters.paid === 'no' ? !this.filters.sectionCountry : this.filters.sectionCountry === x.sectionCountry
       );
 
     this.calcFooterTotals();
@@ -163,4 +169,5 @@ interface RowsFilters {
   spot: null | string;
   paid: null | 'yes' | 'no';
   confirmed: null | 'yes' | 'no';
+  sectionCountry: string | 'no' | null;
 }

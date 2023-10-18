@@ -72,6 +72,20 @@
       </ion-select>
     </ion-item>
     <ion-item color="ideaToolbar" lines="none">
+      <ion-select
+        interface="popover"
+        [label]="('USERS.SECTION_COUNTRY' | translate) + ':'"
+        [(ngModel)]="filters.sectionCountry"
+        (ionChange)="filter()"
+      >
+        <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
+        <ion-select-option value="no">{{ 'USERS.EXTERNAL_GUEST' | translate }}</ion-select-option>
+        <ion-select-option *ngFor="let country of app.configurations.sectionCountries" [value]="country">
+          {{ country }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item color="ideaToolbar" lines="none">
       <ion-searchbar (ionInput)="filter($event.target.value)"></ion-searchbar>
     </ion-item>
   </div>
