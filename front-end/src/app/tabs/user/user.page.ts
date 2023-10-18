@@ -98,8 +98,8 @@ export class UserPage {
     // @todo
   }
 
-  async openPrivacyPolicy(): Promise<void> {
-    await this.app.openURL(this.t._('AUTH.PRIVACY_POLICY_URL'));
+  async openDocumentByTranslationKey(translationKey: string): Promise<void> {
+    await this.app.openURL(this.t._(translationKey));
   }
 
   async logout(): Promise<void> {

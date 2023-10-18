@@ -155,8 +155,10 @@
     "SUBMIT_REGISTRATION": "Submit registration",
     "REGISTRATION_OF": "User registration",
     "CONFIRM_YOUR_REGISTRATION": "Confirm your registration",
+    "TC": "Terms and Conditions",
     "ACCEPT_TC": "I read and I agree with the event's Terms and Conditions",
     "TC_URL": "https://app.erasmusgeneration.org/assets/docs/egm-24-tc.pdf",
+    "COC": "Code of Conduct",
     "ACCEPT_COC": "I read and I agree with the event's Code of Conduct",
     "COC_URL": "https://app.erasmusgeneration.org/assets/docs/egm-24-coc.pdf"
   },
