@@ -123,7 +123,7 @@ export class UsersPage implements OnInit {
       );
     if (this.filters.sectionCountry)
       this.filteredUsers = this.filteredUsers.filter(x =>
-        this.filters.paid === 'no' ? !this.filters.sectionCountry : this.filters.sectionCountry === x.sectionCountry
+        this.filters.sectionCountry === 'no' ? !x.sectionCountry : this.filters.sectionCountry === x.sectionCountry
       );
 
     this.calcFooterTotals();
