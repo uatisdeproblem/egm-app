@@ -28,8 +28,10 @@ export class UsersPage implements OnInit {
   columnMode = ColumnMode.force;
   limit = 10;
 
-  rowHeight = 45;
-  headerHeight = 50;
+  pageHeaderHeightPx = 56;
+  actionBarHeight = 56;
+  rowHeight = 42;
+  headerHeight = 56;
   footerHeight = 80;
 
   users: User[];
@@ -89,7 +91,8 @@ export class UsersPage implements OnInit {
   @HostListener('window:resize', ['$event'])
   setTableHeight(event?: Event): void {
     const currentPageHeight = event?.target ? (event.target as Window).innerHeight : window.innerHeight;
-    const heightAvailableInPx = currentPageHeight - this.headerHeight - this.footerHeight;
+    const heightAvailableInPx =
+      currentPageHeight - this.pageHeaderHeightPx - this.actionBarHeight - this.headerHeight - this.footerHeight;
     this.limit = Math.floor(heightAvailableInPx / this.rowHeight);
   }
 
