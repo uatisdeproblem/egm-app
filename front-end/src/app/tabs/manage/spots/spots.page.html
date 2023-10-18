@@ -114,7 +114,7 @@
       >
         <div class="footerTotals" *ngIf="!app.isInMobileMode()">
           <ng-container>
-            <span><strong>{{ 'SPOTS.TOTAL' | translate }}</strong>: {{ spots?.length ?? 0 }}</span>
+            <span><strong>{{ 'SPOTS.TOTAL' | translate }}</strong>: {{ filteredSpots?.length ?? 0 }}</span>
             <span><strong>{{ 'SPOTS.ASSIGNED_TO_COUNTRY' | translate }}</strong>: {{ numAssignedToCountry }}</span>
             <span><strong>{{ 'SPOTS.ASSIGNED_TO_USER' | translate }}</strong>: {{ numAssignedToUser }}</span>
             <span><strong>{{ 'SPOTS.PAID' | translate }}</strong>: {{ numPaid }}</span>
