@@ -67,7 +67,11 @@ export class SpotsPage implements OnInit {
       { prop: 'type', name: this.t._('SPOTS.TYPE') },
       { prop: 'sectionCountry', name: this.t._('SPOTS.ASSIGNED_TO_COUNTRY') },
       { prop: 'userName', name: this.t._('SPOTS.ASSIGNED_TO_USER') },
-      { prop: 'proofOfPaymentURI', name: this.t._('SPOTS.PAID'), pipe: { transform: x => (x ? !!x : '') } },
+      {
+        prop: 'proofOfPaymentURI',
+        name: this.t._('SPOTS.PROOF_OF_PAYMENT_UPLOADED'),
+        pipe: { transform: x => (x ? !!x : '') }
+      },
       { prop: 'description', name: this.t._('SPOTS.DESCRIPTION') },
       {
         prop: 'createdAt',

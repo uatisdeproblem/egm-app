@@ -82,7 +82,7 @@ export class UsersPage implements OnInit {
         name: this.t._('USER.PERMISSIONS'),
         comparator: (a: UserPermissions, b: UserPermissions): number =>
           this.app.getUserPermissionsString(a).localeCompare(this.app.getUserPermissionsString(b)),
-        pipe: { transform: x => this.app.getUserPermissionsString(x) }
+        pipe: { transform: x => this.app.getUserPermissionsString(x, true) }
       }
     ];
     this.col.forEach(c => (c.resizeable = false));
