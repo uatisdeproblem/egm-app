@@ -16,7 +16,7 @@ import { AppService } from '@app/app.service';
 import { SpotsService } from './spots.service';
 import { UsersService } from '../users/users.service';
 
-import { EventSpot } from '@models/eventSpot.model';
+import { EventSpot, EventSpotAttached } from '@models/eventSpot.model';
 import { User } from '@models/user.model';
 
 @Component({
@@ -78,6 +78,11 @@ export class SpotsPage implements OnInit {
       {
         prop: 'proofOfPaymentURI',
         name: this.t._('SPOTS.PROOF_OF_PAYMENT_UPLOADED'),
+        pipe: { transform: x => (x ? !!x : '') }
+      },
+      {
+        prop: 'paymentConfirmedAt',
+        name: this.t._('SPOTS.PAYMENT_CONFIRMED'),
         pipe: { transform: x => (x ? !!x : '') }
       },
       { prop: 'description', name: this.t._('SPOTS.DESCRIPTION') },
@@ -168,11 +173,13 @@ export class SpotsPage implements OnInit {
           icon: 'swap-horizontal',
           handler: (): Promise<void> => this.pickUserAndTransferSpot(spotsSelected[0])
         });
-        buttons.push({
-          text: this.t._('SPOTS.CONFIRM_PAYMENT_AND_SPOT'),
-          icon: 'checkmark-done',
-          handler: (): Promise<void> => this.confirmPaymentAndSpot(spotsSelected[0])
-        });
+        if (!spotsSelected[0].paymentConfirmedAt) {
+          buttons.push({
+            text: this.t._('SPOTS.CONFIRM_PAYMENT_AND_SPOT'),
+            icon: 'checkmark-done',
+            handler: (): Promise<void> => this.confirmPaymentAndSpot(spotsSelected[0])
+          });
+        }
       }
     }
     buttons.push({
@@ -214,16 +221,30 @@ export class SpotsPage implements OnInit {
       searchPlaceholder: this.t._('SPOTS.ASSIGN_TO_USER')
     };
     const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
-    modal.onDidDismiss().then(({ data }): void => {
+    modal.onDidDismiss().then(async ({ data }): Promise<void> => {
       if (!data) return;
-      // @todo assign spot
+      try {
+        await this.loading.show();
+        const user = this.users.find(x => x.userId === data.value);
+        if (user.spot) return;
+        await this._spots.assignToUser(spot, user);
+        spot.userId = user.userId;
+        spot.userName = user.getName();
+        user.spot = new EventSpotAttached(spot);
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     });
     modal.present();
   }
   private async pickUserAndTransferSpot(spot: EventSpot): Promise<void> {
     if (!spot.userId) return;
 
-    const data = this.users.filter(x => x.registrationAt && x.spot).map(x => x.mapIntoSuggestion());
+    const data = this.users.filter(x => x.registrationAt && !x.spot).map(x => x.mapIntoSuggestion());
     const componentProps = {
       data,
       hideIdFromUI: true,
@@ -232,15 +253,42 @@ export class SpotsPage implements OnInit {
       searchPlaceholder: this.t._('SPOTS.TRANSFER_TO_USER')
     };
     const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
-    modal.onDidDismiss().then(({ data }): void => {
+    modal.onDidDismiss().then(async ({ data }): Promise<void> => {
       if (!data) return;
-      // @todo transfer spot
+      try {
+        await this.loading.show();
+        const targetUser = this.users.find(x => x.userId === data.value);
+        const sourceUser = this.users.find(x => x.spot?.spotId === spot.spotId);
+        await this._spots.transferToUser(spot, targetUser);
+        spot.userId = targetUser.userId;
+        spot.userName = targetUser.getName();
+        targetUser.spot = new EventSpotAttached(spot);
+        delete sourceUser.spot;
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     });
     modal.present();
   }
   private async confirmPaymentAndSpot(spot: EventSpot): Promise<void> {
     const doConfirm = async (): Promise<void> => {
-      // @todo
+      try {
+        await this.loading.show();
+        const user = this.users.find(x => x.spot?.spotId === spot.spotId);
+        await this._spots.confirmPayment(spot);
+        spot.paymentConfirmedAt = new Date().toISOString();
+        user.spot = new EventSpotAttached(spot);
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     };
     const header = this.t._('SPOTS.CONFIRM_PAYMENT_AND_SPOT');
     const subHeader = this.t._('COMMON.ARE_YOU_SURE');
