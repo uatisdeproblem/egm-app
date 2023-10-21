@@ -91,8 +91,4 @@ export class RegistrationPage {
   hasFieldAnError(field: string): boolean {
     return this.errors.has(field);
   }
-
-  async openDocumentByTranslationKey(translationKey: string): Promise<void> {
-    await this.app.openURL(this.t._(translationKey));
-  }
 }

@@ -116,10 +116,6 @@ export class UserPage {
     // @todo
   }
 
-  async openPrivacyPolicy(): Promise<void> {
-    await this.app.openURL(this.t._('AUTH.PRIVACY_POLICY_URL'));
-  }
-
   async logout(): Promise<void> {
     const header = this.t._('COMMON.LOGOUT');
     const message = this.t._('COMMON.ARE_YOU_SURE');

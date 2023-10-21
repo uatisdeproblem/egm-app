@@ -28,8 +28,9 @@
       <ion-button
         slot="end"
         fill="clear"
+        target="_blank"
         *ngIf="user.permissions.isAdmin"
-        (click)="app.openUserProfileInESNAccounts(user)"
+        [href]="app.getUserProfileInESNAccounts(user)"
       >
         <ion-icon icon="open-outline" slot="icon-only"></ion-icon>
       </ion-button>
@@ -50,7 +51,7 @@
       <ion-label class="ion-text-wrap">
         {{ 'USER.ACCEPT_TC' | translate }} <ion-text class="obligatoryDot"></ion-text>
       </ion-label>
-      <ion-button slot="end" fill="clear" color="medium" (click)="openDocumentByTranslationKey('USER.TC_URL')">
+      <ion-button slot="end" fill="clear" color="medium" target="_blank" [href]="'USER.TC_URL' | translate">
         <ion-icon slot="icon-only" icon="eye"></ion-icon>
       </ion-button>
     </ion-item>
@@ -59,7 +60,7 @@
       <ion-label class="ion-text-wrap">
         {{ 'USER.ACCEPT_COC' | translate }} <ion-text class="obligatoryDot"></ion-text>
       </ion-label>
-      <ion-button slot="end" fill="clear" color="medium" (click)="openDocumentByTranslationKey('USER.COC_URL')">
+      <ion-button slot="end" fill="clear" color="medium" target="_blank" [href]="'USER.COC_URL' | translate">
         <ion-icon slot="icon-only" icon="eye"></ion-icon>
       </ion-button>
     </ion-item>
