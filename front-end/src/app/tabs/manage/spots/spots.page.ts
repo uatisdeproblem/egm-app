@@ -1,10 +1,12 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { IonSearchbar, ModalController } from '@ionic/angular';
+import { AlertController, IonSearchbar, ModalController } from '@ionic/angular';
 import { ColumnMode, SelectionType, TableColumn, DatatableComponent } from '@swimlane/ngx-datatable';
+import { Suggestion } from 'idea-toolbox';
 import {
   IDEAActionSheetController,
   IDEALoadingService,
   IDEAMessageService,
+  IDEASuggestionsComponent,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -12,8 +14,10 @@ import { AddSpotsComponent } from './addSpots.component';
 
 import { AppService } from '@app/app.service';
 import { SpotsService } from './spots.service';
+import { UsersService } from '../users/users.service';
 
 import { EventSpot } from '@models/eventSpot.model';
+import { User } from '@models/user.model';
 
 @Component({
   selector: 'event-spots',
@@ -51,13 +55,17 @@ export class SpotsPage implements OnInit {
   numWithProofOfPaymentUploaded = 0;
   numWithPaymentConfirmed = 0;
 
+  users: User[];
+
   constructor(
     private modalCtrl: ModalController,
+    private alertCtrl: AlertController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     private t: IDEATranslationsService,
     private actionsCtrl: IDEAActionSheetController,
     private _spots: SpotsService,
+    private _users: UsersService,
     public app: AppService
   ) {}
   async ngOnInit(): Promise<void> {
@@ -82,21 +90,18 @@ export class SpotsPage implements OnInit {
     this.col.forEach(c => (c.resizeable = false));
     this.setTableHeight();
 
-    await this.loadSpots();
-  }
-  ionViewWillEnter(): void {
-    if (!this.app.user.permissions.canManageRegistrations) return this.app.closePage('COMMON.UNAUTHORIZED');
-  }
-  private async loadSpots(): Promise<void> {
     try {
       await this.loading.show();
-      this.spots = await this._spots.getList();
+      [this.spots, this.users] = await Promise.all([this._spots.getList(), this._users.getList()]);
       this.filter();
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
     } finally {
       this.loading.hide();
     }
+  }
+  ionViewWillEnter(): void {
+    if (!this.app.user.permissions.canManageRegistrations) return this.app.closePage('COMMON.UNAUTHORIZED');
   }
 
   @HostListener('window:resize', ['$event'])
@@ -151,11 +156,24 @@ export class SpotsPage implements OnInit {
     const header = this.t._('SPOTS.ACTIONS_ON_NUM_ROWS', { num: spotsSelected.length });
     const buttons = [];
     if (spotsSelected.length === 1) {
-      buttons.push({
-        text: spotsSelected[0].userId ? this.t._('SPOTS.TRANSFER_TO_USER') : this.t._('SPOTS.ASSIGN_TO_USER'),
-        icon: 'person',
-        handler: (): Promise<void> => this.pickUserAndAssignSpot(spotsSelected[0])
-      });
+      if (!spotsSelected[0].userId) {
+        buttons.push({
+          text: this.t._('SPOTS.ASSIGN_TO_USER'),
+          icon: 'person',
+          handler: (): Promise<void> => this.pickUserAndAssignSpot(spotsSelected[0])
+        });
+      } else {
+        buttons.push({
+          text: this.t._('SPOTS.TRANSFER_TO_USER'),
+          icon: 'swap-horizontal',
+          handler: (): Promise<void> => this.pickUserAndTransferSpot(spotsSelected[0])
+        });
+        buttons.push({
+          text: this.t._('SPOTS.CONFIRM_PAYMENT_AND_SPOT'),
+          icon: 'checkmark-done',
+          handler: (): Promise<void> => this.confirmPaymentAndSpot(spotsSelected[0])
+        });
+      }
     }
     buttons.push({
       text: this.t._('SPOTS.ASSIGN_TO_COUNTRY'),
@@ -172,32 +190,115 @@ export class SpotsPage implements OnInit {
       icon: 'pencil',
       handler: (): Promise<void> => this.editDescriptionOfSpots(spotsSelected)
     });
-    if (spotsSelected.length === 1) {
-      buttons.push({
-        text: this.t._('SPOTS.CONFIRM_PAYMENT_AND_SPOT'),
-        icon: 'checkmark-done',
-        handler: (): Promise<void> => this.confirmPaymentAndSpot(spotsSelected[0])
-      });
-    }
+    buttons.push({
+      text: this.t._('SPOTS.DELETE_SPOTS'),
+      icon: 'trash',
+      role: 'destructive',
+      handler: (): Promise<void> => this.deleteSpots(spotsSelected)
+    });
+
     buttons.push({ text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' });
 
     const actions = await this.actionsCtrl.create({ header, buttons });
     actions.present();
   }
   private async pickUserAndAssignSpot(spot: EventSpot): Promise<void> {
-    // @todo
+    const data = this.users.filter(x => !x.spot).map(x => x.mapIntoSuggestion());
+    const componentProps = {
+      data,
+      hideIdFromUI: true,
+      sortData: true,
+      hideClearButton: true,
+      searchPlaceholder: this.t._('SPOTS.ASSIGN_TO_USER')
+    };
+    const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
+    modal.onDidDismiss().then(({ data }): void => {
+      if (!data) return;
+      // @todo assign spot
+    });
+    modal.present();
   }
-  private async pickCountryAndAssignSpots(spots: EventSpot[]): Promise<void> {
-    // @todo
-  }
-  private async releaseSpots(spots: EventSpot[]): Promise<void> {
-    // @todo
-  }
-  private async editDescriptionOfSpots(spots: EventSpot[]): Promise<void> {
-    // @todo
+  private async pickUserAndTransferSpot(spot: EventSpot): Promise<void> {
+    const data = this.users.filter(x => x.spot).map(x => x.mapIntoSuggestion());
+    const componentProps = {
+      data,
+      hideIdFromUI: true,
+      sortData: true,
+      hideClearButton: true,
+      searchPlaceholder: this.t._('SPOTS.TRANSFER_TO_USER')
+    };
+    const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
+    modal.onDidDismiss().then(({ data }): void => {
+      if (!data) return;
+      // @todo transfer spot
+    });
+    modal.present();
   }
   private async confirmPaymentAndSpot(spot: EventSpot): Promise<void> {
-    // @todo
+    const doConfirm = async (): Promise<void> => {
+      // @todo
+    };
+    const header = this.t._('SPOTS.CONFIRM_PAYMENT_AND_SPOT');
+    const subHeader = this.t._('COMMON.ARE_YOU_SURE');
+    const message = this.t._('SPOTS.CONFIRM_PAYMENT_AND_SPOT_I');
+    const buttons = [{ text: this.t._('COMMON.CANCEL') }, { text: this.t._('COMMON.CONFIRM'), handler: doConfirm }];
+    const alert = await this.alertCtrl.create({ header, subHeader, message, buttons });
+    alert.present();
+  }
+  private async pickCountryAndAssignSpots(spots: EventSpot[]): Promise<void> {
+    const data = this.app.configurations.sectionCountries.map(x => new Suggestion({ value: x }));
+    const componentProps = {
+      data,
+      hideIdFromUI: true,
+      sortData: true,
+      hideClearButton: true,
+      searchPlaceholder: this.t._('SPOTS.ASSIGN_TO_COUNTRY')
+    };
+    const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
+    modal.onDidDismiss().then(({ data }): void => {
+      if (!data) return;
+      // @todo assign spots
+    });
+    modal.present();
+  }
+  private async releaseSpots(spots: EventSpot[]): Promise<void> {
+    const doRelease = async (): Promise<void> => {
+      // @todo
+    };
+    const header = this.t._('SPOTS.RELEASE_SPOT');
+    const subHeader = this.t._('COMMON.ARE_YOU_SURE');
+    const message = this.t._('SPOTS.RELEASE_SPOT_I');
+    const buttons = [{ text: this.t._('COMMON.CANCEL') }, { text: this.t._('COMMON.CONFIRM'), handler: doRelease }];
+    const alert = await this.alertCtrl.create({ header, subHeader, message, buttons });
+    alert.present();
+  }
+  private async editDescriptionOfSpots(spots: EventSpot[]): Promise<void> {
+    const doEditDescription = (data: any): Promise<void> => {
+      const description = data?.description?.trim();
+      if (!description) return;
+      // @todo
+    };
+
+    const header = this.t._('SPOTS.EDIT_DESCRIPTION');
+    const inputs: any = [{ name: 'description', type: 'text', placeholder: this.t._('SPOTS.DESCRIPTION') }];
+    const buttons = [
+      { text: this.t._('COMMON.CANCEL'), role: 'cancel' },
+      { text: this.t._('COMMON.SAVE'), handler: doEditDescription }
+    ];
+
+    const alert = await this.alertCtrl.create({ header, inputs, buttons });
+    await alert.present();
+  }
+  private async deleteSpots(spots: EventSpot[]): Promise<void> {
+    const doDelete = async (): Promise<void> => {
+      // @todo
+    };
+    const header = this.t._('SPOTS.DELETE_SPOTS');
+    const subHeader = this.t._('COMMON.ARE_YOU_SURE');
+    const message = this.t._('COMMON.ACTION_IS_IRREVERSIBLE');
+    const buttons = [{ text: this.t._('COMMON.CANCEL') }, { text: this.t._('COMMON.DELETE'), handler: doDelete }];
+    const alert = await this.alertCtrl.create({ header, subHeader, message, buttons });
+    alert.present();
   }
 
   async addSpots(): Promise<void> {

@@ -187,8 +187,11 @@
     "TRANSFER_TO_USER": "Transfer to user",
     "ASSIGN_TO_COUNTRY": "Assign to country",
     "RELEASE_SPOT": "Release (unassign)",
+    "RELEASE_SPOT_I": "These spots will be unassigned from both users and ESN countries",
     "EDIT_DESCRIPTION": "Edit description",
-    "CONFIRM_PAYMENT_AND_SPOT": "Confirm payment and spot"
+    "CONFIRM_PAYMENT_AND_SPOT": "Confirm payment and spot",
+    "CONFIRM_PAYMENT_AND_SPOT_I": "The payment will be marked as paid and the user assigned (if any) will receive a notification.",
+    "DELETE_SPOTS": "Delete spots"
   },
   "USERS": {
     "USERS": "Users",

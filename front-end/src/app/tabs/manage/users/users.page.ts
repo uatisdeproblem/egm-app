@@ -153,7 +153,7 @@ export class UsersPage implements OnInit {
   async actionsOnSelectedUser(user: User): Promise<void> {
     if (!user) return;
 
-    const header = this.t._('USERS.ACTIONS_ON_USER', { user: `${user.firstName} ${user.lastName}` });
+    const header = this.t._('USERS.ACTIONS_ON_USER', { user: user.getName() });
     const buttons = [];
 
     if (!user.spot) {
@@ -182,6 +182,7 @@ export class UsersPage implements OnInit {
     buttons.push({
       text: this.t._('USERS.DELETE_USER'),
       icon: 'trash',
+      role: 'destructive',
       handler: (): Promise<void> => this.deleteUser(user)
     });
     buttons.push({ text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' });

@@ -138,7 +138,7 @@ class ConfigurationsRC extends ResourceController {
     const toAddresses = [this.user.email];
     const template = `${emailTemplate}-${STAGE}`;
     const templateData = {
-      user: `${this.user.firstName} ${this.user.lastName}`,
+      user: this.user.getName(),
       country: TEST_EMAIL_EXAMPLE_COUNTRY,
       section: TEST_EMAIL_EXAMPLE_SECTION,
       spotType: TEST_EMAIL_EXAMPLE_SPOT_TYPE,

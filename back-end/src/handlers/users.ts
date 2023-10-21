@@ -166,6 +166,7 @@ class UsersRC extends ResourceController {
     if (!(this.reqUser.permissions.canManageRegistrations || this.reqUser.permissions.isCountryLeader))
       throw new RCError('Unauthorized');
 
+    // @todo we may want to add an index here to limit the fields in lists
     let users = (await ddb.scan({ TableName: DDB_TABLES.users })).map(x => new User(x));
     if (!this.reqUser.permissions.canManageRegistrations)
       users = users.filter(x => x.sectionCountry === this.reqUser.sectionCountry);
