@@ -233,7 +233,15 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: [GET_AVATAR_UPLOAD_URL, REGISTER_TO_EVENT, CHANGE_PERMISSIONS]
+                  enum:
+                    [
+                      GET_AVATAR_UPLOAD_URL,
+                      REGISTER_TO_EVENT,
+                      CHANGE_PERMISSIONS,
+                      GET_PROOF_OF_PAYMENT,
+                      PUT_PROOF_OF_PAYMENT_START,
+                      PUT_PROOF_OF_PAYMENT_END
+                    ]
                 registrationForm:
                   type: number
                   description: (REGISTER_TO_EVENT)
@@ -243,6 +251,9 @@ paths:
                 permissions:
                   type: number
                   description: (CHANGE_PERMISSIONS)
+                fileURI:
+                  type: string
+                  description: (PUT_PROOF_OF_PAYMENT_END)
       responses:
         200:
           $ref: '#/components/responses/User'

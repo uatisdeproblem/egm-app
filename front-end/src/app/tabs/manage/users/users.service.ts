@@ -31,6 +31,15 @@ export class UsersService {
   }
 
   /**
+   * Get the URL to the proof of payment of the user.
+   */
+  async getProofOfPaymentURL(user: User): Promise<string> {
+    const body = { action: 'GET_PROOF_OF_PAYMENT' };
+    const { url } = await this.api.patchResource(['users', user.userId], { body });
+    return url;
+  }
+
+  /**
    * Delete a user and its data.
    */
   async delete(user: User): Promise<void> {

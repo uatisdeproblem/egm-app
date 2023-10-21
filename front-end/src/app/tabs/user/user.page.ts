@@ -39,7 +39,7 @@ export class UserPage {
 
     try {
       await this.loading.show();
-      const imageURI = await this._user.uploadAvatarAndGetURI(this.app.user, file);
+      const imageURI = await this._user.uploadAvatarAndGetURI(file);
       await new Promise(waitForImageCreation => setTimeout(waitForImageCreation, 5000));
       this.app.user.avatarURL = this.app.getImageURLByURI(imageURI);
       this.app.user.load(await this._user.update(this.app.user));
@@ -85,11 +85,32 @@ export class UserPage {
     this.app.goToInTabs(['user', 'registration', 'me']);
   }
 
-  uploadProofOfPayment(): void {
-    // @todo
+  async uploadProofOfPayment({ target }): Promise<void> {
+    const file = target.files[0];
+    if (!file) return;
+
+    try {
+      await this.loading.show();
+      this.app.user.load(await this._user.uploadProofOfPayment(file));
+      this.message.success('COMMON.OPERATION_COMPLETED');
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
-  downloadProofOfPayment(): void {
-    // @todo
+  async downloadProofOfPayment(): Promise<void> {
+    if (!this.app.user.spot?.proofOfPaymentURI) return;
+
+    try {
+      await this.loading.show();
+      const url = await this._user.getProofOfPaymentURL();
+      this.app.openURL(url);
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
   downloadInfoToPay(): void {
     // @todo
@@ -117,7 +138,7 @@ export class UserPage {
         const typedKey = data?.confirmKey?.trim();
         if (typedKey !== confirmKey) return;
         await this.loading.show();
-        await this._user.delete(this.app.user);
+        await this._user.delete();
         await this.auth.logout();
         window.location.assign('');
       } catch (error) {

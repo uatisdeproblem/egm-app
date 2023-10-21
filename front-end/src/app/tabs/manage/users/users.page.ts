@@ -181,6 +181,13 @@ export class UsersPage implements OnInit {
         icon: 'swap-horizontal',
         handler: (): Promise<void> => this.transferSpotToAnotherUser(user)
       });
+      if (user.spot.proofOfPaymentURI) {
+        buttons.push({
+          text: this.t._('USERS.OPEN_PROOF_OF_PAYMENT'),
+          icon: 'eye',
+          handler: (): Promise<void> => this.openProofOfPayment(user)
+        });
+      }
       if (!user.spot.paymentConfirmedAt) {
         buttons.push({
           text: this.t._('USERS.CONFIRM_SPOT_PAYMENT'),
@@ -397,6 +404,18 @@ export class UsersPage implements OnInit {
     const buttons = [{ text: this.t._('COMMON.CANCEL') }, { text: this.t._('COMMON.CONFIRM'), handler: doAssign }];
     const alert = await this.alertCtrl.create({ header, message, buttons });
     alert.present();
+  }
+  private async openProofOfPayment(user: User): Promise<void> {
+    if (!user.spot?.proofOfPaymentURI) return;
+    try {
+      await this.loading.show();
+      const url = await this._users.getProofOfPaymentURL(user);
+      this.app.openURL(url);
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
 
   private mapSpotIntoSuggestion(spot: EventSpot): Suggestion {

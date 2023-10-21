@@ -181,6 +181,13 @@ export class SpotsPage implements OnInit {
           });
         }
       }
+      if (spotsSelected[0].proofOfPaymentURI) {
+        buttons.push({
+          text: this.t._('SPOTS.OPEN_PROOF_OF_PAYMENT'),
+          icon: 'eye',
+          handler: (): Promise<void> => this.openProofOfPayment(spotsSelected[0])
+        });
+      }
     }
     buttons.push({
       text: this.t._('SPOTS.ASSIGN_TO_COUNTRY'),
@@ -298,6 +305,19 @@ export class SpotsPage implements OnInit {
     const buttons = [{ text: this.t._('COMMON.CANCEL') }, { text: this.t._('COMMON.CONFIRM'), handler: doConfirm }];
     const alert = await this.alertCtrl.create({ header, subHeader, message, buttons });
     alert.present();
+  }
+  private async openProofOfPayment(spot: EventSpot): Promise<void> {
+    if (!spot.userId || !spot.proofOfPaymentURI) return;
+    try {
+      const user = this.users.find(x => x.userId === spot.userId);
+      await this.loading.show();
+      const url = await this._users.getProofOfPaymentURL(user);
+      this.app.openURL(url);
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
   private async pickCountryAndAssignSpots(spots: EventSpot[]): Promise<void> {
     const data = this.app.configurations.sectionCountries.map(x => new Suggestion({ value: x }));

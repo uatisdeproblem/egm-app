@@ -143,6 +143,7 @@
     "VIEW_MY_REGISTRATION": "View your registration",
     "EXTERNAL_GUEST": "External guest",
     "UPLOAD_PROOF_PAYMENT": "Upload your proof of payment",
+    "REPLACE_PROOF_PAYMENT": "Replace your proof of payment",
     "DOWNLOAD_PROOF_PAYMENT": "Download your proof of payment",
     "DOWNLOAD_INFO_TO_PAY": "Download information to pay",
     "ADMINISTRATOR": "Administrator",
@@ -191,7 +192,8 @@
     "EDIT_DESCRIPTION": "Edit description",
     "CONFIRM_PAYMENT_AND_SPOT": "Confirm payment and spot",
     "CONFIRM_PAYMENT_AND_SPOT_I": "The payment will be marked as paid and the user assigned (if any) will receive a notification.",
-    "DELETE_SPOTS": "Delete spots"
+    "DELETE_SPOTS": "Delete spots",
+    "OPEN_PROOF_OF_PAYMENT": "Proof of payment"
   },
   "USERS": {
     "USERS": "Users",
@@ -211,7 +213,8 @@
     "MANAGE_PERMISSIONS_ADMIN_NOTE": "Note: by assigning the Administrator permissions, the user will automatically acquire all the other permissions.",
     "DELETE_USER": "Delete user",
     "ASSIGN_COUNTRY_SPOT": "Assign country spot",
-    "COUNTRY_SPOTS_AVAILABLE": "{{num}} country spots available"
+    "COUNTRY_SPOTS_AVAILABLE": "{{num}} country spots available",
+    "OPEN_PROOF_OF_PAYMENT": "Proof of payment"
   },
   "MANAGE": {
     "USERS_AND_REGISTRATIONS": "Users and event registrations",
