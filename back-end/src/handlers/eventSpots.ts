@@ -193,7 +193,7 @@ class EventSpotsRC extends ResourceController {
 
     await ddb.update({
       TableName: DDB_TABLES.eventSpots,
-      Key: { userId: this.spot.spotId },
+      Key: { spotId: this.spot.spotId },
       UpdateExpression: 'SET sectionCountry = :sectionCountry',
       ExpressionAttributeValues: { ':sectionCountry': sectionCountry }
     });

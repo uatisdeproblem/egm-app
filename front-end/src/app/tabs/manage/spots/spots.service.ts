@@ -63,8 +63,15 @@ export class SpotsService {
   /**
    * Edit the description of a spot.
    */
-  async editDescription(spot: EventSpot): Promise<void> {
-    const body = { action: 'EDIT_DESCRIPTION', description: spot.description };
+  async editDescription(spot: EventSpot, description: string): Promise<void> {
+    const body = { action: 'EDIT_DESCRIPTION', description };
     await this.api.patchResource(['event-spots', spot.spotId], { body });
+  }
+
+  /**
+   * Delete an unassigned spot.
+   */
+  async delete(spot: EventSpot): Promise<void> {
+    await this.api.deleteResource(['event-spots', spot.spotId]);
   }
 }

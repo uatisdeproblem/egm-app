@@ -197,12 +197,14 @@ export class SpotsPage implements OnInit {
       icon: 'pencil',
       handler: (): Promise<void> => this.editDescriptionOfSpots(spotsSelected)
     });
-    buttons.push({
-      text: this.t._('SPOTS.DELETE_SPOTS'),
-      icon: 'trash',
-      role: 'destructive',
-      handler: (): Promise<void> => this.deleteSpots(spotsSelected)
-    });
+    if (spotsSelected.every(x => !x.userId && !x.sectionCountry)) {
+      buttons.push({
+        text: this.t._('SPOTS.DELETE_SPOTS'),
+        icon: 'trash',
+        role: 'destructive',
+        handler: (): Promise<void> => this.deleteSpots(spotsSelected)
+      });
+    }
 
     buttons.push({ text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' });
 
@@ -307,15 +309,39 @@ export class SpotsPage implements OnInit {
       searchPlaceholder: this.t._('SPOTS.ASSIGN_TO_COUNTRY')
     };
     const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
-    modal.onDidDismiss().then(({ data }): void => {
+    modal.onDidDismiss().then(async ({ data }): Promise<void> => {
       if (!data) return;
-      // @todo assign spots
+      try {
+        await this.loading.show();
+        await Promise.all(spots.map(x => this._spots.assignToCountry(x, data.value)));
+        for (const spot of spots) spot.sectionCountry = data.value;
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     });
     modal.present();
   }
   private async releaseSpots(spots: EventSpot[]): Promise<void> {
     const doRelease = async (): Promise<void> => {
-      // @todo
+      try {
+        await this.loading.show();
+        await Promise.all(spots.map(x => this._spots.release(x)));
+        for (const spot of spots) {
+          delete spot.userId;
+          delete spot.userName;
+          delete spot.sectionCountry;
+        }
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     };
     const header = this.t._('SPOTS.RELEASE_SPOT');
     const subHeader = this.t._('COMMON.ARE_YOU_SURE');
@@ -325,10 +351,20 @@ export class SpotsPage implements OnInit {
     alert.present();
   }
   private async editDescriptionOfSpots(spots: EventSpot[]): Promise<void> {
-    const doEditDescription = (data: any): Promise<void> => {
+    const doEditDescription = async (data: any): Promise<void> => {
       const description = data?.description?.trim();
       if (!description) return;
-      // @todo
+      try {
+        await this.loading.show();
+        await Promise.all(spots.map(x => this._spots.editDescription(x, description)));
+        for (const spot of spots) spot.description = description;
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     };
 
     const header = this.t._('SPOTS.EDIT_DESCRIPTION');
@@ -343,7 +379,17 @@ export class SpotsPage implements OnInit {
   }
   private async deleteSpots(spots: EventSpot[]): Promise<void> {
     const doDelete = async (): Promise<void> => {
-      // @todo
+      try {
+        await this.loading.show();
+        await Promise.all(spots.map(x => this._spots.delete(x)));
+        for (const spot of spots) this.spots.splice(this.spots.indexOf(spot), 1);
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     };
     const header = this.t._('SPOTS.DELETE_SPOTS');
     const subHeader = this.t._('COMMON.ARE_YOU_SURE');
