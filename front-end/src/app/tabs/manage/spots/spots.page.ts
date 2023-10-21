@@ -203,7 +203,9 @@ export class SpotsPage implements OnInit {
     actions.present();
   }
   private async pickUserAndAssignSpot(spot: EventSpot): Promise<void> {
-    const data = this.users.filter(x => !x.spot).map(x => x.mapIntoSuggestion());
+    if (spot.userId) return;
+
+    const data = this.users.filter(x => x.registrationAt && !x.spot).map(x => x.mapIntoSuggestion());
     const componentProps = {
       data,
       hideIdFromUI: true,
@@ -219,7 +221,9 @@ export class SpotsPage implements OnInit {
     modal.present();
   }
   private async pickUserAndTransferSpot(spot: EventSpot): Promise<void> {
-    const data = this.users.filter(x => x.spot).map(x => x.mapIntoSuggestion());
+    if (!spot.userId) return;
+
+    const data = this.users.filter(x => x.registrationAt && x.spot).map(x => x.mapIntoSuggestion());
     const componentProps = {
       data,
       hideIdFromUI: true,

@@ -206,7 +206,9 @@
     "ASSIGN_SPOT": "Assign spot",
     "TRANSFER_SPOT": "Transfer spot",
     "CONFIRM_SPOT_PAYMENT": "Confirm spot payment",
+    "CONFIRM_SPOT_PAYMENT_I": "The payment will be marked as paid and the user's participation will be confirmed. The user will receive a notification.",
     "MANAGE_PERMISSIONS": "Manage permissions",
+    "MANAGE_PERMISSIONS_ADMIN_NOTE": "Note: by assigning the Administrator permissions, the user will automatically acquire all the other permissions.",
     "DELETE_USER": "Delete user",
     "ASSIGN_COUNTRY_SPOT": "Assign country spot",
     "COUNTRY_SPOTS_AVAILABLE": "{{num}} country spots available"

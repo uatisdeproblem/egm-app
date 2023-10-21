@@ -22,7 +22,7 @@
         slot="start"
         color="ESNgreen"
         *ngIf="!app.user.permissions.canManageRegistrations && app.user.permissions.isCountryLeader"
-        [disabled]="!countrySpotsAvailable"
+        [disabled]="!numCountrySpotsAvailable"
         (click)="assignCountrySpot(usersTable.selected[0])"
       >
         <ion-icon name="ticket" slot="icon-only"></ion-icon>
@@ -31,7 +31,7 @@
         <i>{{ 'USERS.ACTIONS_ON_USER' | translate : { user: usersTable.selected[0].firstName } }}</i>
       </ion-label>
       <ion-label *ngIf="!app.user.permissions.canManageRegistrations && app.user.permissions.isCountryLeader">
-        <i>{{ 'USERS.COUNTRY_SPOTS_AVAILABLE' | translate : { num: countrySpotsAvailable } }}</i>
+        <i>{{ 'USERS.COUNTRY_SPOTS_AVAILABLE' | translate : { num: numCountrySpotsAvailable } }}</i>
       </ion-label>
     </ion-item>
     <ion-item color="ideaToolbar" lines="none">

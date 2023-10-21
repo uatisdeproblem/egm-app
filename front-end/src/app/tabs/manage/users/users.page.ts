@@ -1,17 +1,21 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { IonSearchbar } from '@ionic/angular';
+import { AlertController, IonSearchbar, ModalController } from '@ionic/angular';
 import { ColumnMode, SelectionType, TableColumn, DatatableComponent } from '@swimlane/ngx-datatable';
+import { Suggestion } from 'idea-toolbox';
 import {
   IDEAActionSheetController,
   IDEALoadingService,
   IDEAMessageService,
+  IDEASuggestionsComponent,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
 import { AppService } from '@app/app.service';
-import { UsersService } from '@tabs/manage/users/users.service';
+import { UsersService } from './users.service';
+import { SpotsService } from '../spots/spots.service';
 
 import { User, UserPermissions } from '@models/user.model';
+import { EventSpot } from '@models/eventSpot.model';
 
 @Component({
   selector: 'users',
@@ -49,14 +53,18 @@ export class UsersPage implements OnInit {
   numWithProofOfPaymentUploaded = 0;
   numWithPaymentConfirmed = 0;
 
-  countrySpotsAvailable = 0; // @todo
+  spots: EventSpot[];
+  numCountrySpotsAvailable = 0;
 
   constructor(
+    private modalCtrl: ModalController,
+    private alertCtrl: AlertController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     private t: IDEATranslationsService,
     private actionsCtrl: IDEAActionSheetController,
     private _users: UsersService,
+    private _spots: SpotsService,
     public app: AppService
   ) {}
   async ngOnInit(): Promise<void> {
@@ -90,7 +98,10 @@ export class UsersPage implements OnInit {
 
     try {
       await this.loading.show();
-      this.users = await this._users.getList();
+      [this.users, this.spots] = await Promise.all([this._users.getList(), this._spots.getList()]);
+      this.numCountrySpotsAvailable = this.spots.filter(
+        x => x.sectionCountry === this.app.user.sectionCountry && !x.userId
+      ).length;
       this.filter();
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
@@ -191,22 +202,135 @@ export class UsersPage implements OnInit {
     actions.present();
   }
   private async pickSpotAndAssignToUser(user: User): Promise<void> {
-    // @todo
+    if (user.spot) return;
+
+    const data = this.spots.filter(x => !x.userId).map(x => this.mapSpotIntoSuggestion(x));
+    const componentProps = {
+      data,
+      hideIdFromUI: true,
+      hideClearButton: true,
+      searchPlaceholder: this.t._('USERS.ASSIGN_SPOT')
+    };
+    const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
+    modal.onDidDismiss().then(({ data }): void => {
+      if (!data) return;
+      // @todo assign spot to user
+    });
+    modal.present();
   }
   private async transferSpotToAnotherUser(sourceUser: User): Promise<void> {
-    // @todo
+    if (!sourceUser.spot) return;
+
+    const data = this.users
+      .filter(x => x.registrationAt && !x.spot && x.userId !== sourceUser.userId)
+      .map(x => x.mapIntoSuggestion());
+    const componentProps = {
+      data,
+      hideIdFromUI: true,
+      sortData: true,
+      hideClearButton: true,
+      searchPlaceholder: this.t._('USERS.TRANSFER_SPOT')
+    };
+    const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
+    modal.onDidDismiss().then(({ data }): void => {
+      if (!data) return;
+      // @todo transfer spot
+    });
+    modal.present();
   }
   private async confirmSpotPaymentOfUser(user: User): Promise<void> {
-    // @todo
+    if (!user.spot) return;
+
+    const doConfirm = async (): Promise<void> => {
+      // @todo
+    };
+    const header = this.t._('USERS.CONFIRM_SPOT_PAYMENT');
+    const subHeader = this.t._('COMMON.ARE_YOU_SURE');
+    const message = this.t._('SPOTS.CONFIRM_SPOT_PAYMENT_I');
+    const buttons = [{ text: this.t._('COMMON.CANCEL') }, { text: this.t._('COMMON.CONFIRM'), handler: doConfirm }];
+    const alert = await this.alertCtrl.create({ header, subHeader, message, buttons });
+    alert.present();
   }
   private async managePermissionsOfUser(user: User): Promise<void> {
-    // @todo
+    const doChangePermissions = async (permissions: string[]): Promise<void> => {
+      const newPermissions = new UserPermissions();
+      for (const permission of permissions) newPermissions[permission] = true;
+      // @todo
+    };
+    const header = this.t._('USERS.MANAGE_PERMISSIONS');
+    const message = this.t._('USERS.MANAGE_PERMISSIONS_ADMIN_NOTE');
+    const inputs: any[] = [
+      {
+        type: 'checkbox',
+        name: 'isAdmin',
+        value: 'isAdmin',
+        checked: user.permissions.isAdmin,
+        label: this.t._('USER.ADMINISTRATOR')
+      },
+      {
+        type: 'checkbox',
+        name: 'isCountryLeader',
+        value: 'isCountryLeader',
+        checked: user.permissions.isCountryLeader,
+        label: this.t._('USER.DELEGATION_LEADER')
+      },
+      {
+        type: 'checkbox',
+        name: 'canManageRegistrations',
+        value: 'canManageRegistrations',
+        checked: user.permissions.canManageRegistrations,
+        label: this.t._('USER.CAN_MANAGE_REGISTRATIONS')
+      },
+      {
+        type: 'checkbox',
+        name: 'canManageContents',
+        value: 'canManageContents',
+        checked: user.permissions.canManageContents,
+        label: this.t._('USER.CAN_MANAGE_CONTENTS')
+      }
+    ];
+    const buttons = [
+      { text: this.t._('COMMON.CANCEL') },
+      { text: this.t._('COMMON.CONFIRM'), handler: doChangePermissions }
+    ];
+    const alert = await this.alertCtrl.create({ header, message, inputs, buttons });
+    alert.present();
   }
   private async deleteUser(user: User): Promise<void> {
-    // @todo
+    const doDelete = async (): Promise<void> => {
+      // @todo
+    };
+    const header = this.t._('USERS.DELETE_USER');
+    const subHeader = this.t._('COMMON.ARE_YOU_SURE');
+    const message = this.t._('COMMON.ACTION_IS_IRREVERSIBLE');
+    const buttons = [{ text: this.t._('COMMON.CANCEL') }, { text: this.t._('COMMON.DELETE'), handler: doDelete }];
+    const alert = await this.alertCtrl.create({ header, subHeader, message, buttons });
+    alert.present();
   }
   async assignCountrySpot(user: User): Promise<void> {
-    // @todo
+    if (!this.numCountrySpotsAvailable || user.spot) return;
+
+    const doAssign = async (): Promise<void> => {
+      // @todo
+    };
+    const header = this.t._('USERS.ASSIGN_COUNTRY_SPOT');
+    const message = this.t._('COMMON.ARE_YOU_SURE');
+    const buttons = [{ text: this.t._('COMMON.CANCEL') }, { text: this.t._('COMMON.CONFIRM'), handler: doAssign }];
+    const alert = await this.alertCtrl.create({ header, message, buttons });
+    alert.present();
+  }
+
+  private mapSpotIntoSuggestion(spot: EventSpot): Suggestion {
+    return new Suggestion({
+      value: spot.spotId,
+      name: [spot.type, spot.spotId].join(' - '),
+      category1: spot.sectionCountry,
+      category2: spot.paymentConfirmedAt
+        ? this.t._('SPOTS.PAYMENT_CONFIRMED')
+        : spot.proofOfPaymentURI
+        ? this.t._('SPOTS.PROOF_OF_PAYMENT_UPLOADED')
+        : ''
+    });
   }
 
   async openRegistrationOfUser(user: User): Promise<void> {
