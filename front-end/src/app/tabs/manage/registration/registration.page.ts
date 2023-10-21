@@ -33,7 +33,11 @@ export class RegistrationPage {
     let userId = this.route.snapshot.paramMap.get('userId');
     if (userId === 'me') userId = this.app.user.userId;
 
-    if (userId !== this.app.user.userId && !this.app.user.permissions.canManageRegistrations)
+    if (
+      userId !== this.app.user.userId &&
+      !this.app.user.permissions.canManageRegistrations &&
+      !this.app.user.permissions.isCountryLeader
+    )
       return this.app.closePage('COMMON.UNAUTHORIZED');
 
     try {

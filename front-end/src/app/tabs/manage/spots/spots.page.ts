@@ -38,11 +38,18 @@ export class SpotsPage implements OnInit {
 
   spots: EventSpot[];
   filteredSpots: EventSpot[];
-  filters: RowsFilters = { spot: null, assignedToCountry: null, assignedToUser: null, paid: null };
+  filters: RowsFilters = {
+    spot: null,
+    assignedToCountry: null,
+    assignedToUser: null,
+    proofOfPaymentUploaded: null,
+    paymentConfirmed: null
+  };
 
   numAssignedToCountry = 0;
   numAssignedToUser = 0;
-  numPaid = 0;
+  numWithProofOfPaymentUploaded = 0;
+  numWithPaymentConfirmed = 0;
 
   constructor(
     private modalCtrl: ModalController,
@@ -118,9 +125,13 @@ export class SpotsPage implements OnInit {
       this.filteredSpots = this.filteredSpots.filter(x =>
         this.filters.assignedToUser === 'yes' ? !!x.userId : !x.userId
       );
-    if (this.filters.paid)
+    if (this.filters.proofOfPaymentUploaded)
       this.filteredSpots = this.filteredSpots.filter(x =>
-        this.filters.assignedToUser === 'yes' ? !!x.proofOfPaymentURI : !x.proofOfPaymentURI
+        this.filters.proofOfPaymentUploaded === 'yes' ? !!x.proofOfPaymentURI : !x.proofOfPaymentURI
+      );
+    if (this.filters.paymentConfirmed)
+      this.filteredSpots = this.filteredSpots.filter(x =>
+        this.filters.paymentConfirmed === 'yes' ? !!x.paymentConfirmedAt : !x.paymentConfirmedAt
       );
 
     this.calcFooterTotals();
@@ -130,20 +141,61 @@ export class SpotsPage implements OnInit {
   }
 
   async actionsOnSelectedRows(): Promise<void> {
-    if (!this.table.selected.length) return;
+    const spotsSelected = this.table.selected as EventSpot[];
+    if (!spotsSelected.length) return;
 
-    const header = this.t._('SPOTS.ACTIONS_ON_NUM_ROWS', { num: this.table.selected.length });
+    const header = this.t._('SPOTS.ACTIONS_ON_NUM_ROWS', { num: spotsSelected.length });
     const buttons = [];
-    // @todo
+    if (spotsSelected.length === 1) {
+      buttons.push({
+        text: spotsSelected[0].userId ? this.t._('SPOTS.TRANSFER_TO_USER') : this.t._('SPOTS.ASSIGN_TO_USER'),
+        icon: 'person',
+        handler: (): Promise<void> => this.pickUserAndAssignSpot(spotsSelected[0])
+      });
+    }
+    buttons.push({
+      text: this.t._('SPOTS.ASSIGN_TO_COUNTRY'),
+      icon: 'earth',
+      handler: (): Promise<void> => this.pickCountryAndAssignSpots(spotsSelected)
+    });
+    buttons.push({
+      text: this.t._('SPOTS.RELEASE_SPOT'),
+      icon: 'browsers',
+      handler: (): Promise<void> => this.releaseSpots(spotsSelected)
+    });
+    buttons.push({
+      text: this.t._('SPOTS.EDIT_DESCRIPTION'),
+      icon: 'pencil',
+      handler: (): Promise<void> => this.editDescriptionOfSpots(spotsSelected)
+    });
+    if (spotsSelected.length === 1) {
+      buttons.push({
+        text: this.t._('SPOTS.CONFIRM_PAYMENT_AND_SPOT'),
+        icon: 'checkmark-done',
+        handler: (): Promise<void> => this.confirmPaymentAndSpot(spotsSelected[0])
+      });
+    }
     buttons.push({ text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' });
 
     const actions = await this.actionsCtrl.create({ header, buttons });
     actions.present();
   }
-
-  async manageSpot(spot: EventSpot): Promise<void> {
+  private async pickUserAndAssignSpot(spot: EventSpot): Promise<void> {
     // @todo
   }
+  private async pickCountryAndAssignSpots(spots: EventSpot[]): Promise<void> {
+    // @todo
+  }
+  private async releaseSpots(spots: EventSpot[]): Promise<void> {
+    // @todo
+  }
+  private async editDescriptionOfSpots(spots: EventSpot[]): Promise<void> {
+    // @todo
+  }
+  private async confirmPaymentAndSpot(spot: EventSpot): Promise<void> {
+    // @todo
+  }
+
   async addSpots(): Promise<void> {
     const modal = await this.modalCtrl.create({ component: AddSpotsComponent });
     modal.onDidDismiss().then(({ data: newSpots }): void => {
@@ -158,11 +210,13 @@ export class SpotsPage implements OnInit {
   calcFooterTotals(): void {
     this.numAssignedToCountry = 0;
     this.numAssignedToUser = 0;
-    this.numPaid = 0;
-    this.filteredSpots.forEach(user => {
-      if (!!user.sectionCountry) this.numAssignedToCountry++;
-      if (!!user.userId) this.numAssignedToUser++;
-      if (!!user.proofOfPaymentURI) this.numPaid++;
+    this.numWithProofOfPaymentUploaded = 0;
+    this.numWithPaymentConfirmed = 0;
+    this.filteredSpots.forEach(spot => {
+      if (!!spot.sectionCountry) this.numAssignedToCountry++;
+      if (!!spot.userId) this.numAssignedToUser++;
+      if (!!spot.proofOfPaymentURI) this.numWithProofOfPaymentUploaded++;
+      if (!!spot.paymentConfirmedAt) this.numWithPaymentConfirmed++;
     });
   }
 }
@@ -171,5 +225,6 @@ interface RowsFilters {
   spot: null | string;
   assignedToCountry: null | string;
   assignedToUser: null | 'yes' | 'no';
-  paid: null | 'yes' | 'no';
+  proofOfPaymentUploaded: null | 'yes' | 'no';
+  paymentConfirmed: null | 'yes' | 'no';
 }

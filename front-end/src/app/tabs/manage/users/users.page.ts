@@ -23,7 +23,7 @@ export class UsersPage implements OnInit {
   @ViewChild('usersTable') table: DatatableComponent;
 
   col: TableColumn[];
-  selectionType = SelectionType.checkbox;
+  selectionType = SelectionType.single;
   trackByProp = 'userId';
   columnMode = ColumnMode.force;
   limit = 10;
@@ -36,12 +36,20 @@ export class UsersPage implements OnInit {
 
   users: User[];
   filteredUsers: User[];
-  filters: RowsFilters = { registered: null, spot: null, paid: null, confirmed: null, sectionCountry: null };
+  filters: RowsFilters = {
+    registered: null,
+    spot: null,
+    proofOfPaymentUploaded: null,
+    paymentConfirmed: null,
+    sectionCountry: null
+  };
 
   numRegistered = 0;
   numWithSpot = 0;
-  numWhoPaid = 0;
-  numConfirmed = 0;
+  numWithProofOfPaymentUploaded = 0;
+  numWithPaymentConfirmed = 0;
+
+  countrySpotsAvailable = 0; // @todo
 
   constructor(
     private loading: IDEALoadingService,
@@ -53,15 +61,22 @@ export class UsersPage implements OnInit {
   ) {}
   async ngOnInit(): Promise<void> {
     this.col = [
-      { maxWidth: 50, sortable: false, headerCheckboxable: true, checkboxable: true },
       { prop: 'firstName', name: this.t._('USER.FIRST_NAME') },
       { prop: 'lastName', name: this.t._('USER.LAST_NAME') },
       { prop: 'sectionCountry', name: this.t._('USER.ESN_COUNTRY') },
       { prop: 'sectionName', name: this.t._('USER.ESN_SECTION') },
       { prop: 'registrationAt', name: this.t._('USERS.REGISTERED'), pipe: { transform: x => this.t.formatDate(x) } },
       { prop: 'spot.type', name: this.t._('USERS.SPOT') },
-      { prop: 'spot.proofOfPaymentURI', name: this.t._('USERS.PAID'), pipe: { transform: x => (x ? !!x : '') } },
-      { prop: 'confirmedAt', name: this.t._('USERS.CONFIRMED'), pipe: { transform: x => (x ? !!x : '') } },
+      {
+        prop: 'spot.proofOfPaymentURI',
+        name: this.t._('USERS.PROOF_OF_PAYMENT_UPLOADED'),
+        pipe: { transform: x => (x ? !!x : '') }
+      },
+      {
+        prop: 'spot.paymentConfirmedAt',
+        name: this.t._('USERS.PAYMENT_CONFIRMED'),
+        pipe: { transform: x => (x ? !!x : '') }
+      },
       {
         prop: 'permissions',
         name: this.t._('USER.PERMISSIONS'),
@@ -116,13 +131,13 @@ export class UsersPage implements OnInit {
       );
     if (this.filters.spot)
       this.filteredUsers = this.filteredUsers.filter(x => x.spot && this.filters.spot === x.spot.type);
-    if (this.filters.paid)
+    if (this.filters.proofOfPaymentUploaded)
       this.filteredUsers = this.filteredUsers.filter(x =>
-        this.filters.paid === 'yes' ? !!x.spot?.proofOfPaymentURI : !x.spot?.proofOfPaymentURI
+        this.filters.proofOfPaymentUploaded === 'yes' ? !!x.spot?.proofOfPaymentURI : !x.spot?.proofOfPaymentURI
       );
-    if (this.filters.confirmed)
+    if (this.filters.paymentConfirmed)
       this.filteredUsers = this.filteredUsers.filter(x =>
-        this.filters.confirmed === 'yes' ? !!x.confirmedAt : !x.confirmedAt
+        this.filters.paymentConfirmed === 'yes' ? !!x.spot?.paymentConfirmedAt : !x.spot?.paymentConfirmedAt
       );
     if (this.filters.sectionCountry)
       this.filteredUsers = this.filteredUsers.filter(x =>
@@ -135,18 +150,62 @@ export class UsersPage implements OnInit {
     this.table.offset = 0;
   }
 
-  async actionsOnSelectedRows(): Promise<void> {
-    if (!this.table.selected.length) return;
+  async actionsOnSelectedUser(user: User): Promise<void> {
+    if (!user) return;
 
-    const header = this.t._('USERS.ACTIONS_ON_NUM_ROWS', { num: this.table.selected.length });
+    const header = this.t._('USERS.ACTIONS_ON_USER', { user: `${user.firstName} ${user.lastName}` });
     const buttons = [];
-    buttons.push({ text: 'Assign spot', icon: 'ticket' }); // @todo
-    if (this.table.selected.length === 1) buttons.push({ text: 'Assign country spot', icon: 'earth' }); // @todo
-    buttons.push({ text: 'Confirm participation', icon: 'checkmark-done' }); // @todo
+
+    if (!user.spot) {
+      buttons.push({
+        text: this.t._('USERS.ASSIGN_SPOT'),
+        icon: 'ticket',
+        handler: (): Promise<void> => this.pickSpotAndAssignToUser(user)
+      });
+    } else {
+      buttons.push({
+        text: this.t._('USERS.TRANSFER_SPOT'),
+        icon: 'swap-horizontal',
+        handler: (): Promise<void> => this.transferSpotToAnotherUser(user)
+      });
+      buttons.push({
+        text: this.t._('USERS.CONFIRM_SPOT_PAYMENT'),
+        icon: 'checkmark-done',
+        handler: (): Promise<void> => this.confirmSpotPaymentOfUser(user)
+      });
+    }
+    buttons.push({
+      text: this.t._('USERS.MANAGE_PERMISSIONS'),
+      icon: 'ribbon',
+      handler: (): Promise<void> => this.managePermissionsOfUser(user)
+    });
+    buttons.push({
+      text: this.t._('USERS.DELETE_USER'),
+      icon: 'trash',
+      handler: (): Promise<void> => this.deleteUser(user)
+    });
     buttons.push({ text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' });
 
     const actions = await this.actionsCtrl.create({ header, buttons });
     actions.present();
+  }
+  private async pickSpotAndAssignToUser(user: User): Promise<void> {
+    // @todo
+  }
+  private async transferSpotToAnotherUser(sourceUser: User): Promise<void> {
+    // @todo
+  }
+  private async confirmSpotPaymentOfUser(user: User): Promise<void> {
+    // @todo
+  }
+  private async managePermissionsOfUser(user: User): Promise<void> {
+    // @todo
+  }
+  private async deleteUser(user: User): Promise<void> {
+    // @todo
+  }
+  async assignCountrySpot(user: User): Promise<void> {
+    // @todo
   }
 
   async openRegistrationOfUser(user: User): Promise<void> {
@@ -156,13 +215,13 @@ export class UsersPage implements OnInit {
   calcFooterTotals(): void {
     this.numRegistered = 0;
     this.numWithSpot = 0;
-    this.numWhoPaid = 0;
-    this.numConfirmed = 0;
+    this.numWithProofOfPaymentUploaded = 0;
+    this.numWithPaymentConfirmed = 0;
     this.filteredUsers.forEach(user => {
       if (!!user.registrationAt) this.numRegistered++;
       if (!!user.spot) this.numWithSpot++;
-      if (!!user.spot?.proofOfPaymentURI) this.numWhoPaid++;
-      if (!!user.confirmedAt) this.numConfirmed++;
+      if (!!user.spot?.proofOfPaymentURI) this.numWithProofOfPaymentUploaded++;
+      if (!!user.spot?.paymentConfirmedAt) this.numWithPaymentConfirmed++;
     });
   }
 }
@@ -170,7 +229,7 @@ export class UsersPage implements OnInit {
 interface RowsFilters {
   registered: null | 'yes' | 'no';
   spot: null | string;
-  paid: null | 'yes' | 'no';
-  confirmed: null | 'yes' | 'no';
+  proofOfPaymentUploaded: null | 'yes' | 'no';
+  paymentConfirmed: null | 'yes' | 'no';
   sectionCountry: string | 'no' | null;
 }

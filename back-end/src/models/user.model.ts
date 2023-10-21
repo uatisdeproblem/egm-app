@@ -71,10 +71,6 @@ export class User extends Resource {
    * The spot assigned for the event, if any.
    */
   spot?: EventSpotAttached;
-  /**
-   * Whether the participation and the payment of the user have been confirmed.
-   */
-  confirmedAt?: string;
 
   load(x: any): void {
     super.load(x);
@@ -98,7 +94,6 @@ export class User extends Resource {
     this.registrationForm = x.registrationForm ?? {};
     if (x.registrationAt) this.registrationAt = this.clean(x.registrationAt, t => new Date(t).toISOString());
     if (x.spot) this.spot = new EventSpotAttached(x.spot);
-    if (x.confirmedAt) this.confirmedAt = this.clean(x.confirmedAt, d => new Date(d).toISOString());
   }
 
   safeLoad(newData: any, safeData: any): void {

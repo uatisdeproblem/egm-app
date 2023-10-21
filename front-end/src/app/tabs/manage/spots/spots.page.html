@@ -11,15 +11,6 @@
       <ion-label>{{ 'SPOTS.ADD_SPOTS' | translate }}</ion-label>
     </ion-item>
     <ion-item color="ideaToolbar" lines="none" *ngIf="spotsTable.selected.length">
-      <ion-button
-        slot="start"
-        color="ESNgreen"
-        fill="clear"
-        *ngIf="spotsTable.selected.length === 1"
-        (click)="manageSpot(spotsTable.selected[0])"
-      >
-        <ion-icon name="pencil" slot="icon-only"></ion-icon>
-      </ion-button>
       <ion-button slot="start" color="ESNgreen" (click)="actionsOnSelectedRows()">
         <ion-icon name="flash" slot="icon-only"></ion-icon>
       </ion-button>
@@ -67,8 +58,20 @@
     <ion-item color="ideaToolbar" lines="none">
       <ion-select
         interface="popover"
-        [label]="('SPOTS.PAID' | translate) + ':'"
-        [(ngModel)]="filters.paid"
+        [label]="('SPOTS.PROOF_OF_PAYMENT_UPLOADED' | translate) + ':'"
+        [(ngModel)]="filters.proofOfPaymentUploaded"
+        (ionChange)="filter()"
+      >
+        <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
+        <ion-select-option value="yes">{{ 'COMMON.YES' | translate }}</ion-select-option>
+        <ion-select-option value="no">{{ 'COMMON.NO' | translate }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item color="ideaToolbar" lines="none">
+      <ion-select
+        interface="popover"
+        [label]="('SPOTS.PAYMENT_CONFIRMED' | translate) + ':'"
+        [(ngModel)]="filters.paymentConfirmed"
         (ionChange)="filter()"
       >
         <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
@@ -117,7 +120,10 @@
             <span><strong>{{ 'SPOTS.TOTAL' | translate }}</strong>: {{ filteredSpots?.length ?? 0 }}</span>
             <span><strong>{{ 'SPOTS.ASSIGNED_TO_COUNTRY' | translate }}</strong>: {{ numAssignedToCountry }}</span>
             <span><strong>{{ 'SPOTS.ASSIGNED_TO_USER' | translate }}</strong>: {{ numAssignedToUser }}</span>
-            <span><strong>{{ 'SPOTS.PAID' | translate }}</strong>: {{ numPaid }}</span>
+            <span>
+              <strong>{{ 'SPOTS.PROOF_OF_PAYMENT_UPLOADED' | translate }}</strong>: {{ numWithProofOfPaymentUploaded }}
+            </span>
+            <span><strong>{{ 'SPOTS.PAYMENT_CONFIRMED' | translate }}</strong>: {{ numWithPaymentConfirmed }}</span>
           </ng-container>
         </div>
         <datatable-pager
