@@ -59,14 +59,16 @@ class UsersRC extends ResourceController {
       throw new RCError('Target user not found');
     }
 
-    if (this.principalId !== this.resourceId && !this.canReqUserManageUser(this.targetUser))
+    const isCountryLeaderThatWantToReadCountryUser =
+      this.reqUser.permissions.isCountryLeader &&
+      this.reqUser.sectionCountry === this.targetUser.sectionCountry &&
+      this.httpMethod === 'GET';
+    if (
+      this.principalId !== this.resourceId &&
+      !this.reqUser.permissions.canManageRegistrations &&
+      !isCountryLeaderThatWantToReadCountryUser
+    )
       throw new RCError('Unauthorized');
-  }
-  private canReqUserManageUser(user: User): boolean {
-    return (
-      this.reqUser.permissions.canManageRegistrations ||
-      (this.reqUser.permissions.isCountryLeader && this.reqUser.sectionCountry === user.sectionCountry)
-    );
   }
 
   protected async getResource(): Promise<User> {
@@ -146,13 +148,17 @@ class UsersRC extends ResourceController {
     await ddb.update({
       TableName: DDB_TABLES.users,
       Key: { userId: this.targetUser.userId },
-      UpdateExpression: 'SET permissions = :permissions',
+      ExpressionAttributeNames: { '#permissions': 'permissions' },
+      UpdateExpression: 'SET #permissions = :permissions',
       ExpressionAttributeValues: { ':permissions': permissions }
     });
+
     return this.targetUser;
   }
 
   protected async deleteResource(): Promise<void> {
+    if (!this.reqUser.permissions.canManageRegistrations) throw new RCError('Unauthorized');
+
     if (this.targetUser.authService === AuthServices.COGNITO) {
       const cognitoUserId = this.targetUser.getAuthServiceUserId();
       const { email: cognitoUserEmail } = await cognito.getUserBySub(cognitoUserId, COGNITO_USER_POOL_ID);

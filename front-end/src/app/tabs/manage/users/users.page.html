@@ -22,7 +22,7 @@
         slot="start"
         color="ESNgreen"
         *ngIf="!app.user.permissions.canManageRegistrations && app.user.permissions.isCountryLeader"
-        [disabled]="!numCountrySpotsAvailable"
+        [disabled]="!numCountrySpotsAvailable || usersTable.selected[0]?.spot"
         (click)="assignCountrySpot(usersTable.selected[0])"
       >
         <ion-icon name="ticket" slot="icon-only"></ion-icon>
@@ -50,11 +50,12 @@
     <ion-item color="ideaToolbar" lines="none">
       <ion-select
         interface="popover"
-        [label]="('USERS.SPOT' | translate) + ':'"
+        [label]="('USERS.WITH_SPOT' | translate) + ':'"
         [(ngModel)]="filters.spot"
         (ionChange)="filter()"
       >
         <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
+        <ion-select-option value="no">{{ 'COMMON.NO' | translate }}</ion-select-option>
         <ion-select-option *ngFor="let st of app.configurations.spotTypes" [value]="st">{{ st }}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -135,7 +136,7 @@
           <ng-container>
             <span><strong>{{ 'USERS.USERS' | translate }}</strong>: {{ filteredUsers?.length ?? 0 }}</span>
             <span><strong>{{ 'USERS.REGISTERED' | translate }}</strong>: {{ numRegistered }}</span>
-            <span><strong>{{ 'USERS.SPOT' | translate }}</strong>: {{ numWithSpot }}</span>
+            <span><strong>{{ 'USERS.WITH_SPOT' | translate }}</strong>: {{ numWithSpot }}</span>
             <span>
               <strong>{{ 'USERS.PROOF_OF_PAYMENT_UPLOADED' | translate }}</strong>: {{ numWithProofOfPaymentUploaded }}
             </span>

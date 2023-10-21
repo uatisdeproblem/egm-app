@@ -15,7 +15,7 @@ import { UsersService } from './users.service';
 import { SpotsService } from '../spots/spots.service';
 
 import { User, UserPermissions } from '@models/user.model';
-import { EventSpot } from '@models/eventSpot.model';
+import { EventSpot, EventSpotAttached } from '@models/eventSpot.model';
 
 @Component({
   selector: 'users',
@@ -74,7 +74,7 @@ export class UsersPage implements OnInit {
       { prop: 'sectionCountry', name: this.t._('USER.ESN_COUNTRY') },
       { prop: 'sectionName', name: this.t._('USER.ESN_SECTION') },
       { prop: 'registrationAt', name: this.t._('USERS.REGISTERED'), pipe: { transform: x => this.t.formatDate(x) } },
-      { prop: 'spot.type', name: this.t._('USERS.SPOT') },
+      { prop: 'spot.type', name: this.t._('USERS.WITH_SPOT') },
       {
         prop: 'spot.proofOfPaymentURI',
         name: this.t._('USERS.PROOF_OF_PAYMENT_UPLOADED'),
@@ -102,7 +102,7 @@ export class UsersPage implements OnInit {
       this.numCountrySpotsAvailable = this.spots.filter(
         x => x.sectionCountry === this.app.user.sectionCountry && !x.userId
       ).length;
-      this.filter();
+      this.filter(this.searchbar?.value);
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
     } finally {
@@ -141,7 +141,9 @@ export class UsersPage implements OnInit {
         this.filters.registered === 'yes' ? !!x.registrationAt : !x.registrationAt
       );
     if (this.filters.spot)
-      this.filteredUsers = this.filteredUsers.filter(x => x.spot && this.filters.spot === x.spot.type);
+      this.filteredUsers = this.filteredUsers.filter(x =>
+        this.filters.spot === 'no' ? !x.spot : x.spot && this.filters.spot === x.spot.type
+      );
     if (this.filters.proofOfPaymentUploaded)
       this.filteredUsers = this.filteredUsers.filter(x =>
         this.filters.proofOfPaymentUploaded === 'yes' ? !!x.spot?.proofOfPaymentURI : !x.spot?.proofOfPaymentURI
@@ -179,11 +181,13 @@ export class UsersPage implements OnInit {
         icon: 'swap-horizontal',
         handler: (): Promise<void> => this.transferSpotToAnotherUser(user)
       });
-      buttons.push({
-        text: this.t._('USERS.CONFIRM_SPOT_PAYMENT'),
-        icon: 'checkmark-done',
-        handler: (): Promise<void> => this.confirmSpotPaymentOfUser(user)
-      });
+      if (!user.spot.paymentConfirmedAt) {
+        buttons.push({
+          text: this.t._('USERS.CONFIRM_SPOT_PAYMENT'),
+          icon: 'checkmark-done',
+          handler: (): Promise<void> => this.confirmSpotPaymentOfUser(user)
+        });
+      }
     }
     buttons.push({
       text: this.t._('USERS.MANAGE_PERMISSIONS'),
@@ -212,9 +216,22 @@ export class UsersPage implements OnInit {
       searchPlaceholder: this.t._('USERS.ASSIGN_SPOT')
     };
     const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
-    modal.onDidDismiss().then(({ data }): void => {
+    modal.onDidDismiss().then(async ({ data }): Promise<void> => {
       if (!data) return;
-      // @todo assign spot to user
+      try {
+        await this.loading.show();
+        const spot = this.spots.find(x => x.spotId === data.value);
+        await this._spots.assignToUser(spot, user);
+        spot.userId = user.userId;
+        spot.userName = user.getName();
+        user.spot = new EventSpotAttached(spot);
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     });
     modal.present();
   }
@@ -232,9 +249,24 @@ export class UsersPage implements OnInit {
       searchPlaceholder: this.t._('USERS.TRANSFER_SPOT')
     };
     const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
-    modal.onDidDismiss().then(({ data }): void => {
+    modal.onDidDismiss().then(async ({ data }): Promise<void> => {
       if (!data) return;
-      // @todo transfer spot
+      try {
+        await this.loading.show();
+        const targetUser = this.users.find(x => x.userId === data.value);
+        const spot = this.spots.find(x => x.spotId === sourceUser.spot.spotId);
+        await this._spots.transferToUser(spot, targetUser);
+        spot.userId = targetUser.userId;
+        spot.userName = targetUser.getName();
+        targetUser.spot = new EventSpotAttached(spot);
+        delete sourceUser.spot;
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     });
     modal.present();
   }
@@ -242,7 +274,19 @@ export class UsersPage implements OnInit {
     if (!user.spot) return;
 
     const doConfirm = async (): Promise<void> => {
-      // @todo
+      try {
+        await this.loading.show();
+        const spot = this.spots.find(x => x.spotId === user.spot.spotId);
+        await this._spots.confirmPayment(spot);
+        spot.paymentConfirmedAt = new Date().toISOString();
+        user.spot = new EventSpotAttached(spot);
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     };
     const header = this.t._('USERS.CONFIRM_SPOT_PAYMENT');
     const subHeader = this.t._('COMMON.ARE_YOU_SURE');
@@ -255,7 +299,17 @@ export class UsersPage implements OnInit {
     const doChangePermissions = async (permissions: string[]): Promise<void> => {
       const newPermissions = new UserPermissions();
       for (const permission of permissions) newPermissions[permission] = true;
-      // @todo
+      try {
+        await this.loading.show();
+        await this._users.changePermissions(user, newPermissions);
+        user.permissions = newPermissions;
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     };
     const header = this.t._('USERS.MANAGE_PERMISSIONS');
     const message = this.t._('USERS.MANAGE_PERMISSIONS_ADMIN_NOTE');
@@ -298,7 +352,17 @@ export class UsersPage implements OnInit {
   }
   private async deleteUser(user: User): Promise<void> {
     const doDelete = async (): Promise<void> => {
-      // @todo
+      try {
+        await this.loading.show();
+        await this._users.delete(user);
+        this.users.splice(this.users.indexOf(user), 1);
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     };
     const header = this.t._('USERS.DELETE_USER');
     const subHeader = this.t._('COMMON.ARE_YOU_SURE');
@@ -308,10 +372,25 @@ export class UsersPage implements OnInit {
     alert.present();
   }
   async assignCountrySpot(user: User): Promise<void> {
-    if (!this.numCountrySpotsAvailable || user.spot) return;
+    if (!this.numCountrySpotsAvailable || user.spot || user.sectionCountry !== this.app.user.sectionCountry) return;
 
     const doAssign = async (): Promise<void> => {
-      // @todo
+      try {
+        await this.loading.show();
+        const firstAvailableSpot = this.spots.find(x => x.sectionCountry === this.app.user.sectionCountry && !x.userId);
+        if (!firstAvailableSpot) return;
+        await this._spots.assignToUser(firstAvailableSpot, user);
+        firstAvailableSpot.userId = user.userId;
+        firstAvailableSpot.userName = user.getName();
+        user.spot = new EventSpotAttached(firstAvailableSpot);
+        this.numCountrySpotsAvailable--;
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
     };
     const header = this.t._('USERS.ASSIGN_COUNTRY_SPOT');
     const message = this.t._('COMMON.ARE_YOU_SURE');
@@ -353,7 +432,7 @@ export class UsersPage implements OnInit {
 
 interface RowsFilters {
   registered: null | 'yes' | 'no';
-  spot: null | string;
+  spot: null | 'no' | string;
   proofOfPaymentUploaded: null | 'yes' | 'no';
   paymentConfirmed: null | 'yes' | 'no';
   sectionCountry: string | 'no' | null;

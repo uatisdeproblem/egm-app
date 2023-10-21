@@ -52,6 +52,8 @@ export class RegistrationPage {
         this.acceptTC = true;
         this.acceptCOC = true;
       }
+      if (this.user.userId !== this.app.user.userId && !this.app.user.permissions.canManageRegistrations)
+        this.editMode = false;
     } catch (error) {
       this.app.closePage('COMMON.SOMETHING_WENT_WRONG');
       throw error;

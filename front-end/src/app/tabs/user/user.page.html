@@ -104,7 +104,7 @@
         <ion-item
           color="ESNorange"
           lines="none"
-          *ngIf="app.user.registrationAt && app.user.spot && !app.user.spot.proofOfPaymentURI"
+          *ngIf="app.user.registrationAt && app.user.spot && !(app.user.spot.proofOfPaymentURI || app.user.spot.paymentConfirmedAt)"
         >
           <ion-label class="ion-text-wrap">{{ 'USER.YOU_HAVE_A_SPOT_BUT_NO_PROOF_PAYMENT' | translate }}</ion-label>
           <ion-badge slot="end" color="white">{{ app.user.spot.type }}</ion-badge>

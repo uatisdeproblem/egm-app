@@ -93,7 +93,7 @@ export class SpotsPage implements OnInit {
     try {
       await this.loading.show();
       [this.spots, this.users] = await Promise.all([this._spots.getList(), this._users.getList()]);
-      this.filter();
+      this.filter(this.searchbar?.value);
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
     } finally {
@@ -310,7 +310,7 @@ export class SpotsPage implements OnInit {
     modal.onDidDismiss().then(({ data: newSpots }): void => {
       if (newSpots) {
         this.spots.unshift(...newSpots);
-        this.filter();
+        this.filter(this.searchbar?.value);
       }
     });
     await modal.present();

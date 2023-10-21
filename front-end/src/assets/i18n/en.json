@@ -196,7 +196,7 @@
   "USERS": {
     "USERS": "Users",
     "REGISTERED": "Registered",
-    "SPOT": "Spot",
+    "WITH_SPOT": "With spot",
     "PROOF_OF_PAYMENT_UPLOADED": "PoP uploaded",
     "PAYMENT_CONFIRMED": "Payment confirmed",
     "SECTION_COUNTRY": "ESN country",
