@@ -51,6 +51,9 @@ export class UserPage {
     }
   }
 
+  canEditName(): boolean {
+    return this.editProfileMode && (!this.app.user.firstName || !this.app.user.lastName);
+  }
   startEditProfile(): void {
     this.entityBeforeChange = new User(this.app.user);
     this.editProfileMode = true;

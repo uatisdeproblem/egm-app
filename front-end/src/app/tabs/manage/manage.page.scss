@@ -1,5 +1,5 @@
 ion-list.aList {
-  ion-list-header {
+  ion-list-header:not(:first-of-type) {
     margin-top: 40px;
   }
 }

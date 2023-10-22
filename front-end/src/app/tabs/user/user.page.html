@@ -49,8 +49,9 @@
         <ion-input
           labelPlacement="stacked"
           [label]="'USER.FIRST_NAME' | translate"
-          [disabled]="!editProfileMode"
+          [disabled]="!canEditName()"
           [(ngModel)]="app.user.firstName"
+          [class.editMode]="canEditName()"
           [class.fieldHasError]="hasFieldAnError('firstName')"
         />
       </ion-item>
@@ -58,8 +59,9 @@
         <ion-input
           labelPlacement="stacked"
           [label]="'USER.LAST_NAME' | translate"
-          [disabled]="!editProfileMode"
+          [disabled]="!canEditName()"
           [(ngModel)]="app.user.lastName"
+          [class.editMode]="canEditName()"
           [class.fieldHasError]="hasFieldAnError('lastName')"
         />
       </ion-item>
@@ -69,6 +71,7 @@
           [label]="'USER.EMAIL_FOR_NOTIFICATIONS' | translate"
           [disabled]="!editProfileMode"
           [(ngModel)]="app.user.email"
+          [class.editMode]="editProfileMode"
           [class.fieldHasError]="hasFieldAnError('email')"
         />
       </ion-item>
@@ -179,6 +182,14 @@
       <ion-item button detail target="_blank" [href]="'AUTH.PRIVACY_POLICY_URL' | translate">
         <ion-icon name="document-outline" slot="start"></ion-icon>
         <ion-label>{{ 'USER.PRIVACY_POLICY' | translate }}</ion-label>
+      </ion-item>
+      <ion-item button detail (click)="openDocumentByTranslationKey('USER.TC_URL')">
+        <ion-icon name="document-outline" slot="start"></ion-icon>
+        <ion-label>{{ 'USER.TC' | translate }}</ion-label>
+      </ion-item>
+      <ion-item button detail (click)="openDocumentByTranslationKey('USER.COC_URL')">
+        <ion-icon name="document-outline" slot="start"></ion-icon>
+        <ion-label>{{ 'USER.COC' | translate }}</ion-label>
       </ion-item>
       <ion-item button detail (click)="logout()">
         <ion-icon name="exit-outline" slot="start"></ion-icon>
