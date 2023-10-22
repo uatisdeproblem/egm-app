@@ -173,9 +173,17 @@
         <ion-icon name="flag-outline" slot="start"></ion-icon>
         <ion-label>{{ 'USER.COUNTRY_LEADER_MANAGE_USERS' | translate }}</ion-label>
       </ion-item>
-      <ion-item button detail (click)="openPrivacyPolicy()">
+      <ion-item button detail (click)="openDocumentByTranslationKey('AUTH.PRIVACY_POLICY_URL')">
         <ion-icon name="document-outline" slot="start"></ion-icon>
         <ion-label>{{ 'USER.PRIVACY_POLICY' | translate }}</ion-label>
+      </ion-item>
+      <ion-item button detail (click)="openDocumentByTranslationKey('USER.TC_URL')">
+        <ion-icon name="document-outline" slot="start"></ion-icon>
+        <ion-label>{{ 'USER.TC' | translate }}</ion-label>
+      </ion-item>
+      <ion-item button detail (click)="openDocumentByTranslationKey('USER.COC_URL')">
+        <ion-icon name="document-outline" slot="start"></ion-icon>
+        <ion-label>{{ 'USER.COC' | translate }}</ion-label>
       </ion-item>
       <ion-item button detail (click)="logout()">
         <ion-icon name="exit-outline" slot="start"></ion-icon>
