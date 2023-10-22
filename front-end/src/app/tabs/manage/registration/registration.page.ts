@@ -33,7 +33,11 @@ export class RegistrationPage {
     let userId = this.route.snapshot.paramMap.get('userId');
     if (userId === 'me') userId = this.app.user.userId;
 
-    if (userId !== this.app.user.userId && !this.app.user.permissions.canManageRegistrations)
+    if (
+      userId !== this.app.user.userId &&
+      !this.app.user.permissions.canManageRegistrations &&
+      !this.app.user.permissions.isCountryLeader
+    )
       return this.app.closePage('COMMON.UNAUTHORIZED');
 
     try {
@@ -48,6 +52,8 @@ export class RegistrationPage {
         this.acceptTC = true;
         this.acceptCOC = true;
       }
+      if (this.user.userId !== this.app.user.userId && !this.app.user.permissions.canManageRegistrations)
+        this.editMode = false;
     } catch (error) {
       this.app.closePage('COMMON.SOMETHING_WENT_WRONG');
       throw error;
@@ -84,9 +90,5 @@ export class RegistrationPage {
   }
   hasFieldAnError(field: string): boolean {
     return this.errors.has(field);
-  }
-
-  async openDocumentByTranslationKey(translationKey: string): Promise<void> {
-    await this.app.openURL(this.t._(translationKey));
   }
 }

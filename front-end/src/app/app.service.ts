@@ -35,6 +35,8 @@ export class AppService {
   user: User;
   configurations: Configurations;
 
+  linkToOpenViaFab: string;
+
   constructor(
     private platform: Platform,
     private navCtrl: NavController,
@@ -134,16 +136,25 @@ export class AppService {
    * Open the URL in the browser.
    */
   async openURL(url: string): Promise<void> {
-    await Browser.open({ url, windowName: '_blank' });
+    if (this.platform.is('ios')) {
+      // https://stackoverflow.com/a/39387533/13168139
+      // Safari block the opening of any URL which is made inside an async call.
+      // Usually ´Browser.open({ url, windowName: '_parent' })` would work, but there is a bug in Angular/Ionic that,
+      // once you go back from the URL open to the app, blanks all the input fields
+      this.linkToOpenViaFab = url;
+      setTimeout((): void => {
+        if (this.linkToOpenViaFab === url) this.linkToOpenViaFab = null;
+      }, 10 * 1000);
+    } else await Browser.open({ url });
   }
   /**
    * Open a user's profile on ESN Accounts.
    */
-  async openUserProfileInESNAccounts(user: User): Promise<void> {
-    if (user.authService !== AuthServices.ESN_ACCOUNTS) return;
+  getUserProfileInESNAccounts(user: User): string {
+    if (user.authService !== AuthServices.ESN_ACCOUNTS) return null;
     const galaxyId = user.getAuthServiceUserId();
     const cleanESNAccountsIdForURL = (id: string): string => id.replace(/[._@]/gm, '').replace(/\s/gm, '-');
-    await this.openURL('https://accounts.esn.org/user/'.concat(cleanESNAccountsIdForURL(galaxyId)));
+    return 'https://accounts.esn.org/user/'.concat(cleanESNAccountsIdForURL(galaxyId));
   }
 
   /**
@@ -179,12 +190,15 @@ export class AppService {
   /**
    * Get the permissions of a user as printable string.
    */
-  getUserPermissionsString(permissions: UserPermissions): string {
-    if (permissions.isAdmin) return this.t._('USER.ADMINISTRATOR');
+  getUserPermissionsString(permissions: UserPermissions, short = false): string {
+    if (permissions.isAdmin) return this.t._('USER.ADMINISTRATOR'.concat(short ? '_SHORT' : ''));
     const arrPermissions = [];
-    if (permissions.isCountryLeader) arrPermissions.push(this.t._('USER.DELEGATION_LEADER'));
-    if (permissions.canManageRegistrations) arrPermissions.push(this.t._('USER.CAN_MANAGE_REGISTRATIONS'));
-    if (permissions.canManageContents) arrPermissions.push(this.t._('USER.CAN_MANAGE_CONTENTS'));
+    if (permissions.isCountryLeader)
+      arrPermissions.push(this.t._('USER.DELEGATION_LEADER'.concat(short ? '_SHORT' : '')));
+    if (permissions.canManageRegistrations)
+      arrPermissions.push(this.t._('USER.CAN_MANAGE_REGISTRATIONS'.concat(short ? '_SHORT' : '')));
+    if (permissions.canManageContents)
+      arrPermissions.push(this.t._('USER.CAN_MANAGE_CONTENTS'.concat(short ? '_SHORT' : '')));
     return arrPermissions.join(', ');
   }
   /**

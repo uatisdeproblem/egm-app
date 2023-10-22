@@ -19,7 +19,7 @@ servers:
 
 externalDocs:
   description: Models documentation
-  url: https://github.com/uatisdeproblem/egm-app/blob/main/back-end/src/models # @todo change this to ESN Repo
+  url: https://github.com/uatisdeproblem/egm-app/blob/main/back-end/src/models
 
 tags:
   - name: Status
@@ -233,7 +233,15 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: [GET_AVATAR_UPLOAD_URL, REGISTER_TO_EVENT, CHANGE_PERMISSIONS]
+                  enum:
+                    [
+                      GET_AVATAR_UPLOAD_URL,
+                      REGISTER_TO_EVENT,
+                      CHANGE_PERMISSIONS,
+                      GET_PROOF_OF_PAYMENT,
+                      PUT_PROOF_OF_PAYMENT_START,
+                      PUT_PROOF_OF_PAYMENT_END
+                    ]
                 registrationForm:
                   type: number
                   description: (REGISTER_TO_EVENT)
@@ -243,6 +251,9 @@ paths:
                 permissions:
                   type: number
                   description: (CHANGE_PERMISSIONS)
+                fileURI:
+                  type: string
+                  description: (PUT_PROOF_OF_PAYMENT_END)
       responses:
         200:
           $ref: '#/components/responses/User'
@@ -307,9 +318,9 @@ paths:
           $ref: '#/components/responses/EventSpot'
         400:
           $ref: '#/components/responses/BadParameters'
-    put:
-      summary: Edit a spot to the event
-      description: Requires to be admin or canManageRegistrations permission
+    patch:
+      summary: Actions on a spot to the event
+      description: Requires to be admin or canManageRegistrations permission (for some actions isCountryLeader is enough)
       tags: [Event]
       security:
         - AuthFunction: []
@@ -325,10 +336,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EventSpot'
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum:
+                    [ASSIGN_TO_USER, TRANSFER_TO_USER, CONFIRM_PAYMENT, ASSIGN_TO_COUNTRY, RELEASE, EDIT_DESCRIPTION]
+                userId:
+                  type: string
+                  description: (ASSIGN_TO_USER, TRANSFER_TO_USER)
+                sectionCountry:
+                  type: string
+                  description: (ASSIGN_TO_COUNTRY)
+                description:
+                  type: string
+                  description: (EDIT_DESCRIPTION)
       responses:
         200:
-          $ref: '#/components/responses/EventSpot'
+          $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
     delete:

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
-import { User } from '@models/user.model';
+import { User, UserPermissions } from '@models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
@@ -20,6 +20,30 @@ export class UsersService {
   async registerToEvent(user: User, registrationForm: any, isDraft: boolean): Promise<User> {
     const body = { action: 'REGISTER_TO_EVENT', registrationForm, isDraft };
     return new User(await this.api.patchResource(['users', user.userId], { body }));
+  }
+
+  /**
+   * Change the permissions of a user.
+   */
+  async changePermissions(user: User, permissions: UserPermissions): Promise<User> {
+    const body = { action: 'CHANGE_PERMISSIONS', permissions };
+    return new User(await this.api.patchResource(['users', user.userId], { body }));
+  }
+
+  /**
+   * Get the URL to the proof of payment of the user.
+   */
+  async getProofOfPaymentURL(user: User): Promise<string> {
+    const body = { action: 'GET_PROOF_OF_PAYMENT' };
+    const { url } = await this.api.patchResource(['users', user.userId], { body });
+    return url;
+  }
+
+  /**
+   * Delete a user and its data.
+   */
+  async delete(user: User): Promise<void> {
+    await this.api.deleteResource(['users', user.userId]);
   }
 
   /**

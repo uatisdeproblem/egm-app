@@ -107,7 +107,7 @@ class ConfigurationsRC extends ResourceController {
         return await this.resetEmailTemplate('registration-confirmed');
       case 'TEST_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
         return await this.testEmailTemplate('registration-confirmed');
-      // @todo move thsi to document template
+      // @todo move this to document template
       case 'GET_DOCUMENT_TEMPLATE_INVOICE':
         return await this.getDocumentTemplate('payment-invoice');
       case 'SET_DOCUMENT_TEMPLATE_INVOICE':
@@ -138,7 +138,7 @@ class ConfigurationsRC extends ResourceController {
     const toAddresses = [this.user.email];
     const template = `${emailTemplate}-${STAGE}`;
     const templateData = {
-      user: `${this.user.firstName} ${this.user.lastName}`,
+      user: this.user.getName(),
       country: TEST_EMAIL_EXAMPLE_COUNTRY,
       section: TEST_EMAIL_EXAMPLE_SECTION,
       spotType: TEST_EMAIL_EXAMPLE_SPOT_TYPE,

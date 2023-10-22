@@ -28,17 +28,19 @@
           slot="end"
           color="white"
           style="text-transform: none"
+          target="_blank"
           *ngIf="!app.isInMobileMode()"
-          (click)="app.openUserProfileInESNAccounts(app.user)"
+          [href]="app.getUserProfileInESNAccounts(app.user)"
         >
           {{ 'USER.ESN_ACCOUNTS' | translate }} <ion-icon icon="open-outline" slot="end"></ion-icon>
         </ion-button>
         <ion-button
           slot="end"
           fill="clear"
+          target="_blank"
           *ngIf="app.isInMobileMode()"
           [color]="app.isInDarkMode() ? 'dark' : 'white'"
-          (click)="app.openUserProfileInESNAccounts(app.user)"
+          [href]="app.getUserProfileInESNAccounts(app.user)"
         >
           <ion-icon icon="open-outline" slot="icon-only"></ion-icon>
         </ion-button>
@@ -107,7 +109,7 @@
         <ion-item
           color="ESNorange"
           lines="none"
-          *ngIf="app.user.registrationAt && app.user.spot && !app.user.spot.proofOfPaymentURI"
+          *ngIf="app.user.registrationAt && app.user.spot && !(app.user.spot.proofOfPaymentURI || app.user.spot.paymentConfirmedAt)"
         >
           <ion-label class="ion-text-wrap">{{ 'USER.YOU_HAVE_A_SPOT_BUT_NO_PROOF_PAYMENT' | translate }}</ion-label>
           <ion-badge slot="end" color="white">{{ app.user.spot.type }}</ion-badge>
@@ -115,7 +117,7 @@
         <ion-item
           color="ESNcyan"
           lines="none"
-          *ngIf="app.user.registrationAt && app.user.spot && app.user.spot.proofOfPaymentURI && !app.user.confirmedAt"
+          *ngIf="app.user.registrationAt && app.user.spot && app.user.spot.proofOfPaymentURI && !app.user.spot.paymentConfirmedAt"
         >
           <ion-label class="ion-text-wrap">{{ 'USER.YOU_HAVE_SPOT_PROOF_BUT_NO_CONFIRM' | translate }}</ion-label>
           <ion-badge slot="end" color="white">{{ app.user.spot.type }}</ion-badge>
@@ -123,17 +125,21 @@
         <ion-item
           color="ESNgreen"
           lines="none"
-          *ngIf="app.user.registrationAt && app.user.spot && app.user.confirmedAt"
+          *ngIf="app.user.registrationAt && app.user.spot && app.user.spot.paymentConfirmedAt"
         >
           <ion-label class="ion-text-wrap">{{ 'USER.YOU_ARE_CONFIRMED' | translate }}</ion-label>
           <ion-badge slot="end" color="white">{{ app.user.spot.type }}</ion-badge>
         </ion-item>
-        <ng-container *ngIf="app.user.spot && !app.user.confirmedAt">
+        <ng-container *ngIf="app.user.spot && !app.user.spot.paymentConfirmedAt">
           <ion-item button detail color="white" (click)="downloadInfoToPay()">
             <ion-label class="ion-text-wrap"> {{ 'USER.DOWNLOAD_INFO_TO_PAY' | translate }} </ion-label>
           </ion-item>
-          <ion-item button detail color="white" (click)="uploadProofOfPayment()">
-            <ion-label class="ion-text-wrap"> {{ 'USER.UPLOAD_PROOF_PAYMENT' | translate }} </ion-label>
+          <input #popInput type="file" accept=".pdf" style="display: none" (change)="uploadProofOfPayment($event)" />
+          <ion-item button detail color="white" (click)="popInput?.click()">
+            <ion-label class="ion-text-wrap">
+              {{ (app.user.spot.proofOfPaymentURI ? 'USER.REPLACE_PROOF_PAYMENT': 'USER.UPLOAD_PROOF_PAYMENT') |
+              translate }}
+            </ion-label>
           </ion-item>
         </ng-container>
         <ion-item
@@ -173,7 +179,7 @@
         <ion-icon name="flag-outline" slot="start"></ion-icon>
         <ion-label>{{ 'USER.COUNTRY_LEADER_MANAGE_USERS' | translate }}</ion-label>
       </ion-item>
-      <ion-item button detail (click)="openDocumentByTranslationKey('AUTH.PRIVACY_POLICY_URL')">
+      <ion-item button detail target="_blank" [href]="'AUTH.PRIVACY_POLICY_URL' | translate">
         <ion-icon name="document-outline" slot="start"></ion-icon>
         <ion-label>{{ 'USER.PRIVACY_POLICY' | translate }}</ion-label>
       </ion-item>
