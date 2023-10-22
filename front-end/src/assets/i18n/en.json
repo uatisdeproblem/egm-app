@@ -185,6 +185,8 @@
     "SPOT": "Spot",
     "PAID": "Paid",
     "CONFIRMED": "Confirmed",
+    "SECTION_COUNTRY": "ESN country",
+    "EXTERNAL_GUEST": "External guest",
     "PERMISSIONS": "Permissions",
     "NUM_ROWS_SELECTED": "{{num}} users selected",
     "ACTIONS_ON_NUM_ROWS": "Actions on {{num}} users"
