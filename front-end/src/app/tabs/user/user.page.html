@@ -183,6 +183,14 @@
         <ion-icon name="document-outline" slot="start"></ion-icon>
         <ion-label>{{ 'USER.PRIVACY_POLICY' | translate }}</ion-label>
       </ion-item>
+      <ion-item button detail target="_blank" [href]="'USER.TC_URL' | translate">
+        <ion-icon name="document-outline" slot="start"></ion-icon>
+        <ion-label>{{ 'USER.TC' | translate }}</ion-label>
+      </ion-item>
+      <ion-item button detail target="_blank" [href]="'USER.COC_URL' | translate">
+        <ion-icon name="document-outline" slot="start"></ion-icon>
+        <ion-label>{{ 'USER.COC' | translate }}</ion-label>
+      </ion-item>
       <ion-item button detail (click)="logout()">
         <ion-icon name="exit-outline" slot="start"></ion-icon>
         <ion-label>{{ 'COMMON.LOGOUT' | translate }}</ion-label>
