@@ -5,7 +5,7 @@ export const environment = {
   idea: {
     project: 'egm-app',
     app: {
-      version: '3.1.1',
+      version: '3.2.0',
       bundle: 'com.esn.egmapp',
       url: 'https://app.erasmusgeneration.org',
       mediaUrl: 'https://media.egm-app.click',
