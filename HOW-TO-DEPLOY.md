@@ -1,6 +1,6 @@
 # How to (re)create the app environment
 
-Hello, there! This is a guide to deploy the app on a new environment; it only takes ~30 minutes and it's almost fully-automated.
+Hello, there! This is a guide to deploy the app on a new environment; it only takes ~1 hour and it's almost fully-automated.
 
 **The back-end is implemented on AWS** ([Amazon Web Services](https://aws.amazon.com/)) resources. _Note: you don't need to have particular knowledge on AWS to complete this walkthrough._
 
@@ -8,7 +8,7 @@ Hello, there! This is a guide to deploy the app on a new environment; it only ta
 
 1. Choose an AWS account you own, or [create a new one](https://aws.amazon.com/getting-started/).
 1. To completely automate the deployment process, make sure to [purchase a new domain name](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html) or import an existing one inside the [Route53](https://aws.amazon.com/route53) AWS service. _Note: for the domain `egm-app.click` purchased through Route53 we pay only 3$/year._
-1. Identify an [AWS region](https://aws.amazon.com/about-aws/global-infrastructure/regions_az/) to use, i.e. where all your cloud resources will be deployed. Suggested regions — since they are close and they support all the cloud resources we use in the project:
+1. Identify one [AWS region](https://aws.amazon.com/about-aws/global-infrastructure/regions_az/) to use, i.e. where all your cloud resources will be deployed. Suggested regions — since they are close and they support all the cloud resources we use in the project:
    - Frankfurt (`eu-central-1`),
    - Ireland (`eu-west-1`).
 1. Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html) and [configure the credentials linked to your AWS account](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).
@@ -34,6 +34,8 @@ The suggested IDE is [Visual Studio Code](https://code.visualstudio.com/); we in
      - `firstAdminEmail`: insert your email address to create the first (admin) user of the app.
    - Stage parameters; you can create as many enviroments (stages) as you like; a common configuration is with _prod_ and _dev_ stages, but you can also create only a production stage or whatever you like:
      - `domain`: the domain name where to reach the front-end for this stage, based on the domain you purchased/imported earlier. Examples: _yourdomain.com_, _dev.yourdomain.com_, etc.
+     - `alternativeDomain`: in case you want the platform to be reachable from other domains (e.g. _app.erasmusgeneration.org_), you can configure here the domain (_advanced_).
+     - `frontEndCertificateARN`: to support alternative domains, you can add the information about the custom SSL certificates (for HTTPS), here (_advanced_).
      - `destroyDataOnDelete`: whether to delete the data when the stage is deleted; it should be **true** for _dev_ and **false** for _prod_ stages.
 1. From the terminal/prompt, make sure to be in the `/back-end` folder of the project, substitute the STAGE variable (based on the stage/environment you want to deploy) and run:
    ```
@@ -53,13 +55,10 @@ The suggested IDE is [Visual Studio Code](https://code.visualstudio.com/); we in
      - `CLOUDFRONT_DISTRIBUTION_DEV` (dev)
      - `AWS_REGION`
      - `AWS_PROFILE`: only if you need to use named profiles to identify the AWS account, _i.e. this account is not your default's one_.
-   - `/front-end/src/environment.tsx`:
-     - Set the current stage (`CURRENT_STAGE`), i.e. the stage to run when the app is started; read the [development guide](CONTRIBUTING.md) for more info.
-     - Change the `url` _for each of the desired stages_.
-     - Leave the `stage` attribute as it is; it will be replaced on runtime, based on the value of `CURRENT_STAGE`.
-     - Change the `supportEmail` to your liking; some features in app will send feedback and help requests to this email address.
-     - Change the `apiUrl` with the API domain chosen.
-     - Change the `mediaUrl` with the media domain chosen.
+   - `/front-end/src/environaments/environment.idea.ts`:
+
+     - Reset the `app.bundle`, `app.appleStoreURL`, `app.googleStoreURL` attributes.
+     - Change the `app.url`, `app.mediaURL`, `api.url` attributes with the domains you previously chose.
      - Set the `cognito` object with the attributes returned in the `output-config.json` file.
      - Change the `geo.region` attribute with the `AWS_REGION` you chose.
 

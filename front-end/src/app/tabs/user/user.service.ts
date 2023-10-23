@@ -19,16 +19,16 @@ export class UserService {
   /**
    * Updates a user's data.
    */
-  async update(user: User): Promise<User> {
-    return new User(await this.api.putResource(['users', user.userId], { body: user }));
+  async update(updatedData: User): Promise<User> {
+    return new User(await this.api.putResource(['users', updatedData.userId], { body: updatedData }));
   }
 
   /**
    * Upload a new avatar and returns the internal URI to it.
    */
-  async uploadAvatarAndGetURI(user: User, file: File): Promise<string> {
+  async uploadAvatarAndGetURI(file: File): Promise<string> {
     const body = { action: 'GET_AVATAR_UPLOAD_URL' };
-    const { url, id } = await this.api.patchResource(['users', user.userId], { body });
+    const { url, id } = await this.api.patchResource(['users', 'me'], { body });
     await fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
     return id;
   }
@@ -36,15 +36,35 @@ export class UserService {
   /**
    * Delete an account and all of its data.
    */
-  async delete(user: User): Promise<void> {
-    await this.api.deleteResource(['users', user.userId]);
+  async delete(): Promise<void> {
+    await this.api.deleteResource(['users', 'me']);
   }
 
   /**
    * Register the user to the event.
    */
-  async registerToEvent(user: User, registrationForm: any, isDraft: boolean): Promise<User> {
+  async registerToEvent(registrationForm: any, isDraft: boolean): Promise<User> {
     const body = { action: 'REGISTER_TO_EVENT', registrationForm, isDraft };
-    return new User(await this.api.patchResource(['users', user.userId], { body }));
+    return new User(await this.api.patchResource(['users', 'me'], { body }));
+  }
+
+  /**
+   * Upload the proof of payment for the user's spot.
+   */
+  async uploadProofOfPayment(file: File): Promise<User> {
+    const body: any = { action: 'PUT_PROOF_OF_PAYMENT_START' };
+    const { url, id } = await this.api.patchResource(['users', 'me'], { body });
+    await fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
+    body.action = 'PUT_PROOF_OF_PAYMENT_END';
+    body.fileURI = id;
+    return new User(await this.api.patchResource(['users', 'me'], { body }));
+  }
+  /**
+   * Get the URL to the proof of payment of the user.
+   */
+  async getProofOfPaymentURL(): Promise<string> {
+    const body = { action: 'GET_PROOF_OF_PAYMENT' };
+    const { url } = await this.api.patchResource(['users', 'me'], { body });
+    return url;
   }
 }

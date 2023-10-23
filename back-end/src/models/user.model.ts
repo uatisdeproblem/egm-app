@@ -1,4 +1,4 @@
-import { Resource, epochISOString } from 'idea-toolbox';
+import { Resource, Suggestion, epochISOString } from 'idea-toolbox';
 
 import { EventSpotAttached } from './eventSpot.model';
 
@@ -71,10 +71,6 @@ export class User extends Resource {
    * The spot assigned for the event, if any.
    */
   spot?: EventSpotAttached;
-  /**
-   * Whether the participation and the payment of the user have been confirmed.
-   */
-  confirmedAt?: string;
 
   load(x: any): void {
     super.load(x);
@@ -98,7 +94,6 @@ export class User extends Resource {
     this.registrationForm = x.registrationForm ?? {};
     if (x.registrationAt) this.registrationAt = this.clean(x.registrationAt, t => new Date(t).toISOString());
     if (x.spot) this.spot = new EventSpotAttached(x.spot);
-    if (x.confirmedAt) this.confirmedAt = this.clean(x.confirmedAt, d => new Date(d).toISOString());
   }
 
   safeLoad(newData: any, safeData: any): void {
@@ -137,6 +132,13 @@ export class User extends Resource {
   }
 
   /**
+   * Get the full name of the user.
+   */
+  getName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
+  /**
    * Get a string representing the ESN section and country of the user.
    */
   getSectionCountry(): string {
@@ -148,6 +150,19 @@ export class User extends Resource {
    */
   isExternal(): boolean {
     return this.authService !== AuthServices.ESN_ACCOUNTS;
+  }
+
+  /**
+   * Map the user into a Suggestion data structure.
+   */
+  mapIntoSuggestion(): Suggestion {
+    return new Suggestion({
+      value: this.userId,
+      name: this.getName(),
+      description: this.email,
+      category1: this.sectionCountry,
+      category2: this.sectionName
+    });
   }
 }
 

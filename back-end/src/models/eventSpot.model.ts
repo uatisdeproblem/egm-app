@@ -33,6 +33,10 @@ export class EventSpot extends Resource {
    * The URI to the proof of payment, if it has been uploaded.
    */
   proofOfPaymentURI?: string;
+  /**
+   * Whether the payment has been received, and the timestamp when spot/user participation has been confirmed.
+   */
+  paymentConfirmedAt: epochISOString;
 
   load(x: any): void {
     super.load(x);
@@ -44,14 +48,11 @@ export class EventSpot extends Resource {
     if (x.userName) this.userName = this.clean(x.userName, String);
     if (x.sectionCountry) this.sectionCountry = this.clean(x.sectionCountry, String);
     if (x.proofOfPaymentURI) this.proofOfPaymentURI = this.clean(x.proofOfPaymentURI, String);
+    if (x.paymentConfirmedAt)
+      this.paymentConfirmedAt = this.clean(x.paymentConfirmedAt, t => new Date(t).toISOString());
   }
 
-  safeLoad(newData: any, safeData: any): void {
-    super.safeLoad(newData, safeData);
-    this.spotId = safeData.spotId;
-    this.createdAt = safeData.createdAt;
-    if (safeData.proofOfPaymentURI) this.proofOfPaymentURI = safeData.proofOfPaymentURI;
-  }
+  // no safeLoad because no PUT -- only PATCH actions
 
   validate(): string[] {
     const e = super.validate();
@@ -76,11 +77,16 @@ export class EventSpotAttached extends Resource {
    * The URI to the proof of payment, if it has been uploaded.
    */
   proofOfPaymentURI?: string;
+  /**
+   * Whether the payment has been received, and the timestamp when spot/user participation has been confirmed.
+   */
+  paymentConfirmedAt: epochISOString;
 
   load(x: any): void {
     super.load(x);
     this.spotId = this.clean(x.spotId, String);
     this.type = this.clean(x.type, String);
     if (x.proofOfPaymentURI) this.proofOfPaymentURI = this.clean(x.proofOfPaymentURI, String);
+    if (x.paymentConfirmedAt) this.paymentConfirmedAt = this.clean(x.paymentConfirmedAt, String);
   }
 }
