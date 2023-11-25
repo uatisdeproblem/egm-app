@@ -151,16 +151,12 @@ paths:
                     - SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
                     - RESET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
                     - TEST_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
-                    - GET_DOCUMENT_TEMPLATE_INVOICE
-                    - SET_DOCUMENT_TEMPLATE_INVOICE
-                    - RESET_DOCUMENT_TEMPLATE_INVOICE
-                    - TEST_DOCUMENT_TEMPLATE_INVOICE
                 subject:
                   type: string
                   description: (SET_EMAIL_TEMPLATE_SPOT_ASSIGNED, SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED)
                 content:
                   type: string
-                  description: (SET_EMAIL_TEMPLATE_SPOT_ASSIGNED, SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED, SET_DOCUMENT_TEMPLATE_INVOICE)
+                  description: (SET_EMAIL_TEMPLATE_SPOT_ASSIGNED, SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED)
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
@@ -242,7 +238,8 @@ paths:
                       CHANGE_PERMISSIONS,
                       GET_PROOF_OF_PAYMENT,
                       PUT_PROOF_OF_PAYMENT_START,
-                      PUT_PROOF_OF_PAYMENT_END
+                      PUT_PROOF_OF_PAYMENT_END,
+                      GET_INVOICE
                     ]
                 registrationForm:
                   type: number

@@ -107,15 +107,6 @@ class ConfigurationsRC extends ResourceController {
         return await this.resetEmailTemplate('registration-confirmed');
       case 'TEST_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
         return await this.testEmailTemplate('registration-confirmed');
-      // @todo move this to document template
-      case 'GET_DOCUMENT_TEMPLATE_INVOICE':
-        return await this.getDocumentTemplate('payment-invoice');
-      case 'SET_DOCUMENT_TEMPLATE_INVOICE':
-        return await this.setDocumentTemplate('payment-invoice', this.body.content);
-      case 'RESET_DOCUMENT_TEMPLATE_INVOICE':
-        return await this.resetDocumentTemplate('payment-invoice');
-      case 'TEST_DOCUMENT_TEMPLATE_INVOICE':
-        return await this.testDocumentTemplate('payment-invoice');
       default:
         throw new RCError('Unsupported action');
     }
@@ -169,18 +160,5 @@ class ConfigurationsRC extends ResourceController {
       type: GetObjectTypes.TEXT
     })) as string;
     await ses.setTemplate(`${emailTemplate}-${STAGE}`, subject, content, true);
-  }
-
-  private async getDocumentTemplate(documentTemplate: string) {
-    // @todo
-  }
-  private async setDocumentTemplate(documentTemplate: string, content: string): Promise<void> {
-    // @todo
-  }
-  private async testDocumentTemplate(documentTemplate: string): Promise<void> {
-    // @todo
-  }
-  private async resetDocumentTemplate(documentTemplate: string): Promise<void> {
-    // @todo
   }
 }

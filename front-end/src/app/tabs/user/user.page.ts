@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { Browser } from '@capacitor/browser';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { AppService } from '@app/app.service';
@@ -123,8 +124,16 @@ export class UserPage {
       this.loading.hide();
     }
   }
-  downloadInfoToPay(): void {
-    // @todo
+  async downloadInfoToPay(): Promise<void> {
+    try {
+      await this.loading.show();
+      const { url } = await this._user.getInvoice();
+      Browser.open({ url });
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
 
   async logout(): Promise<void> {

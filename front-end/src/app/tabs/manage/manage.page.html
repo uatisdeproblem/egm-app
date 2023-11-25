@@ -72,15 +72,6 @@
           {{ 'MANAGE.EMAIL_TEMPLATES_TYPES.REGISTRATION_CONFIRMED' | translate }}
         </ion-label>
       </ion-item>
-      <ion-list-header>
-        <ion-label>
-          <h2>{{ 'MANAGE.DOCUMENT_TEMPLATES' | translate }}</h2>
-          <p>{{ 'MANAGE.DOCUMENT_TEMPLATES_I' | translate }}</p>
-        </ion-label>
-      </ion-list-header>
-      <ion-item button detail (click)="openTemplateDocumentModal(DocumentTemplates.INVOICE)">
-        <ion-label class="ion-text-wrap">{{ 'MANAGE.DOCUMENT_TEMPLATES_TYPES.INVOICE' | translate }}</ion-label>
-      </ion-item>
     </ng-container>
     <ng-container *ngIf="app.user.permissions.canManageContents">
       <ion-list-header>
