@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { AlertController, IonSearchbar, ModalController } from '@ionic/angular';
 import { ColumnMode, SelectionType, TableColumn, DatatableComponent } from '@swimlane/ngx-datatable';
+import { WorkBook, utils, writeFile } from 'xlsx';
 import { Suggestion } from 'idea-toolbox';
 import {
   IDEAActionSheetController,
@@ -15,6 +16,7 @@ import { UsersService } from './users.service';
 import { SpotsService } from '../spots/spots.service';
 
 import { User, UserPermissions } from '@models/user.model';
+import { UserFlat } from '@models/userFlat.model';
 import { EventSpot, EventSpotAttached } from '@models/eventSpot.model';
 
 @Component({
@@ -446,6 +448,14 @@ export class UsersPage implements OnInit {
       if (!!user.spot?.proofOfPaymentURI) this.numWithProofOfPaymentUploaded++;
       if (!!user.spot?.paymentConfirmedAt) this.numWithPaymentConfirmed++;
     });
+  }
+
+  downloadFilteredUserAsExcelFile(): void {
+    const title = this.t._('USERS.USERS');
+    const data = this.filteredUsers.map(x => new UserFlat(x, this.app.configurations, this.t.getCurrentLang()));
+    const workbook: WorkBook = { SheetNames: [], Sheets: {}, Props: { Title: title } };
+    utils.book_append_sheet(workbook, utils.json_to_sheet(data), '1');
+    writeFile(workbook, title.concat('.xlsx'));
   }
 }
 

@@ -216,7 +216,8 @@
     "DELETE_USER": "Delete user",
     "ASSIGN_COUNTRY_SPOT": "Assign country spot",
     "COUNTRY_SPOTS_AVAILABLE": "{{num}} country spots available",
-    "OPEN_PROOF_OF_PAYMENT": "Proof of payment"
+    "OPEN_PROOF_OF_PAYMENT": "Proof of payment",
+    "DOWNLOAD_FILTERED_USERS": "Download filtered users in a spreadsheet"
   },
   "MANAGE": {
     "USERS_AND_REGISTRATIONS": "Users and event registrations",
