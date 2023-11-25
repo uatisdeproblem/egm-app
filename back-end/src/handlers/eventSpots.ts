@@ -4,12 +4,17 @@
 
 import { DynamoDB, RCError, ResourceController } from 'idea-aws';
 
+import { sendEmail } from '../utils/notifications.utils';
+
 import { EventSpot, EventSpotAttached } from '../models/eventSpot.model';
 import { User } from '../models/user.model';
+import { EmailTemplates } from '../models/configurations.model';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
 ///
+
+const STAGE = process.env.STAGE;
 
 const DDB_TABLES = {
   users: process.env.DDB_TABLE_users,
@@ -102,7 +107,17 @@ class EventSpotsRC extends ResourceController {
 
     await ddb.transactWrites([{ Update: updateSpot }, { Update: updateUser }]);
 
-    // @todo send email to user
+    const toAddresses = [user.email];
+    const template = `${EmailTemplates.SPOT_ASSIGNED}-${STAGE}`;
+    const templateData = {
+      user: this.user.getName()
+    };
+
+    try {
+      await sendEmail(toAddresses, template, templateData);
+    } catch (error) {
+      this.logger.warn('Error sending email', error, { template });
+    }
   }
   private async transferToUser(targetUserId: string): Promise<void> {
     if (!this.user.permissions.canManageRegistrations) throw new RCError('Unauthorized');
@@ -145,7 +160,17 @@ class EventSpotsRC extends ResourceController {
 
     await ddb.transactWrites([{ Update: updateSpot }, { Update: updateTargetUser }, { Update: updateSourceUser }]);
 
-    // @todo send email to target user and source user
+    const toAddresses = [sourceUser.email, targetUser.email];
+    const template = `${EmailTemplates.SPOT_TRANSFERRED}-${STAGE}`;
+    const templateData = {
+      user: this.user.getName()
+    };
+
+    try {
+      await sendEmail(toAddresses, template, templateData);
+    } catch (error) {
+      this.logger.warn('Error sending email', error, { template });
+    }
   }
   private async confirmPayment(): Promise<void> {
     if (!this.user.permissions.canManageRegistrations) throw new RCError('Unauthorized');
@@ -185,7 +210,17 @@ class EventSpotsRC extends ResourceController {
     await ddb.transactWrites(writes);
 
     if (user) {
-      // @todo send email to user
+      const toAddresses = [user.email];
+      const template = `${EmailTemplates.REGISTRATION_CONFIRMED}-${STAGE}`;
+      const templateData = {
+        user: this.user.getName()
+      };
+
+      try {
+        await sendEmail(toAddresses, template, templateData);
+      } catch (error) {
+        this.logger.warn('Error sending email', error, { template });
+      }
     }
   }
   private async assignToCountry(sectionCountry: string): Promise<void> {
@@ -230,7 +265,17 @@ class EventSpotsRC extends ResourceController {
     await ddb.transactWrites(writes);
 
     if (user) {
-      // @todo send email to user
+      const toAddresses = [user.email];
+      const template = `${EmailTemplates.SPOT_RELEASED}-${STAGE}`;
+      const templateData = {
+        user: this.user.getName()
+      };
+
+      try {
+        await sendEmail(toAddresses, template, templateData);
+      } catch (error) {
+        this.logger.warn('Error sending email', error, { template });
+      }
     }
   }
   private async editDescription(description: string): Promise<void> {

@@ -72,8 +72,10 @@ export class Configurations extends Resource {
  * The types of email templates available.
  */
 export enum EmailTemplates {
-  SPOT_ASSIGNED = 'SPOT_ASSIGNED',
-  REGISTRATION_CONFIRMED = 'REGISTRATION_CONFIRMED'
+  SPOT_ASSIGNED = 'spot-assigned',
+  REGISTRATION_CONFIRMED = 'registration-confirmed',
+  SPOT_TRANSFERRED = 'spot-transferred',
+  SPOT_RELEASED = 'spot-released'
 }
 
 /**

@@ -64,13 +64,13 @@
           <p>{{ 'MANAGE.EMAIL_TEMPLATES_I' | translate }}</p>
         </ion-label>
       </ion-list-header>
-      <ion-item button detail (click)="openTemplateEmailModal(EmailTemplates.SPOT_ASSIGNED)">
-        <ion-label class="ion-text-wrap">{{ 'MANAGE.EMAIL_TEMPLATES_TYPES.SPOT_ASSIGNED' | translate }}</ion-label>
-      </ion-item>
-      <ion-item button detail (click)="openTemplateEmailModal(EmailTemplates.REGISTRATION_CONFIRMED)">
-        <ion-label class="ion-text-wrap">
-          {{ 'MANAGE.EMAIL_TEMPLATES_TYPES.REGISTRATION_CONFIRMED' | translate }}
-        </ion-label>
+      <ion-item
+        *ngFor="let template of EmailTemplates | keyvalue"
+        button
+        detail
+        (click)="openTemplateEmailModal(template.value)"
+      >
+        <ion-label class="ion-text-wrap">{{ 'MANAGE.EMAIL_TEMPLATES_TYPES.' + template.key | translate }}</ion-label>
       </ion-item>
     </ng-container>
     <ng-container *ngIf="app.user.permissions.canManageContents">

@@ -4,6 +4,8 @@
 
 import { DynamoDB, GetObjectTypes, RCError, ResourceController, S3, SES } from 'idea-aws';
 
+import { sendEmail } from '../utils/notifications.utils';
+
 import { Configurations } from '../models/configurations.model';
 import { User } from '../models/user.model';
 
@@ -91,22 +93,14 @@ class ConfigurationsRC extends ResourceController {
 
   protected async patchResources(): Promise<{ subject: string; content: string } | void> {
     switch (this.body.action) {
-      case 'GET_EMAIL_TEMPLATE_SPOT_ASSIGNED':
-        return await this.getEmailTemplate('spot-assigned');
-      case 'SET_EMAIL_TEMPLATE_SPOT_ASSIGNED':
-        return await this.setEmailTemplate('spot-assigned', this.body.subject, this.body.content);
-      case 'RESET_EMAIL_TEMPLATE_SPOT_ASSIGNED':
-        return await this.resetEmailTemplate('spot-assigned');
-      case 'TEST_EMAIL_TEMPLATE_SPOT_ASSIGNED':
-        return await this.testEmailTemplate('spot-assigned');
-      case 'GET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
-        return await this.getEmailTemplate('registration-confirmed');
-      case 'SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
-        return await this.setEmailTemplate('registration-confirmed', this.body.subject, this.body.content);
-      case 'RESET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
-        return await this.resetEmailTemplate('registration-confirmed');
-      case 'TEST_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
-        return await this.testEmailTemplate('registration-confirmed');
+      case 'GET_EMAIL_TEMPLATE':
+        return await this.getEmailTemplate(this.body.template);
+      case 'SET_EMAIL_TEMPLATE':
+        return await this.setEmailTemplate(this.body.template, this.body.subject, this.body.content);
+      case 'RESET_EMAIL_TEMPLATE':
+        return await this.resetEmailTemplate(this.body.template);
+      case 'TEST_EMAIL_TEMPLATE':
+        return await this.testEmailTemplate(this.body.template);
       default:
         throw new RCError('Unsupported action');
     }
@@ -139,10 +133,10 @@ class ConfigurationsRC extends ResourceController {
     };
 
     try {
-      await ses.testTemplate(template, templateData);
+      await sendEmail(toAddresses, template, templateData);
     } catch (error) {
-      this.logger.warn('Elaborating template', error, { template });
-      throw new RCError('Bad template');
+      this.logger.warn('Error sending email', error, { template });
+      throw new RCError('Error sending email');
     }
 
     try {

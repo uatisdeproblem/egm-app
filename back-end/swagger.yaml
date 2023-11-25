@@ -143,14 +143,10 @@ paths:
                 action:
                   type: string
                   enum:
-                    - GET_EMAIL_TEMPLATE_SPOT_ASSIGNED
-                    - SET_EMAIL_TEMPLATE_SPOT_ASSIGNED
-                    - RESET_EMAIL_TEMPLATE_SPOT_ASSIGNED
-                    - TEST_EMAIL_TEMPLATE_SPOT_ASSIGNED
-                    - GET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
-                    - SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
-                    - RESET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
-                    - TEST_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
+                    - GET_EMAIL_TEMPLATE
+                    - SET_EMAIL_TEMPLATE
+                    - RESET_EMAIL_TEMPLATE
+                    - TEST_EMAIL_TEMPLATE
                 subject:
                   type: string
                   description: (SET_EMAIL_TEMPLATE_SPOT_ASSIGNED, SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED)
