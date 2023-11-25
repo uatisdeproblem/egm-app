@@ -299,6 +299,16 @@
       }
     },
     "OTHER_CONFIGURATIONS": "Other configurations",
-    "LIST_OF_ESN_COUNTRIES": "List of current ESN countries"
+    "LIST_OF_ESN_COUNTRIES": "List of current ESN countries",
+    "USEFUL_LINKS": "Useful links",
+    "USEFUL_LINKS_I": "Manage the links you want to make available to all users for quick access."
+  },
+  "USEFUL_LINKS": {
+    "USEFUL_LINKS": "Useful links",
+    "MANAGE_LINK": "Manage useful link",
+    "NAME": "Name",
+    "URL": "URL",
+    "AUDIENCE": "Audience",
+    "GENERAL": "General"
   }
 }

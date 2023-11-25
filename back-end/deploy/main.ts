@@ -23,7 +23,8 @@ const apiResources: ResourceController[] = [
   { name: 'galaxy', paths: ['/galaxy'] },
   { name: 'configurations', paths: ['/configurations'] },
   { name: 'users', paths: ['/users', '/users/{userId}'] },
-  { name: 'eventSpots', paths: ['/event-spots', '/event-spots/{spotId}'] }
+  { name: 'eventSpots', paths: ['/event-spots', '/event-spots/{spotId}'] },
+  { name: 'usefulLinks', paths: ['/useful-links', '/useful-links/{linkId}'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
@@ -38,6 +39,9 @@ const tables: { [tableName: string]: DDBTable } = {
   },
   eventSpots: {
     PK: { name: 'spotId', type: DDB.AttributeType.STRING }
+  },
+  usefulLinks: {
+    PK: { name: 'linkId', type: DDB.AttributeType.STRING }
   }
 };
 
