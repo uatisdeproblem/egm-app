@@ -99,6 +99,16 @@
     </ion-item>
     <ion-item color="ideaToolbar" lines="none">
       <ion-searchbar (ionInput)="filter($event.target.value)"></ion-searchbar>
+      <ion-button
+        slot="end"
+        color="ESNgreen"
+        fill="clear"
+        *ngIf="filteredUsers?.length"
+        [title]="'USERS.DOWNLOAD_FILTERED_USERS' | translate"
+        (click)="downloadFilteredUserAsExcelFile()"
+      >
+        <ion-icon name="download" slot="icon-only"></ion-icon>
+      </ion-button>
     </ion-item>
   </div>
 </ion-header>
