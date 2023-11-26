@@ -61,9 +61,10 @@ class GalaxyRC extends ResourceController {
       let firstAccess = false;
       try {
         user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
-        user.sectionCode = attributes['cas:sc'][0];
-        user.sectionCountry = attributes['cas:country'][0];
-        user.sectionName = attributes['cas:section'][0];
+        // @todo temporary (#82) until ESNaccounts returns correct values
+        // user.sectionCode = attributes['cas:sc'][0];
+        // user.sectionCountry = attributes['cas:country'][0];
+        // user.sectionName = attributes['cas:section'][0];
       } catch (error) {
         firstAccess = true;
         user = new User({
