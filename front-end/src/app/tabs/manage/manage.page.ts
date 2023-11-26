@@ -3,7 +3,6 @@ import { ModalController } from '@ionic/angular';
 import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
 
 import { EmailTemplateComponent } from './configurations/emailTemplate/emailTemplate.component';
-import { DocumentTemplateComponent } from './configurations/documentTemplate/documentTemplate.component';
 import { ManageUsefulLinkStandaloneComponent } from '@app/common/usefulLinks/manageUsefulLink.component';
 
 import { AppService } from '@app/app.service';
@@ -39,12 +38,6 @@ export class ManagePage {
   async openTemplateEmailModal(template: EmailTemplates): Promise<void> {
     const componentProps = { template };
     const modal = await this.modalCtrl.create({ component: EmailTemplateComponent, componentProps });
-    await modal.present();
-  }
-
-  async openTemplateDocumentModal(template: DocumentTemplates): Promise<void> {
-    const componentProps = { template };
-    const modal = await this.modalCtrl.create({ component: DocumentTemplateComponent, componentProps });
     await modal.present();
   }
 

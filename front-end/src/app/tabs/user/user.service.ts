@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+
+import { SignedURL } from 'idea-toolbox';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { User } from '@models/user.model';
@@ -46,6 +48,14 @@ export class UserService {
   async registerToEvent(registrationForm: any, isDraft: boolean): Promise<User> {
     const body = { action: 'REGISTER_TO_EVENT', registrationForm, isDraft };
     return new User(await this.api.patchResource(['users', 'me'], { body }));
+  }
+
+  /**
+   * Get the user's invoice.
+   */
+  async getInvoice(): Promise<SignedURL> {
+    const action = 'GET_INVOICE';
+    return await this.api.patchResource(['users', 'me'], { body: { action } });
   }
 
   /**

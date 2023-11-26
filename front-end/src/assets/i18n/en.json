@@ -228,7 +228,9 @@
     "EMAIL_TEMPLATES_I": "Set the templates for the following notification emails.",
     "EMAIL_TEMPLATES_TYPES": {
       "SPOT_ASSIGNED": "A spot has been assigned to a user",
-      "REGISTRATION_CONFIRMED": "A user's spot has been paid and confirmed"
+      "REGISTRATION_CONFIRMED": "A user's spot has been paid and confirmed",
+      "SPOT_TRANSFERRED": "A user's spot has been transferred to another user",
+      "SPOT_RELEASED": "A user has been released from his spot"
     },
     "DOCUMENT_TEMPLATES": "Document templates",
     "DOCUMENT_TEMPLATES_I": "Set the templates for the following documents.",
