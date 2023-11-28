@@ -54,12 +54,19 @@ export class RegistrationPage {
       }
       if (this.user.userId !== this.app.user.userId && !this.app.user.permissions.canManageRegistrations)
         this.editMode = false;
+      if (!this.canUserRegister()) this.editMode = false;
     } catch (error) {
       this.app.closePage('COMMON.SOMETHING_WENT_WRONG');
       throw error;
     } finally {
       this.loading.hide();
     }
+  }
+
+  canUserRegister(): boolean {
+    return this.user.isExternal()
+      ? this.app.configurations.canExternalsRegister
+      : this.app.configurations.isRegistrationOpen;
   }
 
   async save(isDraft = false): Promise<void> {

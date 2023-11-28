@@ -12,9 +12,13 @@ export class Configurations extends Resource {
    */
   PK: string;
   /**
-   * Whether the registrations are open.
+   * Whether the registrations are open for ESNers.
    */
   isRegistrationOpen: boolean;
+  /**
+   * Whether externals and guests can register.
+   */
+  canExternalsRegister: boolean;
   /**
    * A custom block containing the definition of custom sections and fields for the registration form.
    */
@@ -40,6 +44,7 @@ export class Configurations extends Resource {
     super.load(x);
     this.PK = Configurations.PK;
     this.isRegistrationOpen = this.clean(x.isRegistrationOpen, Boolean);
+    this.canExternalsRegister = this.clean(x.canExternalsRegister, Boolean);
     this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);
     this.currency = this.clean(x.currency, String);
     this.spotTypes = this.cleanArray(x.spotTypes, String);
