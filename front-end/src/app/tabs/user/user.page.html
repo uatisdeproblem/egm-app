@@ -18,8 +18,16 @@
           ></ion-img>
         </ion-avatar>
       </p>
-      <ion-item color="ESNcyan" lines="none" *ngIf="app.user.authService === AuthServices.ESN_ACCOUNTS">
-        <ion-icon slot="start" [icon]="app.getIcon(true)"></ion-icon>
+      <ion-item
+        [color]="app.user.isGalaxyInfoValid() ? 'ESNcyan': 'medium'"
+        lines="none"
+        *ngIf="app.user.authService === AuthServices.ESN_ACCOUNTS"
+      >
+        <ion-icon
+          slot="start"
+          [icon]="app.user.isGalaxyInfoValid() ? app.getIcon(true) : 'warning'"
+          [color]="app.user.isGalaxyInfoValid() ? '' : 'danger'"
+        ></ion-icon>
         <ion-label>
           <ion-text style="font-weight: 600">{{ app.user.sectionName }}</ion-text>
           <p><ion-text style="font-weight: 500">{{ app.user.sectionCountry }}</ion-text></p>
