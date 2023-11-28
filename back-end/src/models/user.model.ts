@@ -152,6 +152,11 @@ export class User extends Resource {
     return this.authService !== AuthServices.ESN_ACCOUNTS;
   }
 
+  isGalaxyInfoValid(): boolean {
+    if (this.isExternal()) return true;
+    return this.sectionName !== 'Unknown' && this.sectionCountry !== 'Unknown';
+  }
+
   /**
    * Map the user into a Suggestion data structure.
    */
