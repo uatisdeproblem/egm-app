@@ -34,12 +34,12 @@
     </ion-item>
     <ion-item>
       <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.canExternalsRegister">
-        {{ 'MANAGE.ALLOW_REGISTRATIONS' | translate }} TO-DO external perm
+        {{ 'MANAGE.ALLOW_EXTERNALS' | translate }}
       </ion-checkbox>
     </ion-item>
     <ion-item>
       <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.canCountryLeadersAssignSpots">
-        {{ 'MANAGE.ALLOW_REGISTRATIONS' | translate }} TO-DO DL perm
+        {{ 'MANAGE.ALLOW_COUNTRY_LEADER_ASSIGN_SPOT' | translate }}
       </ion-checkbox>
     </ion-item>
     <ion-list-header>

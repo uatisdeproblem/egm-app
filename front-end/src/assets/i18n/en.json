@@ -247,6 +247,8 @@
     "REGISTRATIONS_OPTIONS": "Registrations options",
     "REGISTRATIONS_OPTIONS_I": "Open/close the registrations and other options.",
     "ALLOW_REGISTRATIONS": "Allow registrations",
+    "ALLOW_EXTERNALS": "Allow externals to register",
+    "ALLOW_COUNTRY_LEADER_ASSIGN_SPOT": "Allow country leaders to assign spots",
     "REGISTRATION_FORM": "Registration form",
     "REGISTRATION_FORM_I": "Add, manage and remove the fields requested during the registration.",
     "EVENT_SPOTS": "Spot types",
