@@ -16,7 +16,7 @@ import { UsersService } from './users.service';
 import { SpotsService } from '../spots/spots.service';
 
 import { User, UserPermissions } from '@models/user.model';
-import { UserFlat } from '@models/userFlat.model';
+import { UserFlat, UserFlatWithRegistration } from '@models/userFlat.model';
 import { EventSpot, EventSpotAttached } from '@models/eventSpot.model';
 
 @Component({
@@ -451,8 +451,14 @@ export class UsersPage implements OnInit {
   }
 
   downloadFilteredUserAsExcelFile(): void {
+    if (!(this.app.user.permissions.canManageRegistrations || this.app.user.permissions.isCountryLeader)) return;
+
     const title = this.t._('USERS.USERS');
-    const data = this.filteredUsers.map(x => new UserFlat(x, this.app.configurations, this.t.getCurrentLang()));
+    const data = this.filteredUsers.map(x =>
+      this.app.user.permissions.canManageRegistrations
+        ? new UserFlatWithRegistration(x, this.app.configurations, this.t.getCurrentLang())
+        : new UserFlat(x)
+    );
     const workbook: WorkBook = { SheetNames: [], Sheets: {}, Props: { Title: title } };
     utils.book_append_sheet(workbook, utils.json_to_sheet(data), '1');
     writeFile(workbook, title.concat('.xlsx'));
