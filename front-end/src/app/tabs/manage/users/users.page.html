@@ -21,7 +21,7 @@
       <ion-button
         slot="start"
         color="ESNgreen"
-        *ngIf="!app.user.permissions.canManageRegistrations && app.user.permissions.isCountryLeader"
+        *ngIf="!app.user.permissions.canManageRegistrations && canAssignSpotAsCountryLeader()"
         [disabled]="!numCountrySpotsAvailable || usersTable.selected[0]?.spot"
         (click)="assignCountrySpot(usersTable.selected[0])"
       >
@@ -30,7 +30,7 @@
       <ion-label *ngIf="app.user.permissions.canManageRegistrations">
         <i>{{ 'USERS.ACTIONS_ON_USER' | translate : { user: usersTable.selected[0].firstName } }}</i>
       </ion-label>
-      <ion-label *ngIf="!app.user.permissions.canManageRegistrations && app.user.permissions.isCountryLeader">
+      <ion-label *ngIf="!app.user.permissions.canManageRegistrations && canAssignSpotAsCountryLeader()">
         <i>{{ 'USERS.COUNTRY_SPOTS_AVAILABLE' | translate : { num: numCountrySpotsAvailable } }}</i>
       </ion-label>
     </ion-item>

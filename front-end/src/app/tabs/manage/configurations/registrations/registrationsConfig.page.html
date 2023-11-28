@@ -37,6 +37,11 @@
         {{ 'MANAGE.ALLOW_REGISTRATIONS' | translate }} TO-DO external perm
       </ion-checkbox>
     </ion-item>
+    <ion-item>
+      <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.canCountryLeadersAssignSpots">
+        {{ 'MANAGE.ALLOW_REGISTRATIONS' | translate }} TO-DO DL perm
+      </ion-checkbox>
+    </ion-item>
     <ion-list-header>
       <ion-label>
         <h2>{{ 'MANAGE.REGISTRATION_FORM' | translate }}</h2>

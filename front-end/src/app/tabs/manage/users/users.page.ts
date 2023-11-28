@@ -463,6 +463,10 @@ export class UsersPage implements OnInit {
     utils.book_append_sheet(workbook, utils.json_to_sheet(data), '1');
     writeFile(workbook, title.concat('.xlsx'));
   }
+
+  canAssignSpotAsCountryLeader(): boolean {
+    return this.app.user.permissions.isCountryLeader && this.app.configurations.canCountryLeadersAssignSpots;
+  }
 }
 
 interface RowsFilters {

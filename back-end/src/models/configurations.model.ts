@@ -20,6 +20,10 @@ export class Configurations extends Resource {
    */
   canExternalsRegister: boolean;
   /**
+   * Whether the delegation leaders can assign spots.
+   */
+  canCountryLeadersAssignSpots: boolean;
+  /**
    * A custom block containing the definition of custom sections and fields for the registration form.
    */
   registrationFormDef: CustomBlockMeta;
@@ -45,6 +49,7 @@ export class Configurations extends Resource {
     this.PK = Configurations.PK;
     this.isRegistrationOpen = this.clean(x.isRegistrationOpen, Boolean);
     this.canExternalsRegister = this.clean(x.canExternalsRegister, Boolean);
+    this.canCountryLeadersAssignSpots = this.clean(x.canCountryLeadersAssignSpots, Boolean);
     this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);
     this.currency = this.clean(x.currency, String);
     this.spotTypes = this.cleanArray(x.spotTypes, String);

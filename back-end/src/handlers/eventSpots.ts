@@ -8,7 +8,7 @@ import { sendEmail } from '../utils/notifications.utils';
 
 import { EventSpot, EventSpotAttached } from '../models/eventSpot.model';
 import { User } from '../models/user.model';
-import { EmailTemplates } from '../models/configurations.model';
+import { Configurations, EmailTemplates } from '../models/configurations.model';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -30,6 +30,7 @@ export const handler = (ev: any, _: any, cb: any): Promise<void> => new EventSpo
 ///
 
 class EventSpotsRC extends ResourceController {
+  configurations: Configurations;
   user: User;
   spot: EventSpot;
 
@@ -38,6 +39,14 @@ class EventSpotsRC extends ResourceController {
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
+    try {
+      this.configurations = new Configurations(
+        await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
+      );
+    } catch (err) {
+      throw new RCError('Configuration not found');
+    }
+
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
@@ -82,6 +91,9 @@ class EventSpotsRC extends ResourceController {
     }
   }
   private async assignToUser(userId: string): Promise<void> {
+    if (!this.user.permissions.canManageRegistrations && !this.configurations.canCountryLeadersAssignSpots)
+      throw new RCError('Unauthorized');
+
     let user: User;
     try {
       user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
