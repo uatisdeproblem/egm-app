@@ -253,7 +253,7 @@ class EventSpotsRC extends ResourceController {
     const updateSpot = {
       TableName: DDB_TABLES.eventSpots,
       Key: { spotId: this.spot.spotId },
-      UpdateExpression: 'REMOVE userId, userName, sectionCountry'
+      UpdateExpression: 'REMOVE userId, userName'
     };
 
     const writes: any[] = [{ Update: updateSpot }];

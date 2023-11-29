@@ -353,7 +353,6 @@ export class SpotsPage implements OnInit {
         for (const spot of spots) {
           delete spot.userId;
           delete spot.userName;
-          delete spot.sectionCountry;
         }
         this.filter(this.searchbar?.value);
         this.message.success('COMMON.OPERATION_COMPLETED');
