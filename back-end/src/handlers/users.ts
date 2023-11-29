@@ -139,11 +139,7 @@ class UsersRC extends ResourceController {
     return signedURL;
   }
   private async registerToEvent(registrationForm: any, isDraft: boolean): Promise<User> {
-    const canUserRegister = this.targetUser.isExternal()
-      ? this.configurations.canExternalsRegister
-      : this.configurations.isRegistrationOpen;
-
-    if (!canUserRegister && !this.reqUser.permissions.canManageRegistrations)
+    if (!this.configurations.canUserRegister(this.targetUser) && !this.reqUser.permissions.canManageRegistrations)
       throw new RCError('Registrations are closed');
     if (this.targetUser.registrationAt && !this.reqUser.permissions.canManageRegistrations)
       throw new RCError("Can't edit a submitted registration");

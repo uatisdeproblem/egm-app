@@ -1,5 +1,7 @@
 import { CustomBlockMeta, Languages, Resource } from 'idea-toolbox';
 
+import { User } from '../models/user.model';
+
 import { ServiceLanguages } from './serviceLanguages.enum';
 
 export const LANGUAGES = new Languages({ default: ServiceLanguages.English, available: [ServiceLanguages.English] });
@@ -14,11 +16,11 @@ export class Configurations extends Resource {
   /**
    * Whether the registrations are open for ESNers.
    */
-  isRegistrationOpen: boolean;
+  isRegistrationOpenForESNers: boolean;
   /**
    * Whether externals and guests can register.
    */
-  canExternalsRegister: boolean;
+  isRegistrationOpenForExternals: boolean;
   /**
    * Whether the delegation leaders can assign spots.
    */
@@ -47,8 +49,8 @@ export class Configurations extends Resource {
   load(x: any): void {
     super.load(x);
     this.PK = Configurations.PK;
-    this.isRegistrationOpen = this.clean(x.isRegistrationOpen, Boolean);
-    this.canExternalsRegister = this.clean(x.canExternalsRegister, Boolean);
+    this.isRegistrationOpenForESNers = this.clean(x.isRegistrationOpenForESNers, Boolean);
+    this.isRegistrationOpenForExternals = this.clean(x.isRegistrationOpenForExternals, Boolean);
     this.canCountryLeadersAssignSpots = this.clean(x.canCountryLeadersAssignSpots, Boolean);
     this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);
     this.currency = this.clean(x.currency, String);
@@ -75,6 +77,10 @@ export class Configurations extends Resource {
    */
   loadRegistrationForm(registrationDef: CustomBlockMeta, existingForm?: any): CustomBlockMeta {
     return existingForm ? registrationDef.loadSections(existingForm) : registrationDef.setSectionsDefaultValues();
+  }
+
+  canUserRegister(user: User): boolean {
+    return user.isExternal() ? this.isRegistrationOpenForExternals : this.isRegistrationOpenForESNers;
   }
 }
 
