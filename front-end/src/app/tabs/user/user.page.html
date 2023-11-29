@@ -142,7 +142,13 @@
           <ion-item button detail color="white" (click)="downloadInfoToPay()">
             <ion-label class="ion-text-wrap"> {{ 'USER.DOWNLOAD_INFO_TO_PAY' | translate }} </ion-label>
           </ion-item>
-          <input #popInput type="file" accept=".pdf" style="display: none" (change)="uploadProofOfPayment($event)" />
+          <input
+            #popInput
+            type="file"
+            accept="application/pdf"
+            style="display: none"
+            (change)="uploadProofOfPayment($event)"
+          />
           <ion-item button detail color="white" (click)="popInput?.click()">
             <ion-label class="ion-text-wrap">
               {{ (app.user.spot.proofOfPaymentURI ? 'USER.REPLACE_PROOF_PAYMENT': 'USER.UPLOAD_PROOF_PAYMENT') |
