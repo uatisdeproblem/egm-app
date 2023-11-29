@@ -206,6 +206,7 @@
         button
         detail
         *ngIf="!app.user.permissions.isAdmin && app.user.permissions.isCountryLeader"
+        color="dark"
         (click)="app.goToInTabs(['manage', 'users'])"
       >
         <ion-icon name="flag-outline" slot="start"></ion-icon>
