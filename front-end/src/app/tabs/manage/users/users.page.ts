@@ -171,18 +171,20 @@ export class UsersPage implements OnInit {
     const header = this.t._('USERS.ACTIONS_ON_USER', { user: user.getName() });
     const buttons = [];
 
-    if (!user.spot) {
+    if (!user.spot && this.app.user.permissions.isAdmin) {
       buttons.push({
         text: this.t._('USERS.ASSIGN_SPOT'),
         icon: 'ticket',
         handler: (): Promise<void> => this.pickSpotAndAssignToUser(user)
       });
     } else {
-      buttons.push({
-        text: this.t._('USERS.TRANSFER_SPOT'),
-        icon: 'swap-horizontal',
-        handler: (): Promise<void> => this.transferSpotToAnotherUser(user)
-      });
+      if (this.app.user.permissions.isAdmin) {
+        buttons.push({
+          text: this.t._('USERS.TRANSFER_SPOT'),
+          icon: 'swap-horizontal',
+          handler: (): Promise<void> => this.transferSpotToAnotherUser(user)
+        });
+      }
       if (user.spot.proofOfPaymentURI) {
         buttons.push({
           text: this.t._('USERS.OPEN_PROOF_OF_PAYMENT'),
@@ -198,17 +200,19 @@ export class UsersPage implements OnInit {
         });
       }
     }
-    buttons.push({
-      text: this.t._('USERS.MANAGE_PERMISSIONS'),
-      icon: 'ribbon',
-      handler: (): Promise<void> => this.managePermissionsOfUser(user)
-    });
-    buttons.push({
-      text: this.t._('USERS.DELETE_USER'),
-      icon: 'trash',
-      role: 'destructive',
-      handler: (): Promise<void> => this.deleteUser(user)
-    });
+    if (this.app.user.permissions.isAdmin) {
+      buttons.push({
+        text: this.t._('USERS.MANAGE_PERMISSIONS'),
+        icon: 'ribbon',
+        handler: (): Promise<void> => this.managePermissionsOfUser(user)
+      });
+      buttons.push({
+        text: this.t._('USERS.DELETE_USER'),
+        icon: 'trash',
+        role: 'destructive',
+        handler: (): Promise<void> => this.deleteUser(user)
+      });
+    }
     buttons.push({ text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' });
 
     const actions = await this.actionsCtrl.create({ header, buttons });

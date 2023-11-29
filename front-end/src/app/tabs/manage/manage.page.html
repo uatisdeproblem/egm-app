@@ -19,7 +19,7 @@
         <ion-icon slot="start" icon="people-outline"></ion-icon>
         <ion-label>{{ 'MANAGE.USERS_LIST' | translate }}</ion-label>
       </ion-item>
-      <ion-item button detail (click)="app.goToInTabs(['manage', 'spots'])">
+      <ion-item button detail *ngIf="app.user.permissions.isAdmin" (click)="app.goToInTabs(['manage', 'spots'])">
         <ion-icon slot="start" icon="ticket-outline"></ion-icon>
         <ion-label>{{ 'MANAGE.SPOTS_MANAGEMENT' | translate }}</ion-label>
       </ion-item>

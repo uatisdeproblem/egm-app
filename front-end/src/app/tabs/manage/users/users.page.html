@@ -21,7 +21,7 @@
       <ion-button
         slot="start"
         color="ESNgreen"
-        *ngIf="!app.user.permissions.canManageRegistrations && canAssignSpotAsCountryLeader()"
+        *ngIf="!app.user.permissions.isAdmin && canAssignSpotAsCountryLeader()"
         [disabled]="!numCountrySpotsAvailable || usersTable.selected[0]?.spot"
         (click)="assignCountrySpot(usersTable.selected[0])"
       >

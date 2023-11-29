@@ -106,7 +106,7 @@ export class SpotsPage implements OnInit {
     }
   }
   ionViewWillEnter(): void {
-    if (!this.app.user.permissions.canManageRegistrations) return this.app.closePage('COMMON.UNAUTHORIZED');
+    if (!this.app.user.permissions.isAdmin) return this.app.closePage('COMMON.UNAUTHORIZED');
   }
 
   @HostListener('window:resize', ['$event'])

@@ -284,7 +284,7 @@ class UsersRC extends ResourceController {
   }
 
   protected async deleteResource(): Promise<void> {
-    if (!this.reqUser.permissions.canManageRegistrations && this.reqUser.userId !== this.targetUser.userId)
+    if (!this.reqUser.permissions.isAdmin && this.reqUser.userId !== this.targetUser.userId)
       throw new RCError('Unauthorized');
 
     if (this.targetUser.authService === AuthServices.COGNITO) {
