@@ -64,7 +64,7 @@
         <ion-icon slot="icon-only" icon="eye"></ion-icon>
       </ion-button>
     </ion-item>
-    <ion-row class="ion-margin-top" *ngIf="editMode">
+    <ion-row class="ion-margin-top" *ngIf="editMode && this.app.configurations.canUserRegister(user)">
       <ion-col>
         <ion-button expand="block" fill="clear" (click)="save(true)"> {{ 'USER.SAVE_DRAFT' | translate }} </ion-button>
       </ion-col>

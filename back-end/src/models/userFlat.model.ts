@@ -20,7 +20,7 @@ export class UserFlat {
 
   [__registrationForm: string]: any;
 
-  constructor(x?: User, configurations?: Configurations, language?: string) {
+  constructor(x?: User) {
     x = x ?? ({} as any);
     this['User ID'] = x.userId;
     this['Type'] = x.authService === AuthServices.ESN_ACCOUNTS ? 'ESNer' : 'Guest';
@@ -34,6 +34,16 @@ export class UserFlat {
     this['Spot type'] = x.spot?.type ?? '';
     this['Spot paid'] = !!x.spot?.proofOfPaymentURI;
     this['Spot confirmed'] = !!x.spot?.paymentConfirmedAt;
+  }
+}
+
+export class UserFlatWithRegistration extends UserFlat {
+  [__registrationForm: string]: any;
+
+  constructor(x?: User, configurations?: Configurations, language?: string) {
+    x = x ?? ({} as any);
+
+    super(x);
 
     if (configurations && language) {
       const fields = configurations.registrationFormDef.loadSections(x.registrationForm);

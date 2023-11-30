@@ -139,7 +139,7 @@ class UsersRC extends ResourceController {
     return signedURL;
   }
   private async registerToEvent(registrationForm: any, isDraft: boolean): Promise<User> {
-    if (!this.configurations.isRegistrationOpen && !this.reqUser.permissions.canManageRegistrations)
+    if (!this.configurations.canUserRegister(this.targetUser) && !this.reqUser.permissions.canManageRegistrations)
       throw new RCError('Registrations are closed');
     if (this.targetUser.registrationAt && !this.reqUser.permissions.canManageRegistrations)
       throw new RCError("Can't edit a submitted registration");
@@ -284,7 +284,7 @@ class UsersRC extends ResourceController {
   }
 
   protected async deleteResource(): Promise<void> {
-    if (!this.reqUser.permissions.canManageRegistrations && this.reqUser.userId !== this.targetUser.userId)
+    if (!this.reqUser.permissions.isAdmin && this.reqUser.userId !== this.targetUser.userId)
       throw new RCError('Unauthorized');
 
     if (this.targetUser.authService === AuthServices.COGNITO) {

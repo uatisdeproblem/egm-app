@@ -1,5 +1,7 @@
 import { CustomBlockMeta, Languages, Resource } from 'idea-toolbox';
 
+import { User } from '../models/user.model';
+
 import { ServiceLanguages } from './serviceLanguages.enum';
 
 export const LANGUAGES = new Languages({ default: ServiceLanguages.English, available: [ServiceLanguages.English] });
@@ -12,9 +14,17 @@ export class Configurations extends Resource {
    */
   PK: string;
   /**
-   * Whether the registrations are open.
+   * Whether the registrations are open for ESNers.
    */
-  isRegistrationOpen: boolean;
+  isRegistrationOpenForESNers: boolean;
+  /**
+   * Whether externals and guests can register.
+   */
+  isRegistrationOpenForExternals: boolean;
+  /**
+   * Whether the delegation leaders can assign spots.
+   */
+  canCountryLeadersAssignSpots: boolean;
   /**
    * A custom block containing the definition of custom sections and fields for the registration form.
    */
@@ -39,7 +49,9 @@ export class Configurations extends Resource {
   load(x: any): void {
     super.load(x);
     this.PK = Configurations.PK;
-    this.isRegistrationOpen = this.clean(x.isRegistrationOpen, Boolean);
+    this.isRegistrationOpenForESNers = this.clean(x.isRegistrationOpenForESNers, Boolean);
+    this.isRegistrationOpenForExternals = this.clean(x.isRegistrationOpenForExternals, Boolean);
+    this.canCountryLeadersAssignSpots = this.clean(x.canCountryLeadersAssignSpots, Boolean);
     this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);
     this.currency = this.clean(x.currency, String);
     this.spotTypes = this.cleanArray(x.spotTypes, String);
@@ -65,6 +77,10 @@ export class Configurations extends Resource {
    */
   loadRegistrationForm(registrationDef: CustomBlockMeta, existingForm?: any): CustomBlockMeta {
     return existingForm ? registrationDef.loadSections(existingForm) : registrationDef.setSectionsDefaultValues();
+  }
+
+  canUserRegister(user: User): boolean {
+    return user.isExternal() ? this.isRegistrationOpenForExternals : this.isRegistrationOpenForESNers;
   }
 }
 
