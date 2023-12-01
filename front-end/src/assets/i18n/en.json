@@ -322,9 +322,8 @@
   "STRIPE": {
     "BEFORE_YOU_PROCEED": "Before you proceed",
     "DISCLAIMER": "Disclaimer",
-    "DISCLAIMER_I": "In order for your spot to be paid for and subsequently validated by the organization, we kindly ask you to save the fields below and insert them, as they are, on the corresponding fields in the Stripe payment platform.",
+    "DISCLAIMER_I": "In order for your spot to be paid for and subsequently validated by the organization, we kindly ask you to save the fields below and insert them, as they are, on the corresponding fields in the Stripe payment platform. Price may increase to cover for Stripe's payment processing fees.",
     "YOUR_REFERENCE": "Your reference",
-    "YOUR_NO": "Your ESN country",
     "CONFIRM_READ": "I have read and understood",
     "PROCEED_TO_STRIPE": "Go to Stripe"
   }

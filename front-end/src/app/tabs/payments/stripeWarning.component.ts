@@ -43,14 +43,8 @@ import { AppService } from '../../app.service';
       <ion-card class="ion-margin-bottom">
         <ion-card-content color="dark">
           <ion-item lines="none">
-            {{ 'STRIPE.YOUR_REFERENCE' | translate }}: {{ app.user.userId }}
+            {{ 'STRIPE.YOUR_REFERENCE' | translate }}: {{ app.user.spot.spotId }}
             <ion-button slot="end" (click)="copyHTMLInputText(app.user.userId)">
-              <ion-icon name="copy" slot="icon-only"></ion-icon>
-            </ion-button>
-          </ion-item>
-          <ion-item *ngIf="!app.user.isExternal()" class="ion-margin-bottom" lines="none">
-            {{ 'STRIPE.YOUR_NO' | translate }}: {{ app.user.sectionCountry }}
-            <ion-button slot="end" (click)="copyHTMLInputText(app.user.sectionCountry)">
               <ion-icon name="copy" slot="icon-only"></ion-icon>
             </ion-button>
           </ion-item>

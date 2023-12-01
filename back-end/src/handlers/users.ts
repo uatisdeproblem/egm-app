@@ -179,7 +179,7 @@ class UsersRC extends ResourceController {
   private async generateUserInvoice(): Promise<SignedURL> {
     if (!this.reqUser.registrationAt || !this.reqUser.spot) return;
 
-    const filename = `${this.principalId.replace(/[/.]/g, '_')}_invoice`;
+    const filename = `${this.reqUser.spot.spotId}_invoice`;
 
     const bucket = S3_BUCKET_MEDIA;
     const key = S3_DOWNLOADS_FOLDER + `/invoices/${filename}`;
@@ -197,7 +197,7 @@ class UsersRC extends ResourceController {
     })) as string;
 
     const pdfVariables = {
-      reference: this.reqUser.userId,
+      reference: this.reqUser.spot.spotId,
       issueDate: toISODate(new Date()),
       dueDate: toISODate(addDays(new Date(), 7)),
       invoiceAddress: this.reqUser.registrationForm.financial.invoiceAddress,
