@@ -43,7 +43,7 @@ import { AppService } from '../../app.service';
       <ion-card class="ion-margin-bottom">
         <ion-card-content color="dark">
           <ion-item lines="none">
-            {{ 'STRIPE.YOUR_REFERENCE' | translate }}: {{ app.user.spot.spotId }}
+            {{ 'USER.YOUR_REFERENCE' | translate }}: {{ app.user.spot.spotId }}
             <ion-button slot="end" (click)="copyHTMLInputText(app.user.userId)">
               <ion-icon name="copy" slot="icon-only"></ion-icon>
             </ion-button>

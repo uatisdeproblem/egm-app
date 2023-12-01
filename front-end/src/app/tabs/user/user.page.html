@@ -185,6 +185,11 @@
             {{ (app.user.registrationAt ? 'USER.VIEW_MY_REGISTRATION': 'USER.REGISTER_TO_EVENT') | translate }}
           </ion-label>
         </ion-item>
+        <ion-item color="primary" *ngIf="app.user.spot">
+          <ion-icon slot="start" name="receipt"></ion-icon>
+          <ion-label class="ion-text-wrap"> {{ 'USER.YOUR_REFERENCE' | translate }}: </ion-label>
+          {{ app.user.spot.spotId}}
+        </ion-item>
       </ng-container>
     </ion-list>
 

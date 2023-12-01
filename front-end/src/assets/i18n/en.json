@@ -167,7 +167,8 @@
     "TC_URL": "https://app.erasmusgeneration.org/assets/docs/egm-24-tc.pdf",
     "COC": "Code of Conduct",
     "ACCEPT_COC": "I read and I agree with the event's Code of Conduct",
-    "COC_URL": "https://app.erasmusgeneration.org/assets/docs/egm-24-coc.pdf"
+    "COC_URL": "https://app.erasmusgeneration.org/assets/docs/egm-24-coc.pdf",
+    "YOUR_REFERENCE": "Your reference"
   },
   "SPOTS": {
     "SPOTS": "Event spots",
@@ -322,8 +323,7 @@
   "STRIPE": {
     "BEFORE_YOU_PROCEED": "Before you proceed",
     "DISCLAIMER": "Disclaimer",
-    "DISCLAIMER_I": "In order for your spot to be paid for and subsequently validated by the organization, we kindly ask you to save the fields below and insert them, as they are, on the corresponding fields in the Stripe payment platform. Price may increase to cover for Stripe's payment processing fees.",
-    "YOUR_REFERENCE": "Your reference",
+    "DISCLAIMER_I": "In order for your spot to be paid for and subsequently validated by the organization, we kindly ask you to save the reference below and insert it, as it is, on the corresponding field in the Stripe payment platform. Price may increase to cover for Stripe's payment processing fees.",
     "CONFIRM_READ": "I have read and understood",
     "PROCEED_TO_STRIPE": "Go to Stripe"
   }
