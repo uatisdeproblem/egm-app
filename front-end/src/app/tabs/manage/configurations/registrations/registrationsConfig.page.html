@@ -63,7 +63,12 @@
     <ion-reorder-group [disabled]="!editMode" (ionItemReorder)="reorderSpotTypes($event)">
       <ion-item *ngFor="let st of configurations.spotTypes">
         <ion-reorder slot="start" *ngIf="editMode"></ion-reorder>
-        <ion-label>{{ st }}</ion-label>
+        <ion-label>
+          {{ st }}
+          <p>
+            <ion-note>{{ configurations.stripeLinkPerSpotType[st] }}</ion-note>
+          </p>
+        </ion-label>
         <ion-badge slot="end">{{ configurations.pricePerSpotTypes[st] | currency: configurations.currency }}</ion-badge>
         <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeSpotType(st)">
           <ion-icon icon="trash" slot="icon-only"></ion-icon>

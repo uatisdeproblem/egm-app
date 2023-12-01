@@ -74,7 +74,8 @@
     "SAVE_CHANGES": "Save changes",
     "NOT_FOUND": "Not found",
     "NOT_SELECTED": "Not selected",
-    "OR": "OR"
+    "OR": "OR",
+    "COPIED": "Copied"
   },
   "AUTH": {
     "TITLE": "Erasmus Generation Meeting",
@@ -146,6 +147,7 @@
     "REPLACE_PROOF_PAYMENT": "Replace your proof of payment",
     "DOWNLOAD_PROOF_PAYMENT": "Download your proof of payment",
     "DOWNLOAD_INFO_TO_PAY": "Download information to pay",
+    "PAY_WITH_STRIPE": "Pay with Stripe",
     "ADMINISTRATOR": "Administrator",
     "ADMINISTRATOR_SHORT": "Admin",
     "DELEGATION_LEADER": "Delegation leader",
@@ -257,6 +259,7 @@
     "ADD_SPOT_TYPE": "Add a spot type",
     "SPOT_TYPE_NAME": "Spot type name",
     "SPOT_TYPE_PRICE": "Spot type price ({{currency}})",
+    "SPOT_TYPE_STRIPE": "Stripe link",
     "EMAIL_TEMPLATE": {
       "HTML": "Template for emails",
       "HTML_I": "Set an HTML template for the email to send.",
@@ -315,5 +318,14 @@
     "URL": "URL",
     "AUDIENCE": "Audience",
     "GENERAL": "General"
+  },
+  "STRIPE": {
+    "BEFORE_YOU_PROCEED": "Before you proceed",
+    "DISCLAIMER": "Disclaimer",
+    "DISCLAIMER_I": "In order for your spot to be paid for and subsequently validated by the organization, we kindly ask you to save the fields below and insert them, as they are, on the corresponding fields in the Stripe payment platform.",
+    "YOUR_REFERENCE": "Your reference",
+    "YOUR_NO": "Your ESN country",
+    "CONFIRM_READ": "I have read and understood",
+    "PROCEED_TO_STRIPE": "Go to Stripe"
   }
 }

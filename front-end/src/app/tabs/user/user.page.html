@@ -142,6 +142,16 @@
           <ion-item button detail color="white" (click)="downloadInfoToPay()">
             <ion-label class="ion-text-wrap"> {{ 'USER.DOWNLOAD_INFO_TO_PAY' | translate }} </ion-label>
           </ion-item>
+          <ion-item
+            *ngIf="app.configurations.getSpotPaymentLink(app.user.spot.type)"
+            button
+            detail
+            color="dark"
+            (click)="openStripeWarning()"
+          >
+            <ion-icon slot="end" name="card"></ion-icon>
+            <ion-label class="ion-text-wrap"> {{ 'USER.PAY_WITH_STRIPE' | translate }} </ion-label>
+          </ion-item>
           <input
             #popInput
             type="file"

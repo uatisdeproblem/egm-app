@@ -42,6 +42,10 @@ export class Configurations extends Resource {
    */
   pricePerSpotTypes: Record<string, number>;
   /**
+   * The stripe payment link for each spot type, if any.
+   */
+  stripeLinkPerSpotType: Record<string, string>;
+  /**
    * The list of all the current ESN countries.
    */
   sectionCountries: string[];
@@ -56,8 +60,11 @@ export class Configurations extends Resource {
     this.currency = this.clean(x.currency, String);
     this.spotTypes = this.cleanArray(x.spotTypes, String);
     this.pricePerSpotTypes = {};
+    this.stripeLinkPerSpotType = {};
     if (x.pricePerSpotTypes)
       this.spotTypes.forEach(st => (this.pricePerSpotTypes[st] = this.clean(x.pricePerSpotTypes[st], Number, 0)));
+    if (x.stripeLinkPerSpotType)
+      this.spotTypes.forEach(st => (this.stripeLinkPerSpotType[st] = this.clean(x.stripeLinkPerSpotType[st], String)));
     this.sectionCountries = this.cleanArray(x.sectionCountries, String);
   }
 
@@ -79,8 +86,19 @@ export class Configurations extends Resource {
     return existingForm ? registrationDef.loadSections(existingForm) : registrationDef.setSectionsDefaultValues();
   }
 
+  /**
+   * Wether registrations are open based on user type
+   */
   canUserRegister(user: User): boolean {
     return user.isExternal() ? this.isRegistrationOpenForExternals : this.isRegistrationOpenForESNers;
+  }
+
+  /**
+   * Returnts the payment link associated with the spot type.
+   */
+  getSpotPaymentLink(spotType: string): string {
+    if (!(this.stripeLinkPerSpotType || spotType)) return;
+    return this.stripeLinkPerSpotType[spotType];
   }
 }
 
