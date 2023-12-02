@@ -125,7 +125,7 @@ class EventSpotsRC extends ResourceController {
     const template = `${EmailTemplates.SPOT_ASSIGNED}-${STAGE}`;
     const aWeekFromNow = addWeeks(new Date(), 1);
     const templateData = {
-      name: this.user.getName(),
+      name: user.getName(),
       spotType: this.spot.type,
       reference: this.spot.spotId,
       deadline: toISODate(aWeekFromNow)
@@ -196,7 +196,7 @@ class EventSpotsRC extends ResourceController {
       const template = `${EmailTemplates.SPOT_ASSIGNED}-${STAGE}`;
       const aWeekFromNow = addWeeks(new Date(), 1);
       const templateData = {
-        name: this.user.getName(),
+        name: targetUser.getName(),
         spotType: this.spot.type,
         reference: this.spot.spotId,
         deadline: toISODate(aWeekFromNow)
@@ -303,7 +303,8 @@ class EventSpotsRC extends ResourceController {
       const toAddresses = [user.email];
       const template = `${EmailTemplates.SPOT_RELEASED}-${STAGE}`;
       const templateData = {
-        name: user.getName()
+        name: user.getName(),
+        reference: this.spot.spotId
       };
 
       try {
