@@ -328,7 +328,7 @@ class EventSpotsRC extends ResourceController {
   protected async deleteResource(): Promise<void> {
     if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
 
-    if (this.spot.userId || this.spot.sectionCountry) throw new RCError('Release the spot first');
+    if (this.spot.userId) throw new RCError('Release the spot first');
 
     await ddb.delete({ TableName: DDB_TABLES.eventSpots, Key: { spotId: this.spot.spotId } });
   }

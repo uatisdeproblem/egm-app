@@ -204,7 +204,7 @@ export class SpotsPage implements OnInit {
       icon: 'pencil',
       handler: (): Promise<void> => this.editDescriptionOfSpots(spotsSelected)
     });
-    if (spotsSelected.every(x => !x.userId && !x.sectionCountry)) {
+    if (spotsSelected.every(x => !x.userId)) {
       buttons.push({
         text: this.t._('SPOTS.DELETE_SPOTS'),
         icon: 'trash',
