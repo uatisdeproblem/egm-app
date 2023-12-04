@@ -10,6 +10,7 @@ import { HTML2PDF } from 'idea-html2pdf';
 import { AuthServices, User, UserPermissions } from '../models/user.model';
 import { Configurations } from '../models/configurations.model';
 import { EventSpot, EventSpotAttached } from '../models/eventSpot.model';
+import { sendSimpleEmail } from '../utils/notifications.utils';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -179,7 +180,7 @@ class UsersRC extends ResourceController {
   private async generateUserInvoice(): Promise<SignedURL> {
     if (!this.reqUser.registrationAt || !this.reqUser.spot) return;
 
-    const filename = `${this.principalId.replace(/[/.]/g, '_')}_invoice`;
+    const filename = `${this.reqUser.spot.spotId}_invoice`;
 
     const bucket = S3_BUCKET_MEDIA;
     const key = S3_DOWNLOADS_FOLDER + `/invoices/${filename}`;
@@ -197,7 +198,7 @@ class UsersRC extends ResourceController {
     })) as string;
 
     const pdfVariables = {
-      reference: this.reqUser.userId,
+      reference: this.reqUser.spot.spotId,
       issueDate: toISODate(new Date()),
       dueDate: toISODate(addDays(new Date(), 7)),
       invoiceAddress: this.reqUser.registrationForm.financial.invoiceAddress,
@@ -293,7 +294,12 @@ class UsersRC extends ResourceController {
       await cognito.deleteUser(cognitoUserEmail, COGNITO_USER_POOL_ID);
     }
     await ddb.delete({ TableName: DDB_TABLES.users, Key: { userId: this.targetUser.userId } });
-    // @todo delete all user-related data
+
+    try {
+      await this.releaseSpot();
+    } catch (error) {
+      this.logger.error('Failed to send delete warn email', error);
+    }
   }
 
   protected async getResources(): Promise<User[]> {
@@ -306,5 +312,29 @@ class UsersRC extends ResourceController {
       users = users.filter(x => x.sectionCountry === this.reqUser.sectionCountry);
 
     return users;
+  }
+
+  private async releaseSpot(): Promise<void> {
+    if (!this.targetUser.spot) return;
+
+    const updateSpot = {
+      TableName: DDB_TABLES.eventSpots,
+      Key: { spotId: this.targetUser.spot.spotId },
+      UpdateExpression: 'REMOVE userId, userName'
+    };
+
+    const writes: any[] = [{ Update: updateSpot }];
+
+    await ddb.transactWrites(writes);
+
+    const toAddresses = ['egm-technical@esn.org'];
+    const subject = '[EGM] User with spot deleted';
+    const content = `A user with ID ${this.targetUser.userId} has deleted his account and released the spot ${this.targetUser.spot.spotId}`;
+
+    try {
+      await sendSimpleEmail(toAddresses, subject, content);
+    } catch (error) {
+      this.logger.warn('Error sending email', error);
+    }
   }
 }

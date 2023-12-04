@@ -3,6 +3,7 @@
 ///
 
 import { DynamoDB, GetObjectTypes, RCError, ResourceController, S3, SES } from 'idea-aws';
+import { toISODate } from 'idea-toolbox';
 
 import { sendEmail } from '../utils/notifications.utils';
 
@@ -124,12 +125,15 @@ class ConfigurationsRC extends ResourceController {
     const template = `${emailTemplate}-${STAGE}`;
     const templateData = {
       user: this.user.getName(),
+      name: this.user.getName(),
       country: TEST_EMAIL_EXAMPLE_COUNTRY,
       section: TEST_EMAIL_EXAMPLE_SECTION,
       spotType: TEST_EMAIL_EXAMPLE_SPOT_TYPE,
       spotId: TEST_EMAIL_EXAMPLE_SPOT_ID,
       price: TEST_EMAIL_EXAMPLE_PRICE,
-      url: TEST_EMAIL_EXAMPLE_URL
+      url: TEST_EMAIL_EXAMPLE_URL,
+      reference: 1234551234,
+      deadline: toISODate(new Date())
     };
 
     try {

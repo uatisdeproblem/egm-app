@@ -2,7 +2,10 @@
 /// IMPORTS
 ///
 
+import { addWeeks } from 'date-fns';
+
 import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { toISODate } from 'idea-toolbox';
 
 import { sendEmail } from '../utils/notifications.utils';
 
@@ -120,8 +123,12 @@ class EventSpotsRC extends ResourceController {
 
     const toAddresses = [user.email];
     const template = `${EmailTemplates.SPOT_ASSIGNED}-${STAGE}`;
+    const aWeekFromNow = addWeeks(new Date(), 1);
     const templateData = {
-      user: this.user.getName()
+      name: user.getName(),
+      spotType: this.spot.type,
+      reference: this.spot.spotId,
+      deadline: toISODate(aWeekFromNow)
     };
 
     try {
@@ -171,16 +178,33 @@ class EventSpotsRC extends ResourceController {
 
     await ddb.transactWrites([{ Update: updateSpot }, { Update: updateTargetUser }, { Update: updateSourceUser }]);
 
-    const toAddresses = [sourceUser.email, targetUser.email];
-    const template = `${EmailTemplates.SPOT_TRANSFERRED}-${STAGE}`;
-    const templateData = {
-      user: this.user.getName()
-    };
-
     try {
+      const toAddresses = [sourceUser.email];
+      const template = `${EmailTemplates.SPOT_TRANSFERRED}-${STAGE}`;
+      const templateData = {
+        name: sourceUser.getName(),
+        reference: this.spot.spotId
+      };
+
       await sendEmail(toAddresses, template, templateData);
     } catch (error) {
-      this.logger.warn('Error sending email', error, { template });
+      this.logger.warn('Error sending email', error, { temlate: EmailTemplates.SPOT_TRANSFERRED });
+    }
+
+    try {
+      const toAddresses = [targetUser.email];
+      const template = `${EmailTemplates.SPOT_ASSIGNED}-${STAGE}`;
+      const aWeekFromNow = addWeeks(new Date(), 1);
+      const templateData = {
+        name: targetUser.getName(),
+        spotType: this.spot.type,
+        reference: this.spot.spotId,
+        deadline: toISODate(aWeekFromNow)
+      };
+
+      await sendEmail(toAddresses, template, templateData);
+    } catch (error) {
+      this.logger.warn('Error sending email', error, { temlate: EmailTemplates.SPOT_TRANSFERRED });
     }
   }
   private async confirmPayment(): Promise<void> {
@@ -224,7 +248,7 @@ class EventSpotsRC extends ResourceController {
       const toAddresses = [user.email];
       const template = `${EmailTemplates.REGISTRATION_CONFIRMED}-${STAGE}`;
       const templateData = {
-        user: this.user.getName()
+        name: user.getName()
       };
 
       try {
@@ -279,7 +303,8 @@ class EventSpotsRC extends ResourceController {
       const toAddresses = [user.email];
       const template = `${EmailTemplates.SPOT_RELEASED}-${STAGE}`;
       const templateData = {
-        user: this.user.getName()
+        name: user.getName(),
+        reference: this.spot.spotId
       };
 
       try {
@@ -303,7 +328,7 @@ class EventSpotsRC extends ResourceController {
   protected async deleteResource(): Promise<void> {
     if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
 
-    if (this.spot.userId || this.spot.sectionCountry) throw new RCError('Release the spot first');
+    if (this.spot.userId) throw new RCError('Release the spot first');
 
     await ddb.delete({ TableName: DDB_TABLES.eventSpots, Key: { spotId: this.spot.spotId } });
   }

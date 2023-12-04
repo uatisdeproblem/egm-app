@@ -74,6 +74,7 @@ export class RegistrationsConfigurationsPage implements OnInit {
       if (!name) return;
       this.configurations.spotTypes.push(name);
       this.configurations.pricePerSpotTypes[name] = data.price ?? 0;
+      this.configurations.stripeLinkPerSpotType[name] = data.stripeLink || null;
     };
 
     const header = this.t._('MANAGE.ADD_SPOT_TYPE');
@@ -83,7 +84,8 @@ export class RegistrationsConfigurationsPage implements OnInit {
         name: 'price',
         type: 'number',
         placeholder: this.t._('MANAGE.SPOT_TYPE_PRICE', { currency: this.configurations.currency })
-      }
+      },
+      { name: 'stripeLink', type: 'text', placeholder: this.t._('MANAGE.SPOT_TYPE_STRIPE') }
     ];
     const buttons = [
       { text: this.t._('COMMON.CANCEL'), role: 'cancel' },

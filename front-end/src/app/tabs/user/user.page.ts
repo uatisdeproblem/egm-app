@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { Browser } from '@capacitor/browser';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
@@ -11,6 +11,7 @@ import { UsefulLinksService } from '@app/common/usefulLinks/usefulLinks.service'
 import { environment as env } from '@env';
 import { AuthServices, User } from '@models/user.model';
 import { UsefulLink } from '@models/usefulLink.model';
+import { StripeWarningStandaloneComponent } from '../payments/stripeWarning.component';
 
 @Component({
   selector: 'user',
@@ -30,6 +31,7 @@ export class UserPage {
 
   constructor(
     private alertCtrl: AlertController,
+    private modalCtrl: ModalController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     private t: IDEATranslationsService,
@@ -174,5 +176,17 @@ export class UserPage {
 
     const alert = await this.alertCtrl.create({ header, subHeader, message, inputs, buttons });
     await alert.present();
+  }
+
+  async openStripeWarning(): Promise<void> {
+    const userSpotType = this.app.user.spot?.type;
+    if (!userSpotType) return;
+
+    const url = this.app.configurations.getSpotPaymentLink(userSpotType);
+    if (!url) return;
+
+    const componentProps = { url };
+    const modal = await this.modalCtrl.create({ component: StripeWarningStandaloneComponent, componentProps });
+    await modal.present();
   }
 }

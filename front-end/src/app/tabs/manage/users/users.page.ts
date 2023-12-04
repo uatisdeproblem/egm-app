@@ -134,7 +134,7 @@ export class UsersPage implements OnInit {
     this.filteredUsers = this.users.slice();
 
     this.filteredUsers = this.filteredUsers.filter(x =>
-      [x.userId, x.firstName, x.lastName, x.email, x.sectionCountry, x.sectionName]
+      [x.userId, x.firstName, x.lastName, x.email, x.sectionCountry, x.sectionName, x.spot?.spotId]
         .filter(f => f)
         .some(f => String(f).toLowerCase().includes(searchText))
     );

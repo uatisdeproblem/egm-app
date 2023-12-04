@@ -12,3 +12,8 @@ export const sendEmail = async (toAddresses: string[], template: string, templat
   SES_CONFIG.sourceName = 'EGM App';
   await ses.sendTemplatedEmail({ toAddresses, template, templateData }, SES_CONFIG);
 };
+
+export const sendSimpleEmail = async (toAddresses: string[], subject: string, text: string): Promise<void> => {
+  SES_CONFIG.sourceName = 'EGM App';
+  await ses.sendEmail({ toAddresses, subject, text }, SES_CONFIG);
+};
