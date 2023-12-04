@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^1.5.1",
+    "date-fns": "^2.30.0",
     "idea-aws": "^4.2.1",
     "idea-html2pdf": "^2.2.5",
     "idea-toolbox": "^7.0.1",
