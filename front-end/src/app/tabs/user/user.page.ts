@@ -1,13 +1,17 @@
 import { Component } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
+import { Browser } from '@capacitor/browser';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { AppService } from '@app/app.service';
 import { AuthService } from '@app/auth/auth.service';
 import { UserService } from '@tabs/user/user.service';
+import { UsefulLinksService } from '@app/common/usefulLinks/usefulLinks.service';
 
 import { environment as env } from '@env';
 import { AuthServices, User } from '@models/user.model';
+import { UsefulLink } from '@models/usefulLink.model';
+import { StripeWarningStandaloneComponent } from '../payments/stripeWarning.component';
 
 @Component({
   selector: 'user',
@@ -23,15 +27,22 @@ export class UserPage {
   errors = new Set<string>();
   entityBeforeChange: User;
 
+  usefulLinks: UsefulLink[];
+
   constructor(
     private alertCtrl: AlertController,
+    private modalCtrl: ModalController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     private t: IDEATranslationsService,
     private auth: AuthService,
     private _user: UserService,
+    private _usefulLinks: UsefulLinksService,
     public app: AppService
   ) {}
+  async ionViewWillEnter(): Promise<void> {
+    this.usefulLinks = await this._usefulLinks.getList();
+  }
 
   async changeAvatar({ target }): Promise<void> {
     const file = target.files[0];
@@ -115,8 +126,16 @@ export class UserPage {
       this.loading.hide();
     }
   }
-  downloadInfoToPay(): void {
-    // @todo
+  async downloadInfoToPay(): Promise<void> {
+    try {
+      await this.loading.show();
+      const { url } = await this._user.getInvoice();
+      Browser.open({ url });
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
 
   async logout(): Promise<void> {
@@ -157,5 +176,17 @@ export class UserPage {
 
     const alert = await this.alertCtrl.create({ header, subHeader, message, inputs, buttons });
     await alert.present();
+  }
+
+  async openStripeWarning(): Promise<void> {
+    const userSpotType = this.app.user.spot?.type;
+    if (!userSpotType) return;
+
+    const url = this.app.configurations.getSpotPaymentLink(userSpotType);
+    if (!url) return;
+
+    const componentProps = { url };
+    const modal = await this.modalCtrl.create({ component: StripeWarningStandaloneComponent, componentProps });
+    await modal.present();
   }
 }

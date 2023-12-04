@@ -54,6 +54,7 @@ export class RegistrationPage {
       }
       if (this.user.userId !== this.app.user.userId && !this.app.user.permissions.canManageRegistrations)
         this.editMode = false;
+      if (!this.app.configurations.canUserRegister(this.user)) this.editMode = false;
     } catch (error) {
       this.app.closePage('COMMON.SOMETHING_WENT_WRONG');
       throw error;

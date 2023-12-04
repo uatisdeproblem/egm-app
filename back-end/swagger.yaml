@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: EGM API
-  version: 3.2.0
+  version: 3.3.0
   contact:
     name: EGM Technical Lead
     email: egm-technical@esn.org
@@ -32,6 +32,8 @@ tags:
     description: The users of the platform
   - name: Event
     description: The event-related actions
+  - name: UsefulLinks
+    description: The useful links available to the users to explore more contents
 
 paths:
   /status:
@@ -141,24 +143,16 @@ paths:
                 action:
                   type: string
                   enum:
-                    - GET_EMAIL_TEMPLATE_SPOT_ASSIGNED
-                    - SET_EMAIL_TEMPLATE_SPOT_ASSIGNED
-                    - RESET_EMAIL_TEMPLATE_SPOT_ASSIGNED
-                    - TEST_EMAIL_TEMPLATE_SPOT_ASSIGNED
-                    - GET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
-                    - SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
-                    - RESET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
-                    - TEST_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED
-                    - GET_DOCUMENT_TEMPLATE_INVOICE
-                    - SET_DOCUMENT_TEMPLATE_INVOICE
-                    - RESET_DOCUMENT_TEMPLATE_INVOICE
-                    - TEST_DOCUMENT_TEMPLATE_INVOICE
+                    - GET_EMAIL_TEMPLATE
+                    - SET_EMAIL_TEMPLATE
+                    - RESET_EMAIL_TEMPLATE
+                    - TEST_EMAIL_TEMPLATE
                 subject:
                   type: string
                   description: (SET_EMAIL_TEMPLATE_SPOT_ASSIGNED, SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED)
                 content:
                   type: string
-                  description: (SET_EMAIL_TEMPLATE_SPOT_ASSIGNED, SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED, SET_DOCUMENT_TEMPLATE_INVOICE)
+                  description: (SET_EMAIL_TEMPLATE_SPOT_ASSIGNED, SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED)
       responses:
         200:
           $ref: '#/components/responses/OperationCompleted'
@@ -240,7 +234,8 @@ paths:
                       CHANGE_PERMISSIONS,
                       GET_PROOF_OF_PAYMENT,
                       PUT_PROOF_OF_PAYMENT_START,
-                      PUT_PROOF_OF_PAYMENT_END
+                      PUT_PROOF_OF_PAYMENT_END,
+                      GET_INVOICE
                     ]
                 registrationForm:
                   type: number
@@ -367,6 +362,121 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /useful-links:
+    get:
+      summary: Get the useful links
+      tags: [UsefulLinks]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/UsefulLinks'
+    post:
+      summary: Insert a new useful link
+      description: Requires to be content manager
+      tags: [UsefulLinks]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsefulLink'
+      responses:
+        200:
+          $ref: '#/components/responses/UsefulLink'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /useful-links/{linkId}:
+    get:
+      summary: Get a useful link
+      tags: [UsefulLinks]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: linkId
+          in: path
+          description: Link ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/UsefulLink'
+    put:
+      summary: Edit a useful link
+      description: Requires to be content manager
+      tags: [UsefulLinks]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: linkId
+          in: path
+          description: Link ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsefulLink'
+      responses:
+        200:
+          $ref: '#/components/responses/UsefulLink'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on a useful link
+      description: Requires to be content manager
+      tags: [UsefulLinks]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: linkId
+          in: path
+          description: Link ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [SWAP_SORT]
+                otherLinkId:
+                  type: string
+                  description: (SWAP_SORT)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a useful link
+      description: Requires to be content manager
+      tags: [UsefulLinks]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: linkId
+          in: path
+          description: Link ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -380,6 +490,9 @@ components:
       type: object
       additionalProperties: {}
     EventSpot:
+      type: object
+      additionalProperties: {}
+    UsefulLink:
       type: object
       additionalProperties: {}
 
@@ -428,6 +541,21 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/EventSpot'
+    UsefulLink:
+      description: A useful link
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/UsefulLink'
+    UsefulLinks:
+      description: The useful links
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/UsefulLink'
     BadParameters:
       description: Bad input parameters
       content:

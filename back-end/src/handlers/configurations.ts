@@ -3,6 +3,9 @@
 ///
 
 import { DynamoDB, GetObjectTypes, RCError, ResourceController, S3, SES } from 'idea-aws';
+import { toISODate } from 'idea-toolbox';
+
+import { sendEmail } from '../utils/notifications.utils';
 
 import { Configurations } from '../models/configurations.model';
 import { User } from '../models/user.model';
@@ -91,31 +94,14 @@ class ConfigurationsRC extends ResourceController {
 
   protected async patchResources(): Promise<{ subject: string; content: string } | void> {
     switch (this.body.action) {
-      case 'GET_EMAIL_TEMPLATE_SPOT_ASSIGNED':
-        return await this.getEmailTemplate('spot-assigned');
-      case 'SET_EMAIL_TEMPLATE_SPOT_ASSIGNED':
-        return await this.setEmailTemplate('spot-assigned', this.body.subject, this.body.content);
-      case 'RESET_EMAIL_TEMPLATE_SPOT_ASSIGNED':
-        return await this.resetEmailTemplate('spot-assigned');
-      case 'TEST_EMAIL_TEMPLATE_SPOT_ASSIGNED':
-        return await this.testEmailTemplate('spot-assigned');
-      case 'GET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
-        return await this.getEmailTemplate('registration-confirmed');
-      case 'SET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
-        return await this.setEmailTemplate('registration-confirmed', this.body.subject, this.body.content);
-      case 'RESET_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
-        return await this.resetEmailTemplate('registration-confirmed');
-      case 'TEST_EMAIL_TEMPLATE_REGISTRATION_CONFIRMED':
-        return await this.testEmailTemplate('registration-confirmed');
-      // @todo move this to document template
-      case 'GET_DOCUMENT_TEMPLATE_INVOICE':
-        return await this.getDocumentTemplate('payment-invoice');
-      case 'SET_DOCUMENT_TEMPLATE_INVOICE':
-        return await this.setDocumentTemplate('payment-invoice', this.body.content);
-      case 'RESET_DOCUMENT_TEMPLATE_INVOICE':
-        return await this.resetDocumentTemplate('payment-invoice');
-      case 'TEST_DOCUMENT_TEMPLATE_INVOICE':
-        return await this.testDocumentTemplate('payment-invoice');
+      case 'GET_EMAIL_TEMPLATE':
+        return await this.getEmailTemplate(this.body.template);
+      case 'SET_EMAIL_TEMPLATE':
+        return await this.setEmailTemplate(this.body.template, this.body.subject, this.body.content);
+      case 'RESET_EMAIL_TEMPLATE':
+        return await this.resetEmailTemplate(this.body.template);
+      case 'TEST_EMAIL_TEMPLATE':
+        return await this.testEmailTemplate(this.body.template);
       default:
         throw new RCError('Unsupported action');
     }
@@ -139,19 +125,22 @@ class ConfigurationsRC extends ResourceController {
     const template = `${emailTemplate}-${STAGE}`;
     const templateData = {
       user: this.user.getName(),
+      name: this.user.getName(),
       country: TEST_EMAIL_EXAMPLE_COUNTRY,
       section: TEST_EMAIL_EXAMPLE_SECTION,
       spotType: TEST_EMAIL_EXAMPLE_SPOT_TYPE,
       spotId: TEST_EMAIL_EXAMPLE_SPOT_ID,
       price: TEST_EMAIL_EXAMPLE_PRICE,
-      url: TEST_EMAIL_EXAMPLE_URL
+      url: TEST_EMAIL_EXAMPLE_URL,
+      reference: 1234551234,
+      deadline: toISODate(new Date())
     };
 
     try {
-      await ses.testTemplate(template, templateData);
+      await sendEmail(toAddresses, template, templateData);
     } catch (error) {
-      this.logger.warn('Elaborating template', error, { template });
-      throw new RCError('Bad template');
+      this.logger.warn('Error sending email', error, { template });
+      throw new RCError('Error sending email');
     }
 
     try {
@@ -169,18 +158,5 @@ class ConfigurationsRC extends ResourceController {
       type: GetObjectTypes.TEXT
     })) as string;
     await ses.setTemplate(`${emailTemplate}-${STAGE}`, subject, content, true);
-  }
-
-  private async getDocumentTemplate(documentTemplate: string) {
-    // @todo
-  }
-  private async setDocumentTemplate(documentTemplate: string, content: string): Promise<void> {
-    // @todo
-  }
-  private async testDocumentTemplate(documentTemplate: string): Promise<void> {
-    // @todo
-  }
-  private async resetDocumentTemplate(documentTemplate: string): Promise<void> {
-    // @todo
   }
 }

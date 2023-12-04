@@ -6,6 +6,19 @@
     <ion-title>{{ 'USERS.USERS' | translate }}</ion-title>
   </ion-toolbar>
   <div class="filters">
+    <ion-item color="ideaToolbar" lines="none">
+      <ion-searchbar (ionInput)="filter($event.target.value)"></ion-searchbar>
+      <ion-button
+        slot="end"
+        color="ESNgreen"
+        fill="clear"
+        *ngIf="filteredUsers?.length"
+        [title]="'USERS.DOWNLOAD_FILTERED_USERS' | translate"
+        (click)="downloadFilteredUserAsExcelFile()"
+      >
+        <ion-icon name="download" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
     <ion-item color="ideaToolbar" lines="none" *ngIf="usersTable.selected.length">
       <ion-button slot="start" color="ESNgreen" fill="clear" (click)="openRegistrationOfUser(usersTable.selected[0])">
         <ion-icon name="open-outline" slot="icon-only"></ion-icon>
@@ -21,7 +34,7 @@
       <ion-button
         slot="start"
         color="ESNgreen"
-        *ngIf="!app.user.permissions.canManageRegistrations && app.user.permissions.isCountryLeader"
+        *ngIf="!app.user.permissions.isAdmin && canAssignSpotAsCountryLeader()"
         [disabled]="!numCountrySpotsAvailable || usersTable.selected[0]?.spot"
         (click)="assignCountrySpot(usersTable.selected[0])"
       >
@@ -30,7 +43,7 @@
       <ion-label *ngIf="app.user.permissions.canManageRegistrations">
         <i>{{ 'USERS.ACTIONS_ON_USER' | translate : { user: usersTable.selected[0].firstName } }}</i>
       </ion-label>
-      <ion-label *ngIf="!app.user.permissions.canManageRegistrations && app.user.permissions.isCountryLeader">
+      <ion-label *ngIf="!app.user.permissions.canManageRegistrations && canAssignSpotAsCountryLeader()">
         <i>{{ 'USERS.COUNTRY_SPOTS_AVAILABLE' | translate : { num: numCountrySpotsAvailable } }}</i>
       </ion-label>
     </ion-item>
@@ -96,9 +109,6 @@
           {{ country }}
         </ion-select-option>
       </ion-select>
-    </ion-item>
-    <ion-item color="ideaToolbar" lines="none">
-      <ion-searchbar (ionInput)="filter($event.target.value)"></ion-searchbar>
     </ion-item>
   </div>
 </ion-header>

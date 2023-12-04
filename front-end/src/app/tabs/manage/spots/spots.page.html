@@ -6,6 +6,9 @@
     <ion-title>{{ 'SPOTS.SPOTS' | translate }}</ion-title>
   </ion-toolbar>
   <div class="filters">
+    <ion-item color="ideaToolbar" lines="none">
+      <ion-searchbar (ionInput)="filter($event.target.value)"></ion-searchbar>
+    </ion-item>
     <ion-item color="ideaToolbar" lines="none" *ngIf="!spotsTable.selected.length" button (click)="addSpots()">
       <ion-icon name="add" slot="start" color="ESNgreen"></ion-icon>
       <ion-label>{{ 'SPOTS.ADD_SPOTS' | translate }}</ion-label>
@@ -78,9 +81,6 @@
         <ion-select-option value="yes">{{ 'COMMON.YES' | translate }}</ion-select-option>
         <ion-select-option value="no">{{ 'COMMON.NO' | translate }}</ion-select-option>
       </ion-select>
-    </ion-item>
-    <ion-item color="ideaToolbar" lines="none">
-      <ion-searchbar (ionInput)="filter($event.target.value)"></ion-searchbar>
     </ion-item>
   </div>
 </ion-header>

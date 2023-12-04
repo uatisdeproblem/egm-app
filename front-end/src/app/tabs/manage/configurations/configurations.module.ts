@@ -8,7 +8,6 @@ import { ConfigurationsRoutingModule } from './configurations-routing.module';
 
 import { RegistrationsConfigurationsPage } from './registrations/registrationsConfig.page';
 import { EmailTemplateModule } from './emailTemplate/emailTemplate.module';
-import { DocumentTemplateModule } from './documentTemplate/documentTemplate.module';
 
 @NgModule({
   imports: [
@@ -19,8 +18,7 @@ import { DocumentTemplateModule } from './documentTemplate/documentTemplate.modu
     IDEACustomFieldsModule,
     IDEAListModule,
     ConfigurationsRoutingModule,
-    EmailTemplateModule,
-    DocumentTemplateModule
+    EmailTemplateModule
   ],
   declarations: [RegistrationsConfigurationsPage]
 })

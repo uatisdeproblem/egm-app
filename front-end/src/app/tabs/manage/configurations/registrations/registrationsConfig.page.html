@@ -28,8 +28,18 @@
       </ion-label>
     </ion-list-header>
     <ion-item>
-      <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.isRegistrationOpen">
+      <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.isRegistrationOpenForESNers">
         {{ 'MANAGE.ALLOW_REGISTRATIONS' | translate }}
+      </ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.isRegistrationOpenForExternals">
+        {{ 'MANAGE.ALLOW_EXTERNALS' | translate }}
+      </ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.canCountryLeadersAssignSpots">
+        {{ 'MANAGE.ALLOW_COUNTRY_LEADER_ASSIGN_SPOT' | translate }}
       </ion-checkbox>
     </ion-item>
     <ion-list-header>
@@ -53,7 +63,12 @@
     <ion-reorder-group [disabled]="!editMode" (ionItemReorder)="reorderSpotTypes($event)">
       <ion-item *ngFor="let st of configurations.spotTypes">
         <ion-reorder slot="start" *ngIf="editMode"></ion-reorder>
-        <ion-label>{{ st }}</ion-label>
+        <ion-label>
+          {{ st }}
+          <p>
+            <ion-note>{{ configurations.stripeLinkPerSpotType[st] }}</ion-note>
+          </p>
+        </ion-label>
         <ion-badge slot="end">{{ configurations.pricePerSpotTypes[st] | currency: configurations.currency }}</ion-badge>
         <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeSpotType(st)">
           <ion-icon icon="trash" slot="icon-only"></ion-icon>

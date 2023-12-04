@@ -2,12 +2,15 @@
 /// IMPORTS
 ///
 
-import { Cognito, DynamoDB, RCError, ResourceController, S3 } from 'idea-aws';
-import { SignedURL } from 'idea-toolbox';
+import { addDays } from 'date-fns';
+import { SignedURL, toISODate } from 'idea-toolbox';
+import { Cognito, DynamoDB, GetObjectTypes, RCError, ResourceController, S3 } from 'idea-aws';
+import { HTML2PDF } from 'idea-html2pdf';
 
 import { AuthServices, User, UserPermissions } from '../models/user.model';
 import { Configurations } from '../models/configurations.model';
 import { EventSpot, EventSpotAttached } from '../models/eventSpot.model';
+import { sendSimpleEmail } from '../utils/notifications.utils';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -24,6 +27,8 @@ const ddb = new DynamoDB();
 const S3_BUCKET_MEDIA = process.env.S3_BUCKET_MEDIA;
 const S3_IMAGES_FOLDER = process.env.S3_IMAGES_FOLDER;
 const S3_ATTACHMENTS_FOLDER = process.env.S3_ATTACHMENTS_FOLDER;
+const S3_ASSETS_FOLDER = process.env.S3_ASSETS_FOLDER;
+const S3_DOWNLOADS_FOLDER = process.env.S3_DOWNLOADS_FOLDER;
 const s3 = new S3();
 
 const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
@@ -36,6 +41,7 @@ export const handler = (ev: any, _: any, cb: any): Promise<void> => new UsersRC(
 ///
 
 class UsersRC extends ResourceController {
+  configurations: Configurations;
   reqUser: User;
   targetUser: User;
 
@@ -44,6 +50,14 @@ class UsersRC extends ResourceController {
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
+    try {
+      this.configurations = new Configurations(
+        await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
+      );
+    } catch (err) {
+      throw new RCError('Configuration not found');
+    }
+
     try {
       this.reqUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
@@ -78,10 +92,7 @@ class UsersRC extends ResourceController {
   }
 
   protected async getResource(): Promise<User> {
-    const configurations = new Configurations(
-      await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
-    );
-    (this.targetUser as any).configurations = configurations;
+    (this.targetUser as any).configurations = this.configurations;
     return this.targetUser;
   }
 
@@ -107,6 +118,8 @@ class UsersRC extends ResourceController {
         return await this.registerToEvent(this.body.registrationForm, this.body.isDraft);
       case 'CHANGE_PERMISSIONS':
         return await this.changeUserPermissions(this.body.permissions);
+      case 'GET_INVOICE':
+        return await this.generateUserInvoice();
       case 'GET_PROOF_OF_PAYMENT':
         return await this.getSignedURLToDownloadProofOfPayment();
       case 'PUT_PROOF_OF_PAYMENT_START':
@@ -127,20 +140,16 @@ class UsersRC extends ResourceController {
     return signedURL;
   }
   private async registerToEvent(registrationForm: any, isDraft: boolean): Promise<User> {
-    const configurations = new Configurations(
-      await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
-    );
-
-    if (!configurations.isRegistrationOpen && !this.reqUser.permissions.canManageRegistrations)
+    if (!this.configurations.canUserRegister(this.targetUser) && !this.reqUser.permissions.canManageRegistrations)
       throw new RCError('Registrations are closed');
     if (this.targetUser.registrationAt && !this.reqUser.permissions.canManageRegistrations)
       throw new RCError("Can't edit a submitted registration");
 
-    this.targetUser.registrationForm = configurations.registrationFormDef.loadSections(registrationForm);
+    this.targetUser.registrationForm = this.configurations.registrationFormDef.loadSections(registrationForm);
 
     if (isDraft) this.targetUser.registrationAt = null;
     else {
-      const errors = configurations.registrationFormDef.validateSections(this.targetUser.registrationForm);
+      const errors = this.configurations.registrationFormDef.validateSections(this.targetUser.registrationForm);
       if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
       this.targetUser.registrationAt = new Date().toISOString();
     }
@@ -167,6 +176,60 @@ class UsersRC extends ResourceController {
 
     return this.targetUser;
   }
+
+  private async generateUserInvoice(): Promise<SignedURL> {
+    if (!this.reqUser.registrationAt || !this.reqUser.spot) return;
+
+    const filename = `${this.reqUser.spot.spotId}_invoice`;
+
+    const bucket = S3_BUCKET_MEDIA;
+    const key = S3_DOWNLOADS_FOLDER + `/invoices/${filename}`;
+
+    const objectExists = await s3.doesObjectExist({
+      bucket,
+      key
+    });
+    if (objectExists) return await s3.signedURLGet(S3_BUCKET_MEDIA, key);
+
+    const htmlBody = (await s3.getObject({
+      bucket: S3_BUCKET_MEDIA,
+      key: S3_ASSETS_FOLDER.concat('/payment-invoice.hbs'),
+      type: GetObjectTypes.TEXT
+    })) as string;
+
+    const pdfVariables = {
+      reference: this.reqUser.spot.spotId,
+      issueDate: toISODate(new Date()),
+      dueDate: toISODate(addDays(new Date(), 7)),
+      invoiceAddress: this.reqUser.registrationForm.financial.invoiceAddress,
+      name: `${this.reqUser.firstName} ${this.reqUser.lastName}`,
+      spotType: this.reqUser.spot.type,
+      spotPrice: `${this.configurations.pricePerSpotTypes[this.reqUser.spot.type]}.00€`
+    };
+
+    try {
+      const html2pdf = new HTML2PDF();
+
+      const body = await html2pdf.create({
+        body: html2pdf.handlebarsCompile(htmlBody, { compat: true })(pdfVariables),
+        pdfOptions: { margin: { top: '0cm', right: '0cm', bottom: '0cm', left: '0cm' } }
+      });
+
+      s3.putObject({
+        bucket,
+        key,
+        body,
+        contentType: 'application/pdf',
+        filename
+      });
+
+      return await s3.signedURLGet(S3_BUCKET_MEDIA, key);
+    } catch (err) {
+      this.logger.warn('PDF creation failed', err);
+      throw new RCError('PDF creation failed');
+    }
+  }
+
   private async getSignedURLToDownloadProofOfPayment(): Promise<SignedURL> {
     if (!this.targetUser.spot?.proofOfPaymentURI) throw new RCError('No proof of payment');
 
@@ -222,7 +285,8 @@ class UsersRC extends ResourceController {
   }
 
   protected async deleteResource(): Promise<void> {
-    if (!this.reqUser.permissions.canManageRegistrations) throw new RCError('Unauthorized');
+    if (!this.reqUser.permissions.isAdmin && this.reqUser.userId !== this.targetUser.userId)
+      throw new RCError('Unauthorized');
 
     if (this.targetUser.authService === AuthServices.COGNITO) {
       const cognitoUserId = this.targetUser.getAuthServiceUserId();
@@ -230,7 +294,12 @@ class UsersRC extends ResourceController {
       await cognito.deleteUser(cognitoUserEmail, COGNITO_USER_POOL_ID);
     }
     await ddb.delete({ TableName: DDB_TABLES.users, Key: { userId: this.targetUser.userId } });
-    // @todo delete all user-related data
+
+    try {
+      await this.releaseSpot();
+    } catch (error) {
+      this.logger.error('Failed to send delete warn email', error);
+    }
   }
 
   protected async getResources(): Promise<User[]> {
@@ -243,5 +312,29 @@ class UsersRC extends ResourceController {
       users = users.filter(x => x.sectionCountry === this.reqUser.sectionCountry);
 
     return users;
+  }
+
+  private async releaseSpot(): Promise<void> {
+    if (!this.targetUser.spot) return;
+
+    const updateSpot = {
+      TableName: DDB_TABLES.eventSpots,
+      Key: { spotId: this.targetUser.spot.spotId },
+      UpdateExpression: 'REMOVE userId, userName'
+    };
+
+    const writes: any[] = [{ Update: updateSpot }];
+
+    await ddb.transactWrites(writes);
+
+    const toAddresses = ['egm-technical@esn.org'];
+    const subject = '[EGM] User with spot deleted';
+    const content = `A user with ID ${this.targetUser.userId} has deleted his account and released the spot ${this.targetUser.spot.spotId}`;
+
+    try {
+      await sendSimpleEmail(toAddresses, subject, content);
+    } catch (error) {
+      this.logger.warn('Error sending email', error);
+    }
   }
 }

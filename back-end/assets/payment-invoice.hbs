@@ -1,5 +1,96 @@
-<html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <style>
+
+      body { font-family: 'Arial', sans-serif; padding-left: 2.54cm; padding-right: 2.54cm; /* A4 dimensions with
+      padding on all sides (1 inch = 2.54 cm) */ box-sizing: border-box; background-color: #fff; color: #333; } header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; } header img {
+      max-height: 50px; /* Adjust the max-height as needed */ } .title { color: #3498db; text-align: left;
+      margin-bottom: 10px; } h3 { font-weight: bold; margin-bottom: 10px; color: #333; } .invoice-details { display:
+      flex; justify-content: space-between; margin-bottom: 20px; } .invoice-details .left-section, .invoice-details
+      .right-section { width: 49%; } table { width: 100%; border-collapse: collapse; margin-bottom: 20px; } th, td {
+      border: 1px solid #ddd; padding: 10px; text-align: left; } th:first-child, td:first-child { width: 40%; }
+      th:nth-child(3), td:nth-child(3) { width: 10%; } .total-amount { margin-bottom: 20px; font-weight: bold;
+      text-align: right; } .reference-number { margin-bottom: 20px; color: #e74c3c; font-weight: bold; }
+      .payment-details, .reason-for-payment { margin-bottom: 20px; color: #e74c3c; } .fee-info { color: #333;
+      font-weight: normal; } ul { list-style: none; padding: 0; margin: 0; } ul li { word-wrap: break-word; } footer {
+      border-bottom: 5px solid #3498db; padding-top: 100px; text-align: center; }
+    </style>
+  </head>
   <body>
-    This will have all the informaqtion and logos according to the ERS invoice template
+    <header>
+      <div class='title'>
+        <h1>Invoice Erasmus Generation Meeting 2024</h1>
+      </div>
+      <img
+        src='https://lh4.googleusercontent.com/K9cjmj87M_wvz0FONlnhN0wZ9mpUSA_mCcC4gDmfonTGzq_qjvIvSrB54S3P5TrVoPcPRiSVuf9OYC5p6bEASAz1Ji65tHTwAxXfRLXLAuRgJjzBCE-3KNk7-XDfJu1MgPFXR6AJh-zDwcs2Isk1A2U'
+        alt='ESN Logo'
+      />
+    </header>
+
+    <h3>{{name}}</h3>
+
+    <div class='invoice-details'>
+      <div class='left-section'>
+        <p><strong>Reference:</strong> {{reference}}</p>
+        <p><strong>Date of issue:</strong> {{issueDate}}</p>
+        <p><strong>Invoice due date:</strong> {{dueDate}}</p>
+      </div>
+      <div class='right-section'>
+        <p>{{invoiceAddress}}</p>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Item Description</th>
+          <th>Item Price</th>
+          <th>#</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{spotType}} spot Erasmus Generation Meeting Seville 2024</td>
+          <td>{{spotPrice}}</td>
+          <td>1</td>
+          <td>{{spotPrice}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class='total-amount'>
+      <p><strong>Total amount to pay:</strong> {{spotPrice}}</p>
+    </div>
+
+    <p>The participant is hereby invited to attend the Erasmus Generation Meeting Seville 2024 and pay the participation
+      fee until the
+      {{dueDate}}.</p>
+
+    <ul>
+      <li><strong>Beneficiary:</strong> Federación ESN España</li>
+      <li><strong>Beneficiary address:</strong> Calle Einstein, 7, 28049, Madrid, España</li>
+      <li><strong>Bank name:</strong> Banco Santander</li>
+      <li><strong>Bank address:</strong> De Pereda 9-12, 39004 Santander, España</li>
+      <li><strong>IBAN:</strong> ES38 0049 1806 9627 1211 4512</li>
+      <li><strong>SWIFT CODE:</strong> BSCHESMMXXX</li>
+    </ul>
+
+    <p class='reference-number'>Please write the reference number of your invoice on the payment.</p>
+    <p class='payment-details'>Your Reference: {{reference}}</p>
+    <p class='reason-for-payment'>Reason for payment:
+      {{name}}
+      -
+      {{reference}}
+      - Erasmus Generation Meeting Seville 2024</p>
+    <p class='fee-info'>Be sure to cover all the fees; otherwise, you will be asked to pay the missing part upon
+      arrival.</p>
+
+    <footer>
+      ESN AISBL | Rue Joseph II 120 1000 Brussels Belgium | www.esn.org
+    </footer>
   </body>
 </html>

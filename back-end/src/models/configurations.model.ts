@@ -1,5 +1,7 @@
 import { CustomBlockMeta, Languages, Resource } from 'idea-toolbox';
 
+import { User } from '../models/user.model';
+
 import { ServiceLanguages } from './serviceLanguages.enum';
 
 export const LANGUAGES = new Languages({ default: ServiceLanguages.English, available: [ServiceLanguages.English] });
@@ -12,9 +14,17 @@ export class Configurations extends Resource {
    */
   PK: string;
   /**
-   * Whether the registrations are open.
+   * Whether the registrations are open for ESNers.
    */
-  isRegistrationOpen: boolean;
+  isRegistrationOpenForESNers: boolean;
+  /**
+   * Whether externals and guests can register.
+   */
+  isRegistrationOpenForExternals: boolean;
+  /**
+   * Whether the delegation leaders can assign spots.
+   */
+  canCountryLeadersAssignSpots: boolean;
   /**
    * A custom block containing the definition of custom sections and fields for the registration form.
    */
@@ -32,6 +42,10 @@ export class Configurations extends Resource {
    */
   pricePerSpotTypes: Record<string, number>;
   /**
+   * The stripe payment link for each spot type, if any.
+   */
+  stripeLinkPerSpotType: Record<string, string>;
+  /**
    * The list of all the current ESN countries.
    */
   sectionCountries: string[];
@@ -39,13 +53,18 @@ export class Configurations extends Resource {
   load(x: any): void {
     super.load(x);
     this.PK = Configurations.PK;
-    this.isRegistrationOpen = this.clean(x.isRegistrationOpen, Boolean);
+    this.isRegistrationOpenForESNers = this.clean(x.isRegistrationOpenForESNers, Boolean);
+    this.isRegistrationOpenForExternals = this.clean(x.isRegistrationOpenForExternals, Boolean);
+    this.canCountryLeadersAssignSpots = this.clean(x.canCountryLeadersAssignSpots, Boolean);
     this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);
     this.currency = this.clean(x.currency, String);
     this.spotTypes = this.cleanArray(x.spotTypes, String);
     this.pricePerSpotTypes = {};
+    this.stripeLinkPerSpotType = {};
     if (x.pricePerSpotTypes)
       this.spotTypes.forEach(st => (this.pricePerSpotTypes[st] = this.clean(x.pricePerSpotTypes[st], Number, 0)));
+    if (x.stripeLinkPerSpotType)
+      this.spotTypes.forEach(st => (this.stripeLinkPerSpotType[st] = this.clean(x.stripeLinkPerSpotType[st], String)));
     this.sectionCountries = this.cleanArray(x.sectionCountries, String);
   }
 
@@ -66,14 +85,31 @@ export class Configurations extends Resource {
   loadRegistrationForm(registrationDef: CustomBlockMeta, existingForm?: any): CustomBlockMeta {
     return existingForm ? registrationDef.loadSections(existingForm) : registrationDef.setSectionsDefaultValues();
   }
+
+  /**
+   * Wether registrations are open based on user type
+   */
+  canUserRegister(user: User): boolean {
+    return user.isExternal() ? this.isRegistrationOpenForExternals : this.isRegistrationOpenForESNers;
+  }
+
+  /**
+   * Returnts the payment link associated with the spot type.
+   */
+  getSpotPaymentLink(spotType: string): string {
+    if (!(this.stripeLinkPerSpotType || spotType)) return;
+    return this.stripeLinkPerSpotType[spotType];
+  }
 }
 
 /**
  * The types of email templates available.
  */
 export enum EmailTemplates {
-  SPOT_ASSIGNED = 'SPOT_ASSIGNED',
-  REGISTRATION_CONFIRMED = 'REGISTRATION_CONFIRMED'
+  SPOT_ASSIGNED = 'spot-assigned',
+  REGISTRATION_CONFIRMED = 'registration-confirmed',
+  SPOT_TRANSFERRED = 'spot-transferred',
+  SPOT_RELEASED = 'spot-released'
 }
 
 /**

@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { AlertController, IonSearchbar, ModalController } from '@ionic/angular';
 import { ColumnMode, SelectionType, TableColumn, DatatableComponent } from '@swimlane/ngx-datatable';
+import { WorkBook, utils, writeFile } from 'xlsx';
 import { Suggestion } from 'idea-toolbox';
 import {
   IDEAActionSheetController,
@@ -15,6 +16,7 @@ import { UsersService } from './users.service';
 import { SpotsService } from '../spots/spots.service';
 
 import { User, UserPermissions } from '@models/user.model';
+import { UserFlat, UserFlatWithRegistration } from '@models/userFlat.model';
 import { EventSpot, EventSpotAttached } from '@models/eventSpot.model';
 
 @Component({
@@ -132,7 +134,7 @@ export class UsersPage implements OnInit {
     this.filteredUsers = this.users.slice();
 
     this.filteredUsers = this.filteredUsers.filter(x =>
-      [x.firstName, x.lastName, x.email, x.sectionCountry, x.sectionName]
+      [x.userId, x.firstName, x.lastName, x.email, x.sectionCountry, x.sectionName, x.spot?.spotId]
         .filter(f => f)
         .some(f => String(f).toLowerCase().includes(searchText))
     );
@@ -169,18 +171,20 @@ export class UsersPage implements OnInit {
     const header = this.t._('USERS.ACTIONS_ON_USER', { user: user.getName() });
     const buttons = [];
 
-    if (!user.spot) {
+    if (!user.spot && this.app.user.permissions.isAdmin) {
       buttons.push({
         text: this.t._('USERS.ASSIGN_SPOT'),
         icon: 'ticket',
         handler: (): Promise<void> => this.pickSpotAndAssignToUser(user)
       });
     } else {
-      buttons.push({
-        text: this.t._('USERS.TRANSFER_SPOT'),
-        icon: 'swap-horizontal',
-        handler: (): Promise<void> => this.transferSpotToAnotherUser(user)
-      });
+      if (this.app.user.permissions.isAdmin) {
+        buttons.push({
+          text: this.t._('USERS.TRANSFER_SPOT'),
+          icon: 'swap-horizontal',
+          handler: (): Promise<void> => this.transferSpotToAnotherUser(user)
+        });
+      }
       if (user.spot.proofOfPaymentURI) {
         buttons.push({
           text: this.t._('USERS.OPEN_PROOF_OF_PAYMENT'),
@@ -196,17 +200,19 @@ export class UsersPage implements OnInit {
         });
       }
     }
-    buttons.push({
-      text: this.t._('USERS.MANAGE_PERMISSIONS'),
-      icon: 'ribbon',
-      handler: (): Promise<void> => this.managePermissionsOfUser(user)
-    });
-    buttons.push({
-      text: this.t._('USERS.DELETE_USER'),
-      icon: 'trash',
-      role: 'destructive',
-      handler: (): Promise<void> => this.deleteUser(user)
-    });
+    if (this.app.user.permissions.isAdmin) {
+      buttons.push({
+        text: this.t._('USERS.MANAGE_PERMISSIONS'),
+        icon: 'ribbon',
+        handler: (): Promise<void> => this.managePermissionsOfUser(user)
+      });
+      buttons.push({
+        text: this.t._('USERS.DELETE_USER'),
+        icon: 'trash',
+        role: 'destructive',
+        handler: (): Promise<void> => this.deleteUser(user)
+      });
+    }
     buttons.push({ text: this.t._('COMMON.CANCEL'), role: 'cancel', icon: 'arrow-undo' });
 
     const actions = await this.actionsCtrl.create({ header, buttons });
@@ -446,6 +452,24 @@ export class UsersPage implements OnInit {
       if (!!user.spot?.proofOfPaymentURI) this.numWithProofOfPaymentUploaded++;
       if (!!user.spot?.paymentConfirmedAt) this.numWithPaymentConfirmed++;
     });
+  }
+
+  downloadFilteredUserAsExcelFile(): void {
+    if (!(this.app.user.permissions.canManageRegistrations || this.app.user.permissions.isCountryLeader)) return;
+
+    const title = this.t._('USERS.USERS');
+    const data = this.filteredUsers.map(x =>
+      this.app.user.permissions.canManageRegistrations
+        ? new UserFlatWithRegistration(x, this.app.configurations, this.t.getCurrentLang())
+        : new UserFlat(x)
+    );
+    const workbook: WorkBook = { SheetNames: [], Sheets: {}, Props: { Title: title } };
+    utils.book_append_sheet(workbook, utils.json_to_sheet(data), '1');
+    writeFile(workbook, title.concat('.xlsx'));
+  }
+
+  canAssignSpotAsCountryLeader(): boolean {
+    return this.app.user.permissions.isCountryLeader && this.app.configurations.canCountryLeadersAssignSpots;
   }
 }
 

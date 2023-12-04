@@ -1,6 +1,6 @@
 {
   "name": "egm-app",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "author": "ITER IDEA",
   "homepage": "https://iter-idea.com/",
   "scripts": {
@@ -35,6 +35,7 @@
     "rxjs": "~7.8.0",
     "tslib": "^2.4.1",
     "typeface-poppins": "^1.1.13",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.13.0"
   },
   "devDependencies": {

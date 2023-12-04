@@ -106,7 +106,7 @@ export class SpotsPage implements OnInit {
     }
   }
   ionViewWillEnter(): void {
-    if (!this.app.user.permissions.canManageRegistrations) return this.app.closePage('COMMON.UNAUTHORIZED');
+    if (!this.app.user.permissions.isAdmin) return this.app.closePage('COMMON.UNAUTHORIZED');
   }
 
   @HostListener('window:resize', ['$event'])
@@ -204,7 +204,7 @@ export class SpotsPage implements OnInit {
       icon: 'pencil',
       handler: (): Promise<void> => this.editDescriptionOfSpots(spotsSelected)
     });
-    if (spotsSelected.every(x => !x.userId && !x.sectionCountry)) {
+    if (spotsSelected.every(x => !x.userId)) {
       buttons.push({
         text: this.t._('SPOTS.DELETE_SPOTS'),
         icon: 'trash',
@@ -353,7 +353,6 @@ export class SpotsPage implements OnInit {
         for (const spot of spots) {
           delete spot.userId;
           delete spot.userName;
-          delete spot.sectionCountry;
         }
         this.filter(this.searchbar?.value);
         this.message.success('COMMON.OPERATION_COMPLETED');
