@@ -56,7 +56,12 @@ class EventSpotsRC extends ResourceController {
       throw new RCError('User not found');
     }
 
-    if (!this.user.permissions.isAdmin && !this.user.permissions.isCountryLeader) throw new RCError('Unauthorized');
+    if (
+      !this.user.permissions.isAdmin &&
+      !this.user.permissions.canManageRegistrations &&
+      !this.user.permissions.isCountryLeader
+    )
+      throw new RCError('Unauthorized');
 
     if (!this.resourceId) return;
 
