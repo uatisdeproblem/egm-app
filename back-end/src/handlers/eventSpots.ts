@@ -56,7 +56,12 @@ class EventSpotsRC extends ResourceController {
       throw new RCError('User not found');
     }
 
-    if (!this.user.permissions.isAdmin && !this.user.permissions.isCountryLeader) throw new RCError('Unauthorized');
+    if (
+      !this.user.permissions.isAdmin &&
+      !this.user.permissions.canManageRegistrations &&
+      !this.user.permissions.isCountryLeader
+    )
+      throw new RCError('Unauthorized');
 
     if (!this.resourceId) return;
 
@@ -66,7 +71,7 @@ class EventSpotsRC extends ResourceController {
       throw new RCError('Spot not found');
     }
 
-    if (!this.user.permissions.isAdmin && this.spot.sectionCountry !== this.user.sectionCountry)
+    if (!this.user.permissions.canManageRegistrations && this.spot.sectionCountry !== this.user.sectionCountry)
       throw new RCError('Unauthorized');
   }
 
@@ -208,7 +213,7 @@ class EventSpotsRC extends ResourceController {
     }
   }
   private async confirmPayment(): Promise<void> {
-    if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageRegistrations) throw new RCError('Unauthorized');
 
     if (this.spot.paymentConfirmedAt) return;
 
