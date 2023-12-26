@@ -139,9 +139,6 @@
           <ion-badge slot="end" color="white">{{ app.user.spot.type }}</ion-badge>
         </ion-item>
         <ng-container *ngIf="app.user.spot && !app.user.spot.paymentConfirmedAt">
-          <ion-item button detail color="white" (click)="downloadInfoToPay()">
-            <ion-label class="ion-text-wrap"> {{ 'USER.DOWNLOAD_INFO_TO_PAY' | translate }} </ion-label>
-          </ion-item>
           <ion-item
             *ngIf="app.configurations.getSpotPaymentLink(app.user.spot.type)"
             button
@@ -166,6 +163,9 @@
             </ion-label>
           </ion-item>
         </ng-container>
+        <ion-item *ngIf="app.user.spot" button detail color="white" (click)="downloadInfoToPay()">
+          <ion-label class="ion-text-wrap"> {{ 'USER.DOWNLOAD_INFO_TO_PAY' | translate }} </ion-label>
+        </ion-item>
         <ion-item
           button
           detail
