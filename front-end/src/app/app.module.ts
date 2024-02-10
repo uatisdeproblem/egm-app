@@ -10,7 +10,8 @@ import { registerLocaleData } from '@angular/common';
 import localeIt from '@angular/common/locales/it';
 registerLocaleData(localeIt, 'it');
 
-import { IDEATranslationsModule, IDEAActionSheetModule } from '@idea-ionic/common';
+import { IDEAEnvironment, IDEATranslationsModule, IDEAActionSheetModule } from '@idea-ionic/common';
+import { environment } from '@env';
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,7 +23,10 @@ import { IDEATranslationsModule, IDEAActionSheetModule } from '@idea-ionic/commo
     IDEATranslationsModule,
     IDEAActionSheetModule
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: IDEAEnvironment, useValue: environment }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

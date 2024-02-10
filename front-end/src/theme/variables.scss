@@ -361,3 +361,11 @@
   --ion-color-shade: var(--ion-color-ESNdarkBlue-shade) !important;
   --ion-color-tint: var(--ion-color-ESNdarkBlue-tint) !important;
 }
+
+html {
+  /*
+   * For more information on dynamic font scaling, visit the documentation:
+   * https://ionicframework.com/docs/layout/dynamic-font-scaling
+   */
+  --ion-dynamic-font: var(--ion-default-dynamic-font);
+}
