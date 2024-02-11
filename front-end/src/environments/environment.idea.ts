@@ -5,11 +5,10 @@ export const environment = {
   idea: {
     project: 'egm-app',
     app: {
-      version: '3.3.0',
+      version: '3.3.1',
       bundle: 'com.esn.egmapp',
       url: 'https://app.erasmusgeneration.org',
       mediaUrl: 'https://media.egm-app.click',
-      title: 'EGM app',
       appleStoreURL: '',
       googleStoreURL: ''
     },
@@ -18,6 +17,7 @@ export const environment = {
       stage: 'prod'
     },
     auth: {
+      title: 'EGM app',
       registrationIsPossible: true,
       singleSimultaneousSession: false,
       forceLoginWithMFA: false,

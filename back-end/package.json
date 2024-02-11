@@ -1,5 +1,5 @@
 {
-  "version": "3.3.0",
+  "version": "3.3.1",
   "name": "back-end",
   "scripts": {
     "lint": "eslint --ext .ts",
@@ -14,7 +14,7 @@
     "date-fns": "^2.30.0",
     "idea-aws": "^4.2.1",
     "idea-html2pdf": "^2.2.5",
-    "idea-toolbox": "^7.0.1",
+    "idea-toolbox": "^7.0.3",
     "jsonwebtoken": "^9.0.2",
     "xml2js": "^0.6.2"
   },

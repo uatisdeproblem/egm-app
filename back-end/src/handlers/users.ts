@@ -180,16 +180,10 @@ class UsersRC extends ResourceController {
   private async generateUserInvoice(): Promise<SignedURL> {
     if (!this.reqUser.registrationAt || !this.reqUser.spot) return;
 
-    const filename = `${this.reqUser.spot.spotId}_invoice`;
+    const filename = `${this.reqUser.spot.spotId}_invoice.pdf`;
 
     const bucket = S3_BUCKET_MEDIA;
     const key = S3_DOWNLOADS_FOLDER + `/invoices/${filename}`;
-
-    const objectExists = await s3.doesObjectExist({
-      bucket,
-      key
-    });
-    if (objectExists) return await s3.signedURLGet(S3_BUCKET_MEDIA, key);
 
     const htmlBody = (await s3.getObject({
       bucket: S3_BUCKET_MEDIA,
