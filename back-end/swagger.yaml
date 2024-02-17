@@ -34,6 +34,8 @@ tags:
     description: The event-related actions
   - name: UsefulLinks
     description: The useful links available to the users to explore more contents
+  - name: Venues
+    description: The venues of the event
 
 paths:
   /status:
@@ -477,6 +479,89 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /venues:
+    get:
+      summary: Get the venues
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Venues'
+    post:
+      summary: Insert a new venue
+      description: Requires to be content manager
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Venue
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /venues/{venueId}:
+    get:
+      summary: Get a venue
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+    put:
+      summary: Edit a venue
+      description: Requires to be content manager
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Venue
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a venue
+      description: Requires to be content manager
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -493,6 +578,15 @@ components:
       type: object
       additionalProperties: {}
     UsefulLink:
+      type: object
+      additionalProperties: {}
+    Venue:
+      type: object
+      additionalProperties: {}
+    Communication:
+      type: object
+      additionalProperties: {}
+    Organization:
       type: object
       additionalProperties: {}
 
@@ -556,6 +650,21 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/UsefulLink'
+    Venue:
+      description: Venue
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/Venue'
+    Venues:
+      description: Venue[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Venue'
     BadParameters:
       description: Bad input parameters
       content:
