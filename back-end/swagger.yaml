@@ -44,6 +44,8 @@ tags:
     description: The rooms of the event
   - name: Speakers
     description: The speakers of the event
+  - name: Sessions
+    description: The sessions of the event
 
 paths:
   /status:
@@ -868,7 +870,7 @@ paths:
           $ref: '#/components/responses/Speakers'
     post:
       summary: Insert a new speaker
-      description: Requires to be Admin.
+      description: Requires to be content manager
       tags: [Speakers]
       security:
         - AuthFunction: []
@@ -901,7 +903,7 @@ paths:
           $ref: '#/components/responses/Speaker'
     put:
       summary: Edit a speaker
-      description: Requires to be Admin.
+      description: Requires to be content manager
       tags: [Speakers]
       security:
         - AuthFunction: []
@@ -925,12 +927,104 @@ paths:
           $ref: '#/components/responses/BadParameters'
     delete:
       summary: Delete a speaker
-      description: Requires to be Admin.
+      description: Requires to be content manager
       tags: [Speakers]
       security:
         - AuthFunction: []
       parameters:
         - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /sessions:
+    get:
+      summary: Get the sessions
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: speaker
+          in: query
+          schema:
+            type: string
+        - name: venue
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Sessions'
+    post:
+      summary: Insert a new session
+      description: Requires to be content manager
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Session
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /sessions/{sessionId}:
+    get:
+      summary: Get a session
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+    put:
+      summary: Edit a session
+      description: Requires to be content manager
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Session
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a session
+      description: Requires to be content manager
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
           in: path
           required: true
           schema:
@@ -971,6 +1065,9 @@ components:
       type: object
       additionalProperties: {}
     Speaker:
+      type: object
+      additionalProperties: {}
+    Session:
       type: object
       additionalProperties: {}
 
@@ -1113,6 +1210,22 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Speaker'
+    Session:
+      description: Session
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Session'
+    Sessions:
+      description: Session[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Session'
     BadParameters:
       description: Bad input parameters
       content:
