@@ -38,6 +38,8 @@ tags:
     description: The venues of the event
   - name: Communications
     description: The event's communications and announcements.
+  - name: Organizations
+    description: The organizations of the event
 
 paths:
   /status:
@@ -675,6 +677,89 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /organizations:
+    get:
+      summary: Get the organizations
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Organizations'
+    post:
+      summary: Insert a new organization
+      description: Requires to be content manager
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Organization
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /organizations/{organizationId}:
+    get:
+      summary: Get an organization
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+    put:
+      summary: Edit an organization
+      description: Requires to be content manager
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Organization
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete an organization
+      description: Requires to be content manager
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -794,6 +879,22 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Communication'
+    Organization:
+      description: Organization
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Organization'
+    Organizations:
+      description: Organization[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Organization'
     BadParameters:
       description: Bad input parameters
       content:
