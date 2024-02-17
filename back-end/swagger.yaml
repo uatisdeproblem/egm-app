@@ -42,6 +42,8 @@ tags:
     description: The organizations of the event
   - name: Rooms
     description: The rooms of the event
+  - name: Speakers
+    description: The speakers of the event
 
 paths:
   /status:
@@ -850,6 +852,94 @@ paths:
           $ref: '#/components/responses/Room'
         400:
           $ref: '#/components/responses/BadParameters'
+  /speakers:
+    get:
+      summary: Get the speakers
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: organization
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Speakers'
+    post:
+      summary: Insert a new speaker
+      description: Requires to be Admin.
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Speaker
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /speakers/{speakerId}:
+    get:
+      summary: Get a speaker
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+    put:
+      summary: Edit a speaker
+      description: Requires to be Admin.
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Speaker
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a speaker
+      description: Requires to be Admin.
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -878,6 +968,9 @@ components:
       type: object
       additionalProperties: {}
     Room:
+      type: object
+      additionalProperties: {}
+    Speaker:
       type: object
       additionalProperties: {}
 
@@ -1004,6 +1097,22 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Room'
+    Speaker:
+      description: Speaker
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Speaker'
+    Speakers:
+      description: Speaker[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Speaker'
     BadParameters:
       description: Bad input parameters
       content:
