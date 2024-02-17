@@ -40,6 +40,8 @@ tags:
     description: The event's communications and announcements.
   - name: Organizations
     description: The organizations of the event
+  - name: Rooms
+    description: The rooms of the event
 
 paths:
   /status:
@@ -760,6 +762,94 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /rooms:
+    get:
+      summary: Get the rooms
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: venue
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Rooms'
+    post:
+      summary: Insert a new room
+      description: Requires to be content manager
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Room
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /rooms/{roomId}:
+    get:
+      summary: Get a room
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+    put:
+      summary: Edit a room
+      description: Requires to be content manager
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Room
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a room
+      description: Requires to be content manager
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -785,6 +875,9 @@ components:
       type: object
       additionalProperties: {}
     Organization:
+      type: object
+      additionalProperties: {}
+    Room:
       type: object
       additionalProperties: {}
 
@@ -895,6 +988,22 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Organization'
+    Room:
+      description: Room
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Room'
+    Rooms:
+      description: Room[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Room'
     BadParameters:
       description: Bad input parameters
       content:
