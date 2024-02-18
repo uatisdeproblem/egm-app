@@ -239,15 +239,17 @@ paths:
               properties:
                 action:
                   type: string
-                  enum:
-                    [
+                  enum: [
                       GET_AVATAR_UPLOAD_URL,
                       REGISTER_TO_EVENT,
                       CHANGE_PERMISSIONS,
                       GET_PROOF_OF_PAYMENT,
                       PUT_PROOF_OF_PAYMENT_START,
                       PUT_PROOF_OF_PAYMENT_END,
-                      GET_INVOICE
+                      GET_INVOICE,
+                      ADD_FAVORITE_SESSION
+                      REMOVE_FAVORITE_SESSION
+                      GET_FAVORITE_SESSIONS
                     ]
                 registrationForm:
                   type: number
@@ -261,6 +263,9 @@ paths:
                 fileURI:
                   type: string
                   description: (PUT_PROOF_OF_PAYMENT_END)
+                sessionId:
+                  type: string
+                  description: (ADD_FAVORITE_SESSION, REMOVE_FAVORITE_SESSION)
       responses:
         200:
           $ref: '#/components/responses/User'

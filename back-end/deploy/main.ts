@@ -83,6 +83,18 @@ const tables: { [tableName: string]: DDBTable } = {
         projectionType: DDB.ProjectionType.ALL
       }
     ]
+  },
+  usersFavoriteSessions: {
+    PK: { name: 'userId', type: DDB.AttributeType.STRING },
+    SK: { name: 'sessionId', type: DDB.AttributeType.STRING },
+    indexes: [
+      {
+        indexName: 'inverted-index',
+        partitionKey: { name: 'sessionId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'userId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      }
+    ]
   }
 };
 
