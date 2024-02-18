@@ -30,7 +30,8 @@ const apiResources: ResourceController[] = [
   { name: 'organizations', paths: ['/organizations', '/organizations/{organizationId}'] },
   { name: 'rooms', paths: ['/rooms', '/rooms/{roomId}'] },
   { name: 'speakers', paths: ['/speakers', '/speakers/{speakerId}'] },
-  { name: 'sessions', paths: ['/sessions', '/sessions/{sessionId}'] }
+  { name: 'sessions', paths: ['/sessions', '/sessions/{sessionId}'] },
+  { name: 'registrations', paths: ['/registrations', '/registrations/{sessionId}'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
@@ -70,6 +71,18 @@ const tables: { [tableName: string]: DDBTable } = {
   },
   sessions: {
     PK: { name: 'sessionId', type: DDB.AttributeType.STRING }
+  },
+  registrations: {
+    PK: { name: 'sessionId', type: DDB.AttributeType.STRING },
+    SK: { name: 'userId', type: DDB.AttributeType.STRING },
+    indexes: [
+      {
+        indexName: 'userId-sessionId-index',
+        partitionKey: { name: 'userId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'sessionId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      }
+    ]
   }
 };
 

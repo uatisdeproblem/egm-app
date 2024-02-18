@@ -1034,6 +1034,69 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /registrations:
+    get:
+      summary: Get the registrations for a user or for a session
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Registrations'
+    post:
+      summary: Create a new session registration
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Registration
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /registrations/{sessionId}:
+    get:
+      summary: Get a session registration
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+    delete:
+      summary: Delete a registration
+      description: Requires to be Admin or the registered user.
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -1068,6 +1131,9 @@ components:
       type: object
       additionalProperties: {}
     Session:
+      type: object
+      additionalProperties: {}
+    Registration:
       type: object
       additionalProperties: {}
 
@@ -1226,6 +1292,22 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Session'
+    Registration:
+      description: Registration
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Registration'
+    Registrations:
+      description: Registration[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Registration'
     BadParameters:
       description: Bad input parameters
       content:
