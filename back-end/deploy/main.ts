@@ -31,7 +31,8 @@ const apiResources: ResourceController[] = [
   { name: 'rooms', paths: ['/rooms', '/rooms/{roomId}'] },
   { name: 'speakers', paths: ['/speakers', '/speakers/{speakerId}'] },
   { name: 'sessions', paths: ['/sessions', '/sessions/{sessionId}'] },
-  { name: 'registrations', paths: ['/registrations', '/registrations/{sessionId}'] }
+  { name: 'registrations', paths: ['/registrations', '/registrations/{sessionId}'] },
+  { name: 'connections', paths: ['/connections', '/connections/{connectionId}'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
@@ -92,6 +93,23 @@ const tables: { [tableName: string]: DDBTable } = {
         indexName: 'inverted-index',
         partitionKey: { name: 'sessionId', type: DDB.AttributeType.STRING },
         sortKey: { name: 'userId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      }
+    ]
+  },
+  connections: {
+    PK: { name: 'connectionId', type: DDB.AttributeType.STRING },
+    indexes: [
+      {
+        indexName: 'requesterId-targetId-index',
+        partitionKey: { name: 'requesterId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'targetId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      },
+      {
+        indexName: 'targetId-requesterId-index',
+        partitionKey: { name: 'targetId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'requesterId', type: DDB.AttributeType.STRING },
         projectionType: DDB.ProjectionType.ALL
       }
     ]

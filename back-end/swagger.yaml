@@ -1102,6 +1102,51 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /connections:
+    get:
+      summary: Get the connections of a user
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+    post:
+      summary: Create a new connection between the requester user and a target user or confirm a pending connection
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /connections/{connectionId}:
+    delete:
+      summary: Delete the connection of a user with a target
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: connectionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
