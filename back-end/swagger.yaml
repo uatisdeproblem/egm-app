@@ -1053,23 +1053,6 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Registrations'
-    post:
-      summary: Create a new session registration
-      tags: [Sessions]
-      security:
-        - AuthFunction: []
-      requestBody:
-        required: true
-        description: Registration
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        200:
-          $ref: '#/components/responses/Registration'
-        400:
-          $ref: '#/components/responses/BadParameters'
   /registrations/{sessionId}:
     get:
       summary: Get a session registration
@@ -1085,6 +1068,29 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Registration'
+    post:
+      summary: Create a new session registration
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Registration
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+        400:
+          $ref: '#/components/responses/BadParameters'
     delete:
       summary: Delete a registration
       description: Requires to be Admin or the registered user.

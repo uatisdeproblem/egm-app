@@ -41,7 +41,7 @@ class SessionRegistrations extends ResourceController {
       throw new RCError('User not found');
     }
 
-    if (!this.resourceId) return;
+    if (!this.resourceId || this.httpMethod === 'POST') return;
 
     try {
       this.registration = new SessionRegistration(
@@ -75,10 +75,8 @@ class SessionRegistrations extends ResourceController {
   protected async postResources(): Promise<any> {
     // @todo configurations.canSignUpForSessions()
 
-    if (!this.body.sessionId) throw new RCError('Missing session ID!');
-
     this.registration = new SessionRegistration({
-      sessionId: this.body.sessionId,
+      sessionId: this.resourceId,
       userId: this.principalId,
       registrationDateInMs: new Date().getTime()
     });
