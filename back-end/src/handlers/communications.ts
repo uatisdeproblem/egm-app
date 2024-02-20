@@ -27,8 +27,6 @@ export const handler = (ev: any, _: any, cb: any) => new Communications(ev, cb).
 /// RESOURCE CONTROLLER
 ///
 
-// @todo check permissions here
-
 class Communications extends ResourceController {
   user: User;
   communication: Communication;

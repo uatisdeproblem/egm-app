@@ -48,11 +48,11 @@ export class Session extends Resource {
   /**
    * The session's speakrs.
    */
-  speakers: SpeakerLinked[]; // @todo we changed this to a single array. Check consequences
+  speakers: SpeakerLinked[];
   /**
    * The number of participants currently registered
    */
-  numberOfParticipants: number; // @todo should this be calculated?
+  numberOfParticipants: number;
   /**
    * The limit of participants for this session.
    */
