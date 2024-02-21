@@ -20,7 +20,8 @@ const PROJECT = process.env.PROJECT;
 const DDB_TABLES = {
   users: process.env.DDB_TABLE_users,
   configurations: process.env.DDB_TABLE_configurations,
-  eventSpots: process.env.DDB_TABLE_eventSpots
+  eventSpots: process.env.DDB_TABLE_eventSpots,
+  usersFavoriteSessions: process.env.DDB_TABLE_usersFavoriteSessions
 };
 const ddb = new DynamoDB();
 
@@ -110,7 +111,7 @@ class UsersRC extends ResourceController {
     return this.targetUser;
   }
 
-  protected async patchResource(): Promise<User | SignedURL> {
+  protected async patchResource(): Promise<User | SignedURL | void | string[]> {
     switch (this.body.action) {
       case 'GET_AVATAR_UPLOAD_URL':
         return await this.getSignedURLToUploadAvatar();
@@ -126,6 +127,12 @@ class UsersRC extends ResourceController {
         return await this.getSignedURLToUploadProofOfPayment();
       case 'PUT_PROOF_OF_PAYMENT_END':
         return await this.confirmUploadProofOfPayment(this.body.fileURI);
+      case 'ADD_FAVORITE_SESSION':
+        return await this.setFavoriteSession(this.body.sessionId, true);
+      case 'REMOVE_FAVORITE_SESSION':
+        return await this.setFavoriteSession(this.body.sessionId, false);
+      case 'GET_FAVORITE_SESSIONS':
+        return await this.getFavoriteSessions();
       default:
         throw new RCError('Unsupported action');
     }
@@ -330,5 +337,20 @@ class UsersRC extends ResourceController {
     } catch (error) {
       this.logger.warn('Error sending email', error);
     }
+  }
+  private async setFavoriteSession(sessionId: string, isFavorite: boolean): Promise<void> {
+    if (isFavorite)
+      await ddb.put({ TableName: DDB_TABLES.usersFavoriteSessions, Item: { userId: this.principalId, sessionId } });
+    else
+      await ddb.delete({ TableName: DDB_TABLES.usersFavoriteSessions, Key: { userId: this.principalId, sessionId } });
+  }
+  private async getFavoriteSessions(): Promise<string[]> {
+    return (
+      await ddb.query({
+        TableName: DDB_TABLES.usersFavoriteSessions,
+        KeyConditionExpression: 'userId = :userId',
+        ExpressionAttributeValues: { ':userId': this.principalId }
+      })
+    ).map((x: { sessionId: string }) => x.sessionId);
   }
 }

@@ -77,4 +77,26 @@ export class UserService {
     const { url } = await this.api.patchResource(['users', 'me'], { body });
     return url;
   }
+
+  /**
+   * Favorite a session.
+   */
+  async addFavoriteSession(sessionId: string): Promise<void> {
+    const body = { action: 'ADD_FAVORITE_SESSION', sessionId };
+    await this.api.patchResource(['users'], { body });
+  }
+  /**
+   * Remove a session from the favorites.
+   */
+  async removeFavoriteSession(sessionId: string): Promise<void> {
+    const body = { action: 'REMOVE_FAVORITE_SESSION', sessionId };
+    await this.api.patchResource(['users'], { body });
+  }
+  /**
+   * Get the user's favorited sessions (IDs).
+   */
+  async getFavoriteSessions(): Promise<string[]> {
+    const body = { action: 'GET_FAVORITE_SESSIONS' };
+    return await this.api.patchResource(['users'], { body });
+  }
 }

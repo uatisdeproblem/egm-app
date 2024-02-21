@@ -1,6 +1,7 @@
 import { Resource, Suggestion, epochISOString } from 'idea-toolbox';
 
 import { EventSpotAttached } from './eventSpot.model';
+import { Speaker } from './speaker.model';
 
 export class User extends Resource {
   /**
@@ -152,6 +153,10 @@ export class User extends Resource {
     return this.authService !== AuthServices.ESN_ACCOUNTS;
   }
 
+  isSpeaker(speaker: Speaker) {
+    return speaker.speakerId === this.userId;
+  }
+
   isGalaxyInfoValid(): boolean {
     if (this.isExternal()) return true;
     return this.sectionName !== 'Unknown' && this.sectionCountry !== 'Unknown';
@@ -219,5 +224,16 @@ export class UserPermissions {
     this.canManageContents = Boolean(x.canManageContents);
     // as last, to change any other attribute in case it's `true`
     this.isAdmin = Boolean(x._isAdmin);
+  }
+}
+
+export class UserFavoriteSession extends Resource {
+  userId: string;
+  sessionId: string;
+
+  load(x: any): void {
+    super.load(x);
+    this.userId = this.clean(x.userId, String);
+    this.sessionId = this.clean(x.sessionId, String);
   }
 }
