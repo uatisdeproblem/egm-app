@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 
 import { Session } from '../models/session.model';
 import { SessionRegistration } from '../models/sessionRegistration.model';
@@ -38,7 +38,7 @@ class SessionRegistrations extends ResourceController {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
-      throw new RCError('User not found');
+      throw new HandledError('User not found');
     }
 
     if (!this.resourceId || this.httpMethod === 'POST') return;
@@ -51,7 +51,7 @@ class SessionRegistrations extends ResourceController {
         })
       );
     } catch (err) {
-      throw new RCError('Registration not found');
+      throw new HandledError('Registration not found');
     }
   }
 
@@ -65,7 +65,7 @@ class SessionRegistrations extends ResourceController {
         });
         return registrationsOfSession.map(s => new SessionRegistration(s));
       } catch (error) {
-        throw new RCError('Could not load registrations for this session');
+        throw new HandledError('Could not load registrations for this session');
       }
     } else {
       return await this.getUsersRegistrations(this.principalId);
@@ -107,7 +107,7 @@ class SessionRegistrations extends ResourceController {
 
       await ddb.transactWrites([{ Delete: deleteSessionRegistration }, { Update: updateSessionCount }]);
     } catch (err) {
-      throw new RCError('Delete failed');
+      throw new HandledError('Delete failed');
     }
   }
 
@@ -115,7 +115,7 @@ class SessionRegistrations extends ResourceController {
     const { sessionId, userId } = this.registration;
     const isValid = await this.validateRegistration(sessionId, userId);
 
-    if (!isValid) throw new RCError("User can't sign up for this session!");
+    if (!isValid) throw new HandledError("User can't sign up for this session!");
 
     try {
       const putSessionRegistration = { TableName: DDB_TABLES.registrations, Item: this.registration };
@@ -133,15 +133,15 @@ class SessionRegistrations extends ResourceController {
 
       return this.registration;
     } catch (err) {
-      throw new RCError('Operation failed');
+      throw new HandledError('Operation failed');
     }
   }
 
   private async validateRegistration(sessionId: string, userId: string) {
     const session: Session = new Session(await ddb.get({ TableName: DDB_TABLES.sessions, Key: { sessionId } }));
 
-    if (!session.requiresRegistration) throw new RCError("User can't sign up for this session!");
-    if (session.isFull()) throw new RCError('Session is full! Refresh your page.');
+    if (!session.requiresRegistration) throw new HandledError("User can't sign up for this session!");
+    if (session.isFull()) throw new HandledError('Session is full! Refresh your page.');
 
     const userRegistrations: SessionRegistration[] = await this.getUsersRegistrations(userId);
 
@@ -167,7 +167,7 @@ class SessionRegistrations extends ResourceController {
     });
 
     if (sessions.length !== validSessions.length)
-      throw new RCError('You have 1 or more sessions during this time period.');
+      throw new HandledError('You have 1 or more sessions during this time period.');
 
     return true;
   }
@@ -182,7 +182,7 @@ class SessionRegistrations extends ResourceController {
       });
       return registrationsOfUser.map(s => new SessionRegistration(s));
     } catch (error) {
-      throw new RCError('Could not load registrations for this user');
+      throw new HandledError('Could not load registrations for this user');
     }
   }
 }

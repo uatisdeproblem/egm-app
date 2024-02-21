@@ -4,7 +4,7 @@
 
 import { default as Axios } from 'axios';
 import { parseStringPromise } from 'xml2js';
-import { DynamoDB, RCError, ResourceController, SystemsManager } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController, SystemsManager } from 'idea-aws';
 
 import { createAuthTokenWithUserId } from '../utils/auth.utils';
 
@@ -51,7 +51,7 @@ class GalaxyRC extends ResourceController {
       this.logger.debug('CAS ticket validated and parsed', { ticket: jsonWithUserData });
 
       const success = !!jsonWithUserData['cas:serviceResponse']['cas:authenticationSuccess'];
-      if (!success) throw new RCError('ESN accounts sign-in failed');
+      if (!success) throw new HandledError('ESN accounts sign-in failed');
 
       const data = jsonWithUserData['cas:serviceResponse']['cas:authenticationSuccess'][0];
       const attributes = data['cas:attributes'][0];
@@ -96,7 +96,7 @@ class GalaxyRC extends ResourceController {
       this.callback(null, { statusCode: 302, headers: { Location: `${appURL}/auth?token=${token}` } });
     } catch (err) {
       this.logger.error('ESN Accounts sign-in failed', err);
-      throw new RCError('ESN Accounts sign-in failed');
+      throw new HandledError('ESN Accounts sign-in failed');
     }
   }
 }

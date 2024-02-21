@@ -182,6 +182,7 @@ const createApp = async (): Promise<void> => {
       userPoolId: cognitoStack.userPool.userPoolId,
       audience: [cognitoStack.clientFrontEnd.userPoolClientId, cognitoStack.clientBackEnd.userPoolClientId]
     },
+    lambdaLogLevel: STAGE_VARIABLES.logLevel ?? 'INFO',
     removalPolicy: STAGE_VARIABLES.destroyDataOnDelete ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN
   });
   apiStack.addDependency(mediaStack);

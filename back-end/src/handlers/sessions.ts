@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 
 import { Session } from '../models/session.model';
 import { SpeakerLinked } from '../models/speaker.model';
@@ -42,7 +42,7 @@ class Sessions extends ResourceController {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
-      throw new RCError('User not found');
+      throw new HandledError('User not found');
     }
 
     if (!this.resourceId) return;
@@ -52,7 +52,7 @@ class Sessions extends ResourceController {
         await ddb.get({ TableName: DDB_TABLES.sessions, Key: { sessionId: this.resourceId } })
       );
     } catch (err) {
-      throw new RCError('Session not found');
+      throw new HandledError('Session not found');
     }
   }
 
@@ -61,7 +61,7 @@ class Sessions extends ResourceController {
   }
 
   protected async putResource(): Promise<Session> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     const oldResource = new Session(this.session);
     this.session.safeLoad(this.body, oldResource);
@@ -70,7 +70,7 @@ class Sessions extends ResourceController {
   }
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Session> {
     const errors = this.session.validate();
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     this.session.room = new RoomLinked(
       await ddb.get({ TableName: DDB_TABLES.rooms, Key: { roomId: this.session.room.roomId } })
@@ -91,22 +91,22 @@ class Sessions extends ResourceController {
 
       return this.session;
     } catch (err) {
-      throw new RCError('Operation failed');
+      throw new HandledError('Operation failed');
     }
   }
 
   protected async deleteResource(): Promise<void> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.sessions, Key: { sessionId: this.resourceId } });
     } catch (err) {
-      throw new RCError('Delete failed');
+      throw new HandledError('Delete failed');
     }
   }
 
   protected async postResources(): Promise<Session> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     this.session = new Session(this.body);
     this.session.sessionId = await ddb.IUNID(PROJECT);
@@ -128,7 +128,7 @@ class Sessions extends ResourceController {
 
       return sortedSessions;
     } catch (err) {
-      throw new RCError('Operation failed');
+      throw new HandledError('Operation failed');
     }
   }
 }

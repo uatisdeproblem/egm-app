@@ -4,7 +4,7 @@
 
 import { addWeeks } from 'date-fns';
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 import { toISODate } from 'idea-toolbox';
 
 import { sendEmail } from '../utils/notifications.utils';
@@ -47,13 +47,13 @@ class EventSpotsRC extends ResourceController {
         await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
       );
     } catch (err) {
-      throw new RCError('Configuration not found');
+      throw new HandledError('Configuration not found');
     }
 
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
-      throw new RCError('User not found');
+      throw new HandledError('User not found');
     }
 
     if (
@@ -61,18 +61,18 @@ class EventSpotsRC extends ResourceController {
       !this.user.permissions.canManageRegistrations &&
       !this.user.permissions.isCountryLeader
     )
-      throw new RCError('Unauthorized');
+      throw new HandledError('Unauthorized');
 
     if (!this.resourceId) return;
 
     try {
       this.spot = new EventSpot(await ddb.get({ TableName: DDB_TABLES.eventSpots, Key: { spotId: this.resourceId } }));
     } catch (err) {
-      throw new RCError('Spot not found');
+      throw new HandledError('Spot not found');
     }
 
     if (!this.user.permissions.canManageRegistrations && this.spot.sectionCountry !== this.user.sectionCountry)
-      throw new RCError('Unauthorized');
+      throw new HandledError('Unauthorized');
   }
 
   protected async getResource(): Promise<EventSpot> {
@@ -94,21 +94,21 @@ class EventSpotsRC extends ResourceController {
       case 'EDIT_DESCRIPTION':
         return await this.editDescription(this.body.description);
       default:
-        throw new RCError('Unsupported action');
+        throw new HandledError('Unsupported action');
     }
   }
   private async assignToUser(userId: string): Promise<void> {
     if (!this.user.permissions.isAdmin && !this.configurations.canCountryLeadersAssignSpots)
-      throw new RCError('Unauthorized');
+      throw new HandledError('Unauthorized');
 
     let user: User;
     try {
       user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
     } catch (error) {
-      throw new RCError("User doesn't exist");
+      throw new HandledError("User doesn't exist");
     }
 
-    if (user.spot) throw new RCError('User already has spot');
+    if (user.spot) throw new HandledError('User already has spot');
 
     const updateSpot = {
       TableName: DDB_TABLES.eventSpots,
@@ -143,23 +143,23 @@ class EventSpotsRC extends ResourceController {
     }
   }
   private async transferToUser(targetUserId: string): Promise<void> {
-    if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
+    if (!this.user.permissions.isAdmin) throw new HandledError('Unauthorized');
 
     let sourceUser: User;
     try {
       sourceUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.spot.userId } }));
     } catch (error) {
-      throw new RCError("Source user doesn't exist");
+      throw new HandledError("Source user doesn't exist");
     }
 
     let targetUser: User;
     try {
       targetUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: targetUserId } }));
     } catch (error) {
-      throw new RCError("Target user doesn't exist");
+      throw new HandledError("Target user doesn't exist");
     }
 
-    if (targetUser.spot) throw new RCError('Target user already has spot');
+    if (targetUser.spot) throw new HandledError('Target user already has spot');
 
     const updateSpot = {
       TableName: DDB_TABLES.eventSpots,
@@ -213,7 +213,7 @@ class EventSpotsRC extends ResourceController {
     }
   }
   private async confirmPayment(): Promise<void> {
-    if (!this.user.permissions.canManageRegistrations) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageRegistrations) throw new HandledError('Unauthorized');
 
     if (this.spot.paymentConfirmedAt) return;
 
@@ -234,7 +234,7 @@ class EventSpotsRC extends ResourceController {
       try {
         user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.spot.userId } }));
       } catch (error) {
-        throw new RCError("User doesn't exist");
+        throw new HandledError("User doesn't exist");
       }
 
       const updateUser = {
@@ -264,7 +264,7 @@ class EventSpotsRC extends ResourceController {
     }
   }
   private async assignToCountry(sectionCountry: string): Promise<void> {
-    if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
+    if (!this.user.permissions.isAdmin) throw new HandledError('Unauthorized');
 
     await ddb.update({
       TableName: DDB_TABLES.eventSpots,
@@ -274,7 +274,7 @@ class EventSpotsRC extends ResourceController {
     });
   }
   private async release(): Promise<void> {
-    if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
+    if (!this.user.permissions.isAdmin) throw new HandledError('Unauthorized');
 
     if (!this.spot.userId && !this.spot.sectionCountry) return;
 
@@ -291,7 +291,7 @@ class EventSpotsRC extends ResourceController {
       try {
         user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.spot.userId } }));
       } catch (error) {
-        throw new RCError("User doesn't exist");
+        throw new HandledError("User doesn't exist");
       }
 
       const updateUser = {
@@ -320,7 +320,7 @@ class EventSpotsRC extends ResourceController {
     }
   }
   private async editDescription(description: string): Promise<void> {
-    if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
+    if (!this.user.permissions.isAdmin) throw new HandledError('Unauthorized');
 
     await ddb.update({
       TableName: DDB_TABLES.eventSpots,
@@ -331,9 +331,9 @@ class EventSpotsRC extends ResourceController {
   }
 
   protected async deleteResource(): Promise<void> {
-    if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
+    if (!this.user.permissions.isAdmin) throw new HandledError('Unauthorized');
 
-    if (this.spot.userId) throw new RCError('Release the spot first');
+    if (this.spot.userId) throw new HandledError('Release the spot first');
 
     await ddb.delete({ TableName: DDB_TABLES.eventSpots, Key: { spotId: this.spot.spotId } });
   }
@@ -346,7 +346,7 @@ class EventSpotsRC extends ResourceController {
   }
 
   protected async postResources(): Promise<EventSpot[]> {
-    if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
+    if (!this.user.permissions.isAdmin) throw new HandledError('Unauthorized');
 
     const numOfSpots = Number(this.body.numOfSpots ?? 1);
     this.spot = new EventSpot({
@@ -357,7 +357,7 @@ class EventSpotsRC extends ResourceController {
 
     const errors = this.spot.validate();
     if (numOfSpots < 1) errors.push('numOfSpots');
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     const batchId = Math.round(Date.now() / 1000).toString();
     const spotsToAdd: EventSpot[] = [];

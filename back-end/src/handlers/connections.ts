@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 
 import { Connection, ConnectionWithUserData } from '../models/connection.model';
 import { User } from '../models/user.model';
@@ -70,30 +70,30 @@ class Connections extends ResourceController {
 
       return sortedUserConnections;
     } catch (err) {
-      throw new RCError('Operation failed');
+      throw new HandledError('Operation failed');
     }
   }
 
   protected async postResources(): Promise<ConnectionWithUserData> {
-    if (!this.body.userId) throw new RCError('Missing target user');
-    if (this.principalId === this.body.userId) throw new RCError('Same user');
+    if (!this.body.userId) throw new HandledError('Missing target user');
+    if (this.principalId === this.body.userId) throw new HandledError('Same user');
 
     let target: User;
     try {
       target = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.body.userId } }));
     } catch (error) {
-      throw new RCError('Target profile not found');
+      throw new HandledError('Target profile not found');
     }
-    if (!target.getName()) throw new RCError('Target profile incomplete');
+    if (!target.getName()) throw new HandledError('Target profile incomplete');
 
     let connection = await this.getConnectionOfUserWithTarget(target.userId);
     if (connection) {
       if (connection.requesterId === this.principalId) {
-        if (connection.isPending) throw new RCError('Connection is pending');
-        else throw new RCError('Already connected');
+        if (connection.isPending) throw new HandledError('Connection is pending');
+        else throw new HandledError('Already connected');
       } else {
         if (connection.isPending) delete connection.isPending;
-        else throw new RCError('Already connected');
+        else throw new HandledError('Already connected');
       }
     } else {
       connection = new Connection({
@@ -109,7 +109,7 @@ class Connections extends ResourceController {
 
       return new ConnectionWithUserData({ ...connection, userProfile: target });
     } catch (err) {
-      throw new RCError('Connection failed');
+      throw new HandledError('Connection failed');
     }
   }
 
@@ -118,16 +118,16 @@ class Connections extends ResourceController {
     try {
       connection = await ddb.get({ TableName: DDB_TABLES.connections, Key: { connectionId: this.resourceId } });
     } catch (error) {
-      throw new RCError('Not found');
+      throw new HandledError('Not found');
     }
 
     if (connection.requesterId !== this.principalId && connection.targetId !== this.principalId)
-      throw new RCError('Unauthorized');
+      throw new HandledError('Unauthorized');
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.connections, Key: { connectionId: this.resourceId } });
     } catch (err) {
-      throw new RCError('Delete failed');
+      throw new HandledError('Delete failed');
     }
   }
 
