@@ -27,6 +27,7 @@ export interface ApiProps extends cdk.StackProps {
   ses: { identityArn: string; notificationTopicArn: string };
   cognito: { userPoolId: string; audience: string[] };
   removalPolicy: RemovalPolicy;
+  lambdaLogLevel: 'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
 }
 export interface ResourceController {
   name: string;
@@ -48,7 +49,8 @@ const defaultLambdaFnProps: NodejsFunctionProps = {
   memorySize: 1024,
   bundling: { minify: true, sourceMap: true },
   environment: { NODE_OPTIONS: '--enable-source-maps' },
-  logRetention: RetentionDays.TWO_WEEKS
+  logRetention: RetentionDays.TWO_WEEKS,
+  logFormat: Lambda.LogFormat.JSON
 };
 
 const defaultDDBTableProps: DDB.TableProps | any = {
@@ -77,7 +79,8 @@ export class ApiStack extends cdk.Stack {
       defaultLambdaFnProps,
       project: props.project,
       stage: props.stage,
-      versionStatus: props.versionStatus
+      versionStatus: props.versionStatus,
+      lambdaLogLevel: props.lambdaLogLevel
     });
     this.allowLambdaFunctionsToAccessCognitoUserPool({
       cognitoUserPoolId: props.cognito.userPoolId,
@@ -172,6 +175,7 @@ export class ApiStack extends cdk.Stack {
     defaultLambdaFnProps: NodejsFunctionProps;
     api: cdk.aws_apigatewayv2.CfnApi;
     versionStatus: VersionStatus;
+    lambdaLogLevel: 'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
   }): {
     lambdaFunctions: { [resourceName: string]: NodejsFunction };
   } {
@@ -189,7 +193,8 @@ export class ApiStack extends cdk.Stack {
       const lambdaFn = new NodejsFunction(this, resource.name.concat('Function'), {
         ...params.defaultLambdaFnProps,
         functionName: lambdaFnName,
-        entry: `./src/handlers/${resource.name}.ts`
+        entry: `./src/handlers/${resource.name}.ts`,
+        applicationLogLevel: params.lambdaLogLevel
       });
 
       // link the Lambda function to the Resource Controller's paths (if any)

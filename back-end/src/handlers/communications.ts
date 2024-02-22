@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 
 import { Communication, CommunicationWithMarker } from '../models/communication.model';
 import { User } from '../models/user.model';
@@ -39,7 +39,7 @@ class Communications extends ResourceController {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
-      throw new RCError('User not found');
+      throw new HandledError('User not found');
     }
 
     if (!this.resourceId) return;
@@ -49,7 +49,7 @@ class Communications extends ResourceController {
         await ddb.get({ TableName: DDB_TABLES.communications, Key: { communicationId: this.resourceId } })
       );
     } catch (err) {
-      throw new RCError('Communication not found');
+      throw new HandledError('Communication not found');
     }
   }
 
@@ -69,7 +69,7 @@ class Communications extends ResourceController {
   }
 
   protected async putResource(): Promise<Communication> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     const oldResource = new Communication(this.communication);
     this.communication.safeLoad(this.body, oldResource);
@@ -78,7 +78,7 @@ class Communications extends ResourceController {
   }
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Communication> {
     const errors = this.communication.validate();
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     try {
       const putParams: any = { TableName: DDB_TABLES.communications, Item: this.communication };
@@ -87,7 +87,7 @@ class Communications extends ResourceController {
 
       return this.communication;
     } catch (err) {
-      throw new RCError('Operation failed');
+      throw new HandledError('Operation failed');
     }
   }
 
@@ -98,7 +98,7 @@ class Communications extends ResourceController {
       case 'MARK_AS_UNREAD':
         return await this.markAsReadForUser(false);
       default:
-        throw new RCError('Unsupported action');
+        throw new HandledError('Unsupported action');
     }
   }
   private async markAsReadForUser(markRead: boolean): Promise<void> {
@@ -109,17 +109,17 @@ class Communications extends ResourceController {
   }
 
   protected async deleteResource(): Promise<void> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.communications, Key: { communicationId: this.resourceId } });
     } catch (err) {
-      throw new RCError('Delete failed');
+      throw new HandledError('Delete failed');
     }
   }
 
   protected async postResources(): Promise<Communication> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     this.communication = new Communication(this.body);
     this.communication.communicationId = await ddb.IUNID(PROJECT);
@@ -151,7 +151,7 @@ class Communications extends ResourceController {
 
       return sortedCommunications;
     } catch (err) {
-      throw new RCError('Operation failed');
+      throw new HandledError('Operation failed');
     }
   }
 }

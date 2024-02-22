@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 
 import { Speaker } from '../models/speaker.model';
 import { OrganizationLinked } from '../models/organization.model';
@@ -40,7 +40,7 @@ class Speakers extends ResourceController {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
-      throw new RCError('User not found');
+      throw new HandledError('User not found');
     }
 
     if (!this.resourceId) return;
@@ -50,7 +50,7 @@ class Speakers extends ResourceController {
         await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.resourceId } })
       );
     } catch (err) {
-      throw new RCError('Speaker not found');
+      throw new HandledError('Speaker not found');
     }
   }
 
@@ -59,7 +59,7 @@ class Speakers extends ResourceController {
   }
 
   protected async putResource(): Promise<Speaker> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     const oldResource = new Speaker(this.speaker);
     this.speaker.safeLoad(this.body, oldResource);
@@ -68,7 +68,7 @@ class Speakers extends ResourceController {
   }
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Speaker> {
     const errors = this.speaker.validate();
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     this.speaker.organization = new OrganizationLinked(
       await ddb.get({
@@ -84,22 +84,22 @@ class Speakers extends ResourceController {
 
       return this.speaker;
     } catch (err) {
-      throw new RCError('Operation failed');
+      throw new HandledError('Operation failed');
     }
   }
 
   protected async deleteResource(): Promise<void> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.resourceId } });
     } catch (err) {
-      throw new RCError('Delete failed');
+      throw new HandledError('Delete failed');
     }
   }
 
   protected async postResources(): Promise<Speaker> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     this.speaker = new Speaker(this.body);
     this.speaker.speakerId = await ddb.IUNID(PROJECT);
@@ -119,7 +119,7 @@ class Speakers extends ResourceController {
 
       return sortedSpeakers;
     } catch (err) {
-      throw new RCError('Operation failed');
+      throw new HandledError('Operation failed');
     }
   }
 }

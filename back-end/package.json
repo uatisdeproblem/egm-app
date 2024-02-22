@@ -12,7 +12,7 @@
   "dependencies": {
     "axios": "^1.5.1",
     "date-fns": "^2.30.0",
-    "idea-aws": "^4.2.1",
+    "idea-aws": "^4.3.4",
     "idea-html2pdf": "^2.2.5",
     "idea-toolbox": "^7.0.3",
     "jsonwebtoken": "^9.0.2",
@@ -28,9 +28,9 @@
     "@types/xml2js": "^0.4.12",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
-    "aws-cdk": "^2.90.0",
-    "aws-cdk-lib": "^2.90.0",
-    "constructs": "^10.2.69",
+    "aws-cdk": "^2.118.0",
+    "aws-cdk-lib": "^2.118.0",
+    "constructs": "^10.3.0",
     "esbuild": "^0.19.0",
     "eslint": "^8.46.0",
     "typescript": "^5.1.6"

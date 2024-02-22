@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { Cognito, DynamoDB, RCError, ResourceController, SystemsManager } from 'idea-aws';
+import { Cognito, DynamoDB, HandledError, ResourceController, SystemsManager } from 'idea-aws';
 
 import { createAuthTokenWithUserId } from '../utils/auth.utils';
 
@@ -43,7 +43,7 @@ class CognitoRC extends ResourceController {
       case 'RESET_PASSWORD_CONFIRM':
         return this.confirmResetPassword(this.body.email, this.body.password, this.body.confirmationCode);
       default:
-        throw new RCError('Unsupported action');
+        throw new HandledError('Unsupported action');
     }
   }
   private async signIn(email: string, password: string): Promise<{ token: string }> {
@@ -51,7 +51,7 @@ class CognitoRC extends ResourceController {
       await cognito.signIn(email, password, COGNITO_USER_POOL_ID, COGNITO_USER_POOL_CLIENT_ID);
     } catch (error) {
       this.logger.error('Cognito sign in failed', error);
-      throw new RCError('Cognito sign-in failed');
+      throw new HandledError('Cognito sign-in failed');
     }
 
     const cognitoUser = await cognito.getUserByEmail(email, COGNITO_USER_POOL_ID);
@@ -78,7 +78,7 @@ class CognitoRC extends ResourceController {
     const user = new User({ authService: AuthServices.COGNITO, firstName, lastName, email });
 
     const errors = user.validate();
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     try {
       const cognitoUserId = await cognito.createUser(email, COGNITO_USER_POOL_ID, {
@@ -91,7 +91,7 @@ class CognitoRC extends ResourceController {
       await ddb.put({ TableName: DDB_TABLES.users, Item: user });
     } catch (error) {
       this.logger.error('Cognito sign up failed', error);
-      throw new RCError('Cognito sign up failed');
+      throw new HandledError('Cognito sign up failed');
     }
 
     const token = await createAuthTokenWithUserId(ssm, user.userId);

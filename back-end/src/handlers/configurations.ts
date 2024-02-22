@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, GetObjectTypes, RCError, ResourceController, S3, SES } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController, S3, SES } from 'idea-aws';
 import { toISODate } from 'idea-toolbox';
 
 import { sendEmail } from '../utils/notifications.utils';
@@ -60,17 +60,17 @@ class ConfigurationsRC extends ResourceController {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
-      throw new RCError('User not found');
+      throw new HandledError('User not found');
     }
 
-    if (!this.user.permissions.isAdmin) throw new RCError('Unauthorized');
+    if (!this.user.permissions.isAdmin) throw new HandledError('Unauthorized');
 
     try {
       this.configurations = new Configurations(
         await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
       );
     } catch (err) {
-      throw new RCError('Configuration not found');
+      throw new HandledError('Configuration not found');
     }
   }
 
@@ -86,7 +86,7 @@ class ConfigurationsRC extends ResourceController {
   }
   private async putSafeResource(): Promise<Configurations> {
     const errors = this.configurations.validate();
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     await ddb.put({ TableName: DDB_TABLES.configurations, Item: this.configurations });
     return this.configurations;
@@ -103,7 +103,7 @@ class ConfigurationsRC extends ResourceController {
       case 'TEST_EMAIL_TEMPLATE':
         return await this.testEmailTemplate(this.body.template);
       default:
-        throw new RCError('Unsupported action');
+        throw new HandledError('Unsupported action');
     }
   }
   private async getEmailTemplate(emailTemplate: string): Promise<{ subject: string; content: string }> {
@@ -111,12 +111,12 @@ class ConfigurationsRC extends ResourceController {
       const template = await ses.getTemplate(`${emailTemplate}-${STAGE}`);
       return { subject: template.Subject, content: template.Html };
     } catch (error) {
-      throw new RCError('Template not found');
+      throw new HandledError('Template not found');
     }
   }
   private async setEmailTemplate(emailTemplate: string, subject: string, content: string): Promise<void> {
-    if (!subject) throw new RCError('Missing subject');
-    if (!content) throw new RCError('Missing content');
+    if (!subject) throw new HandledError('Missing subject');
+    if (!content) throw new HandledError('Missing content');
 
     await ses.setTemplate(`${emailTemplate}-${STAGE}`, subject, content, true);
   }
@@ -140,22 +140,21 @@ class ConfigurationsRC extends ResourceController {
       await sendEmail(toAddresses, template, templateData);
     } catch (error) {
       this.logger.warn('Error sending email', error, { template });
-      throw new RCError('Error sending email');
+      throw new HandledError('Error sending email');
     }
 
     try {
       await ses.sendTemplatedEmail({ toAddresses, template, templateData }, SES_CONFIG);
     } catch (error) {
       this.logger.warn('Sending template', error, { template });
-      throw new RCError('Sending failed');
+      throw new HandledError('Sending failed');
     }
   }
   private async resetEmailTemplate(emailTemplate: string): Promise<void> {
     const subject = `${emailTemplate}-${STAGE}`;
-    const content = (await s3.getObject({
+    const content = (await s3.getObjectAsText({
       bucket: S3_BUCKET_MEDIA,
-      key: S3_ASSETS_FOLDER.concat('/', emailTemplate, '.hbs'),
-      type: GetObjectTypes.TEXT
+      key: S3_ASSETS_FOLDER.concat('/', emailTemplate, '.hbs')
     })) as string;
     await ses.setTemplate(`${emailTemplate}-${STAGE}`, subject, content, true);
   }

@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 import { AppStatus, InternalAppVersionStatus } from 'idea-toolbox';
 
 ///
@@ -34,7 +34,7 @@ class Status extends ResourceController {
       return (await ddb.get({ TableName: DDB_TABLES.status, Key: { version } })) as InternalAppVersionStatus;
     } catch (err) {
       if (String(err) === 'Error: Not found') return { version } as InternalAppVersionStatus;
-      else throw new RCError('Failed to check version');
+      else throw new HandledError('Failed to check version');
     }
   }
 

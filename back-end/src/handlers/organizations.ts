@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 
 import { Organization } from '../models/organization.model';
 import { User } from '../models/user.model';
@@ -56,7 +56,7 @@ class Organizations extends ResourceController {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
-      throw new RCError('User not found');
+      throw new HandledError('User not found');
     }
 
     if (!this.resourceId) return;
@@ -66,7 +66,7 @@ class Organizations extends ResourceController {
         await ddb.get({ TableName: DDB_TABLES.organizations, Key: { organizationId: this.resourceId } })
       );
     } catch (err) {
-      throw new RCError('Organization not found');
+      throw new HandledError('Organization not found');
     }
   }
 
@@ -75,7 +75,7 @@ class Organizations extends ResourceController {
   }
 
   protected async putResource(): Promise<Organization> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     const oldResource = new Organization(this.organization);
     this.organization.safeLoad(this.body, oldResource);
@@ -84,7 +84,7 @@ class Organizations extends ResourceController {
   }
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Organization> {
     const errors = this.organization.validate();
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     try {
       const putParams: any = { TableName: DDB_TABLES.organizations, Item: this.organization };
@@ -93,7 +93,7 @@ class Organizations extends ResourceController {
 
       return this.organization;
     } catch (err) {
-      throw new RCError('Operation failed');
+      throw new HandledError('Operation failed');
     }
   }
 
@@ -102,7 +102,7 @@ class Organizations extends ResourceController {
   //     case 'SEND_USER_CONTACTS':
   //       return await this.sendUserContacts();
   //     default:
-  //       throw new RCError('Unsupported action');
+  //       throw new HandledError('Unsupported action');
   //   }
   // }
 
@@ -137,17 +137,17 @@ class Organizations extends ResourceController {
   // }
 
   protected async deleteResource(): Promise<void> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.organizations, Key: { organizationId: this.resourceId } });
     } catch (err) {
-      throw new RCError('Delete failed');
+      throw new HandledError('Delete failed');
     }
   }
 
   protected async postResources(): Promise<Organization> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     this.organization = new Organization(this.body);
     this.organization.organizationId = await ddb.IUNID(PROJECT);
@@ -161,7 +161,7 @@ class Organizations extends ResourceController {
         .map((x: Organization) => new Organization(x))
         .sort((a, b) => a.name.localeCompare(b.name));
     } catch (err) {
-      throw new RCError('Operation failed');
+      throw new HandledError('Operation failed');
     }
   }
 }
