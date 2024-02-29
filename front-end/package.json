@@ -25,7 +25,7 @@
     "@capacitor/push-notifications": "^5.1.0",
     "@idea-ionic/auth": "^7.2.12",
     "@idea-ionic/common": "^7.2.12",
-    "@ionic/angular": "^7.5.1",
+    "@ionic/angular": "^7.7.3",
     "@ionic/storage-angular": "^4.0.0",
     "@swimlane/ngx-datatable": "^20.1.0",
     "idea-toolbox": "^7.0.3",
