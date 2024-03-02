@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar *ngIf="app.isInMobileMode()" color="ideaToolbar">
+    <ion-segment [(ngModel)]="segment">
+      <ion-segment-button value="map">
+        {{ 'VENUES.MAP' | translate }}
+      </ion-segment-button>
+      <ion-segment-button value="list">
+        {{ 'VENUES.LIST' | translate }}
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="venues">
+    <div *ngIf="app.isInMobileMode(); else desktopContent">
+      <div [style.display]="segment !== 'list' ? 'none' : 'inherit'">
+        <ion-list lines="inset" style="padding: 0; max-width: 500px; margin: 0 auto;">
+          <ion-searchbar #searchbar color="light" (ionInput)="filter($event.target.value)"></ion-searchbar>
+          <ion-item color="white" class="noElements" *ngIf="venues && !venues.length">
+            <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
+          </ion-item>
+          <ion-item color="white" *ngIf="!venues">
+            <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
+          </ion-item>
+          <ion-item
+            color="white"
+            *ngFor="let venue of venues"
+            button
+            detail
+            (click)="selectVenue(venue)"
+          >
+            <ion-label class="ion-text-wrap">{{ venue.name }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+      <div [style.display]="segment !== 'map' ? 'none' : 'inherit'">
+        <!-- Map View -->
+        <div id="main-map" #mapRef></div>
+      </div>
+    </div>
+    <ng-template #desktopContent>
+      <div style="width: 30%; float: left;">
+        <ion-list lines="inset" style="padding: 0; max-width: 500px; margin: 0 auto;">
+          <ion-searchbar #searchbar color="light" (ionInput)="filter($event.target.value)"></ion-searchbar>
+          <ion-item color="white" class="noElements" *ngIf="venues && !venues.length">
+            <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
+          </ion-item>
+          <ion-item color="white" *ngIf="!venues">
+            <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
+          </ion-item>
+          <ion-item
+            color="white"
+            *ngFor="let venue of venues"
+            button
+            detail
+            (click)="selectVenue(venue)"
+          >
+            <ion-label class="ion-text-wrap">{{ venue.name }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+      <div style="width: 70%; float: right; right: 0; position: fixed;">
+        <!-- Desktop Map View -->
+        <div id="main-map" #mapRef></div>
+      </div>
+    </ng-template>
+  </div>
+</ion-content>

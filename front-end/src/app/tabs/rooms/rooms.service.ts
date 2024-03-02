@@ -14,22 +14,24 @@ export class RoomsService {
 
   constructor(private api: IDEAApiService) {}
 
-  private async loadList(): Promise<void> {
-    this.rooms = (await this.api.getResource(['rooms'])).map(r => new Room(r));
+  private async loadList(venue?: string): Promise<void> {
+    this.rooms = (await this.api.getResource(['rooms'], { params: { venue } })).map(r => new Room(r));
   }
 
   /**
    * Get (and optionally filter) the list of rooms.
    * Note: it can be paginated.
    * Note: it's a slice of the array.
+   * Note: if venue id is passed, it will filter rooms for that venue.
    */
   async getList(options: {
     force?: boolean;
     withPagination?: boolean;
     startPaginationAfterId?: string;
     search?: string;
+    venue?: string;
   }): Promise<Room[]> {
-    if (!this.rooms || options.force) await this.loadList();
+    if (!this.rooms || options.force) await this.loadList(options.venue);
     if (!this.rooms) return null;
 
     options.search = options.search ? String(options.search).toLowerCase() : '';
