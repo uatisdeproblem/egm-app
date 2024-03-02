@@ -7,6 +7,13 @@
       "type": "pickString",
       "options": ["dev", "prod"],
       "default": "dev"
+    },
+    {
+      "id": "platform",
+      "description": "The platform you target",
+      "type": "pickString",
+      "options": ["android", "ios"],
+      "default": "ios"
     }
   ],
   "tasks": [
@@ -49,6 +56,30 @@
       "type": "shell",
       "command": "./release.sh",
       "args": ["${input:environment}"],
+      "group": "build",
+      "options": { "cwd": "front-end" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Run a native mobile app",
+      "type": "shell",
+      "command": "./native-app.sh",
+      "args": ["${input:platform}", "run"],
+      "group": "build",
+      "options": { "cwd": "front-end" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Package a native mobile app",
+      "type": "shell",
+      "command": "./native-app.sh",
+      "args": ["${input:platform}", "release"],
       "group": "build",
       "options": { "cwd": "front-end" },
       "presentation": {
