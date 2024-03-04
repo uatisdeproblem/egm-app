@@ -14,22 +14,29 @@ export class SessionsService {
 
   constructor(private api: IDEAApiService) {}
 
-  private async loadList(): Promise<void> {
-    this.sessions = (await this.api.getResource(['sessions'])).map(s => new Session(s));
+  private async loadList(speaker?: string, room?: string): Promise<void> {
+    const params: any = {};
+    if (speaker) params.speaker = speaker;
+    if (room) params.room = room;
+    this.sessions = (await this.api.getResource(['sessions'], { params: params })).map(s => new Session(s));
   }
 
   /**
    * Get (and optionally filter) the list of sessions.
    * Note: it can be paginated.
    * Note: it's a slice of the array.
+   * Note: if speaker id is passed, it will filter sessions for that speaker.
+   * Note: if room id is passed, it will filter sessions for that room.
    */
   async getList(options: {
     force?: boolean;
     withPagination?: boolean;
     startPaginationAfterId?: string;
     search?: string;
+    speaker?: string;
+    room?: string;
   }): Promise<Session[]> {
-    if (!this.sessions || options.force) await this.loadList();
+    if (!this.sessions || options.force) await this.loadList(options.speaker, options.room);
     if (!this.sessions) return null;
 
     options.search = options.search ? String(options.search).toLowerCase() : '';
