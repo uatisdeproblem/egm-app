@@ -333,5 +333,9 @@
     "MAP": "Map",
     "DETAILS": "Venue's details",
     "ROOMS": "Venue's rooms"
+  },
+  "ROOMS": {
+    "DETAILS": "Room details",
+    "SESSIONS": "Sessions hosted in this room"
   }
 }
