@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'ORGANIZATIONS.DETAILS' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid class="contentGrid">
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="12" size-md="6">
+        <app-organization-card [organization]="organization"></app-organization-card>
+      </ion-col>
+      <ion-col size="12" size-md="6">
+        <ion-list>
+          <ion-list-header>
+            <ion-label class="ion-text-center">
+              <h2>{{ 'ORGANIZATIONS.SPEAKERS' | translate }}</h2>
+            </ion-label>
+          </ion-list-header>
+          <ion-searchbar #searchbar color="light" (ionInput)="filterSpeakers($event.target.value)"></ion-searchbar>
+          <ion-col *ngIf="!speakers">
+            <app-speaker-card [preview]="true"></app-speaker-card>
+          </ion-col>
+          <ion-col *ngIf="speakers && speakers.length === 0">
+            <ion-item lines="none" color="white">
+              <ion-label class="ion-text-center">{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
+            </ion-item>
+          </ion-col>
+          <ion-col *ngFor="let speaker of speakers">
+            <app-speaker-card [speaker]="speaker" [preview]="true" (click)="app.goToInTabs(['speakers', speaker.speakerId])"></app-speaker-card>
+          </ion-col>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

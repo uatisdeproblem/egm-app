@@ -337,5 +337,10 @@
   "ROOMS": {
     "DETAILS": "Room details",
     "SESSIONS": "Sessions hosted in this room"
+  },
+  "ORGANIZATIONS": {
+    "LIST": "Organizations list",
+    "DETAILS": "Organization details",
+    "SPEAKERS": "Speakers from this organization"
   }
 }

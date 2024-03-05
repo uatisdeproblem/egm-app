@@ -24,6 +24,10 @@ const routes: Routes = [
       {
         path: 'rooms',
         loadChildren: (): Promise<any> => import('./rooms/rooms.module').then(m => m.RoomsModule)
+      },
+      {
+        path: 'organizations',
+        loadChildren: (): Promise<any> => import('./organizations/organizations.module').then(m => m.OrganizationsModule)
       }
     ]
   }

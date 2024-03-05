@@ -14,22 +14,24 @@ export class SpeakersService {
 
   constructor(private api: IDEAApiService) {}
 
-  private async loadList(): Promise<void> {
-    this.speakers = (await this.api.getResource(['speakers'])).map(s => new Speaker(s));
+  private async loadList(organization?: string): Promise<void> {
+    this.speakers = (await this.api.getResource(['speakers'], { params: { organization } })).map(s => new Speaker(s));
   }
 
   /**
    * Get (and optionally filter) the list of speakers.
    * Note: it can be paginated.
    * Note: it's a slice of the array.
+   * Note: if organization id is passed, it will filter speakers for that organization.
    */
   async getList(options: {
     force?: boolean;
     withPagination?: boolean;
     startPaginationAfterId?: string;
     search?: string;
+    organization?: string;
   }): Promise<Speaker[]> {
-    if (!this.speakers || options.force) await this.loadList();
+    if (!this.speakers || options.force) await this.loadList(options.organization);
     if (!this.speakers) return null;
 
     options.search = options.search ? String(options.search).toLowerCase() : '';
