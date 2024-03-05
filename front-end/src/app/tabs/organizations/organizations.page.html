@@ -5,50 +5,23 @@
     </ion-segment-button>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
-  <div *ngIf="organizations">
-    <div *ngIf="app.isInMobileMode(); else desktopContent">
-      <ion-list lines="inset" style="padding: 0; max-width: 500px; margin: 0 auto;">
-        <ion-searchbar #searchbar color="light" (ionInput)="filterOrganizations($event.target.value)"></ion-searchbar>
-        <ion-item color="white" class="noElements" *ngIf="organizations && !organizations.length">
-          <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
-        </ion-item>
-        <ion-item color="white" *ngIf="!organizations">
-          <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
-        </ion-item>
-        <ion-item
-          color="white"
-          *ngFor="let organization of organizations"
-          button
-          detail
-          (click)="selectOrganization(organization)"
-        >
-          <ion-label class="ion-text-wrap">{{ organization.name }}</ion-label>
-        </ion-item>
-      </ion-list>
-    </div>
-    <ng-template #desktopContent>
-      <div style="width: 30%; float: left;">
-        <ion-list lines="inset" style="padding: 0; max-width: 500px; margin: 0 auto;">
-          <ion-searchbar #searchbar color="light" (ionInput)="filterOrganizations($event.target.value)"></ion-searchbar>
-          <ion-item color="white" class="noElements" *ngIf="organizations && !organizations.length">
-            <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
-          </ion-item>
-          <ion-item color="white" *ngIf="!organizations">
-            <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
-          </ion-item>
-          <ion-item
-            color="white"
-            *ngFor="let organization of organizations"
-            button
-            detail
-            (click)="selectOrganization(organization)"
-          >
-            <ion-label class="ion-text-wrap">{{ organization.name }}</ion-label>
-          </ion-item>
-        </ion-list>
-      </div>
-    </ng-template>
-  </div>
+  <ion-list lines="inset" style="padding: 0; max-width: 500px; margin: 0 auto;">
+    <ion-searchbar #searchbar color="light" (ionInput)="filterOrganizations($event.target.value)"></ion-searchbar>
+    <ion-item color="white" class="noElements" *ngIf="organizations && !organizations.length">
+      <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
+    </ion-item>
+    <ion-item color="white" *ngIf="!organizations">
+      <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
+    </ion-item>
+    <ion-item
+      color="white"
+      *ngFor="let organization of organizations"
+      button
+      detail
+      (click)="selectOrganization(organization)"
+    >
+      <ion-label class="ion-text-wrap">{{ organization.name }}</ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>
