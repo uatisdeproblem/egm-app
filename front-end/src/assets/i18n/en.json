@@ -117,8 +117,19 @@
     "NEW_PASSWORD": "New password"
   },
   "TABS": {
+    "HOME": "Home",
+    "AGENDA": "Agenda",
+    "VENUES": "Venues",
     "USER": "You",
+    "MENU": "Menu",
     "MANAGE": "Manage"
+  },
+  "MENU": {
+    "PAGES": "Pages",
+    "HOME": "Home",
+    "AGENDA": "Agenda",
+    "VENUES": "Venues",
+    "ORGANIZATIONS": "Organizations"
   },
   "USER": {
     "ESN_ACCOUNTS": "ESN Accounts",
