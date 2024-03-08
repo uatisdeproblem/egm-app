@@ -1,45 +1,56 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonContent, IonInfiniteScroll } from '@ionic/angular';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Map } from 'maplibre-gl';
+import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
 
-// import { openGeoLocationInMap } from '../utils'; // @todo add map #61 this method is in react branch
+import { AppService } from '@app/app.service';
+import { MapService } from '@common/map.service';
+import { VenuesService } from './venues.service';
 
 import { Venue } from '@models/venue.model';
-import { VenuesService } from './venues.service';
-import { AppService } from 'src/app/app.service';
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
 
 @Component({
   selector: 'app-venues',
-  templateUrl: './venues.page.html',
-  styleUrls: ['./venues.page.scss']
+  templateUrl: 'venues.page.html',
+  styleUrls: ['venues.page.scss']
 })
-export class VenuesPage implements OnInit {
-  @ViewChild(IonContent) content: IonContent;
-
-  segment = 'map'; // @todo add map #61
+export class VenuesPage implements OnInit, OnDestroy {
   venues: Venue[];
   filteredVenues: Venue[];
-  mapRef: any; // @todo add map #61
 
-  constructor(
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _venues: VenuesService,
-    public app: AppService
-  ) {}
+  segment: 'map' | 'list' = 'map';
 
-  ngOnInit() {
-    this.loadData();
-  }
+  map: Map;
+  mapContainerId = 'map-venues';
+  selectInMapSubscription: Subscription;
 
-  async loadData() {
+  private _map = inject(MapService);
+  private _loading = inject(IDEALoadingService);
+  private _message = inject(IDEAMessageService);
+  private _venues = inject(VenuesService);
+  _app = inject(AppService);
+
+  async ngOnInit(): Promise<void> {
     try {
-      await this.loading.show();
-      this.venues = await this._venues.getList({});
+      await this._loading.show();
+      this.venues = await this._venues.getList();
+
+      const entities = this.venues.map(venue => ({ ...venue, coordinates: Venue.getCoordinates(venue) }));
+      this.map = await this._map.initMap({ id: this.mapContainerId, entities });
+
+      this.selectInMapSubscription = this._map
+        .onSelectEntity(this.map)
+        .subscribe(feature => this.selectVenue(feature.properties));
     } catch (error) {
-      this.message.error('COMMON.OPERATION_FAILED');
+      this._message.error('COMMON.OPERATION_FAILED');
     } finally {
-      this.loading.hide();
+      this._loading.hide();
+    }
+  }
+  ngOnDestroy(): void {
+    if (this.selectInMapSubscription) {
+      this.selectInMapSubscription.unsubscribe();
+      this.selectInMapSubscription = null;
     }
   }
 
@@ -47,21 +58,8 @@ export class VenuesPage implements OnInit {
     this.venues = await this._venues.getList({ search });
   }
 
-  selectVenue(venue: Venue) {
+  selectVenue(venue: Venue): void {
     if (venue.venueId === 'home') return;
-
-    this.app.goToInTabs(['venues', venue.venueId]);
-
-    // @todo add map #61
-    // if (isMobileMode()) this.app.goToInTabs(['venue', venue.venueId])
-    // else {
-    //   this.mapRef.selectVenue(venue);
-    // }
+    this._app.goToInTabs(['venues', venue.venueId]);
   }
-
-  // @todo add map #61
-  // navigateToVenue(venue: Venue, event: Event) {
-  //   event.stopPropagation();
-  //   openGeoLocationInMap(venue.latitude, venue.longitude);
-  // }
 }

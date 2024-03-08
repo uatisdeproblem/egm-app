@@ -40,7 +40,8 @@
               "localforage",
               "@aws-crypto/sha256-js",
               "js-cookie",
-              "qrcode"
+              "qrcode",
+              "maplibre-gl"
             ]
           },
           "configurations": {
@@ -75,9 +76,7 @@
     }
   },
   "cli": {
-    "schematicCollections": [
-      "@ionic/angular-toolkit"
-    ],
+    "schematicCollections": ["@ionic/angular-toolkit"],
     "analytics": false
   },
   "schematics": {
