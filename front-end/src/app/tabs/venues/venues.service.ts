@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { Venue } from '@models/venue.model';
@@ -12,10 +12,11 @@ export class VenuesService {
    */
   MAX_PAGE_SIZE = 24;
 
-  constructor(private api: IDEAApiService) {}
+  private api = inject(IDEAApiService);
 
   private async loadList(): Promise<void> {
-    this.venues = (await this.api.getResource(['venues'])).map(v => new Venue(v));
+    const venues: Venue[] = await this.api.getResource(['venues']);
+    this.venues = venues.map(v => new Venue(v));
   }
 
   /**
@@ -23,12 +24,14 @@ export class VenuesService {
    * Note: it can be paginated.
    * Note: it's a slice of the array.
    */
-  async getList(options: {
-    force?: boolean;
-    withPagination?: boolean;
-    startPaginationAfterId?: string;
-    search?: string;
-  }): Promise<Venue[]> {
+  async getList(
+    options: {
+      force?: boolean;
+      withPagination?: boolean;
+      startPaginationAfterId?: string;
+      search?: string;
+    } = {}
+  ): Promise<Venue[]> {
     if (!this.venues || options.force) await this.loadList();
     if (!this.venues) return null;
 
@@ -40,7 +43,9 @@ export class VenuesService {
       filteredList = filteredList.filter(x =>
         options.search
           .split(' ')
-          .every(searchTerm => [x.venueId, x.name].filter(f => f).some(f => f.toLowerCase().includes(searchTerm)))
+          .every(searchTerm =>
+            [x.venueId, x.name, x.address, x.description].filter(f => f).some(f => f.toLowerCase().includes(searchTerm))
+          )
       );
 
     if (options.withPagination && filteredList.length > this.MAX_PAGE_SIZE) {
@@ -70,11 +75,7 @@ export class VenuesService {
    * Update an existing venue.
    */
   async update(venue: Venue): Promise<Venue> {
-    return new Venue(
-      await this.api.putResource(['venues', venue.venueId], {
-        body: venue
-      })
-    );
+    return new Venue(await this.api.putResource(['venues', venue.venueId], { body: venue }));
   }
   /**
    * Delete a venue.

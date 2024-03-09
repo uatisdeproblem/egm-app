@@ -3,6 +3,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as DDB from 'aws-cdk-lib/aws-dynamodb';
 
 import { IDEAStack } from './idea-stack';
+import { MapStack } from './map-stack';
 import { MediaStack } from './media-stack';
 import { CognitoStack } from './cognito-stack';
 import { SESStack } from './ses-stack';
@@ -137,6 +138,8 @@ const createApp = async (): Promise<void> => {
   //
 
   new IDEAStack(app, `idea-resources`);
+
+  new MapStack(app, `${parameters.project}-map`, { project: parameters.project });
 
   const mediaStack = new MediaStack(app, `${parameters.project}-media`, {
     env,
