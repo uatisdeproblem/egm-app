@@ -120,7 +120,7 @@ class Sessions extends ResourceController {
 
       const filtertedSessions = sessions.filter(
         x =>
-          (!this.queryParams.speaker || x.speakers.filter(x => x).includes(this.queryParams.speaker)) &&
+          (!this.queryParams.speaker || x.speakers.some(speaker => speaker.speakerId === this.queryParams.speaker)) &&
           (!this.queryParams.room || x.room.roomId === this.queryParams.room)
       );
 
