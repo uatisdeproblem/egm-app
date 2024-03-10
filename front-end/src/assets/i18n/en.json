@@ -353,5 +353,10 @@
     "LIST": "Organizations list",
     "DETAILS": "Organization details",
     "SPEAKERS": "Speakers from this organization"
+  },
+  "SPEAKERS": {
+    "LIST": "Speakers list",
+    "DETAILS": "Speaker details",
+    "SESSIONS": "Sessions given by this speaker"
   }
 }

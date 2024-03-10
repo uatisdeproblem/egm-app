@@ -18,16 +18,24 @@ import { Speaker } from '@models/speaker.model';
       <ion-card *ngIf="preview" [color]="preview ? 'white' : ''">
         <ion-card-header>
           <ion-card-title>{{ speaker.name }}</ion-card-title>
-          <ion-card-subtitle>{{ speaker.description }}</ion-card-subtitle>
+          <ion-card-subtitle>{{ speaker.organization.name }}</ion-card-subtitle>
         </ion-card-header>
       </ion-card>
 
       <ion-card *ngIf="!preview" color="white">
         <ion-card-header>
-          <ion-card-subtitle style="font-weight: 300;" class="ion-text-right">
+          <ion-card-subtitle class="ion-text-right">
+            <ion-img [src]="app.getImageURLByURI(speaker.imageURI)"></ion-img>
           </ion-card-subtitle>
           <ion-card-title>{{ speaker.name }}</ion-card-title>
-          <ion-card-subtitle>{{ speaker.organization }}</ion-card-subtitle>
+          <ion-card-subtitle>
+            <ion-button fill="clear" color="dark" (click)="app.goToInTabs(['organizations', speaker.organization.organizationId])">
+              {{ speaker.organization.name }}
+            </ion-button>
+          </ion-card-subtitle>
+          <ion-card-subtitle>
+            <a [href]="'mailto:' + speaker.contactEmail">{{ speaker.contactEmail }}</a>
+          </ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
           <div class="divDescription" *ngIf="speaker.description">
