@@ -129,7 +129,8 @@
     "HOME": "Home",
     "AGENDA": "Agenda",
     "VENUES": "Venues",
-    "ORGANIZATIONS": "Organizations"
+    "ORGANIZATIONS": "Organizations",
+    "SPEAKERS": "Speakers"
   },
   "USER": {
     "ESN_ACCOUNTS": "ESN Accounts",
