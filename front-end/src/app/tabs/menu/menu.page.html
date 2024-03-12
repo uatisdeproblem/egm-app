@@ -26,5 +26,9 @@
       <ion-icon name="business" slot="start"></ion-icon>
       <ion-label>{{ 'MENU.ORGANIZATIONS' | translate }}</ion-label>
     </ion-item>
+    <ion-item button color="white" (click)="app.goToInTabs(['speakers'])">
+      <ion-icon name="mic" slot="start"></ion-icon>
+      <ion-label>{{ 'MENU.SPEAKERS' | translate }}</ion-label>
+    </ion-item>
   </ion-list>
 </ion-content>

@@ -129,7 +129,8 @@
     "HOME": "Home",
     "AGENDA": "Agenda",
     "VENUES": "Venues",
-    "ORGANIZATIONS": "Organizations"
+    "ORGANIZATIONS": "Organizations",
+    "SPEAKERS": "Speakers"
   },
   "USER": {
     "ESN_ACCOUNTS": "ESN Accounts",
@@ -353,5 +354,10 @@
     "LIST": "Organizations list",
     "DETAILS": "Organization details",
     "SPEAKERS": "Speakers from this organization"
+  },
+  "SPEAKERS": {
+    "LIST": "Speakers list",
+    "DETAILS": "Speaker details",
+    "SESSIONS": "Sessions given by this speaker"
   }
 }

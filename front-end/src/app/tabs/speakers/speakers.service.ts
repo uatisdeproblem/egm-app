@@ -15,7 +15,9 @@ export class SpeakersService {
   constructor(private api: IDEAApiService) {}
 
   private async loadList(organization?: string): Promise<void> {
-    this.speakers = (await this.api.getResource(['speakers'], { params: { organization } })).map(s => new Speaker(s));
+    const params: any = {};
+    if (organization) params.organization = organization;
+    this.speakers = (await this.api.getResource(['speakers'], { params: params })).map(s => new Speaker(s));
   }
 
   /**
