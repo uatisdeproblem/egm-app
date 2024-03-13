@@ -18,6 +18,10 @@ const routes: Routes = [
         loadChildren: (): Promise<any> => import('./manage/manage.module').then(m => m.ManageModule)
       },
       {
+        path: 'home',
+        loadChildren: (): Promise<any> => import('./home/home.module').then(m => m.HomeModule)
+      },
+      {
         path: 'menu',
         loadChildren: (): Promise<any> => import('./menu/menu.module').then(m => m.MenuModule)
       },

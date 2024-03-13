@@ -23,6 +23,7 @@ const apiResources: ResourceController[] = [
   { name: 'cognito', paths: ['/cognito'] },
   { name: 'galaxy', paths: ['/galaxy'] },
   { name: 'configurations', paths: ['/configurations'] },
+  { name: 'media', paths: ['/media'] },
   { name: 'users', paths: ['/users', '/users/{userId}'] },
   { name: 'eventSpots', paths: ['/event-spots', '/event-spots/{spotId}'] },
   { name: 'usefulLinks', paths: ['/useful-links', '/useful-links/{linkId}'] },

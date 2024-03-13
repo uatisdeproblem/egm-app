@@ -196,24 +196,6 @@
     <ion-list class="aList">
       <ion-list-header>
         <ion-label>
-          <h2>{{ 'USEFUL_LINKS.USEFUL_LINKS' | translate }}</h2>
-        </ion-label>
-      </ion-list-header>
-      <ion-item class="noElements" *ngIf="usefulLinks && !usefulLinks.length">
-        <ion-label>{{ 'COMMON.NO_ELEMENTS' | translate }}</ion-label>
-      </ion-item>
-      <app-useful-link *ngIf="!usefulLinks" />
-      <app-useful-link
-        *ngFor="let link of usefulLinks"
-        [link]="link"
-        [button]="true"
-        (select)="app.openURL(link.url)"
-      />
-    </ion-list>
-
-    <ion-list class="aList">
-      <ion-list-header>
-        <ion-label>
           <h2>{{ 'USER.OTHER_ACTIONS' | translate }}</h2>
         </ion-label>
       </ion-list-header>

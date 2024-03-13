@@ -74,8 +74,13 @@
     "SAVE_CHANGES": "Save changes",
     "NOT_FOUND": "Not found",
     "NOT_SELECTED": "Not selected",
-    "OR": "OR",
-    "COPIED": "Copied"
+    "COPIED": "Copied",
+    "MANAGE": "Manage",
+    "UNKNOWN": "Unknown",
+    "DUPLICATE": "Duplicate",
+    "ERROR": "Error",
+    "OR": "Or",
+    "COPY": "Copy"
   },
   "AUTH": {
     "TITLE": "Erasmus Generation Meeting",
@@ -123,6 +128,28 @@
     "USER": "You",
     "MENU": "Menu",
     "MANAGE": "Manage"
+  },
+  "HOME": {
+    "NEWS": "News",
+    "NEWS_I": "Bulletin board from the administrators.",
+    "USEFUL_LINKS": "Useful links",
+    "USEFUL_LINKS_I": "Access more information through these sources."
+  },
+  "USEFUL_LINKS": {
+    "USEFUL_LINKS": "Useful links",
+    "MANAGE_LINK": "Manage useful link",
+    "NAME": "Name",
+    "URL": "URL",
+    "AUDIENCE": "Audience",
+    "GENERAL": "General"
+  },
+  "COMMUNICATIONS": {
+    "COMMUNICATIONS": "Communications",
+    "MANAGE_COMMUNICATION": "Manage communication",
+    "NAME": "Title",
+    "BRIEF": "A brief description (for previews)",
+    "IMAGE_URL": "Image URL",
+    "CONTENT": "The full-content of the communication"
   },
   "MENU": {
     "PAGES": "Pages",
@@ -324,14 +351,6 @@
     "LIST_OF_ESN_COUNTRIES": "List of current ESN countries",
     "USEFUL_LINKS": "Useful links",
     "USEFUL_LINKS_I": "Manage the links you want to make available to all users for quick access."
-  },
-  "USEFUL_LINKS": {
-    "USEFUL_LINKS": "Useful links",
-    "MANAGE_LINK": "Manage useful link",
-    "NAME": "Name",
-    "URL": "URL",
-    "AUDIENCE": "Audience",
-    "GENERAL": "General"
   },
   "STRIPE": {
     "BEFORE_YOU_PROCEED": "Before you proceed",

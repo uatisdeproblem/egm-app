@@ -6,11 +6,9 @@ import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from 
 import { AppService } from '@app/app.service';
 import { AuthService } from '@app/auth/auth.service';
 import { UserService } from '@tabs/user/user.service';
-import { UsefulLinksService } from '@app/common/usefulLinks/usefulLinks.service';
 
 import { environment as env } from '@env';
 import { AuthServices, User } from '@models/user.model';
-import { UsefulLink } from '@models/usefulLink.model';
 import { StripeWarningStandaloneComponent } from '../payments/stripeWarning.component';
 
 @Component({
@@ -27,8 +25,6 @@ export class UserPage {
   errors = new Set<string>();
   entityBeforeChange: User;
 
-  usefulLinks: UsefulLink[];
-
   constructor(
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
@@ -37,12 +33,8 @@ export class UserPage {
     private t: IDEATranslationsService,
     private auth: AuthService,
     private _user: UserService,
-    private _usefulLinks: UsefulLinksService,
     public app: AppService
   ) {}
-  async ionViewWillEnter(): Promise<void> {
-    this.usefulLinks = await this._usefulLinks.getList();
-  }
 
   async changeAvatar({ target }): Promise<void> {
     const file = target.files[0];
