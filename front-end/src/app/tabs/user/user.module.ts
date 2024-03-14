@@ -6,7 +6,6 @@ import { IDEATranslationsModule, IDEAUserAvatarModule } from '@idea-ionic/common
 
 import { UserRoutingModule } from './user-routing.module';
 import { UserPage } from './user.page';
-import { UsefulLinkStandaloneComponent } from '@app/common/usefulLinks/usefulLink.component';
 
 @NgModule({
   imports: [
@@ -15,8 +14,7 @@ import { UsefulLinkStandaloneComponent } from '@app/common/usefulLinks/usefulLin
     IonicModule,
     IDEATranslationsModule,
     IDEAUserAvatarModule,
-    UserRoutingModule,
-    UsefulLinkStandaloneComponent
+    UserRoutingModule
   ],
   declarations: [UserPage]
 })

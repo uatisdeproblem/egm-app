@@ -9,7 +9,7 @@ const MAP_HTML_ELEMENT_ID = 'map';
 const MAP_ENTITIES_LAYER_NAME = 'entities-layer';
 const MAP_ENTITIES_SOURCE_NAME = 'entities-source';
 
-const MAP_CENTER_LAT_LON: LngLatLike = [16, 45];
+const MAP_CENTER_LAT_LON: LngLatLike = [-6, 37.4];
 const MAP_DEFAULT_ZOOM = 14;
 
 @Injectable({ providedIn: 'root' })
