@@ -120,7 +120,7 @@ ion-list.aList {
     --highlight-color-valid: var(--ion-color-primary);
     --highlight-color-invalid: var(--ion-color-primary);
     ion-label p {
-      color: var(--ion-color-step-600) !important;
+      opacity: 0.9 !important;
     }
   }
   ion-row.row,
