@@ -4,7 +4,7 @@ import { RoomLinked } from './room.model';
 import { SpeakerLinked } from './speaker.model';
 
 /**
- * YYYY-MM-DDTHH:MM, without timezone. // @todo do we need this?
+ * YYYY-MM-DDTHH:MM, without timezone.
  */
 type datetime = string;
 
@@ -76,9 +76,11 @@ export class Session extends Resource {
     this.endsAt = this.calcDatetimeWithoutTimezone(endsAt);
     this.room = typeof x.room === 'string' ? new RoomLinked({ roomId: x.room }) : new RoomLinked(x.room);
     this.speakers = this.cleanArray(x.speakers, x => new SpeakerLinked(x));
-    this.numberOfParticipants = this.clean(x.numberOfParticipants, Number, 0);
-    this.limitOfParticipants = this.clean(x.limitOfParticipants, Number);
-    this.requiresRegistration = Object.keys(IndividualSessionType).includes(this.type);
+    this.requiresRegistration = this.type !== SessionType.COMMON;
+    if (this.requiresRegistration) {
+      this.numberOfParticipants = this.clean(x.numberOfParticipants, Number, 0);
+      this.limitOfParticipants = this.clean(x.limitOfParticipants, Number);
+    }
   }
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
@@ -103,47 +105,17 @@ export class Session extends Resource {
   }
 
   isFull(): boolean {
-    return this.numberOfParticipants >= this.limitOfParticipants;
+    return this.requiresRegistration ? this.numberOfParticipants >= this.limitOfParticipants : false
   }
 }
 
-// @todo don't have three enums...
-// @todo check if any is missing or we need to add.
-export enum CommonSessionType {
-  OPENING = 'OPENING',
-  KEYNOTE = 'KEYNOTE',
-  MORNING = 'MORNING',
-  POSTER = 'POSTER',
-  EXPO = 'EXPO',
-  CANDIDATES = 'CANDIDATES',
-  HARVESTING = 'HARVESTING',
-  CLOSING = 'CLOSING',
-  OTHER = 'OTHER'
-}
-
-export enum IndividualSessionType {
-  DISCUSSION = 'DISCUSSION',
-  TALK = 'TALK',
-  IGNITE = 'IGNITE',
-  CAMPFIRE = 'CAMPFIRE',
-  IDEAS = 'IDEAS',
-  INCUBATOR = 'INCUBATOR'
-}
 
 export enum SessionType {
-  OPENING = 'OPENING',
-  KEYNOTE = 'KEYNOTE',
-  MORNING = 'MORNING',
-  POSTER = 'POSTER',
-  EXPO = 'EXPO',
-  CANDIDATES = 'CANDIDATES',
-  HARVESTING = 'HARVESTING',
-  CLOSING = 'CLOSING',
   DISCUSSION = 'DISCUSSION',
   TALK = 'TALK',
   IGNITE = 'IGNITE',
   CAMPFIRE = 'CAMPFIRE',
-  IDEAS = 'IDEAS',
   INCUBATOR = 'INCUBATOR',
-  OTHER = 'OTHER'
+  HUB = 'HUB',
+  COMMON = 'COMMON'
 }
