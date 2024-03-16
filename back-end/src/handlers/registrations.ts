@@ -15,7 +15,8 @@ import { User } from '../models/user.model';
 const DDB_TABLES = {
   users: process.env.DDB_TABLE_users,
   sessions: process.env.DDB_TABLE_sessions,
-  registrations: process.env.DDB_TABLE_registrations
+  registrations: process.env.DDB_TABLE_registrations,
+  usersFavoriteSessions: process.env.DDB_TABLE_usersFavoriteSessions
 };
 
 const ddb = new DynamoDB();
@@ -35,6 +36,10 @@ class SessionRegistrations extends ResourceController {
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
+  // NOTE: DONT DO THIS CHECK HERE, DO IT ON THE DELETE/POST
+  // this.app.configurations.areSessionRegistrationsOpen // @todo use this in the code (and in back-end as well!!)
+
+
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
@@ -72,13 +77,15 @@ class SessionRegistrations extends ResourceController {
     }
   }
 
-  protected async postResources(): Promise<any> {
+  protected async postResource(): Promise<any> {
     // @todo configurations.canSignUpForSessions()
 
     this.registration = new SessionRegistration({
       sessionId: this.resourceId,
-      userId: this.principalId,
-      registrationDateInMs: new Date().getTime()
+      userId: this.user.userId,
+      registrationDateInMs: new Date().getTime(),
+      name: this.user.getName(),
+      esnCountry: this.user.sectionCountry
     });
 
     return await this.putSafeResource();
@@ -105,7 +112,16 @@ class SessionRegistrations extends ResourceController {
         }
       };
 
-      await ddb.transactWrites([{ Delete: deleteSessionRegistration }, { Update: updateSessionCount }]);
+      const removeFromFavorites = {
+        TableName: DDB_TABLES.usersFavoriteSessions,
+        Key: { userId: this.principalId, sessionId }
+      };
+
+      await ddb.transactWrites([
+        { Delete: deleteSessionRegistration },
+        { Delete: removeFromFavorites },
+        { Update: updateSessionCount }
+      ]);
     } catch (err) {
       throw new HandledError('Delete failed');
     }
@@ -129,7 +145,16 @@ class SessionRegistrations extends ResourceController {
         }
       };
 
-      await ddb.transactWrites([{ Put: putSessionRegistration }, { Update: updateSessionCount }]);
+      const addToFavorites = {
+        TableName: DDB_TABLES.usersFavoriteSessions,
+        Item: { userId: this.principalId, sessionId: this.resourceId }
+      }
+
+      await ddb.transactWrites([
+        { Put: putSessionRegistration },
+        { Put: addToFavorites },
+        { Update: updateSessionCount }
+      ]);
 
       return this.registration;
     } catch (err) {
