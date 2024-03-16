@@ -37,7 +37,7 @@ export class RoomPage implements OnInit {
       await this.loading.show();
       const roomId = this.route.snapshot.paramMap.get('roomId');
       this.room = await this._rooms.getById(roomId);
-      this.sessions = await this._sessions.getList({ room: this.room.roomId, force: true });
+      this.sessions = await this._sessions.getSessionsInARoom(this.room.roomId);
     } catch (err) {
       this.message.error('COMMON.NOT_FOUND');
     } finally {
@@ -46,6 +46,6 @@ export class RoomPage implements OnInit {
   }
 
   async filterSessions(search: string = ''): Promise<void> {
-    this.sessions = await this._sessions.getList({ search, room: this.room.roomId });
+    this.sessions = await this._sessions.getSessionsInARoom(search, this.room.roomId)
   }
 }

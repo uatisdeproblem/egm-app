@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
-import { Session } from '@models/session.model';
+import { Session, SessionType } from '@models/session.model';
+import { SessionRegistration } from '@models/sessionRegistration.model';
 
 @Injectable({ providedIn: 'root' })
 export class SessionsService {
   private sessions: Session[];
+  // It's the IDs only
+  private userFavoriteSessions: string[];
+  private userRegisteredSessions: SessionRegistration[];
 
   /**
    * The number of sessions to consider for the pagination, when active.
@@ -14,11 +18,29 @@ export class SessionsService {
 
   constructor(private api: IDEAApiService) {}
 
-  private async loadList(speaker?: string, room?: string): Promise<void> {
-    const params: any = {};
-    if (speaker) params.speaker = speaker;
-    if (room) params.room = room;
-    this.sessions = (await this.api.getResource(['sessions'], { params: params })).map(s => new Session(s));
+  private async loadList(): Promise<void> {
+    this.sessions = (await this.api.getResource(['sessions'])).map(s => new Session(s));
+  }
+
+  private async loadUserFavoriteSessions(): Promise<void> {
+    const body: any = { action: 'GET_FAVORITE_SESSIONS' };
+    this.userFavoriteSessions = await this.api.patchResource(['users', 'me'], { body });
+  }
+
+  async loadUserRegisteredSessions(): Promise<SessionRegistration[]> {
+    this.userRegisteredSessions = await this.api.getResource(['registrations']);
+    return this.userRegisteredSessions
+  }
+
+  async getSpeakerSessions(speaker: string, search?: string): Promise<Session[]> {
+    const sessions: Session[] = (await this.api.getResource(['sessions'], { params: { speaker } })).map(
+      s => new Session(s)
+    );
+    return this.applySearchToSessions(sessions, search);
+  }
+  async getSessionsInARoom(room: string, search?: string): Promise<Session[]> {
+    let sessions: Session[] = (await this.api.getResource(['sessions'], { params: { room } })).map(s => new Session(s));
+    return this.applySearchToSessions(sessions, search);
   }
 
   /**
@@ -33,24 +55,23 @@ export class SessionsService {
     withPagination?: boolean;
     startPaginationAfterId?: string;
     search?: string;
-    speaker?: string;
-    room?: string;
-  }): Promise<Session[]> {
-    if (!this.sessions || options.force) await this.loadList(options.speaker, options.room);
+    segment?: string,
+  } = {}): Promise<Session[]> {
+    if (!this.sessions || options.force) await this.loadList();
     if (!this.sessions) return null;
 
     options.search = options.search ? String(options.search).toLowerCase() : '';
 
     let filteredList = this.sessions.slice();
 
-    if (options.search)
-      filteredList = filteredList.filter(x =>
-        options.search
-          .split(' ')
-          .every(searchTerm =>
-            [x.sessionId, x.code, x.name].filter(f => f).some(f => f.toLowerCase().includes(searchTerm))
-          )
-      );
+    if (options.search) filteredList = this.applySearchToSessions(filteredList, options.search)
+
+      // @todo should we hide past sessions? or disable them?
+      if (!options.segment) {
+        await this.loadUserFavoriteSessions();
+        filteredList = filteredList.filter(s => this.userFavoriteSessions.includes(s.sessionId)) || [];
+      }
+      else filteredList = filteredList.filter(s => s.startsAt.startsWith(options.segment)) || [];
 
     if (options.withPagination && filteredList.length > this.MAX_PAGE_SIZE) {
       let indexOfLastOfPreviousPage = 0;
@@ -60,6 +81,25 @@ export class SessionsService {
     }
 
     return filteredList;
+  }
+
+  private applySearchToSessions(sessions: Session[], search: string) {
+    if (search)
+    sessions = sessions.filter(x =>
+      search
+        .split(' ')
+        .every(searchTerm =>
+          [x.sessionId, x.code, x.name].filter(f => f).some(f => f.toLowerCase().includes(searchTerm))
+        )
+    );
+
+    return sessions
+  }
+
+  async getSessionDays(): Promise<string[]> {
+    if (!this.sessions) await this.loadList();
+
+    return Array.from(new Set(this.sessions.map(s => s.startsAt.slice(0, 10)))).sort()
   }
 
   /**
@@ -90,5 +130,39 @@ export class SessionsService {
    */
   async delete(session: Session): Promise<void> {
     await this.api.deleteResource(['sessions', session.sessionId]);
+  }
+
+  async addToFavorites(sessionId: string){
+    const body: any = { action: 'ADD_FAVORITE_SESSION', sessionId };
+    this.userFavoriteSessions = await this.api.patchResource(['users', 'me'], { body });
+  }
+  async removeFromFavorites(sessionId: string){
+    const body: any = { action: 'REMOVE_FAVORITE_SESSION', sessionId };
+    this.userFavoriteSessions = await this.api.patchResource(['users', 'me'], { body });
+  }
+  async registerInSession(sessionId: string){
+    this.userFavoriteSessions = await this.api.postResource(['registrations', sessionId]);
+  }
+  async unregisterFromSession(sessionId: string){
+    this.userFavoriteSessions = await this.api.deleteResource(['registrations', sessionId]);
+  }
+
+  getColourBySessionType(session: Session){
+    switch(session.type) {
+      case SessionType.DISCUSSION:
+        return 'ESNcyan';
+      case SessionType.TALK:
+        return 'ESNgreen';
+      case SessionType.IGNITE:
+        return 'ESNpink';
+      case SessionType.CAMPFIRE:
+        return 'ESNorange';
+      case SessionType.INCUBATOR:
+        return 'ESNdarkBlue';
+      case SessionType.HUB:
+        return 'dark';
+      default:
+        return 'medium';
+    }
   }
 }

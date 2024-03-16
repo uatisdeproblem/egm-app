@@ -37,7 +37,7 @@ export class SpeakerPage implements OnInit {
       await this.loading.show();
       const speakerId = this.route.snapshot.paramMap.get('speakerId');
       this.speaker = await this._speakers.getById(speakerId);
-      this.sessions = await this._sessions.getList({ speaker: this.speaker.speakerId, force: true });
+      this.sessions = await this._sessions.getSpeakerSessions(this.speaker.speakerId)
     } catch (err) {
       this.message.error('COMMON.NOT_FOUND');
     } finally {
@@ -46,6 +46,6 @@ export class SpeakerPage implements OnInit {
   }
 
   async filterSessions(search: string = ''): Promise<void> {
-    this.sessions = await this._sessions.getList({ search, speaker: this.speaker.speakerId });
+    this.sessions = await this._sessions.getSpeakerSessions(this.speaker.speakerId, search);
   }
 }

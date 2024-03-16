@@ -1,0 +1,99 @@
+<ion-header>
+  <ion-toolbar *ngIf="app.isInMobileMode()" color="ideaToolbar">
+    <ion-title class="ion-text-center">
+      {{ 'SESSIONS.LIST' | translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col [size]="app.isInMobileMode() ? 12 : 6">
+        <ion-segment [(ngModel)]="segment">
+          <ion-segment-button [value]="''" (click)="changeSegment('', searchbar.value)">
+            <ion-icon name="star" />
+          </ion-segment-button>
+          <ion-segment-button *ngFor="let day of days" [value]="day" (click)="changeSegment(day, searchbar.value)">
+            <ion-label>
+              {{ app.formatDateShort(day) }}
+            </ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <ion-list class="maxWidthContainer" lines="inset">
+          <ion-searchbar #searchbar color="light" (ionInput)="filterSessions($event.target.value)"></ion-searchbar>
+          <ion-item color="white" class="noElements" *ngIf="sessions && !sessions.length">
+            <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
+          </ion-item>
+          <ion-item color="white" *ngIf="!sessions">
+            <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
+          </ion-item>
+          <ion-item
+            *ngFor="let session of sessions"
+            [class.favoritedSession]="!session.requiresRegistration && this.isSessionInFavorites(session)"
+            [class.registeredSession]="session.requiresRegistration && this.isUserRegisteredInSession(session)"
+            button
+            lines="none"
+            color="white"
+          >
+            <ion-note class="ion-text-center borderRight" slot="start">
+              <b>{{ app.formatTime(session.startsAt) }}</b>
+              <span>{{ app.formatTime(session.endsAt) }}</span>
+            </ion-note>
+            <ion-label class="ion-text-wrap">
+              <ion-text class="sessionTitle">{{ session.name }}</ion-text>
+              <p>
+                <ion-badge [color]="_sessions.getColourBySessionType(session)">
+                  {{ 'SESSIONS.TYPES.' + session.type | translate }}
+                </ion-badge>
+              </p>
+              <p>
+                <ion-icon color="medium" name="location-outline"/>
+                <ion-text color="medium">
+                  {{ session.room.name }} ({{ session.room.venue.name }})
+                </ion-text>
+                <br />
+                <ion-icon color="medium" name="mic-outline"/>
+                <ion-text color="medium">
+                  {{ session.getSpeakers() }}
+                </ion-text>
+              </p>
+            </ion-label>
+            <ion-note class="ion-text-center" slot="end">
+              <ion-chip outline [color]="session.isFull() ? 'danger' : 'primary'">
+                @if(session.requiresRegistration) {
+                  {{ session.isFull() ? this.t._('COMMON.FULL') : session.numberOfParticipants + '/' + session.limitOfParticipants }}
+                } @else {
+                  {{ 'COMMON.OPEN' | translate }}
+                }
+              </ion-chip>
+              <span class="ion-text-center">
+                <ion-button
+                  *ngIf="session.requiresRegistration"
+                  fill="clear"
+                  [color]="isUserRegisteredInSession(session) ? 'danger' : 'success'"
+                  (click)="toggleRegister(session)"
+                >
+                  <ion-icon
+                    [name]="isUserRegisteredInSession(session) ? 'close-circle' : 'checkmark-circle'"
+                    slot="icon-only"
+                  />
+                </ion-button>
+                <ion-button
+                  *ngIf="!session.requiresRegistration"
+                  fill="clear"
+                  color="warning"
+                  (click)="toggleFavorite(session)"
+                >
+                  <ion-icon [name]="isSessionInFavorites(session) ? 'star' : 'star-outline'" slot="icon-only" />
+                </ion-button>
+              </span>
+            </ion-note>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      <ion-col *ngIf="!app.isInMobileMode()">
+        <!-- @todo -->
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

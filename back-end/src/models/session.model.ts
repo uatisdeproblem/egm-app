@@ -94,6 +94,7 @@ export class Session extends Resource {
     if (isEmpty(this.durationMinutes)) e.push('durationMinutes');
     if (!this.room.roomId) e.push('room');
     if (!this.speakers?.length) e.push('speakers');
+    if (this.requiresRegistration && !this.limitOfParticipants) e.push('limitOfParticipants');
     return e;
   }
 
@@ -106,6 +107,10 @@ export class Session extends Resource {
 
   isFull(): boolean {
     return this.requiresRegistration ? this.numberOfParticipants >= this.limitOfParticipants : false
+  }
+
+  getSpeakers(): string {
+    return this.speakers.map(s => s.name).join(', ')
   }
 }
 

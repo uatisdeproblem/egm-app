@@ -208,4 +208,13 @@ export class AppService {
     const p = this.user.permissions;
     return p.isAdmin || p.canManageRegistrations || p.canManageContents;
   }
+
+  formatDateShort = (date: string | Date): string => {
+    if (!(date instanceof Date)) date = new Date(date);
+    return date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  };
+  formatTime(date: string | Date): string {
+    if (!(date instanceof Date)) date = new Date(date);
+    return new Date(date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
 }

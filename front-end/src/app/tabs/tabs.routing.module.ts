@@ -40,6 +40,10 @@ const routes: Routes = [
       {
         path: 'speakers',
         loadChildren: (): Promise<any> => import('./speakers/speakers.module').then(m => m.SpeakersModule)
+      },
+      {
+        path: 'agenda',
+        loadChildren: (): Promise<any> => import('./sessions/sessions.module').then(m => m.SessionsModule)
       }
     ]
   }
