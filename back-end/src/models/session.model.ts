@@ -100,9 +100,19 @@ export class Session extends Resource {
 
   // @todo add a method to check if a user/speaker is in the session or not
 
-  calcDatetimeWithoutTimezone(dateToFormat: Date | string | number): datetime {
+  calcDatetimeWithoutTimezone(dateToFormat: Date | string | number, bufferInMinutes = 0): datetime {
     const date = new Date(dateToFormat);
-    return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    return new Date(
+      date.getTime() -
+        this.convertMinutesToMilliseconds(date.getTimezoneOffset()) +
+        this.convertMinutesToMilliseconds(bufferInMinutes)
+    )
+      .toISOString()
+      .slice(0, 16);
+  }
+
+  convertMinutesToMilliseconds(minutes: number) {
+    return minutes * 60 * 1000;
   }
 
   isFull(): boolean {

@@ -42,6 +42,12 @@
         {{ 'MANAGE.ALLOW_SESSION_REGISTRATIONS' | translate }}
       </ion-checkbox>
     </ion-item>
+    <ion-item [class.fieldHasError]="hasFieldAnError('sessionRegistrationBuffer')">
+      <ion-label position="stacked">
+        {{ 'MANAGE.SESSION_BUFFER' | translate }}
+      </ion-label>
+      <ion-input [(ngModel)]="configurations.sessionRegistrationBuffer" [disabled]="!editMode"></ion-input>
+    </ion-item>
     <ion-item>
       <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.canCountryLeadersAssignSpots">
         {{ 'MANAGE.ALLOW_COUNTRY_LEADER_ASSIGN_SPOT' | translate }}

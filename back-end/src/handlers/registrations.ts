@@ -193,8 +193,14 @@ class SessionRegistrations extends ResourceController {
       const sessionStartDate = s.calcDatetimeWithoutTimezone(s.startsAt);
       const sessionEndDate = s.calcDatetimeWithoutTimezone(s.endsAt);
 
-      const targetSessionStart = session.calcDatetimeWithoutTimezone(session.startsAt);
-      const targetSessionEnd = session.calcDatetimeWithoutTimezone(session.endsAt);
+      const targetSessionStart = session.calcDatetimeWithoutTimezone(
+        session.startsAt,
+        -1 * this.configurations.sessionRegistrationBuffer || 0
+      );
+      const targetSessionEnd = session.calcDatetimeWithoutTimezone(
+        session.endsAt,
+        this.configurations.sessionRegistrationBuffer || 0
+      );
 
       // it's easier to prove a session is valid than it is to prove it's invalid. (1 vs 5 conditional checks)
       return sessionStartDate >= targetSessionEnd || sessionEndDate <= targetSessionStart;

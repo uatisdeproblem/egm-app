@@ -294,6 +294,7 @@
     "ALLOW_REGISTRATIONS": "Allow registrations",
     "ALLOW_EXTERNALS": "Allow externals to register",
     "ALLOW_SESSION_REGISTRATIONS": "Allow session registrations",
+    "SESSION_BUFFER": "Time interval between sessions for registration.",
     "ALLOW_COUNTRY_LEADER_ASSIGN_SPOT": "Allow country leaders to assign spots",
     "REGISTRATION_FORM": "Registration form",
     "REGISTRATION_FORM_I": "Add, manage and remove the fields requested during the registration.",
