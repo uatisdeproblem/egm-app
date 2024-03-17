@@ -7,6 +7,7 @@ import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 import { Session } from '../models/session.model';
 import { SessionRegistration } from '../models/sessionRegistration.model';
 import { User } from '../models/user.model';
+import { Configurations } from '../models/configurations.model';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -15,6 +16,7 @@ import { User } from '../models/user.model';
 const DDB_TABLES = {
   users: process.env.DDB_TABLE_users,
   sessions: process.env.DDB_TABLE_sessions,
+  configurations: process.env.DDB_TABLE_configurations,
   registrations: process.env.DDB_TABLE_registrations,
   usersFavoriteSessions: process.env.DDB_TABLE_usersFavoriteSessions
 };
@@ -29,6 +31,7 @@ export const handler = (ev: any, _: any, cb: any) => new SessionRegistrations(ev
 
 class SessionRegistrations extends ResourceController {
   user: User;
+  configurations: Configurations;
   registration: SessionRegistration;
 
   constructor(event: any, callback: any) {
@@ -36,14 +39,20 @@ class SessionRegistrations extends ResourceController {
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
-  // NOTE: DONT DO THIS CHECK HERE, DO IT ON THE DELETE/POST
-  // this.app.configurations.areSessionRegistrationsOpen // @todo use this in the code (and in back-end as well!!)
 
 
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
       throw new HandledError('User not found');
+    }
+
+    try {
+      this.configurations = new Configurations(
+        await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
+      );
+    } catch (err) {
+      throw new HandledError('Configuration not found');
     }
 
     if (!this.resourceId || this.httpMethod === 'POST') return;
@@ -78,7 +87,7 @@ class SessionRegistrations extends ResourceController {
   }
 
   protected async postResource(): Promise<any> {
-    // @todo configurations.canSignUpForSessions()
+    if (!this.configurations.areSessionRegistrationsOpen) throw new HandledError('Registrations are closed!')
 
     this.registration = new SessionRegistration({
       sessionId: this.resourceId,
@@ -96,7 +105,7 @@ class SessionRegistrations extends ResourceController {
   }
 
   protected async deleteResource(): Promise<void> {
-    // @todo configurations.canSignUpForSessions()
+    if (!this.configurations.areSessionRegistrationsOpen) throw new HandledError('Registrations are closed!')
 
     try {
       const { sessionId, userId } = this.registration;

@@ -22,6 +22,10 @@ export class Configurations extends Resource {
    */
   isRegistrationOpenForExternals: boolean;
   /**
+   * Whether participants can register for sessions.
+   */
+  areSessionRegistrationsOpen: boolean;
+  /**
    * Whether the delegation leaders can assign spots.
    */
   canCountryLeadersAssignSpots: boolean;
@@ -55,6 +59,7 @@ export class Configurations extends Resource {
     this.PK = Configurations.PK;
     this.isRegistrationOpenForESNers = this.clean(x.isRegistrationOpenForESNers, Boolean);
     this.isRegistrationOpenForExternals = this.clean(x.isRegistrationOpenForExternals, Boolean);
+    this.areSessionRegistrationsOpen = this.clean(x.areSessionRegistrationsOpen, Boolean);
     this.canCountryLeadersAssignSpots = this.clean(x.canCountryLeadersAssignSpots, Boolean);
     this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);
     this.currency = this.clean(x.currency, String);

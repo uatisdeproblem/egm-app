@@ -70,7 +70,7 @@
               </ion-chip>
               <span class="ion-text-center">
                 <ion-button
-                  *ngIf="session.requiresRegistration"
+                  *ngIf="session.requiresRegistration && app.configurations.areSessionRegistrationsOpen"
                   fill="clear"
                   [disabled]="!canUserRegisterInSession(session)"
                   [color]="isUserRegisteredInSession(session) ? 'danger' : 'success'"
@@ -82,7 +82,7 @@
                   />
                 </ion-button>
                 <ion-button
-                  *ngIf="!session.requiresRegistration"
+                  *ngIf="!session.requiresRegistration || !app.configurations.areSessionRegistrationsOpen"
                   fill="clear"
                   color="warning"
                   (click)="toggleFavorite(session)"

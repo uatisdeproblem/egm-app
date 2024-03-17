@@ -38,6 +38,11 @@
       </ion-checkbox>
     </ion-item>
     <ion-item>
+      <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.areSessionRegistrationsOpen">
+        {{ 'MANAGE.ALLOW_SESSION_REGISTRATIONS' | translate }}
+      </ion-checkbox>
+    </ion-item>
+    <ion-item>
       <ion-checkbox [disabled]="!editMode" [(ngModel)]="configurations.canCountryLeadersAssignSpots">
         {{ 'MANAGE.ALLOW_COUNTRY_LEADER_ASSIGN_SPOT' | translate }}
       </ion-checkbox>

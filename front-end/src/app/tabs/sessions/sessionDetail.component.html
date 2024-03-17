@@ -45,7 +45,7 @@
       </ion-list>
       <app-html-editor [content]="session.description" [editMode]="false"></app-html-editor>
       <ion-row>
-        <ion-col *ngIf="session.requiresRegistration">
+        <ion-col *ngIf="session.requiresRegistration && app.configurations.areSessionRegistrationsOpen">
           <ion-button
             fill="clear"
             expand="block"
