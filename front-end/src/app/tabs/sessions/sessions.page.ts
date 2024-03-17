@@ -109,13 +109,13 @@ export class SessionsPage implements OnInit {
       session.numberOfParticipants = updatedSession.numberOfParticipants;
     } catch (error) {
       if (error.message === "User can't sign up for this session!"){
-        this.message.error(this.t._('SESSIONS.CANT_SIGN_UP'));
+        this.message.error('SESSIONS.CANT_SIGN_UP');
       } else if (error.message === 'Registrations are closed!'){
-        this.message.error(this.t._('SESSIONS.REGISTRATION_CLOSED'));
+        this.message.error('SESSIONS.REGISTRATION_CLOSED');
       } else if (error.message === 'Session is full! Refresh your page.'){
-        this.message.error(this.t._('SESSIONS.SESSION_FULL'));
+        this.message.error('SESSIONS.SESSION_FULL');
       } else if (error.message === 'You have 1 or more sessions during this time period.'){
-        this.message.error(this.t._('SESSIONS.OVERLAP'));
+        this.message.error('SESSIONS.OVERLAP');
       } else this.message.error('COMMON.OPERATION_FAILED');
     } finally {
       this.loading.hide();
