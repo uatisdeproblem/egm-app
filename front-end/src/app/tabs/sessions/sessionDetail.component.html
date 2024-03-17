@@ -1,0 +1,75 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="ideaToolbar">
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card color="white">
+    <ion-card-header>
+      <ion-card-subtitle>
+        <ion-badge color="primary">
+          {{ session.code }}
+        </ion-badge>
+      </ion-card-subtitle>
+      <ion-card-title>
+        <ion-text style="font-weight: 600">
+          {{ session.name }}
+        </ion-text>
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item [color]="_sessions.getColourBySessionType(session)">
+          <ion-icon slot="start" name="pricetag" />
+          <ion-label>{{ 'SESSIONS.TYPES.' + session.type | translate }}</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="time" />
+          <ion-label>{{ app.formatTime(session.startsAt) }} - {{ app.formatTime(session.endsAt) }}</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="hourglass" />
+          <ion-label>{{ session.durationMinutes }} {{ 'COMMON.MINUTES' | translate }}</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="location" />
+          <ion-label>{{ session.room.name }} ({{ session.room.venue.name }})</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="mic" />
+          <ion-label>{{ session.getSpeakers() }}</ion-label>
+        </ion-item>
+        <ion-item *ngIf="session.requiresRegistration">
+          <ion-icon slot="start" name="people" />
+          <ion-label>{{ session.isFull() ? this.t._('COMMON.FULL') : session.numberOfParticipants + '/' + session.limitOfParticipants }}</ion-label>
+        </ion-item>
+      </ion-list>
+      <app-html-editor [content]="session.description" [editMode]="false"></app-html-editor>
+      <ion-row>
+        <ion-col *ngIf="session.requiresRegistration">
+          <ion-button
+            fill="clear"
+            expand="block"
+            [disabled]="!canUserRegisterInSession"
+            [color]="isUserRegisteredInSession ? 'danger' : 'success'"
+            (click)="register.emit()"
+            >
+            <ion-icon
+            [name]="isUserRegisteredInSession ? 'close-circle' : 'checkmark-circle'"
+            slot="icon-only"
+            />
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button
+            fill="clear"
+            expand="block"
+            color="warning"
+            (click)="favorite.emit()"
+          >
+            <ion-icon [name]="isSessionInFavorites ? 'star' : 'star-outline'" slot="icon-only" />
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

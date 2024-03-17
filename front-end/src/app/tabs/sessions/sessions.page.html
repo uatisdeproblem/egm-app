@@ -29,11 +29,13 @@
           </ion-item>
           <ion-item
             *ngFor="let session of sessions"
-            [class.favoritedSession]="!session.requiresRegistration && this.isSessionInFavorites(session)"
-            [class.registeredSession]="session.requiresRegistration && this.isUserRegisteredInSession(session)"
+            [class.unavailableSession]="!this.canUserRegisterInSession(session)"
+            [class.favoritedSession]="this.isSessionInFavorites(session)"
+            [class.registeredSession]="this.isUserRegisteredInSession(session)"
             button
             lines="none"
             color="white"
+            (click)="openDetail(session)"
           >
             <ion-note class="ion-text-center borderRight" slot="start">
               <b>{{ app.formatTime(session.startsAt) }}</b>
@@ -70,6 +72,7 @@
                 <ion-button
                   *ngIf="session.requiresRegistration"
                   fill="clear"
+                  [disabled]="!canUserRegisterInSession(session)"
                   [color]="isUserRegisteredInSession(session) ? 'danger' : 'success'"
                   (click)="toggleRegister(session)"
                 >
@@ -92,7 +95,15 @@
         </ion-list>
       </ion-col>
       <ion-col *ngIf="!app.isInMobileMode()">
-        <!-- @todo -->
+          <app-session-detail
+            *ngIf="selectedSession"
+            [session]="selectedSession"
+            [isSessionInFavorites]="isSessionInFavorites(selectedSession)"
+            [isUserRegisteredInSession]="isUserRegisteredInSession(selectedSession)"
+            [canUserRegisterInSession]="canUserRegisterInSession(selectedSession)"
+            (favorite)="toggleFavorite(selectedSession)"
+            (register)="toggleRegister(selectedSession)"
+          />
       </ion-col>
     </ion-row>
   </ion-grid>

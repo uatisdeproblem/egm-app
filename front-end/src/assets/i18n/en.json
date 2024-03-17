@@ -81,7 +81,8 @@
     "ERROR": "Error",
     "OR": "Or",
     "COPY": "Copy",
-    "FULL": "Full"
+    "FULL": "Full",
+    "MINUTES": "Minutes"
   },
   "AUTH": {
     "TITLE": "Erasmus Generation Meeting",

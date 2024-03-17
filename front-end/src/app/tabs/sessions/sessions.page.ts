@@ -19,10 +19,14 @@ export class SessionsPage implements OnInit {
 
   // @todo check if registrations are open
 
+  // @todo prevent default on favorite/register/selectDetail not working
+  // @todo if few sessions (i.e. favorites) session detail is small
+
   days: string[]
   sessions: Session[];
   favoriteSessionsIds: string[] = [];
-  registeredSessionsIds: string[] = []
+  registeredSessionsIds: string[] = [];
+  selectedSession: Session;
 
   segment = ''
 
@@ -54,7 +58,8 @@ export class SessionsPage implements OnInit {
     }
   }
   changeSegment (segment: string, search = ''): void {
-    this.segment = segment
+    this.selectedSession = null;
+    this.segment = segment;
     this.filterSessions(search);
   };
   async filterSessions(search = ''): Promise<void> {
@@ -90,6 +95,7 @@ export class SessionsPage implements OnInit {
   async toggleRegister(session: Session): Promise<void> {
     try {
       await this.loading.show();
+      // @todo we should update the session after the call, or maybe all so the user can see the current limits
       if (this.isUserRegisteredInSession(session)) {
         await this._sessions.unregisterFromSession(session.sessionId);
         this.favoriteSessionsIds = this.favoriteSessionsIds.filter(id => id !== session.sessionId);
@@ -103,19 +109,23 @@ export class SessionsPage implements OnInit {
         session.numberOfParticipants++;
       };
     } catch (error) {
+      // @todo handle errors coming from back-end
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
       this.loading.hide();
     }
   }
 
-  // @todo this may be refactored to use both on back-end and front-end. This will handle the logic to tell if a session is disabled or not. WARNING IS DISABLED YOU CANT OPEN DETAIL....
+  // @todo this may be refactored to use both on back-end and front-end. This will handle the logic to tell if a session is disabled or not.
   canUserRegisterInSession(session: Session) {
-    if (session.isFull()) return false;
-
-    // @todo or should this just disable the button and make the border red...?
+    if (!session.requiresRegistration) return true;
     // @todo check logic to avoid overlaps.
+    return true;
   }
 
-  // @todo open detail <- modal if mobile, selectSession if not
+  openDetail(session: Session): void {
+    // @todo if mobile, show on modal
+    if (this.app.isInMobileMode()) return;
+    this.selectedSession = session;
+  }
 }

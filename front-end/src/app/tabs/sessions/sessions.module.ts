@@ -6,6 +6,8 @@ import { IDEATranslationsModule } from '@idea-ionic/common';
 
 import { SessionsPage } from './sessions.page';
 import { SessionsRoutingModule } from './sessions-routing.module';
+import { SessionDetailComponent } from './sessionDetail.component';
+import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
 @NgModule({
   imports: [
@@ -13,8 +15,9 @@ import { SessionsRoutingModule } from './sessions-routing.module';
     FormsModule,
     IonicModule,
     IDEATranslationsModule,
-    SessionsRoutingModule
+    SessionsRoutingModule,
+    HTMLEditorComponent
   ],
-  declarations: [SessionsPage]
+  declarations: [SessionsPage, SessionDetailComponent]
 })
 export class SessionsModule {}
