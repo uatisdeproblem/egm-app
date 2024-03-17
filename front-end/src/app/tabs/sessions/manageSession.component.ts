@@ -124,7 +124,7 @@ import { RoomLinked } from '@models/room.model';
         </ion-list-header>
         <ion-item [class.fieldHasError]="hasFieldAnError('room')">
           <ion-label position="stacked">{{ 'SESSIONS.ROOM' | translate }}</ion-label>
-          <ion-select interface="popover" [(ngModel)]="session.room">
+          <ion-select interface="popover" [(ngModel)]="session.room" [placeholder]="session?.room?.name">
             <ion-select-option *ngFor="let room of rooms" [value]="room">
               {{ room.name }}
             </ion-select-option>

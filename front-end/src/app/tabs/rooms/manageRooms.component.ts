@@ -66,7 +66,7 @@ import { VenueLinked } from '@models/venue.model';
             {{ 'ROOMS.VENUE' | translate }}
             <ion-text class="obligatoryDot"></ion-text>
           </ion-label>
-          <ion-select interface="popover" [(ngModel)]="room.venue">
+          <ion-select interface="popover" [(ngModel)]="room.venue" [placeholder]="room?.venue?.name">
             <ion-select-option *ngFor="let venue of venues" [value]="venue">
               {{ venue.name }}
             </ion-select-option>

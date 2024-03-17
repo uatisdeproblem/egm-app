@@ -66,7 +66,11 @@ import { Speaker } from '@models/speaker.model';
             {{ 'SPEAKERS.ORGANIZATION' | translate }}
             <ion-text class="obligatoryDot"></ion-text>
           </ion-label>
-          <ion-select interface="popover" [(ngModel)]="speaker.organization">
+          <ion-select
+            interface="popover"
+            [(ngModel)]="speaker.organization"
+            [placeholder]="speaker?.organization?.name"
+          >
             <ion-select-option *ngFor="let organization of organizations" [value]="organization">
               {{ organization.name }}
             </ion-select-option>
