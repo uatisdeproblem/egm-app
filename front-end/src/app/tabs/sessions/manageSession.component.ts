@@ -173,7 +173,6 @@ export class ManageSessionComponent implements OnInit {
   }
 
   addSpeaker(ev: any): void {
-    console.log('EVENT', ev)
     const speaker = ev?.detail?.value
     if (!speaker) return
 
