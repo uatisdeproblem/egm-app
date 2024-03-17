@@ -100,7 +100,15 @@
             [isUserRegisteredInSession]="isUserRegisteredInSession(selectedSession)"
             (favorite)="toggleFavorite(selectedSession)"
             (register)="toggleRegister(selectedSession)"
-          />
+          >
+          <ion-buttons slot="end" *ngIf="selectedSession && app.user.permissions.canManageContents">
+            <ng-container>
+              <ion-button color="ESNgreen" (click)="manageSession()">
+                <ion-icon slot="icon-only" icon="hammer"></ion-icon>
+              </ion-button>
+            </ng-container>
+          </ion-buttons>
+        </app-session-detail>
       </ion-col>
     </ion-row>
   </ion-grid>

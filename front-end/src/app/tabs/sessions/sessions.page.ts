@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonContent, IonSearchbar } from '@ionic/angular';
+import { IonContent, IonSearchbar, ModalController } from '@ionic/angular';
 
 import { AppService } from 'src/app/app.service';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+
+import { ManageSessionComponent } from './manageSession.component';
 
 import { SessionsService } from './sessions.service';
 
@@ -17,8 +19,6 @@ export class SessionsPage implements OnInit {
   @ViewChild(IonContent) content: IonContent;
   @ViewChild(IonContent) searchbar: IonSearchbar;
 
-  // @todo check if registrations are open
-
   // @todo prevent default on favorite/register/selectDetail not working
   // @todo if few sessions (i.e. favorites) session detail is small
 
@@ -31,6 +31,7 @@ export class SessionsPage implements OnInit {
   segment = ''
 
   constructor(
+    private modalCtrl: ModalController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     public _sessions: SessionsService,
@@ -39,7 +40,6 @@ export class SessionsPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    // this.app.configurations.areSessionRegistrationsOpen // @todo use this in the code (and in back-end as well!!)
     this.loadData();
   }
 
@@ -126,5 +126,28 @@ export class SessionsPage implements OnInit {
     // @todo if mobile, show on modal
     if (this.app.isInMobileMode()) return;
     this.selectedSession = session;
+  }
+
+
+  async manageSession(): Promise<void> {
+    if (!this.selectedSession) return;
+
+    if (!this.app.user.permissions.canManageContents) return
+
+    const modal = await this.modalCtrl.create({
+      component: ManageSessionComponent,
+      componentProps: { session: this.selectedSession },
+      backdropDismiss: false
+    });
+    modal.onDidDismiss().then(async (): Promise<void> => {
+      try {
+        this.selectedSession = await this._sessions.getById(this.selectedSession.sessionId);
+      } catch (error) {
+        // deleted
+        this.selectedSession = null;
+        this.sessions = await this._sessions.getList({ force: true })
+      }
+    });
+    await modal.present();
   }
 }

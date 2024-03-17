@@ -412,6 +412,7 @@
     "SOCIAL_MEDIA": "Social media"
   },
   "SESSIONS": {
+    "MANAGE_SESSION": "Manage session",
     "LIST": "Session list",
     "TYPES": {
       "DISCUSSION": "Discussion",
@@ -425,6 +426,17 @@
     "CANT_SIGN_UP": "User can't sign up for this session!",
     "REGISTRATION_CLOSED": "Registrations are closed!",
     "SESSION_FULL": "Session is full! Refresh your page.",
-    "OVERLAP": "You have 1 or more sessions during this time period."
+    "OVERLAP": "You have 1 or more sessions during this time period.",
+    "CODE": "Session code",
+    "NAME": "Name",
+    "DESCRIPTION": "Description",
+    "TYPE": "Session type",
+    "STARTS_AT": "Session starts at",
+    "DURATION_MINUTES": "Session duration (minutes)",
+    "PARTICIPANT_LIMIT": "Participant limit",
+    "SPEAKERS": "Speakers",
+    "NO_SPEAKERS": "No speakers yet...",
+    "ADD_SPEAKER": "Add speaker",
+    "ROOM": "Room"
   }
 }

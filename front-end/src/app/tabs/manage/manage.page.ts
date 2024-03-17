@@ -8,6 +8,7 @@ import { ManageOrganizationComponent } from '../organizations/manageOrganization
 import { ManageSpeakerComponent } from '../speakers/manageSpeaker.component';
 import { ManageVenueComponent } from '../venues/manageVenue.component';
 import { ManageRoomComponent } from '../rooms/manageRooms.component';
+import { ManageSessionComponent } from '../sessions/manageSession.component';
 
 import { AppService } from '@app/app.service';
 import { UsefulLinksService } from '@app/common/usefulLinks/usefulLinks.service';
@@ -18,6 +19,7 @@ import { Organization } from '@models/organization.model';
 import { Venue } from '@models/venue.model';
 import { Speaker } from '@models/speaker.model';
 import { Room } from '@models/room.model';
+import { Session } from '@models/session.model';
 
 @Component({
   selector: 'manage',
@@ -108,6 +110,14 @@ export class ManagePage {
     const modal = await this.modalCtrl.create({
       component: ManageRoomComponent,
       componentProps: { room: new Room() },
+      backdropDismiss: false
+    });
+    await modal.present();
+  }
+  async addSession(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: ManageSessionComponent,
+      componentProps: { session: new Session() },
       backdropDismiss: false
     });
     await modal.present();

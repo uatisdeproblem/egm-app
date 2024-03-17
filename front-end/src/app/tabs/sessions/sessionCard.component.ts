@@ -5,13 +5,15 @@ import { IonicModule } from '@ionic/angular';
 
 import { IDEATranslationsModule } from '@idea-ionic/common';
 
+import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
+
 import { AppService } from 'src/app/app.service';
 
 import { Session } from '@models/session.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule],
+  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
   selector: 'app-session-card',
   template: `
     <ng-container *ngIf="session; else skeletonTemplate">
@@ -36,9 +38,7 @@ import { Session } from '@models/session.model';
           <ion-card-subtitle>{{ session.description }}</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
-          <div class="divDescription" *ngIf="session.description">
-            <ion-textarea readonly [rows]="4" [(ngModel)]="session.description"></ion-textarea>
-          </div>
+        <app-html-editor [content]="session.description" [editMode]="false"></app-html-editor>
         </ion-card-content>
       </ion-card>
     </ng-container>
