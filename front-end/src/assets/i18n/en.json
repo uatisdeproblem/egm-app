@@ -368,7 +368,13 @@
     "LIST": "List",
     "MAP": "Map",
     "DETAILS": "Venue's details",
-    "ROOMS": "Venue's rooms"
+    "ROOMS": "Venue's rooms",
+    "NAME": "Name",
+    "IMAGE_URL": "Image URL",
+    "DESCRIPTION": "Description",
+    "ADDRESS": "Address",
+    "LATITUDE": "Latitude",
+    "LONGITUDE": "Longitude"
   },
   "ROOMS": {
     "DETAILS": "Room details",
@@ -387,7 +393,14 @@
   "SPEAKERS": {
     "LIST": "Speakers list",
     "DETAILS": "Speaker details",
-    "SESSIONS": "Sessions given by this speaker"
+    "SESSIONS": "Sessions given by this speaker",
+    "NAME": "Name",
+    "TITLE": "Title",
+    "ORGANIZATION": "Organization",
+    "IMAGE_URL": "Image URL",
+    "EMAIL": "Contact email",
+    "DESCRIPTION": "Description",
+    "SOCIAL_MEDIA": "Social media"
   },
   "SESSIONS": {
     "LIST": "Session list",
