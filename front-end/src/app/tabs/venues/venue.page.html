@@ -1,5 +1,10 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" (click)="app.goToInTabs(['venues'], { back: true })">
+        <ion-icon slot="icon-only" name="arrow-back" />
+      </ion-button>
+    </ion-buttons>
     <ion-title>{{ 'VENUES.DETAILS' | translate }}</ion-title>
     <ion-buttons slot="end" *ngIf="app.user.permissions.canManageContents">
       <ng-container>
