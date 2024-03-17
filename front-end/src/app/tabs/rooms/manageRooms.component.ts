@@ -61,8 +61,11 @@ import { VenueLinked } from '@models/venue.model';
             <ion-icon icon="cloud-upload-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-item>
-        <ion-item  [class.fieldHasError]="hasFieldAnError('venue')">
-          <ion-label position="stacked">{{ 'ROOMS.VENUE' | translate }}</ion-label>
+        <ion-item [class.fieldHasError]="hasFieldAnError('venue')">
+          <ion-label position="stacked">
+            {{ 'ROOMS.VENUE' | translate }}
+            <ion-text class="obligatoryDot"></ion-text>
+          </ion-label>
           <ion-select interface="popover" [(ngModel)]="room.venue">
             <ion-select-option *ngFor="let venue of venues" [value]="venue">
               {{ venue.name }}

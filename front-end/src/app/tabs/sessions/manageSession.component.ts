@@ -54,21 +54,23 @@ import { RoomLinked } from '@models/room.model';
           </ion-label>
           <ion-input [(ngModel)]="session.name"></ion-input>
         </ion-item>
-        <ion-item>
-          <ion-label position="stacked">{{ 'SESSIONS.TYPE' | translate }}</ion-label>
+        <ion-item [class.fieldHasError]="hasFieldAnError('type')">
+          <ion-label position="stacked">
+            {{ 'SESSIONS.TYPE' | translate }}
+            <ion-text class="obligatoryDot"></ion-text>
+          </ion-label>
           <ion-select interface="popover" [(ngModel)]="session.type">
             <ion-select-option *ngFor="let type of types | keyvalue" [value]="type.value">
               {{ 'SESSIONS.TYPES.' + type.key | translate }}
             </ion-select-option>
           </ion-select>
         </ion-item>
-        <ion-item lines="none">
-          <ion-label position="stacked">{{ 'SESSIONS.STARTS_AT' }} <ion-text class="obligatoryDot" /></ion-label>
-          <input
-            #dateTime
-            type="datetime-local"
-            [(ngModel)]="session.startsAt"
-          />
+        <ion-item lines="none" [class.fieldHasError]="hasFieldAnError('durationMinutes')">
+          <ion-label position="stacked">
+            {{ 'SESSIONS.STARTS_AT' | translate }}
+            <ion-text class="obligatoryDot" />
+          </ion-label>
+          <input #dateTime type="datetime-local" [(ngModel)]="session.startsAt" />
         </ion-item>
         <ion-item [class.fieldHasError]="hasFieldAnError('durationMinutes')">
           <ion-label position="stacked">
@@ -84,7 +86,10 @@ import { RoomLinked } from '@models/room.model';
         </ion-item>
         <ion-list-header>
           <ion-label>
-            <h4>{{ 'SESSIONS.SPEAKERS' | translate }}</h4>
+            <h4>
+              {{ 'SESSIONS.SPEAKERS' | translate }}
+              <ion-text class="obligatoryDot"></ion-text>
+            </h4>
           </ion-label>
         </ion-list-header>
         @if (session.speakers?.length) {
@@ -92,7 +97,7 @@ import { RoomLinked } from '@models/room.model';
           <ion-icon slot="start" name="mic" />
           <ion-label>{{ speaker.name }}</ion-label>
           <ion-button fill="clear" slot="end" color="danger" (click)="removeSpeaker(speaker)">
-            <ion-icon slot="icon-only" name="trash"/>
+            <ion-icon slot="icon-only" name="trash" />
           </ion-button>
         </ion-item>
         } @else {
@@ -101,7 +106,7 @@ import { RoomLinked } from '@models/room.model';
           <ion-label>{{ 'SESSIONS.NO_SPEAKERS' | translate }}</ion-label>
         </ion-item>
         }
-        <ion-item [class.fieldHasError]="hasFieldAnError('speaker')">
+        <ion-item [class.fieldHasError]="hasFieldAnError('speakers')">
           <ion-label position="stacked">{{ 'SESSIONS.ADD_SPEAKER' | translate }}</ion-label>
           <ion-select interface="popover" (ionChange)="addSpeaker($event)">
             <ion-select-option *ngFor="let speaker of speakers" [value]="speaker">
@@ -111,7 +116,10 @@ import { RoomLinked } from '@models/room.model';
         </ion-item>
         <ion-list-header>
           <ion-label>
-            <h4>{{ 'SESSIONS.ROOM' | translate }}</h4>
+            <h4>
+              {{ 'SESSIONS.ROOM' | translate }}
+              <ion-text class="obligatoryDot"></ion-text>
+            </h4>
           </ion-label>
         </ion-list-header>
         <ion-item [class.fieldHasError]="hasFieldAnError('room')">
@@ -173,8 +181,8 @@ export class ManageSessionComponent implements OnInit {
   }
 
   addSpeaker(ev: any): void {
-    const speaker = ev?.detail?.value
-    if (!speaker) return
+    const speaker = ev?.detail?.value;
+    if (!speaker) return;
 
     if (this.session.speakers.some(s => s.speakerId === speaker.speakerId)) return;
 

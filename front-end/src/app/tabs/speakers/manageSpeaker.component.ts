@@ -61,8 +61,11 @@ import { Speaker } from '@models/speaker.model';
             <ion-icon icon="cloud-upload-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-item>
-        <ion-item  [class.fieldHasError]="hasFieldAnError('organization')">
-          <ion-label position="stacked">{{ 'SPEAKERS.ORGANIZATION' | translate }}</ion-label>
+        <ion-item [class.fieldHasError]="hasFieldAnError('organization')">
+          <ion-label position="stacked">
+            {{ 'SPEAKERS.ORGANIZATION' | translate }}
+            <ion-text class="obligatoryDot"></ion-text>
+          </ion-label>
           <ion-select interface="popover" [(ngModel)]="speaker.organization">
             <ion-select-option *ngFor="let organization of organizations" [value]="organization">
               {{ organization.name }}

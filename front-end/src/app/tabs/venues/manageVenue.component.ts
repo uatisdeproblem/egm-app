@@ -59,21 +59,21 @@ import { Venue } from '@models/venue.model';
             <ion-icon icon="cloud-upload-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-item>
-        <ion-item>
+        <ion-item [class.fieldHasError]="hasFieldAnError('address')">
           <ion-label position="stacked">
-            {{ 'VENUES.ADDRESS' | translate }}
+            {{ 'VENUES.ADDRESS' | translate }} <ion-text class="obligatoryDot"></ion-text>
           </ion-label>
           <ion-input [(ngModel)]="venue.address"></ion-input>
         </ion-item>
-        <ion-item>
+        <ion-item [class.fieldHasError]="hasFieldAnError('latitude')">
           <ion-label position="stacked">
-            {{ 'VENUES.LATITUDE' | translate }}
+            {{ 'VENUES.LATITUDE' | translate }} <ion-text class="obligatoryDot"></ion-text>
           </ion-label>
           <ion-input type="number" [(ngModel)]="venue.latitude"></ion-input>
         </ion-item>
-        <ion-item>
+        <ion-item [class.fieldHasError]="hasFieldAnError('longitude')">
           <ion-label position="stacked">
-            {{ 'VENUES.LONGITUDE' | translate }}
+            {{ 'VENUES.LONGITUDE' | translate }} <ion-text class="obligatoryDot"></ion-text>
           </ion-label>
           <ion-input type="number" [(ngModel)]="venue.longitude"></ion-input>
         </ion-item>
