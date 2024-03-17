@@ -4,12 +4,20 @@ import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
 
 import { EmailTemplateComponent } from './configurations/emailTemplate/emailTemplate.component';
 import { ManageUsefulLinkStandaloneComponent } from '@app/common/usefulLinks/manageUsefulLink.component';
+import { ManageOrganizationComponent } from '../organizations/manageOrganization.component';
+import { ManageSpeakerComponent } from '../speakers/manageSpeaker.component';
+import { ManageVenueComponent } from '../venues/manageVenue.component';
+import { ManageRoomComponent } from '../rooms/manageRooms.component';
 
 import { AppService } from '@app/app.service';
 import { UsefulLinksService } from '@app/common/usefulLinks/usefulLinks.service';
 
 import { EmailTemplates, DocumentTemplates } from '@models/configurations.model';
 import { UsefulLink } from '@models/usefulLink.model';
+import { Organization } from '@models/organization.model';
+import { Venue } from '@models/venue.model';
+import { Speaker } from '@models/speaker.model';
+import { Room } from '@models/room.model';
 
 @Component({
   selector: 'manage',
@@ -70,5 +78,38 @@ export class ManagePage {
   }
   async addUsefulLink(): Promise<void> {
     await this.editUsefulLink(new UsefulLink());
+  }
+
+  async addOrganization(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: ManageOrganizationComponent,
+      componentProps: { organization: new Organization() },
+      backdropDismiss: false
+    });
+    await modal.present();
+  }
+  async addSpeaker(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: ManageSpeakerComponent,
+      componentProps: { speaker: new Speaker() },
+      backdropDismiss: false
+    });
+    await modal.present();
+  }
+  async addVenue(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: ManageVenueComponent,
+      componentProps: { venue: new Venue() },
+      backdropDismiss: false
+    });
+    await modal.present();
+  }
+  async addRoom(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: ManageRoomComponent,
+      componentProps: { room: new Room() },
+      backdropDismiss: false
+    });
+    await modal.present();
   }
 }
