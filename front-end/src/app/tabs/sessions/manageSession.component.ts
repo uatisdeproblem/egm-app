@@ -186,6 +186,7 @@ export class ManageSessionComponent implements OnInit {
   }
 
   async save(): Promise<void> {
+    this.session = new Session(this.session);
     this.errors = new Set(this.session.validate());
     if (this.errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
 
