@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ModalController } from '@ionic/angular';
 
 import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+
+import { ManageOrganizationComponent } from './manageOrganization.component';
 
 import { AppService } from 'src/app/app.service';
 import { OrganizationsService } from './organizations.service';
@@ -9,8 +12,6 @@ import { SpeakersService } from '../speakers/speakers.service';
 
 import { Speaker } from '@models/speaker.model';
 import { Organization } from '@models/organization.model';
-import { ModalController } from '@ionic/angular';
-import { ManageOrganizationComponent } from './manageOrganization.component';
 
 @Component({
   selector: 'app-organization',
