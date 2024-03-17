@@ -29,7 +29,7 @@ import { Venue } from '@models/venue.model';
             <ion-icon slot="icon-only" icon="close-circle"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>{{ 'ORGANIZATIONS.MANAGE_ORGANIZATION' | translate }}</ion-title>
+        <ion-title>{{ 'VENUES.MANAGE_VENUES' | translate }}</ion-title>
         <ion-buttons slot="end">
           <ion-button [title]="'COMMON.SAVE' | translate" (click)="save()">
             <ion-icon slot="icon-only" icon="checkmark-circle"></ion-icon>

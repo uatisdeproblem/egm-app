@@ -365,6 +365,7 @@
     "PROCEED_TO_STRIPE": "Go to Stripe"
   },
   "VENUES": {
+    "MANAGE_VENUES": "Manage venues",
     "LIST": "List",
     "MAP": "Map",
     "DETAILS": "Venue's details",
@@ -381,6 +382,7 @@
     "SESSIONS": "Sessions hosted in this room"
   },
   "ORGANIZATIONS": {
+    "MANAGE_ORGANIZATIONS": "Manage organizations",
     "LIST": "Organizations list",
     "DETAILS": "Organization details",
     "SPEAKERS": "Speakers from this organization",
@@ -391,6 +393,7 @@
     "DESCRIPTION": "Description"
   },
   "SPEAKERS": {
+    "MANAGE_SPEAKERS": "Manage speakers",
     "LIST": "Speakers list",
     "DETAILS": "Speaker details",
     "SESSIONS": "Sessions given by this speaker",
