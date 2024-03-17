@@ -3,10 +3,10 @@
     <ion-tab-button (click)="app.goTo([''])">
       <ion-img [src]="app.getIcon()"></ion-img>
     </ion-tab-button>
+    <ion-tab-button tab="home">
+      <ion-label>{{ 'TABS.HOME' | translate }}</ion-label>
+    </ion-tab-button>
     <ng-container *ngIf="app?.user.spot?.paymentConfirmedAt">
-      <ion-tab-button tab="home">
-        <ion-label>{{ 'TABS.HOME' | translate }}</ion-label>
-      </ion-tab-button>
       <ion-tab-button tab="agenda">
         <ion-label>{{ 'TABS.AGENDA' | translate }}</ion-label>
       </ion-tab-button>
@@ -28,10 +28,10 @@
 
 <ion-tabs class="mobileTabs" *ngIf="app.isInMobileMode()">
   <ion-tab-bar color="ideaToolbar" slot="bottom">
+    <ion-tab-button tab="home">
+      <ion-icon icon="home"></ion-icon>
+    </ion-tab-button>
     <ng-container *ngIf="app?.user.spot?.paymentConfirmedAt">
-      <ion-tab-button tab="home">
-        <ion-icon icon="home"></ion-icon>
-      </ion-tab-button>
       <ion-tab-button tab="agenda">
         <ion-icon icon="calendar"></ion-icon>
       </ion-tab-button>
