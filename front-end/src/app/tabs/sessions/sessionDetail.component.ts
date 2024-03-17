@@ -15,7 +15,6 @@ export class SessionDetailComponent {
   @Input() session: Session;
   @Input() isSessionInFavorites: boolean;
   @Input() isUserRegisteredInSession: boolean;
-  @Input() canUserRegisterInSession: boolean;
   @Output() favorite = new EventEmitter<void>();
   @Output() register = new EventEmitter<void>();
 

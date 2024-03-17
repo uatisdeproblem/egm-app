@@ -116,13 +116,6 @@ export class SessionsPage implements OnInit {
     }
   }
 
-  // @todo this may be refactored to use both on back-end and front-end. This will handle the logic to tell if a session is disabled or not.
-  canUserRegisterInSession(session: Session) {
-    if (!session.requiresRegistration) return true;
-    // @todo check logic to avoid overlaps.
-    return true;
-  }
-
   openDetail(session: Session): void {
     // @todo if mobile, show on modal
     if (this.app.isInMobileMode()) return;

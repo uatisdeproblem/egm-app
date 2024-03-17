@@ -29,7 +29,6 @@
           </ion-item>
           <ion-item
             *ngFor="let session of sessions"
-            [class.unavailableSession]="!this.canUserRegisterInSession(session)"
             [class.favoritedSession]="this.isSessionInFavorites(session)"
             [class.registeredSession]="this.isUserRegisteredInSession(session)"
             button
@@ -72,7 +71,6 @@
                 <ion-button
                   *ngIf="session.requiresRegistration && app.configurations.areSessionRegistrationsOpen"
                   fill="clear"
-                  [disabled]="!canUserRegisterInSession(session)"
                   [color]="isUserRegisteredInSession(session) ? 'danger' : 'success'"
                   (click)="toggleRegister(session)"
                 >
@@ -100,7 +98,6 @@
             [session]="selectedSession"
             [isSessionInFavorites]="isSessionInFavorites(selectedSession)"
             [isUserRegisteredInSession]="isUserRegisteredInSession(selectedSession)"
-            [canUserRegisterInSession]="canUserRegisterInSession(selectedSession)"
             (favorite)="toggleFavorite(selectedSession)"
             (register)="toggleRegister(selectedSession)"
           />

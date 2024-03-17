@@ -49,7 +49,6 @@
           <ion-button
             fill="clear"
             expand="block"
-            [disabled]="!canUserRegisterInSession"
             [color]="isUserRegisteredInSession ? 'danger' : 'success'"
             (click)="register.emit()"
             >
