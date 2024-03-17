@@ -74,7 +74,7 @@ export class OrganizationsService {
    */
   async update(organization: Organization): Promise<Organization> {
     return new Organization(
-      await this.api.putResource(['communications', organization.organizationId], {
+      await this.api.putResource(['organizations', organization.organizationId], {
         body: organization
       })
     );

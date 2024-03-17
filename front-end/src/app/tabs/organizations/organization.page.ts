@@ -9,6 +9,8 @@ import { SpeakersService } from '../speakers/speakers.service';
 
 import { Speaker } from '@models/speaker.model';
 import { Organization } from '@models/organization.model';
+import { ModalController } from '@ionic/angular';
+import { ManageOrganizationComponent } from './manageOrganization.component';
 
 @Component({
   selector: 'app-organization',
@@ -21,6 +23,7 @@ export class OrganizationPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private modalCtrl: ModalController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     private _organizations: OrganizationsService,
@@ -47,5 +50,19 @@ export class OrganizationPage implements OnInit {
 
   async filterSpeakers(search: string = ''): Promise<void> {
     this.speakers = await this._speakers.getList({ search, organization: this.organization.organizationId });
+  }
+
+  async manageOrganization(organization: Organization): Promise<void> {
+    if (!this.app.user.permissions.canManageContents) return
+
+    const modal = await this.modalCtrl.create({
+      component: ManageOrganizationComponent,
+      componentProps: { organization },
+      backdropDismiss: false
+    });
+    modal.onDidDismiss().then(async (): Promise<void> => {
+      this.organization = await this._organizations.getById(organization.organizationId);
+    });
+    await modal.present();
   }
 }

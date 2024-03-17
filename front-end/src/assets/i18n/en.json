@@ -289,6 +289,7 @@
     "ORGANIZATIONS": "Organisations",
     "SESSIONS": "Sessions",
     "VENUES": "Venues",
+    "ROOMS": "Rooms",
     "REGISTRATIONS_OPTIONS": "Registrations options",
     "REGISTRATIONS_OPTIONS_I": "Open/close the registrations and other options.",
     "ALLOW_REGISTRATIONS": "Allow registrations",
@@ -376,7 +377,12 @@
   "ORGANIZATIONS": {
     "LIST": "Organizations list",
     "DETAILS": "Organization details",
-    "SPEAKERS": "Speakers from this organization"
+    "SPEAKERS": "Speakers from this organization",
+    "NAME": "Name",
+    "IMAGE_URL": "Image URL",
+    "WEBSITE": "Website",
+    "EMAIL": "Contact email",
+    "DESCRIPTION": "Description"
   },
   "SPEAKERS": {
     "LIST": "Speakers list",

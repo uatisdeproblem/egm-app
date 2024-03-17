@@ -5,13 +5,15 @@ import { IonicModule } from '@ionic/angular';
 
 import { IDEATranslationsModule } from '@idea-ionic/common';
 
+import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
+
 import { AppService } from 'src/app/app.service';
 
 import { Organization } from '@models/organization.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule],
+  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
   selector: 'app-organization-card',
   template: `
     <ion-card *ngIf="organization" color="white">
@@ -19,17 +21,14 @@ import { Organization } from '@models/organization.model';
       <ion-card-header>
         <ion-card-title>{{ organization.name }}</ion-card-title>
         <ion-card-subtitle>
-          <a [href]="(organization.website.startsWith('http') ? '' : 'http://') + organization.website" target="_blank">{{ organization.website }}</a>
+          <a *ngIf="organization.website" [href]="(organization.website.startsWith('http') ? '' : 'http://') + organization.website" target="_blank">{{ organization.website }}</a>
         </ion-card-subtitle>
         <ion-card-subtitle>
           <a [href]="'mailto:' + organization.contactEmail">{{ organization.contactEmail }}</a>
         </ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
-        <div class="divDescription" *ngIf="organization.description">
-          <ion-textarea readonly [rows]="4" [(ngModel)]="organization.description"></ion-textarea>
-        </div>
-
+      <app-html-editor [content]="organization.description" [editMode]="false"></app-html-editor>
       </ion-card-content>
     </ion-card>
 
