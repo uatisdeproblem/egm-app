@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { adminGuard } from '../admin.guard';
+import { manageGuard } from '../manage.guard';
 import { spotGuard } from '../spot.guard';
 
 import { TabsComponent } from './tabs.component';
@@ -19,7 +19,7 @@ const routes: Routes = [
       {
         path: 'manage',
         loadChildren: (): Promise<any> => import('./manage/manage.module').then(m => m.ManageModule),
-        canActivate: [adminGuard]
+        canActivate: [manageGuard]
       },
       {
         path: 'home',
