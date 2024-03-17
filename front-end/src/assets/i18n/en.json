@@ -393,6 +393,10 @@
       "INCUBATOR": "Incubator",
       "HUB": "Knowledge Hub",
       "COMMON": "Common"
-    }
+    },
+    "CANT_SIGN_UP": "User can't sign up for this session!",
+    "REGISTRATION_CLOSED": "Registrations are closed!",
+    "SESSION_FULL": "Session is full! Refresh your page.",
+    "OVERLAP": "You have 1 or more sessions during this time period."
   }
 }

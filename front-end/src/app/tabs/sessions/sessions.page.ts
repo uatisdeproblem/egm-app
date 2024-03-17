@@ -100,18 +100,23 @@ export class SessionsPage implements OnInit {
         this.favoriteSessionsIds = this.favoriteSessionsIds.filter(id => id !== session.sessionId);
         this.registeredSessionsIds = this.registeredSessionsIds.filter(id => id !== session.sessionId);
         if (!this.segment) this.sessions = this.sessions.filter(s => s.sessionId !== session.sessionId);
-        // session.numberOfParticipants--;
       } else {
         await this._sessions.registerInSession(session.sessionId);
         this.favoriteSessionsIds.push(session.sessionId);
         this.registeredSessionsIds.push(session.sessionId);
-        // session.numberOfParticipants++;
       };
       const updatedSession = await this._sessions.getById(session.sessionId);
       session.numberOfParticipants = updatedSession.numberOfParticipants;
     } catch (error) {
-      // @todo handle errors coming from back-end
-      this.message.error('COMMON.OPERATION_FAILED');
+      if (error.message === "User can't sign up for this session!"){
+        this.message.error(this.t._('SESSIONS.CANT_SIGN_UP'));
+      } else if (error.message === 'Registrations are closed!'){
+        this.message.error(this.t._('SESSIONS.REGISTRATION_CLOSED'));
+      } else if (error.message === 'Session is full! Refresh your page.'){
+        this.message.error(this.t._('SESSIONS.SESSION_FULL'));
+      } else if (error.message === 'You have 1 or more sessions during this time period.'){
+        this.message.error(this.t._('SESSIONS.OVERLAP'));
+      } else this.message.error('COMMON.OPERATION_FAILED');
     } finally {
       this.loading.hide();
     }
