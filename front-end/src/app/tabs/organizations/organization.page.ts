@@ -41,7 +41,7 @@ export class OrganizationPage implements OnInit {
       await this.loading.show();
       const organizationId = this.route.snapshot.paramMap.get('organizationId');
       this.organization = await this._organizations.getById(organizationId);
-      this.speakers = await this._speakers.getList({ organization: this.organization.organizationId, force: true });
+      this.speakers = await this._speakers.getOrganizationSpeakers(this.organization.organizationId);
     } catch (err) {
       this.message.error('COMMON.NOT_FOUND');
     } finally {
@@ -50,7 +50,7 @@ export class OrganizationPage implements OnInit {
   }
 
   async filterSpeakers(search: string = ''): Promise<void> {
-    this.speakers = await this._speakers.getList({ search, organization: this.organization.organizationId });
+    this.speakers = await this._speakers.getOrganizationSpeakers(this.organization.organizationId, search);
   }
 
   async manageOrganization(organization: Organization): Promise<void> {
