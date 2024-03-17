@@ -5,13 +5,15 @@ import { IonicModule } from '@ionic/angular';
 
 import { IDEATranslationsModule } from '@idea-ionic/common';
 
+import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
+
 import { AppService } from 'src/app/app.service';
 
 import { Speaker } from '@models/speaker.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule],
+  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
   selector: 'app-speaker-card',
   template: `
     <ng-container *ngIf="speaker; else skeletonTemplate">
@@ -29,7 +31,11 @@ import { Speaker } from '@models/speaker.model';
           </ion-card-subtitle>
           <ion-card-title>{{ speaker.name }}</ion-card-title>
           <ion-card-subtitle>
-            <ion-button fill="clear" color="dark" (click)="app.goToInTabs(['organizations', speaker.organization.organizationId])">
+            <ion-button
+              fill="clear"
+              color="dark"
+              (click)="app.goToInTabs(['organizations', speaker.organization.organizationId])"
+            >
               {{ speaker.organization.name }}
             </ion-button>
           </ion-card-subtitle>
@@ -38,9 +44,21 @@ import { Speaker } from '@models/speaker.model';
           </ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
-          <div class="divDescription" *ngIf="speaker.description">
-            <ion-textarea readonly [rows]="4" [(ngModel)]="speaker.description"></ion-textarea>
-          </div>
+          <ion-list>
+            <ion-item *ngIf="speaker.socialMedia.linkedIn">
+              <ion-icon name="logo-linkedin" slot="start"/>
+              <ion-input [(ngModel)]="speaker.socialMedia.linkedIn"></ion-input>
+            </ion-item>
+            <ion-item *ngIf="speaker.socialMedia.instagram">
+              <ion-icon name="logo-instagram" slot="start"/>
+              <ion-input [(ngModel)]="speaker.socialMedia.instagram"></ion-input>
+            </ion-item>
+            <ion-item *ngIf="speaker.socialMedia.twitter">
+              <ion-icon name="logo-twitter" slot="start"/>
+              <ion-input [(ngModel)]="speaker.socialMedia.twitter"></ion-input>
+            </ion-item>
+            <app-html-editor [content]="speaker.description" [editMode]="false"></app-html-editor>
+          </ion-list>
         </ion-card-content>
       </ion-card>
     </ng-container>

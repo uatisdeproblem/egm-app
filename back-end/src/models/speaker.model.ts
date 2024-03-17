@@ -67,7 +67,6 @@ export class Speaker extends Resource {
   validate(): string[] {
     const e = super.validate();
     if (isEmpty(this.name)) e.push('name');
-    if (this.contactEmail && isEmpty(this.contactEmail, 'email')) e.push('contactEmail');
     if (!this.organization.organizationId) e.push('organization');
     return e;
   }
