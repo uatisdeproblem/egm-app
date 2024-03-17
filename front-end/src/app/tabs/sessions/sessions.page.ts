@@ -95,19 +95,20 @@ export class SessionsPage implements OnInit {
   async toggleRegister(session: Session): Promise<void> {
     try {
       await this.loading.show();
-      // @todo we should update the session after the call, or maybe all so the user can see the current limits
       if (this.isUserRegisteredInSession(session)) {
         await this._sessions.unregisterFromSession(session.sessionId);
         this.favoriteSessionsIds = this.favoriteSessionsIds.filter(id => id !== session.sessionId);
         this.registeredSessionsIds = this.registeredSessionsIds.filter(id => id !== session.sessionId);
         if (!this.segment) this.sessions = this.sessions.filter(s => s.sessionId !== session.sessionId);
-        session.numberOfParticipants--;
+        // session.numberOfParticipants--;
       } else {
         await this._sessions.registerInSession(session.sessionId);
         this.favoriteSessionsIds.push(session.sessionId);
         this.registeredSessionsIds.push(session.sessionId);
-        session.numberOfParticipants++;
+        // session.numberOfParticipants++;
       };
+      const updatedSession = await this._sessions.getById(session.sessionId);
+      session.numberOfParticipants = updatedSession.numberOfParticipants;
     } catch (error) {
       // @todo handle errors coming from back-end
       this.message.error('COMMON.OPERATION_FAILED');
