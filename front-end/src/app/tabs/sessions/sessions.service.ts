@@ -89,7 +89,7 @@ export class SessionsService {
       search
         .split(' ')
         .every(searchTerm =>
-          [x.sessionId, x.code, x.name].filter(f => f).some(f => f.toLowerCase().includes(searchTerm))
+          [x.sessionId, x.code, x.name, x.getSpeakers()].filter(f => f).some(f => f.toLowerCase().includes(searchTerm))
         )
     );
 
