@@ -15,7 +15,9 @@ export class RoomsService {
   constructor(private api: IDEAApiService) {}
 
   private async loadList(venue?: string): Promise<void> {
-    this.rooms = (await this.api.getResource(['rooms'], { params: { venue } })).map(r => new Room(r));
+    const params: any = {}
+    if (venue) params.venue = venue
+    this.rooms = (await this.api.getResource(['rooms'], { params })).map(r => new Room(r));
   }
 
   /**
