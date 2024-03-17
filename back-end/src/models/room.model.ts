@@ -27,10 +27,6 @@ export class Room extends Resource {
    * An URI for an image of the room.
    */
   imageURI: string;
-  /**
-   * An URI for a plan of the room.
-   */
-  planImageURI: string;
 
   load(x: any): void {
     super.load(x);
@@ -40,7 +36,6 @@ export class Room extends Resource {
     this.internalLocation = this.clean(x.internalLocation, String);
     this.description = this.clean(x.description, String);
     this.imageURI = this.clean(x.imageURI, String);
-    this.planImageURI = this.clean(x.planImageURI, String);
   }
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);

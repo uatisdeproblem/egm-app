@@ -365,7 +365,7 @@
     "PROCEED_TO_STRIPE": "Go to Stripe"
   },
   "VENUES": {
-    "MANAGE_VENUES": "Manage venues",
+    "MANAGE_VENUE": "Manage venue",
     "LIST": "List",
     "MAP": "Map",
     "DETAILS": "Venue's details",
@@ -378,11 +378,17 @@
     "LONGITUDE": "Longitude"
   },
   "ROOMS": {
+    "MANAGE_ROOM": "Manage room",
     "DETAILS": "Room details",
-    "SESSIONS": "Sessions hosted in this room"
+    "SESSIONS": "Sessions hosted in this room",
+    "NAME": "Name",
+    "IMAGE_URL": "Image URL",
+    "DESCRIPTION": "Description",
+    "VENUE": "Venue",
+    "INTERNAL_LOCATION": "Internal location"
   },
   "ORGANIZATIONS": {
-    "MANAGE_ORGANIZATIONS": "Manage organizations",
+    "MANAGE_ORGANIZATION": "Manage organizations",
     "LIST": "Organizations list",
     "DETAILS": "Organization details",
     "SPEAKERS": "Speakers from this organization",
@@ -393,7 +399,7 @@
     "DESCRIPTION": "Description"
   },
   "SPEAKERS": {
-    "MANAGE_SPEAKERS": "Manage speakers",
+    "MANAGE_SPEAKER": "Manage speaker",
     "LIST": "Speakers list",
     "DETAILS": "Speaker details",
     "SESSIONS": "Sessions given by this speaker",
