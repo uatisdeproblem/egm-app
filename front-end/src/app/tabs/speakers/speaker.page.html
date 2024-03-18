@@ -39,7 +39,7 @@
             </ion-item>
           </ion-col>
           <ion-col *ngFor="let session of sessions">
-            <app-session-card [session]="session" [preview]="true" (click)="app.goToInTabs(['sessions', session.sessionId])"></app-session-card>
+            <app-session-card [session]="session" [preview]="true"></app-session-card>
           </ion-col>
         </ion-list>
       </ion-col>
