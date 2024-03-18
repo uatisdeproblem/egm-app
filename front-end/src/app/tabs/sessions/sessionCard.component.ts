@@ -20,7 +20,6 @@ import { Session } from '@models/session.model';
       <ion-card *ngIf="preview" [color]="preview ? 'white' : ''">
         <ion-card-header>
           <ion-card-title>{{ session.name }}</ion-card-title>
-          <ion-card-subtitle>{{ session.description }}</ion-card-subtitle>
         </ion-card-header>
       </ion-card>
 
