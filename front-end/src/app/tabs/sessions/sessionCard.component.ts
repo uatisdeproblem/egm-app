@@ -21,6 +21,19 @@ import { Session } from '@models/session.model';
         <ion-card-header>
           <ion-card-title>{{ session.name }}</ion-card-title>
         </ion-card-header>
+        <ion-card-content>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="calendar" />
+            <ion-label>
+              {{ app.formatTime(session.startsAt) }} - {{ app.formatTime(session.endsAt) }} ({{
+                app.formatDateShort(session.startsAt)
+              }})
+            </ion-label>
+            <ion-badge color="primary">
+              {{ session.code }}
+            </ion-badge>
+          </ion-item>
+        </ion-card-content>
       </ion-card>
 
       <ion-card *ngIf="!preview" color="white">
@@ -37,7 +50,7 @@ import { Session } from '@models/session.model';
           <ion-card-subtitle>{{ session.description }}</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
-        <app-html-editor [content]="session.description" [editMode]="false"></app-html-editor>
+          <app-html-editor [content]="session.description" [editMode]="false"></app-html-editor>
         </ion-card-content>
       </ion-card>
     </ng-container>
