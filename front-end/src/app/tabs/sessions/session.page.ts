@@ -1,5 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
-import { IonContent, IonSearchbar, ModalController } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 
 import { AppService } from 'src/app/app.service';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
@@ -9,28 +9,22 @@ import { ManageSessionComponent } from './manageSession.component';
 import { SessionsService } from './sessions.service';
 
 import { Session } from '@models/session.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-sessions',
-  templateUrl: './sessions.page.html',
-  styleUrls: ['./sessions.page.scss']
+  selector: 'app-session',
+  templateUrl: './session.page.html',
+  styleUrls: ['./session.page.scss']
 })
-export class SessionsPage {
-  @ViewChild(IonContent) content: IonContent;
-  @ViewChild(IonContent) searchbar: IonSearchbar;
+export class SessionPage implements OnInit {
 
-  // @todo prevent default on favorite/register/selectDetail not working
-  // @todo if few sessions (i.e. favorites) session detail is small
-
-  days: string[]
-  sessions: Session[];
+  session: Session;
   favoriteSessionsIds: string[] = [];
   registeredSessionsIds: string[] = [];
   selectedSession: Session;
 
-  segment = ''
-
   constructor(
+    private route: ActivatedRoute,
     private modalCtrl: ModalController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
@@ -39,32 +33,25 @@ export class SessionsPage {
     public app: AppService
   ) {}
 
-  async ionViewDidEnter() {
-    await this.loadData();
+  ngOnInit() {
+    this.loadData();
   }
 
   async loadData() {
     try {
       await this.loading.show();
+      const sessionId = this.route.snapshot.paramMap.get('sessionId');
+      this.session = await this._sessions.getById(sessionId);
       // WARNING: do not pass any segment in order to get the favorites on the next api call.
-      this.segment = ''
-      this.sessions = await this._sessions.getList({ force: true });
-      this.favoriteSessionsIds = this.sessions.map( s => s.sessionId);
+      // @todo improvable. Just amke a call to see if a session is or isn't favorited/registerd using a getById
+      const favoriteSessions = await this._sessions.getList({ force: true });
+      this.favoriteSessionsIds = favoriteSessions.map( s => s.sessionId);
       this.registeredSessionsIds = (await this._sessions.loadUserRegisteredSessions()).map(ur => ur.sessionId);
-      this.days = await this._sessions.getSessionDays()
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
       this.loading.hide();
     }
-  }
-  changeSegment (segment: string, search = ''): void {
-    this.selectedSession = null;
-    this.segment = segment;
-    this.filterSessions(search);
-  };
-  async filterSessions(search = ''): Promise<void> {
-    this.sessions = await this._sessions.getList({ search, segment: this.segment });
   }
 
   isSessionInFavorites(session: Session): boolean {
@@ -77,7 +64,6 @@ export class SessionsPage {
       if (this.isSessionInFavorites(session)) {
         await this._sessions.removeFromFavorites(session.sessionId);
         this.favoriteSessionsIds = this.favoriteSessionsIds.filter(id => id !== session.sessionId);
-        if (!this.segment) this.sessions = this.sessions.filter(s => s.sessionId !== session.sessionId);
       } else {
         await this._sessions.addToFavorites(session.sessionId);
         this.favoriteSessionsIds.push(session.sessionId);
@@ -100,14 +86,12 @@ export class SessionsPage {
         await this._sessions.unregisterFromSession(session.sessionId);
         this.favoriteSessionsIds = this.favoriteSessionsIds.filter(id => id !== session.sessionId);
         this.registeredSessionsIds = this.registeredSessionsIds.filter(id => id !== session.sessionId);
-        if (!this.segment) this.sessions = this.sessions.filter(s => s.sessionId !== session.sessionId);
       } else {
         await this._sessions.registerInSession(session.sessionId);
         this.favoriteSessionsIds.push(session.sessionId);
         this.registeredSessionsIds.push(session.sessionId);
       };
-      const updatedSession = await this._sessions.getById(session.sessionId);
-      session.numberOfParticipants = updatedSession.numberOfParticipants;
+      this.session = await this._sessions.getById(session.sessionId);
     } catch (error) {
       if (error.message === "User can't sign up for this session!"){
         this.message.error('SESSIONS.CANT_SIGN_UP');
@@ -123,29 +107,23 @@ export class SessionsPage {
     }
   }
 
-  openDetail(session: Session): void {
-    if (this.app.isInMobileMode()) this.app.goToInTabs(['agenda', session.sessionId]);
-    else this.selectedSession = session;
-  }
-
 
   async manageSession(): Promise<void> {
-    if (!this.selectedSession) return;
+    if (!this.session) return;
 
     if (!this.app.user.permissions.canManageContents) return
 
     const modal = await this.modalCtrl.create({
       component: ManageSessionComponent,
-      componentProps: { session: this.selectedSession },
+      componentProps: { session: this.session },
       backdropDismiss: false
     });
     modal.onDidDismiss().then(async (): Promise<void> => {
       try {
-        this.selectedSession = await this._sessions.getById(this.selectedSession.sessionId);
+        this.session = await this._sessions.getById(this.session.sessionId);
       } catch (error) {
         // deleted
-        this.selectedSession = null;
-        this.sessions = await this._sessions.getList({ force: true })
+        this.session = null;
       }
     });
     await modal.present();

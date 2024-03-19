@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IDEATranslationsModule } from '@idea-ionic/common';
 
 import { SessionsPage } from './sessions.page';
+import { SessionPage } from './session.page';
 import { SessionsRoutingModule } from './sessions-routing.module';
 import { SessionDetailComponent } from './sessionDetail.component';
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
@@ -18,6 +19,6 @@ import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
     SessionsRoutingModule,
     HTMLEditorComponent
   ],
-  declarations: [SessionsPage, SessionDetailComponent]
+  declarations: [SessionsPage, SessionPage, SessionDetailComponent]
 })
 export class SessionsModule {}

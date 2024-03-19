@@ -1,9 +1,6 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar color="ideaToolbar">
-    <ng-content></ng-content>
-  </ion-toolbar>
-</ion-header>
-<ion-content>
+<ion-toolbar color="ideaToolbar">
+  <ng-content></ng-content>
+</ion-toolbar>
   <ion-card color="white">
     <ion-card-header>
       <ion-card-subtitle>
@@ -44,6 +41,7 @@
           <ion-label class="ion-text-wrap">
             <ion-button
             *ngFor="let speaker of session.speakers"
+            class="ion-text-wrap"
             fill="outline"
             (click)="app.goToInTabs(['speakers', speaker.speakerId])"
             >
@@ -85,4 +83,3 @@
       </ion-row>
     </ion-card-content>
   </ion-card>
-</ion-content>

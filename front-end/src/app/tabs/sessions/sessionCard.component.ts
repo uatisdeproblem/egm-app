@@ -17,7 +17,12 @@ import { Session } from '@models/session.model';
   selector: 'app-session-card',
   template: `
     <ng-container *ngIf="session; else skeletonTemplate">
-      <ion-card *ngIf="preview" [color]="preview ? 'white' : ''">
+      <ion-card
+        *ngIf="preview"
+        button
+        [color]="preview ? 'white' : ''"
+        (click)="this.app.goToInTabs(['agenda', session.sessionId])"
+      >
         <ion-card-header>
           <ion-card-title>{{ session.name }}</ion-card-title>
         </ion-card-header>
@@ -25,9 +30,8 @@ import { Session } from '@models/session.model';
           <ion-item lines="none">
             <ion-icon slot="start" name="calendar" />
             <ion-label>
-              {{ app.formatTime(session.startsAt) }} - {{ app.formatTime(session.endsAt) }} ({{
-                app.formatDateShort(session.startsAt)
-              }})
+              {{ app.formatTime(session.startsAt) }} - {{ app.formatTime(session.endsAt) }}
+              <p>({{ app.formatDateShort(session.startsAt) }})</p>
             </ion-label>
             <ion-badge color="primary">
               {{ session.code }}
