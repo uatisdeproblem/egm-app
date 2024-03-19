@@ -63,7 +63,7 @@
             />
           </ion-button>
         </ion-col>
-        <ion-col>
+        <ion-col *ngIf="!isUserRegisteredInSession">
           <ion-button
             fill="clear"
             expand="block"
