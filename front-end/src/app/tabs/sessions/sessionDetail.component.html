@@ -39,9 +39,18 @@
           <ion-icon slot="start" name="location" />
           <ion-label>{{ session.room.name }} ({{ session.room.venue.name }})</ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item class="ion-text-wrap">
           <ion-icon slot="start" name="mic" />
-          <ion-label>{{ session.getSpeakers() }}</ion-label>
+          <ion-label class="ion-text-wrap">
+            <ion-button
+            *ngFor="let speaker of session.speakers"
+            fill="outline"
+            (click)="app.goToInTabs(['speakers', speaker.speakerId])"
+            >
+              {{ speaker.name }}
+            <ion-icon size="small" slot="end" name="link" />
+          </ion-button>
+          </ion-label>
         </ion-item>
         <ion-item *ngIf="session.requiresRegistration">
           <ion-icon slot="start" name="people" />
