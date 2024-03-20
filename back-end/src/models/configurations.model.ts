@@ -5,8 +5,7 @@ import { User } from '../models/user.model';
 import { ServiceLanguages } from './serviceLanguages.enum';
 
 export const LANGUAGES = new Languages({ default: ServiceLanguages.English, available: [ServiceLanguages.English] });
-
-const DEFAULT_SESSION_REGISTRATION_BUFFER = 10;
+const DEFAULT_SESSION_REGISTRATION_BUFFER_MINUTES = 10;
 
 export class Configurations extends Resource {
   static PK = 'EGM';
@@ -69,7 +68,7 @@ export class Configurations extends Resource {
     this.sessionRegistrationBuffer = this.clean(
       x.sessionRegistrationBuffer,
       Number,
-      DEFAULT_SESSION_REGISTRATION_BUFFER
+      DEFAULT_SESSION_REGISTRATION_BUFFER_MINUTES
     );
     this.canCountryLeadersAssignSpots = this.clean(x.canCountryLeadersAssignSpots, Boolean);
     this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);

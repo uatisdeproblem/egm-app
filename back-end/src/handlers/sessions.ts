@@ -73,13 +73,13 @@ class Sessions extends ResourceController {
       await ddb.get({ TableName: DDB_TABLES.rooms, Key: { roomId: this.session.room.roomId } })
     );
 
-    const getRooms = await ddb.batchGet(
+    const getSpeakers = await ddb.batchGet(
       DDB_TABLES.speakers,
       this.session.speakers?.map(s => ({ speakerId: s.speakerId })),
       true
     )
 
-    this.session.speakers = getRooms.map(s => new SpeakerLinked(s));
+    this.session.speakers = getSpeakers.map(s => new SpeakerLinked(s));
 
     const errors = this.session.validate();
     if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
