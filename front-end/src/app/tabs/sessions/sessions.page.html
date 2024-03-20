@@ -34,7 +34,7 @@
             button
             lines="none"
             color="white"
-            (click)="openDetail(session)"
+            (click)="openDetail($event, session)"
           >
             <ion-note class="ion-text-center borderRight" slot="start">
               <b>{{ app.formatTime(session.startsAt) }}</b>
@@ -72,7 +72,7 @@
                   *ngIf="session.requiresRegistration && app.configurations.areSessionRegistrationsOpen"
                   fill="clear"
                   [color]="isUserRegisteredInSession(session) ? 'danger' : 'success'"
-                  (click)="toggleRegister(session)"
+                  (click)="toggleRegister($event, session)"
                 >
                   <ion-icon
                     [name]="isUserRegisteredInSession(session) ? 'close-circle' : 'checkmark-circle'"
@@ -83,7 +83,7 @@
                   *ngIf="!session.requiresRegistration || !app.configurations.areSessionRegistrationsOpen"
                   fill="clear"
                   color="warning"
-                  (click)="toggleFavorite(session)"
+                  (click)="toggleFavorite($event, session)"
                 >
                   <ion-icon [name]="isSessionInFavorites(session) ? 'star' : 'star-outline'" slot="icon-only" />
                 </ion-button>
@@ -98,8 +98,8 @@
             [session]="selectedSession"
             [isSessionInFavorites]="isSessionInFavorites(selectedSession)"
             [isUserRegisteredInSession]="isUserRegisteredInSession(selectedSession)"
-            (favorite)="toggleFavorite(selectedSession)"
-            (register)="toggleRegister(selectedSession)"
+            (favorite)="toggleFavorite($event, selectedSession)"
+            (register)="toggleRegister($event, selectedSession)"
           >
           <ion-buttons slot="end" *ngIf="selectedSession && app.user.permissions.canManageContents">
             <ng-container>

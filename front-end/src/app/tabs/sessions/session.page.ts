@@ -58,7 +58,8 @@ export class SessionPage implements OnInit {
     return this.favoriteSessionsIds.includes(session.sessionId);
   }
 
-  async toggleFavorite(session: Session): Promise<void> {
+  async toggleFavorite(ev: any, session: Session): Promise<void> {
+    ev?.stopPropagation()
     try {
       await this.loading.show();
       if (this.isSessionInFavorites(session)) {
@@ -79,7 +80,8 @@ export class SessionPage implements OnInit {
     return this.registeredSessionsIds.includes(session.sessionId);
   }
 
-  async toggleRegister(session: Session): Promise<void> {
+  async toggleRegister(ev: any, session: Session): Promise<void> {
+    ev?.stopPropagation()
     try {
       await this.loading.show();
       if (this.isUserRegisteredInSession(session)) {

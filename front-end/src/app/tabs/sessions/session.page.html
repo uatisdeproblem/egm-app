@@ -5,8 +5,8 @@
     [session]="session"
     [isSessionInFavorites]="isSessionInFavorites(session)"
     [isUserRegisteredInSession]="isUserRegisteredInSession(session)"
-    (favorite)="toggleFavorite(session)"
-    (register)="toggleRegister(session)"
+    (favorite)="toggleFavorite($event, session)"
+    (register)="toggleRegister($event, session)"
   >
     <ion-buttons slot="start">
       <ion-button color="primary" (click)="app.goToInTabs(['agenda'], { back: true })">

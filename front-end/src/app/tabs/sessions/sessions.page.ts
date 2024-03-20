@@ -19,8 +19,6 @@ export class SessionsPage {
   @ViewChild(IonContent) content: IonContent;
   @ViewChild(IonContent) searchbar: IonSearchbar;
 
-  // @todo prevent default on favorite/register/selectDetail not working
-  // @todo if few sessions (i.e. favorites) session detail is small
 
   days: string[]
   sessions: Session[];
@@ -71,7 +69,8 @@ export class SessionsPage {
     return this.favoriteSessionsIds.includes(session.sessionId);
   }
 
-  async toggleFavorite(session: Session): Promise<void> {
+  async toggleFavorite(ev: any, session: Session): Promise<void> {
+    ev?.stopPropagation()
     try {
       await this.loading.show();
       if (this.isSessionInFavorites(session)) {
@@ -93,7 +92,8 @@ export class SessionsPage {
     return this.registeredSessionsIds.includes(session.sessionId);
   }
 
-  async toggleRegister(session: Session): Promise<void> {
+  async toggleRegister(ev: any, session: Session): Promise<void> {
+    ev?.stopPropagation()
     try {
       await this.loading.show();
       if (this.isUserRegisteredInSession(session)) {
@@ -123,7 +123,9 @@ export class SessionsPage {
     }
   }
 
-  openDetail(session: Session): void {
+  openDetail(ev: any, session: Session): void {
+    ev?.stopPropagation()
+
     if (this.app.isInMobileMode()) this.app.goToInTabs(['agenda', session.sessionId]);
     else this.selectedSession = session;
   }
