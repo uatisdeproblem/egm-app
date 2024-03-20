@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ModalController } from '@ionic/angular';
 
 import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+
+import { ManageOrganizationComponent } from './manageOrganization.component';
 
 import { AppService } from 'src/app/app.service';
 import { OrganizationsService } from './organizations.service';
@@ -21,6 +24,7 @@ export class OrganizationPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private modalCtrl: ModalController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     private _organizations: OrganizationsService,
@@ -37,7 +41,7 @@ export class OrganizationPage implements OnInit {
       await this.loading.show();
       const organizationId = this.route.snapshot.paramMap.get('organizationId');
       this.organization = await this._organizations.getById(organizationId);
-      this.speakers = await this._speakers.getList({ organization: this.organization.organizationId, force: true });
+      this.speakers = await this._speakers.getOrganizationSpeakers(this.organization.organizationId);
     } catch (err) {
       this.message.error('COMMON.NOT_FOUND');
     } finally {
@@ -46,6 +50,20 @@ export class OrganizationPage implements OnInit {
   }
 
   async filterSpeakers(search: string = ''): Promise<void> {
-    this.speakers = await this._speakers.getList({ search, organization: this.organization.organizationId });
+    this.speakers = await this._speakers.getOrganizationSpeakers(this.organization.organizationId, search);
+  }
+
+  async manageOrganization(organization: Organization): Promise<void> {
+    if (!this.app.user.permissions.canManageContents) return
+
+    const modal = await this.modalCtrl.create({
+      component: ManageOrganizationComponent,
+      componentProps: { organization },
+      backdropDismiss: false
+    });
+    modal.onDidDismiss().then(async (): Promise<void> => {
+      this.organization = await this._organizations.getById(organization.organizationId);
+    });
+    await modal.present();
   }
 }

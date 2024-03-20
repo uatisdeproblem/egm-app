@@ -4,7 +4,7 @@ import { RoomLinked } from './room.model';
 import { SpeakerLinked } from './speaker.model';
 
 /**
- * YYYY-MM-DDTHH:MM, without timezone. // @todo do we need this?
+ * YYYY-MM-DDTHH:MM, without timezone.
  */
 type datetime = string;
 
@@ -76,9 +76,11 @@ export class Session extends Resource {
     this.endsAt = this.calcDatetimeWithoutTimezone(endsAt);
     this.room = typeof x.room === 'string' ? new RoomLinked({ roomId: x.room }) : new RoomLinked(x.room);
     this.speakers = this.cleanArray(x.speakers, x => new SpeakerLinked(x));
-    this.numberOfParticipants = this.clean(x.numberOfParticipants, Number, 0);
-    this.limitOfParticipants = this.clean(x.limitOfParticipants, Number);
-    this.requiresRegistration = Object.keys(IndividualSessionType).includes(this.type);
+    this.requiresRegistration = this.type !== SessionType.COMMON;
+    if (this.requiresRegistration) {
+      this.numberOfParticipants = this.clean(x.numberOfParticipants, Number, 0);
+      this.limitOfParticipants = this.clean(x.limitOfParticipants, Number);
+    }
   }
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
@@ -92,58 +94,43 @@ export class Session extends Resource {
     if (isEmpty(this.durationMinutes)) e.push('durationMinutes');
     if (!this.room.roomId) e.push('room');
     if (!this.speakers?.length) e.push('speakers');
+    if (this.requiresRegistration && !this.limitOfParticipants) e.push('limitOfParticipants');
     return e;
   }
 
   // @todo add a method to check if a user/speaker is in the session or not
 
-  calcDatetimeWithoutTimezone(dateToFormat: Date | string | number): datetime {
+  calcDatetimeWithoutTimezone(dateToFormat: Date | string | number, bufferInMinutes = 0): datetime {
     const date = new Date(dateToFormat);
-    return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    return new Date(
+      date.getTime() -
+        this.convertMinutesToMilliseconds(date.getTimezoneOffset()) +
+        this.convertMinutesToMilliseconds(bufferInMinutes)
+    )
+      .toISOString()
+      .slice(0, 16);
+  }
+
+  convertMinutesToMilliseconds(minutes: number) {
+    return minutes * 60 * 1000;
   }
 
   isFull(): boolean {
-    return this.numberOfParticipants >= this.limitOfParticipants;
+    return this.requiresRegistration ? this.numberOfParticipants >= this.limitOfParticipants : false
+  }
+
+  getSpeakers(): string {
+    return this.speakers.map(s => s.name).join(', ')
   }
 }
 
-// @todo don't have three enums...
-// @todo check if any is missing or we need to add.
-export enum CommonSessionType {
-  OPENING = 'OPENING',
-  KEYNOTE = 'KEYNOTE',
-  MORNING = 'MORNING',
-  POSTER = 'POSTER',
-  EXPO = 'EXPO',
-  CANDIDATES = 'CANDIDATES',
-  HARVESTING = 'HARVESTING',
-  CLOSING = 'CLOSING',
-  OTHER = 'OTHER'
-}
-
-export enum IndividualSessionType {
-  DISCUSSION = 'DISCUSSION',
-  TALK = 'TALK',
-  IGNITE = 'IGNITE',
-  CAMPFIRE = 'CAMPFIRE',
-  IDEAS = 'IDEAS',
-  INCUBATOR = 'INCUBATOR'
-}
 
 export enum SessionType {
-  OPENING = 'OPENING',
-  KEYNOTE = 'KEYNOTE',
-  MORNING = 'MORNING',
-  POSTER = 'POSTER',
-  EXPO = 'EXPO',
-  CANDIDATES = 'CANDIDATES',
-  HARVESTING = 'HARVESTING',
-  CLOSING = 'CLOSING',
   DISCUSSION = 'DISCUSSION',
   TALK = 'TALK',
   IGNITE = 'IGNITE',
   CAMPFIRE = 'CAMPFIRE',
-  IDEAS = 'IDEAS',
   INCUBATOR = 'INCUBATOR',
-  OTHER = 'OTHER'
+  HUB = 'HUB',
+  COMMON = 'COMMON'
 }

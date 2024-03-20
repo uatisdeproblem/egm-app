@@ -5,6 +5,7 @@ import { User } from '../models/user.model';
 import { ServiceLanguages } from './serviceLanguages.enum';
 
 export const LANGUAGES = new Languages({ default: ServiceLanguages.English, available: [ServiceLanguages.English] });
+const DEFAULT_SESSION_REGISTRATION_BUFFER_MINUTES = 10;
 
 export class Configurations extends Resource {
   static PK = 'EGM';
@@ -21,6 +22,14 @@ export class Configurations extends Resource {
    * Whether externals and guests can register.
    */
   isRegistrationOpenForExternals: boolean;
+  /**
+   * Whether participants can register for sessions.
+   */
+  areSessionRegistrationsOpen: boolean;
+  /**
+   * The minimum amount of time (in minutes) a user must leave open between sessions.
+   */
+  sessionRegistrationBuffer: number;
   /**
    * Whether the delegation leaders can assign spots.
    */
@@ -55,6 +64,12 @@ export class Configurations extends Resource {
     this.PK = Configurations.PK;
     this.isRegistrationOpenForESNers = this.clean(x.isRegistrationOpenForESNers, Boolean);
     this.isRegistrationOpenForExternals = this.clean(x.isRegistrationOpenForExternals, Boolean);
+    this.areSessionRegistrationsOpen = this.clean(x.areSessionRegistrationsOpen, Boolean);
+    this.sessionRegistrationBuffer = this.clean(
+      x.sessionRegistrationBuffer,
+      Number,
+      DEFAULT_SESSION_REGISTRATION_BUFFER_MINUTES
+    );
     this.canCountryLeadersAssignSpots = this.clean(x.canCountryLeadersAssignSpots, Boolean);
     this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);
     this.currency = this.clean(x.currency, String);
@@ -76,6 +91,7 @@ export class Configurations extends Resource {
   validate(): string[] {
     const e = super.validate();
     this.registrationFormDef.validate(LANGUAGES).forEach(ea => e.push(`registrationFormDef.${ea}`));
+    if (this.sessionRegistrationBuffer < 0) e.push('sessionRegistrationBuffer')
     return e;
   }
 

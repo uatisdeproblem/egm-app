@@ -69,20 +69,20 @@ class Sessions extends ResourceController {
     return await this.putSafeResource();
   }
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Session> {
-    const errors = this.session.validate();
-    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
-
     this.session.room = new RoomLinked(
       await ddb.get({ TableName: DDB_TABLES.rooms, Key: { roomId: this.session.room.roomId } })
     );
 
-    this.session.speakers = (
-      await ddb.batchGet(
-        DDB_TABLES.speakers,
-        this.session.speakers?.map(speakerId => ({ speakerId })),
-        true
-      )
-    ).map(s => new SpeakerLinked(s));
+    const getSpeakers = await ddb.batchGet(
+      DDB_TABLES.speakers,
+      this.session.speakers?.map(s => ({ speakerId: s.speakerId })),
+      true
+    )
+
+    this.session.speakers = getSpeakers.map(s => new SpeakerLinked(s));
+
+    const errors = this.session.validate();
+    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     try {
       const putParams: any = { TableName: DDB_TABLES.sessions, Item: this.session };

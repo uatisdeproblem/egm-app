@@ -25,10 +25,6 @@ export class Organization extends Resource {
    * The organization's contact email.
    */
   contactEmail: string;
-  /**
-   * A link to perform a contact action.
-   */
-  contactAction: string; // @todo check this
 
   load(x: any): void {
     super.load(x);
@@ -38,7 +34,6 @@ export class Organization extends Resource {
     this.description = this.clean(x.description, String);
     this.website = this.clean(x.website, String);
     this.contactEmail = this.clean(x.contactEmail, String);
-    this.contactAction = this.clean(x.contactAction, String);
   }
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
@@ -47,13 +42,10 @@ export class Organization extends Resource {
   validate(): string[] {
     const e = super.validate();
     if (isEmpty(this.name)) e.push('name');
-    if (this.website && isEmpty(this.website, 'url')) e.push('website');
-    if (this.contactEmail && isEmpty(this.contactEmail, 'email')) e.push('contactEmail');
     return e;
   }
 }
 
-// @todo check this
 export class OrganizationLinked extends Resource {
   organizationId: string;
   name: string;

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ModalController } from '@ionic/angular';
 
 import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+
+import { ManageVenueComponent } from './manageVenue.component';
 
 import { AppService } from 'src/app/app.service';
 import { VenuesService } from './venues.service';
@@ -21,6 +24,7 @@ export class VenuePage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private modalCtrl: ModalController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     private _venues: VenuesService,
@@ -47,5 +51,19 @@ export class VenuePage implements OnInit {
 
   async filterRooms(search: string = ''): Promise<void> {
     this.rooms = await this._rooms.getList({ search, venue: this.venue.venueId });
+  }
+
+  async manageVenue(venue: Venue): Promise<void> {
+    if (!this.app.user.permissions.canManageContents) return
+
+    const modal = await this.modalCtrl.create({
+      component: ManageVenueComponent,
+      componentProps: { venue },
+      backdropDismiss: false
+    });
+    modal.onDidDismiss().then(async (): Promise<void> => {
+      this.venue = await this._venues.getById(venue.venueId);
+    });
+    await modal.present();
   }
 }

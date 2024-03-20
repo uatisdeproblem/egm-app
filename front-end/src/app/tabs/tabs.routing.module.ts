@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { manageGuard } from '../manage.guard';
+import { spotGuard } from '../spot.guard';
+
 import { TabsComponent } from './tabs.component';
 
 const routes: Routes = [
@@ -8,14 +11,15 @@ const routes: Routes = [
     path: '',
     component: TabsComponent,
     children: [
-      { path: '', redirectTo: 'user', pathMatch: 'full' },
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
       {
         path: 'user',
         loadChildren: (): Promise<any> => import('./user/user.module').then(m => m.UserModule)
       },
       {
         path: 'manage',
-        loadChildren: (): Promise<any> => import('./manage/manage.module').then(m => m.ManageModule)
+        loadChildren: (): Promise<any> => import('./manage/manage.module').then(m => m.ManageModule),
+        canActivate: [manageGuard]
       },
       {
         path: 'home',
@@ -23,23 +27,33 @@ const routes: Routes = [
       },
       {
         path: 'menu',
-        loadChildren: (): Promise<any> => import('./menu/menu.module').then(m => m.MenuModule)
+        loadChildren: (): Promise<any> => import('./menu/menu.module').then(m => m.MenuModule),
+        canActivate: [spotGuard]
       },
       {
         path: 'venues',
-        loadChildren: (): Promise<any> => import('./venues/venues.module').then(m => m.VenuesModule)
+        loadChildren: (): Promise<any> => import('./venues/venues.module').then(m => m.VenuesModule),
+        canActivate: [spotGuard]
       },
       {
         path: 'rooms',
-        loadChildren: (): Promise<any> => import('./rooms/rooms.module').then(m => m.RoomsModule)
+        loadChildren: (): Promise<any> => import('./rooms/rooms.module').then(m => m.RoomsModule),
+        canActivate: [spotGuard]
       },
       {
         path: 'organizations',
-        loadChildren: (): Promise<any> => import('./organizations/organizations.module').then(m => m.OrganizationsModule)
+        loadChildren: (): Promise<any> => import('./organizations/organizations.module').then(m => m.OrganizationsModule),
+        canActivate: [spotGuard]
       },
       {
         path: 'speakers',
-        loadChildren: (): Promise<any> => import('./speakers/speakers.module').then(m => m.SpeakersModule)
+        loadChildren: (): Promise<any> => import('./speakers/speakers.module').then(m => m.SpeakersModule),
+        canActivate: [spotGuard]
+      },
+      {
+        path: 'agenda',
+        loadChildren: (): Promise<any> => import('./sessions/sessions.module').then(m => m.SessionsModule),
+        canActivate: [spotGuard]
       }
     ]
   }

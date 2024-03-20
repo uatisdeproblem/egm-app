@@ -1,0 +1,25 @@
+<ion-content>
+  <div class="maxWidthContainer">
+    <app-session-detail
+    *ngIf="session"
+    [session]="session"
+    [isSessionInFavorites]="isSessionInFavorites(session)"
+    [isUserRegisteredInSession]="isUserRegisteredInSession(session)"
+    (favorite)="toggleFavorite($event, session)"
+    (register)="toggleRegister($event, session)"
+  >
+    <ion-buttons slot="start">
+      <ion-button color="primary" (click)="app.goToInTabs(['agenda'], { back: true })">
+        <ion-icon slot="icon-only" name="arrow-back" />
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="session && app.user.permissions.canManageContents">
+      <ng-container>
+        <ion-button color="ESNgreen" (click)="manageSession()">
+          <ion-icon slot="icon-only" icon="hammer"></ion-icon>
+        </ion-button>
+      </ng-container>
+    </ion-buttons>
+  </app-session-detail>
+  </div>
+</ion-content>

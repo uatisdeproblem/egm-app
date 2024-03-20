@@ -102,6 +102,8 @@ export class HTMLEditorComponent implements OnInit, OnChanges {
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.editMode) this.sanitizedHtml = this._sanitizer.sanitize(SecurityContext.HTML, this.content);
+    if (changes.content) this.sanitizedHtml = this._sanitizer.sanitize(SecurityContext.HTML, this.content);
+
   }
 
   cleanHTMLCode(): void {

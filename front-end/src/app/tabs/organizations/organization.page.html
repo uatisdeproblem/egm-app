@@ -1,6 +1,18 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" (click)="app.goToInTabs(['organizations'], { back: true })">
+        <ion-icon slot="icon-only" name="arrow-back" />
+      </ion-button>
+    </ion-buttons>
     <ion-title>{{ 'ORGANIZATIONS.DETAILS' | translate }}</ion-title>
+    <ion-buttons slot="end" *ngIf="app.user.permissions.canManageContents">
+      <ng-container>
+        <ion-button color="ESNgreen" (click)="manageOrganization(organization)">
+          <ion-icon slot="icon-only" icon="hammer"></ion-icon>
+        </ion-button>
+      </ng-container>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

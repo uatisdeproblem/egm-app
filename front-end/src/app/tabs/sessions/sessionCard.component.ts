@@ -5,21 +5,39 @@ import { IonicModule } from '@ionic/angular';
 
 import { IDEATranslationsModule } from '@idea-ionic/common';
 
+import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
+
 import { AppService } from 'src/app/app.service';
 
 import { Session } from '@models/session.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule],
+  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
   selector: 'app-session-card',
   template: `
     <ng-container *ngIf="session; else skeletonTemplate">
-      <ion-card *ngIf="preview" [color]="preview ? 'white' : ''">
+      <ion-card
+        *ngIf="preview"
+        button
+        [color]="preview ? 'white' : ''"
+        (click)="this.app.goToInTabs(['agenda', session.sessionId])"
+      >
         <ion-card-header>
           <ion-card-title>{{ session.name }}</ion-card-title>
-          <ion-card-subtitle>{{ session.description }}</ion-card-subtitle>
         </ion-card-header>
+        <ion-card-content>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="calendar" />
+            <ion-label>
+              {{ app.formatTime(session.startsAt) }} - {{ app.formatTime(session.endsAt) }}
+              <p>({{ app.formatDateShort(session.startsAt) }})</p>
+            </ion-label>
+            <ion-badge color="primary">
+              {{ session.code }}
+            </ion-badge>
+          </ion-item>
+        </ion-card-content>
       </ion-card>
 
       <ion-card *ngIf="!preview" color="white">
@@ -36,9 +54,7 @@ import { Session } from '@models/session.model';
           <ion-card-subtitle>{{ session.description }}</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
-          <div class="divDescription" *ngIf="session.description">
-            <ion-textarea readonly [rows]="4" [(ngModel)]="session.description"></ion-textarea>
-          </div>
+          <app-html-editor [content]="session.description" [editMode]="false"></app-html-editor>
         </ion-card-content>
       </ion-card>
     </ng-container>

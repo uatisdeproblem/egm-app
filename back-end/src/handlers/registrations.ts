@@ -7,6 +7,7 @@ import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 import { Session } from '../models/session.model';
 import { SessionRegistration } from '../models/sessionRegistration.model';
 import { User } from '../models/user.model';
+import { Configurations } from '../models/configurations.model';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -15,7 +16,9 @@ import { User } from '../models/user.model';
 const DDB_TABLES = {
   users: process.env.DDB_TABLE_users,
   sessions: process.env.DDB_TABLE_sessions,
-  registrations: process.env.DDB_TABLE_registrations
+  configurations: process.env.DDB_TABLE_configurations,
+  registrations: process.env.DDB_TABLE_registrations,
+  usersFavoriteSessions: process.env.DDB_TABLE_usersFavoriteSessions
 };
 
 const ddb = new DynamoDB();
@@ -28,6 +31,7 @@ export const handler = (ev: any, _: any, cb: any) => new SessionRegistrations(ev
 
 class SessionRegistrations extends ResourceController {
   user: User;
+  configurations: Configurations;
   registration: SessionRegistration;
 
   constructor(event: any, callback: any) {
@@ -35,10 +39,20 @@ class SessionRegistrations extends ResourceController {
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
+
+
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
       throw new HandledError('User not found');
+    }
+
+    try {
+      this.configurations = new Configurations(
+        await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
+      );
+    } catch (err) {
+      throw new HandledError('Configuration not found');
     }
 
     if (!this.resourceId || this.httpMethod === 'POST') return;
@@ -72,13 +86,15 @@ class SessionRegistrations extends ResourceController {
     }
   }
 
-  protected async postResources(): Promise<any> {
-    // @todo configurations.canSignUpForSessions()
+  protected async postResource(): Promise<any> {
+    if (!this.configurations.areSessionRegistrationsOpen) throw new HandledError('Registrations are closed!')
 
     this.registration = new SessionRegistration({
       sessionId: this.resourceId,
-      userId: this.principalId,
-      registrationDateInMs: new Date().getTime()
+      userId: this.user.userId,
+      registrationDateInMs: new Date().getTime(),
+      name: this.user.getName(),
+      sectionCountry: this.user.sectionCountry
     });
 
     return await this.putSafeResource();
@@ -89,7 +105,7 @@ class SessionRegistrations extends ResourceController {
   }
 
   protected async deleteResource(): Promise<void> {
-    // @todo configurations.canSignUpForSessions()
+    if (!this.configurations.areSessionRegistrationsOpen) throw new HandledError('Registrations are closed!')
 
     try {
       const { sessionId, userId } = this.registration;
@@ -105,7 +121,16 @@ class SessionRegistrations extends ResourceController {
         }
       };
 
-      await ddb.transactWrites([{ Delete: deleteSessionRegistration }, { Update: updateSessionCount }]);
+      const removeFromFavorites = {
+        TableName: DDB_TABLES.usersFavoriteSessions,
+        Key: { userId: this.principalId, sessionId }
+      };
+
+      await ddb.transactWrites([
+        { Delete: deleteSessionRegistration },
+        { Delete: removeFromFavorites },
+        { Update: updateSessionCount }
+      ]);
     } catch (err) {
       throw new HandledError('Delete failed');
     }
@@ -113,7 +138,8 @@ class SessionRegistrations extends ResourceController {
 
   private async putSafeResource(): Promise<SessionRegistration> {
     const { sessionId, userId } = this.registration;
-    const isValid = await this.validateRegistration(sessionId, userId);
+    const session: Session = new Session(await ddb.get({ TableName: DDB_TABLES.sessions, Key: { sessionId } }));
+    const isValid = await this.validateRegistration(session, userId);
 
     if (!isValid) throw new HandledError("User can't sign up for this session!");
 
@@ -124,12 +150,23 @@ class SessionRegistrations extends ResourceController {
         TableName: DDB_TABLES.sessions,
         Key: { sessionId },
         UpdateExpression: 'ADD numberOfParticipants :one',
+        ConditionExpression: 'numberOfParticipants < :limit',
         ExpressionAttributeValues: {
-          ':one': 1
+          ':one': 1,
+          ":limit": session.limitOfParticipants
         }
       };
 
-      await ddb.transactWrites([{ Put: putSessionRegistration }, { Update: updateSessionCount }]);
+      const addToFavorites = {
+        TableName: DDB_TABLES.usersFavoriteSessions,
+        Item: { userId: this.principalId, sessionId: this.resourceId }
+      }
+
+      await ddb.transactWrites([
+        { Put: putSessionRegistration },
+        { Put: addToFavorites },
+        { Update: updateSessionCount }
+      ]);
 
       return this.registration;
     } catch (err) {
@@ -137,9 +174,7 @@ class SessionRegistrations extends ResourceController {
     }
   }
 
-  private async validateRegistration(sessionId: string, userId: string) {
-    const session: Session = new Session(await ddb.get({ TableName: DDB_TABLES.sessions, Key: { sessionId } }));
-
+  private async validateRegistration(session: Session, userId: string) {
     if (!session.requiresRegistration) throw new HandledError("User can't sign up for this session!");
     if (session.isFull()) throw new HandledError('Session is full! Refresh your page.');
 
@@ -159,8 +194,14 @@ class SessionRegistrations extends ResourceController {
       const sessionStartDate = s.calcDatetimeWithoutTimezone(s.startsAt);
       const sessionEndDate = s.calcDatetimeWithoutTimezone(s.endsAt);
 
-      const targetSessionStart = session.calcDatetimeWithoutTimezone(session.startsAt);
-      const targetSessionEnd = session.calcDatetimeWithoutTimezone(session.endsAt);
+      const targetSessionStart = session.calcDatetimeWithoutTimezone(
+        session.startsAt,
+        -1 * this.configurations.sessionRegistrationBuffer || 0
+      );
+      const targetSessionEnd = session.calcDatetimeWithoutTimezone(
+        session.endsAt,
+        this.configurations.sessionRegistrationBuffer || 0
+      );
 
       // it's easier to prove a session is valid than it is to prove it's invalid. (1 vs 5 conditional checks)
       return sessionStartDate >= targetSessionEnd || sessionEndDate <= targetSessionStart;

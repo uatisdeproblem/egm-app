@@ -20,6 +20,13 @@ export class SpeakersService {
     this.speakers = (await this.api.getResource(['speakers'], { params: params })).map(s => new Speaker(s));
   }
 
+  async getOrganizationSpeakers(organization: string, search?: string): Promise<Speaker[]> {
+    const speakers: Speaker[] = (await this.api.getResource(['speakers'], { params: { organization } })).map(
+      s => new Speaker(s)
+    );
+    return this.applySearchToSpeakers(speakers, search);
+  }
+
   /**
    * Get (and optionally filter) the list of speakers.
    * Note: it can be paginated.
@@ -31,25 +38,15 @@ export class SpeakersService {
     withPagination?: boolean;
     startPaginationAfterId?: string;
     search?: string;
-    organization?: string;
   }): Promise<Speaker[]> {
-    if (!this.speakers || options.force) await this.loadList(options.organization);
+    if (!this.speakers || options.force) await this.loadList();
     if (!this.speakers) return null;
 
     options.search = options.search ? String(options.search).toLowerCase() : '';
 
     let filteredList = this.speakers.slice();
 
-    if (options.search)
-      filteredList = filteredList.filter(x =>
-        options.search
-          .split(' ')
-          .every(searchTerm =>
-            [x.speakerId, x.name, x.contactEmail, x.organization?.organizationId, x.organization?.name]
-              .filter(f => f)
-              .some(f => f.toLowerCase().includes(searchTerm))
-          )
-      );
+    if (options.search) filteredList = this.applySearchToSpeakers(filteredList, options.search)
 
     if (options.withPagination && filteredList.length > this.MAX_PAGE_SIZE) {
       let indexOfLastOfPreviousPage = 0;
@@ -59,6 +56,21 @@ export class SpeakersService {
     }
 
     return filteredList;
+  }
+
+  private applySearchToSpeakers(speakers: Speaker[], search: string) {
+    if (search)
+      speakers = speakers.filter(x =>
+        search
+          .split(' ')
+          .every(searchTerm =>
+            [x.speakerId, x.name, x.contactEmail, x.organization?.organizationId, x.organization?.name]
+              .filter(f => f)
+              .some(f => f.toLowerCase().includes(searchTerm))
+          )
+      );
+
+    return speakers
   }
 
   /**

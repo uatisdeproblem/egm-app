@@ -8,10 +8,11 @@ import { IDEATranslationsModule } from '@idea-ionic/common';
 import { AppService } from 'src/app/app.service';
 
 import { Room } from '@models/room.model';
+import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule],
+  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
   selector: 'app-room-card',
   template: `
     <ng-container *ngIf="room; else skeletonTemplate">
@@ -37,9 +38,7 @@ import { Room } from '@models/room.model';
           <ion-card-subtitle>{{ room.internalLocation }}</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
-          <div class="divDescription" *ngIf="room.description">
-            <ion-textarea readonly [rows]="4" [(ngModel)]="room.description"></ion-textarea>
-          </div>
+        <app-html-editor [content]="room.description" [editMode]="false"></app-html-editor>
         </ion-card-content>
       </ion-card>
     </ng-container>
