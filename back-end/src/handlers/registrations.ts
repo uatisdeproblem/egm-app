@@ -94,7 +94,7 @@ class SessionRegistrations extends ResourceController {
       userId: this.user.userId,
       registrationDateInMs: new Date().getTime(),
       name: this.user.getName(),
-      esnCountry: this.user.sectionCountry
+      sectionCountry: this.user.sectionCountry
     });
 
     return await this.putSafeResource();
@@ -138,7 +138,8 @@ class SessionRegistrations extends ResourceController {
 
   private async putSafeResource(): Promise<SessionRegistration> {
     const { sessionId, userId } = this.registration;
-    const isValid = await this.validateRegistration(sessionId, userId);
+    const session: Session = new Session(await ddb.get({ TableName: DDB_TABLES.sessions, Key: { sessionId } }));
+    const isValid = await this.validateRegistration(session, userId);
 
     if (!isValid) throw new HandledError("User can't sign up for this session!");
 
@@ -149,8 +150,10 @@ class SessionRegistrations extends ResourceController {
         TableName: DDB_TABLES.sessions,
         Key: { sessionId },
         UpdateExpression: 'ADD numberOfParticipants :one',
+        ConditionExpression: 'numberOfParticipants < :limit',
         ExpressionAttributeValues: {
-          ':one': 1
+          ':one': 1,
+          ":limit": session.limitOfParticipants
         }
       };
 
@@ -171,9 +174,7 @@ class SessionRegistrations extends ResourceController {
     }
   }
 
-  private async validateRegistration(sessionId: string, userId: string) {
-    const session: Session = new Session(await ddb.get({ TableName: DDB_TABLES.sessions, Key: { sessionId } }));
-
+  private async validateRegistration(session: Session, userId: string) {
     if (!session.requiresRegistration) throw new HandledError("User can't sign up for this session!");
     if (session.isFull()) throw new HandledError('Session is full! Refresh your page.');
 
