@@ -1,0 +1,1 @@
+// @todo refactor items in sessions page to a component here

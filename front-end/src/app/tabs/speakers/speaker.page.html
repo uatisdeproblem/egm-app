@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" (click)="app.goToInTabs(['speakers'], { back: true })">
+        <ion-icon slot="icon-only" name="arrow-back" />
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'SPEAKERS.DETAILS' | translate }}</ion-title>
+    <ion-buttons slot="end" *ngIf="app.user.permissions.canManageContents">
+      <ng-container>
+        <ion-button color="ESNgreen" (click)="manageSpeaker(speaker)">
+          <ion-icon slot="icon-only" icon="hammer"></ion-icon>
+        </ion-button>
+      </ng-container>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid class="contentGrid">
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="12" size-md="6">
+        <app-speaker-card [speaker]="speaker"></app-speaker-card>
+      </ion-col>
+      <ion-col size="12" size-md="6">
+        <ion-list>
+          <ion-list-header>
+            <ion-label class="ion-text-center">
+              <h2>{{ 'SPEAKERS.SESSIONS' | translate }}</h2>
+            </ion-label>
+          </ion-list-header>
+          <ion-searchbar #searchbar color="light" (ionInput)="filterSessions($event.target.value)"></ion-searchbar>
+          <ion-col *ngIf="!sessions">
+            <app-session-card [preview]="true"></app-session-card>
+          </ion-col>
+          <ion-col *ngIf="sessions && sessions.length === 0">
+            <ion-item lines="none" color="white">
+              <ion-label class="ion-text-center">{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
+            </ion-item>
+          </ion-col>
+          <ion-col *ngFor="let session of sessions">
+            <app-session-card [session]="session" [preview]="true"></app-session-card>
+          </ion-col>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

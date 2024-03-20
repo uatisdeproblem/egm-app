@@ -8,7 +8,8 @@
       "@models/*": ["../back-end/src/models/*"],
       "@env": ["../front-end/src/environments/environment.ts"],
       "@app/*": ["../front-end/src/app/*"],
-      "@tabs/*": ["../front-end/src/app/tabs/*"]
+      "@tabs/*": ["../front-end/src/app/tabs/*"],
+      "@common/*": ["../front-end/src/app/common/*"]
     },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
@@ -18,6 +19,7 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "useDefineForClassFields": false,
+    "allowSyntheticDefaultImports": true,
     "target": "es2022",
     "module": "es2020",
     "lib": ["es2018", "dom"]

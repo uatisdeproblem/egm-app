@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: EGM API
-  version: 3.3.1
+  version: 3.4.0
   contact:
     name: EGM Technical Lead
     email: egm-technical@esn.org
@@ -34,6 +34,18 @@ tags:
     description: The event-related actions
   - name: UsefulLinks
     description: The useful links available to the users to explore more contents
+  - name: Venues
+    description: The venues of the event
+  - name: Communications
+    description: The event's communications and announcements.
+  - name: Organizations
+    description: The organizations of the event
+  - name: Rooms
+    description: The rooms of the event
+  - name: Speakers
+    description: The speakers of the event
+  - name: Sessions
+    description: The sessions of the event
 
 paths:
   /status:
@@ -98,6 +110,16 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /media:
+    post:
+      summary: Get a signed URL to upload a new image
+      description: Requires to be Administrator
+      tags: [Configurations]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
   /configurations:
     get:
       summary: Get the platform's configurations
@@ -227,15 +249,17 @@ paths:
               properties:
                 action:
                   type: string
-                  enum:
-                    [
+                  enum: [
                       GET_AVATAR_UPLOAD_URL,
                       REGISTER_TO_EVENT,
                       CHANGE_PERMISSIONS,
                       GET_PROOF_OF_PAYMENT,
                       PUT_PROOF_OF_PAYMENT_START,
                       PUT_PROOF_OF_PAYMENT_END,
-                      GET_INVOICE
+                      GET_INVOICE,
+                      ADD_FAVORITE_SESSION
+                      REMOVE_FAVORITE_SESSION
+                      GET_FAVORITE_SESSIONS
                     ]
                 registrationForm:
                   type: number
@@ -249,6 +273,9 @@ paths:
                 fileURI:
                   type: string
                   description: (PUT_PROOF_OF_PAYMENT_END)
+                sessionId:
+                  type: string
+                  description: (ADD_FAVORITE_SESSION, REMOVE_FAVORITE_SESSION)
       responses:
         200:
           $ref: '#/components/responses/User'
@@ -477,6 +504,665 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /venues:
+    get:
+      summary: Get the venues
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Venues'
+    post:
+      summary: Insert a new venue
+      description: Requires to be content manager
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Venue
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /venues/{venueId}:
+    get:
+      summary: Get a venue
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+    put:
+      summary: Edit a venue
+      description: Requires to be content manager
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Venue
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a venue
+      description: Requires to be content manager
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: venueId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /communications:
+    get:
+      summary: Get the communications
+      tags: [Communications]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Communications'
+    post:
+      summary: Insert a new communication
+      description: Requires to be content manager
+      tags: [Communications]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Communication
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Communication'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /communications/{communicationId}:
+    get:
+      summary: Get a communication
+      tags: [Communications]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: communicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Communication'
+    put:
+      summary: Edit a communication
+      description: Requires to be content manager
+      tags: [Communications]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: communicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Communication
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Communication'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on a communication
+      tags: [Communications, Users]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: communicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum:
+                    - MARK_AS_READ
+                    - MARK_AS_UNREAD
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a communication
+      description: Requires to be content manager
+      tags: [Communications]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: communicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /organizations:
+    get:
+      summary: Get the organizations
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Organizations'
+    post:
+      summary: Insert a new organization
+      description: Requires to be content manager
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Organization
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /organizations/{organizationId}:
+    get:
+      summary: Get an organization
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+    put:
+      summary: Edit an organization
+      description: Requires to be content manager
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Organization
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete an organization
+      description: Requires to be content manager
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /rooms:
+    get:
+      summary: Get the rooms
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: venue
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Rooms'
+    post:
+      summary: Insert a new room
+      description: Requires to be content manager
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Room
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /rooms/{roomId}:
+    get:
+      summary: Get a room
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+    put:
+      summary: Edit a room
+      description: Requires to be content manager
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Room
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a room
+      description: Requires to be content manager
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /speakers:
+    get:
+      summary: Get the speakers
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: organization
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Speakers'
+    post:
+      summary: Insert a new speaker
+      description: Requires to be content manager
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Speaker
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /speakers/{speakerId}:
+    get:
+      summary: Get a speaker
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+    put:
+      summary: Edit a speaker
+      description: Requires to be content manager
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Speaker
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a speaker
+      description: Requires to be content manager
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /sessions:
+    get:
+      summary: Get the sessions
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: speaker
+          in: query
+          schema:
+            type: string
+        - name: venue
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Sessions'
+    post:
+      summary: Insert a new session
+      description: Requires to be content manager
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Session
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /sessions/{sessionId}:
+    get:
+      summary: Get a session
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+    put:
+      summary: Edit a session
+      description: Requires to be content manager
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Session
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a session
+      description: Requires to be content manager
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /registrations:
+    get:
+      summary: Get the registrations for a user or for a session
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Registrations'
+  /registrations/{sessionId}:
+    get:
+      summary: Get a session registration
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+    post:
+      summary: Create a new session registration
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Registration
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Registration'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a registration
+      description: Requires to be Admin or the registered user.
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /connections:
+    get:
+      summary: Get the connections of a user
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+    post:
+      summary: Create a new connection between the requester user and a target user or confirm a pending connection
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /connections/{connectionId}:
+    delete:
+      summary: Delete the connection of a user with a target
+      tags: [Users]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: connectionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -493,6 +1179,27 @@ components:
       type: object
       additionalProperties: {}
     UsefulLink:
+      type: object
+      additionalProperties: {}
+    Venue:
+      type: object
+      additionalProperties: {}
+    Communication:
+      type: object
+      additionalProperties: {}
+    Organization:
+      type: object
+      additionalProperties: {}
+    Room:
+      type: object
+      additionalProperties: {}
+    Speaker:
+      type: object
+      additionalProperties: {}
+    Session:
+      type: object
+      additionalProperties: {}
+    Registration:
       type: object
       additionalProperties: {}
 
@@ -556,6 +1263,117 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/UsefulLink'
+    Venue:
+      description: Venue
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/Venue'
+    Venues:
+      description: Venue[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Venue'
+    Communication:
+      description: Communication
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Communication'
+    Communications:
+      description: Communication[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Communication'
+    Organization:
+      description: Organization
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Organization'
+    Organizations:
+      description: Organization[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Organization'
+    Room:
+      description: Room
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Room'
+    Rooms:
+      description: Room[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Room'
+    Speaker:
+      description: Speaker
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Speaker'
+    Speakers:
+      description: Speaker[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Speaker'
+    Session:
+      description: Session
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Session'
+    Sessions:
+      description: Session[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Session'
+    Registration:
+      description: Registration
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Registration'
+    Registrations:
+      description: Registration[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Registration'
     BadParameters:
       description: Bad input parameters
       content:

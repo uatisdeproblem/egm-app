@@ -1,0 +1,46 @@
+<ion-header>
+  @if(_app.isInMobileMode()) {
+  <ion-toolbar color="ideaToolbar">
+    <ion-segment [(ngModel)]="segment">
+      <ion-segment-button value="map">{{ 'VENUES.MAP' | translate }}</ion-segment-button>
+      <ion-segment-button value="list">{{ 'VENUES.LIST' | translate }}</ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+  }
+</ion-header>
+<ion-content>
+  @if(_app.isInMobileMode()) {
+  <div [style.display]="segment !== 'list' ? 'none' : 'inherit'">
+    <ng-container [ngTemplateOutlet]="venuesListTemplate"></ng-container>
+  </div>
+  <div class="mapContainer" [style.display]="segment !== 'map' ? 'none' : 'inherit'">
+    <div class="map" [id]="mapContainerId"></div>
+  </div>
+  } @else {
+  <div style="width: 30%; float: left">
+    <ng-container [ngTemplateOutlet]="venuesListTemplate"></ng-container>
+  </div>
+  <div class="mapContainer" style="width: 70%; float: right; right: 0; position: fixed">
+    <div class="map" [id]="mapContainerId"></div>
+  </div>
+  }
+</ion-content>
+
+<ng-template #venuesListTemplate>
+  <ion-list lines="inset">
+    <ion-searchbar #searchbar color="light" (ionInput)="filter($event.target.value)"></ion-searchbar>
+    @if(venues && !venues.length) {
+    <ion-item color="white" class="noElements">
+      <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
+    </ion-item>
+    } @if(!venues) {
+    <ion-item color="white">
+      <ion-label><ion-skeleton-text animated /></ion-label>
+    </ion-item>
+    } @for(venue of venues; track venue.venueId) {
+    <ion-item color="white" button detail (click)="selectVenue(venue)">
+      <ion-label class="ion-text-wrap">{{ venue.name }}</ion-label>
+    </ion-item>
+    }
+  </ion-list>
+</ng-template>

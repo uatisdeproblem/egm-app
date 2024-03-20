@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar *ngIf="app.isInMobileMode()" color="ideaToolbar">
+    <ion-title class="ion-text-center">
+      {{ 'TABS.MENU' | translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list lines="inset" style="padding: 0; max-width: 500px; margin: 0 auto;">
+    <ion-item-divider>
+      <ion-label>{{ 'MENU.PAGES' | translate }}</ion-label>
+    </ion-item-divider>
+    <ion-item button color="white" (click)="app.goToInTabs(['home'])">
+      <ion-icon name="home" slot="start"></ion-icon>
+      <ion-label>{{ 'MENU.HOME' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button color="white" (click)="app.goToInTabs(['agenda'])">
+      <ion-icon name="calendar" slot="start"></ion-icon>
+      <ion-label>{{ 'MENU.AGENDA' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button color="white" (click)="app.goToInTabs(['venues'])">
+      <ion-icon name="map" slot="start"></ion-icon>
+      <ion-label>{{ 'MENU.VENUES' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button color="white" (click)="app.goToInTabs(['organizations'])">
+      <ion-icon name="business" slot="start"></ion-icon>
+      <ion-label>{{ 'MENU.ORGANIZATIONS' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button color="white" (click)="app.goToInTabs(['speakers'])">
+      <ion-icon name="mic" slot="start"></ion-icon>
+      <ion-label>{{ 'MENU.SPEAKERS' | translate }}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

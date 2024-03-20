@@ -1,7 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as Cognito from 'aws-cdk-lib/aws-cognito';
-// import * as IAM from 'aws-cdk-lib/aws-iam';
 import { Duration } from 'aws-cdk-lib';
 
 export interface CognitoProps extends cdk.StackProps {
@@ -83,59 +82,5 @@ export class CognitoStack extends cdk.Stack {
       groupName: String(adminsGroup.groupName),
       username: user.ref
     });
-
-    /* @idea uncomment only if you need a Cognito IdentityPool
-
-    const userIdentityPool = new Cognito.CfnIdentityPool(this, 'CognitoIdentiyPool', {
-      identityPoolName: props.project.concat('-identity'),
-      allowUnauthenticatedIdentities: false,
-      cognitoIdentityProviders: [
-        {
-          clientId: this.clientFrontEnd.userPoolClientId,
-          providerName: `cognito-idp.${cdk.Stack.of(this).region}.amazonaws.com/${this.userPool.userPoolId}`,
-          serverSideTokenCheck: false
-        }
-      ]
-    });
-    new cdk.CfnOutput(this, 'IdentityPoolId', { value: userIdentityPool.ref });
-
-    const unauthenticatedIdentityPoolRole = new IAM.Role(this, 'IdentityUnauthenticatedRole', {
-      assumedBy: new IAM.FederatedPrincipal(
-        'cognito-identity.amazonaws.com',
-        {
-          StringEquals: { 'cognito-identity.amazonaws.com:aud': userIdentityPool.ref },
-          'ForAnyValue:StringLike': { 'cognito-identity.amazonaws.com:amr': 'unauthenticated' }
-        },
-        'sts:AssumeRoleWithWebIdentity'
-      )
-    });
-
-    const authenticatedIdentityPoolRole = new IAM.Role(this, 'IdentityAuthenticatedRole', {
-      assumedBy: new IAM.FederatedPrincipal(
-        'cognito-identity.amazonaws.com',
-        {
-          StringEquals: { 'cognito-identity.amazonaws.com:aud': userIdentityPool.ref },
-          'ForAnyValue:StringLike': { 'cognito-identity.amazonaws.com:amr': 'authenticated' }
-        },
-        'sts:AssumeRoleWithWebIdentity'
-      )
-    });
-
-    new Cognito.CfnIdentityPoolRoleAttachment(this, 'identity-pool-role-attachment', {
-      identityPoolId: userIdentityPool.ref,
-      roles: {
-        authenticated: authenticatedIdentityPoolRole.roleArn,
-        unauthenticated: unauthenticatedIdentityPoolRole.roleArn
-      },
-      roleMappings: {
-        mapping: {
-          type: 'Token',
-          ambiguousRoleResolution: 'AuthenticatedRole',
-          identityProvider: `cognito-idp.${cdk.Stack.of(this).region}.amazonaws.com/${this.userPool.userPoolId}:${
-            this.clientFrontEnd.userPoolClientId
-          }`
-        }
-      }
-    });*/
   }
 }

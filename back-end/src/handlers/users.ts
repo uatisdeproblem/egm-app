@@ -4,7 +4,7 @@
 
 import { addDays } from 'date-fns';
 import { SignedURL, toISODate } from 'idea-toolbox';
-import { Cognito, DynamoDB, GetObjectTypes, RCError, ResourceController, S3 } from 'idea-aws';
+import { Cognito, DynamoDB, HandledError, ResourceController, S3 } from 'idea-aws';
 import { HTML2PDF } from 'idea-html2pdf';
 
 import { AuthServices, User, UserPermissions } from '../models/user.model';
@@ -20,7 +20,8 @@ const PROJECT = process.env.PROJECT;
 const DDB_TABLES = {
   users: process.env.DDB_TABLE_users,
   configurations: process.env.DDB_TABLE_configurations,
-  eventSpots: process.env.DDB_TABLE_eventSpots
+  eventSpots: process.env.DDB_TABLE_eventSpots,
+  usersFavoriteSessions: process.env.DDB_TABLE_usersFavoriteSessions
 };
 const ddb = new DynamoDB();
 
@@ -55,13 +56,13 @@ class UsersRC extends ResourceController {
         await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
       );
     } catch (err) {
-      throw new RCError('Configuration not found');
+      throw new HandledError('Configuration not found');
     }
 
     try {
       this.reqUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
-      throw new RCError('Requesting user not found');
+      throw new HandledError('Requesting user not found');
     }
 
     if (this.resourceId === 'me') this.resourceId = this.principalId;
@@ -76,7 +77,7 @@ class UsersRC extends ResourceController {
     try {
       this.targetUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.resourceId } }));
     } catch (error) {
-      throw new RCError('Target user not found');
+      throw new HandledError('Target user not found');
     }
 
     const isCountryLeaderThatWantToReadCountryUser =
@@ -88,7 +89,7 @@ class UsersRC extends ResourceController {
       !this.reqUser.permissions.canManageRegistrations &&
       !isCountryLeaderThatWantToReadCountryUser
     )
-      throw new RCError('Unauthorized');
+      throw new HandledError('Unauthorized');
   }
 
   protected async getResource(): Promise<User> {
@@ -104,13 +105,13 @@ class UsersRC extends ResourceController {
   }
   private async putSafeResource(): Promise<User> {
     const errors = this.targetUser.validate();
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     await ddb.put({ TableName: DDB_TABLES.users, Item: this.targetUser });
     return this.targetUser;
   }
 
-  protected async patchResource(): Promise<User | SignedURL> {
+  protected async patchResource(): Promise<User | SignedURL | void | string[]> {
     switch (this.body.action) {
       case 'GET_AVATAR_UPLOAD_URL':
         return await this.getSignedURLToUploadAvatar();
@@ -126,12 +127,18 @@ class UsersRC extends ResourceController {
         return await this.getSignedURLToUploadProofOfPayment();
       case 'PUT_PROOF_OF_PAYMENT_END':
         return await this.confirmUploadProofOfPayment(this.body.fileURI);
+      case 'ADD_FAVORITE_SESSION':
+        return await this.setFavoriteSession(this.body.sessionId, true);
+      case 'REMOVE_FAVORITE_SESSION':
+        return await this.setFavoriteSession(this.body.sessionId, false);
+      case 'GET_FAVORITE_SESSIONS':
+        return await this.getFavoriteSessions();
       default:
-        throw new RCError('Unsupported action');
+        throw new HandledError('Unsupported action');
     }
   }
   private async getSignedURLToUploadAvatar(): Promise<SignedURL> {
-    if (this.reqUser !== this.targetUser) throw new RCError('Unauthorized');
+    if (this.reqUser !== this.targetUser) throw new HandledError('Unauthorized');
 
     const imageURI = await ddb.IUNID(PROJECT.concat('-avatar'));
     const key = `${S3_IMAGES_FOLDER}/${imageURI}.png`;
@@ -141,16 +148,16 @@ class UsersRC extends ResourceController {
   }
   private async registerToEvent(registrationForm: any, isDraft: boolean): Promise<User> {
     if (!this.configurations.canUserRegister(this.targetUser) && !this.reqUser.permissions.canManageRegistrations)
-      throw new RCError('Registrations are closed');
+      throw new HandledError('Registrations are closed');
     if (this.targetUser.registrationAt && !this.reqUser.permissions.canManageRegistrations)
-      throw new RCError("Can't edit a submitted registration");
+      throw new HandledError("Can't edit a submitted registration");
 
     this.targetUser.registrationForm = this.configurations.registrationFormDef.loadSections(registrationForm);
 
     if (isDraft) this.targetUser.registrationAt = null;
     else {
       const errors = this.configurations.registrationFormDef.validateSections(this.targetUser.registrationForm);
-      if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+      if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
       this.targetUser.registrationAt = new Date().toISOString();
     }
 
@@ -164,7 +171,7 @@ class UsersRC extends ResourceController {
     return this.targetUser;
   }
   private async changeUserPermissions(permissions: UserPermissions): Promise<User> {
-    if (!this.reqUser.permissions.isAdmin) throw new RCError('Unauthorized');
+    if (!this.reqUser.permissions.isAdmin) throw new HandledError('Unauthorized');
 
     await ddb.update({
       TableName: DDB_TABLES.users,
@@ -185,10 +192,9 @@ class UsersRC extends ResourceController {
     const bucket = S3_BUCKET_MEDIA;
     const key = S3_DOWNLOADS_FOLDER + `/invoices/${filename}`;
 
-    const htmlBody = (await s3.getObject({
+    const htmlBody = (await s3.getObjectAsText({
       bucket: S3_BUCKET_MEDIA,
-      key: S3_ASSETS_FOLDER.concat('/payment-invoice.hbs'),
-      type: GetObjectTypes.TEXT
+      key: S3_ASSETS_FOLDER.concat('/payment-invoice.hbs')
     })) as string;
 
     const pdfVariables = {
@@ -220,20 +226,20 @@ class UsersRC extends ResourceController {
       return await s3.signedURLGet(S3_BUCKET_MEDIA, key);
     } catch (err) {
       this.logger.warn('PDF creation failed', err);
-      throw new RCError('PDF creation failed');
+      throw new HandledError('PDF creation failed');
     }
   }
 
   private async getSignedURLToDownloadProofOfPayment(): Promise<SignedURL> {
-    if (!this.targetUser.spot?.proofOfPaymentURI) throw new RCError('No proof of payment');
+    if (!this.targetUser.spot?.proofOfPaymentURI) throw new HandledError('No proof of payment');
 
     const key = `${S3_ATTACHMENTS_FOLDER}/${this.targetUser.userId}_${this.targetUser.spot.proofOfPaymentURI}`;
     return await s3.signedURLGet(S3_BUCKET_MEDIA, key);
   }
   private async getSignedURLToUploadProofOfPayment(): Promise<SignedURL> {
-    if (this.reqUser !== this.targetUser) throw new RCError('Unauthorized');
-    if (!this.targetUser.spot) throw new RCError('No spot');
-    if (this.targetUser.spot.paymentConfirmedAt) throw new RCError('Payment already confirmed');
+    if (this.reqUser !== this.targetUser) throw new HandledError('Unauthorized');
+    if (!this.targetUser.spot) throw new HandledError('No spot');
+    if (this.targetUser.spot.paymentConfirmedAt) throw new HandledError('Payment already confirmed');
 
     const fileURI = await ddb.IUNID(PROJECT.concat('-pop'));
     const key = `${S3_ATTACHMENTS_FOLDER}/${this.targetUser.userId}_${fileURI}`;
@@ -242,7 +248,7 @@ class UsersRC extends ResourceController {
     return signedURL;
   }
   private async confirmUploadProofOfPayment(fileURI: string): Promise<User> {
-    if (!this.targetUser.spot) throw new RCError('No spot');
+    if (!this.targetUser.spot) throw new HandledError('No spot');
 
     let spot: EventSpot;
     try {
@@ -250,10 +256,10 @@ class UsersRC extends ResourceController {
         await ddb.get({ TableName: DDB_TABLES.eventSpots, Key: { spotId: this.targetUser.spot.spotId } })
       );
     } catch (error) {
-      throw new RCError("Spot doesn't exist");
+      throw new HandledError("Spot doesn't exist");
     }
 
-    if (spot.userId !== this.targetUser.userId) throw new RCError('Wrong spot');
+    if (spot.userId !== this.targetUser.userId) throw new HandledError('Wrong spot');
 
     spot.proofOfPaymentURI = fileURI;
 
@@ -280,7 +286,7 @@ class UsersRC extends ResourceController {
 
   protected async deleteResource(): Promise<void> {
     if (!this.reqUser.permissions.isAdmin && this.reqUser.userId !== this.targetUser.userId)
-      throw new RCError('Unauthorized');
+      throw new HandledError('Unauthorized');
 
     if (this.targetUser.authService === AuthServices.COGNITO) {
       const cognitoUserId = this.targetUser.getAuthServiceUserId();
@@ -298,7 +304,7 @@ class UsersRC extends ResourceController {
 
   protected async getResources(): Promise<User[]> {
     if (!(this.reqUser.permissions.canManageRegistrations || this.reqUser.permissions.isCountryLeader))
-      throw new RCError('Unauthorized');
+      throw new HandledError('Unauthorized');
 
     // @todo we may want to add an index here to limit the fields in lists
     let users = (await ddb.scan({ TableName: DDB_TABLES.users })).map(x => new User(x));
@@ -330,5 +336,20 @@ class UsersRC extends ResourceController {
     } catch (error) {
       this.logger.warn('Error sending email', error);
     }
+  }
+  private async setFavoriteSession(sessionId: string, isFavorite: boolean): Promise<void> {
+    if (isFavorite)
+      await ddb.put({ TableName: DDB_TABLES.usersFavoriteSessions, Item: { userId: this.principalId, sessionId } });
+    else
+      await ddb.delete({ TableName: DDB_TABLES.usersFavoriteSessions, Key: { userId: this.principalId, sessionId } });
+  }
+  private async getFavoriteSessions(): Promise<string[]> {
+    return (
+      await ddb.query({
+        TableName: DDB_TABLES.usersFavoriteSessions,
+        KeyConditionExpression: 'userId = :userId',
+        ExpressionAttributeValues: { ':userId': this.principalId }
+      })
+    ).map((x: { sessionId: string }) => x.sessionId);
   }
 }

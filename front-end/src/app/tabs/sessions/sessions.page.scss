@@ -1,0 +1,62 @@
+ion-list {
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+ion-item {
+  box-shadow: '0 0 5px 3px rgba(0, 0, 0, 0.05)';
+  border-radius: 12px;
+  margin: 8;
+}
+
+.registeredSession.favoritedSession {
+  border-color: var(--ion-color-primary);
+  border-style: solid ;
+}
+
+.favoritedSession {
+  border-color: var(--ion-color-warning);
+  border-style: solid;
+}
+
+ion-label {
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+.sessionTitle {
+  font-weight: 600;
+}
+
+.borderRight {
+  border-right-style: solid;
+}
+
+ion-note {
+  margin-top: auto;
+  margin-bottom: auto;
+
+  b, span {
+    display: block;
+    padding: 5px;
+    margin: 0px
+  }
+}
+
+ion-badge {
+  margin-top: 2;
+  font-size: '0.8em';
+}
+
+p {
+  ion-icon {
+    vertical-align: middle;
+  }
+}
+
+ion-searchbar {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}

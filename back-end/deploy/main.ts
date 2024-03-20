@@ -3,6 +3,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as DDB from 'aws-cdk-lib/aws-dynamodb';
 
 import { IDEAStack } from './idea-stack';
+import { MapStack } from './map-stack';
 import { MediaStack } from './media-stack';
 import { CognitoStack } from './cognito-stack';
 import { SESStack } from './ses-stack';
@@ -22,9 +23,18 @@ const apiResources: ResourceController[] = [
   { name: 'cognito', paths: ['/cognito'] },
   { name: 'galaxy', paths: ['/galaxy'] },
   { name: 'configurations', paths: ['/configurations'] },
+  { name: 'media', paths: ['/media'] },
   { name: 'users', paths: ['/users', '/users/{userId}'] },
   { name: 'eventSpots', paths: ['/event-spots', '/event-spots/{spotId}'] },
-  { name: 'usefulLinks', paths: ['/useful-links', '/useful-links/{linkId}'] }
+  { name: 'usefulLinks', paths: ['/useful-links', '/useful-links/{linkId}'] },
+  { name: 'venues', paths: ['/venues', '/venues/{venueId}'] },
+  { name: 'communications', paths: ['/communications', '/communications/{communicationId}'] },
+  { name: 'organizations', paths: ['/organizations', '/organizations/{organizationId}'] },
+  { name: 'rooms', paths: ['/rooms', '/rooms/{roomId}'] },
+  { name: 'speakers', paths: ['/speakers', '/speakers/{speakerId}'] },
+  { name: 'sessions', paths: ['/sessions', '/sessions/{sessionId}'] },
+  { name: 'registrations', paths: ['/registrations', '/registrations/{sessionId}'] },
+  { name: 'connections', paths: ['/connections', '/connections/{connectionId}'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
@@ -42,6 +52,69 @@ const tables: { [tableName: string]: DDBTable } = {
   },
   usefulLinks: {
     PK: { name: 'linkId', type: DDB.AttributeType.STRING }
+  },
+  venues: {
+    PK: { name: 'venueId', type: DDB.AttributeType.STRING }
+  },
+  communications: {
+    PK: { name: 'communicationId', type: DDB.AttributeType.STRING }
+  },
+  usersReadCommunications: {
+    PK: { name: 'userId', type: DDB.AttributeType.STRING },
+    SK: { name: 'communicationId', type: DDB.AttributeType.STRING }
+  },
+  organizations: {
+    PK: { name: 'organizationId', type: DDB.AttributeType.STRING }
+  },
+  rooms: {
+    PK: { name: 'roomId', type: DDB.AttributeType.STRING }
+  },
+  speakers: {
+    PK: { name: 'speakerId', type: DDB.AttributeType.STRING }
+  },
+  sessions: {
+    PK: { name: 'sessionId', type: DDB.AttributeType.STRING }
+  },
+  registrations: {
+    PK: { name: 'sessionId', type: DDB.AttributeType.STRING },
+    SK: { name: 'userId', type: DDB.AttributeType.STRING },
+    indexes: [
+      {
+        indexName: 'userId-sessionId-index',
+        partitionKey: { name: 'userId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'sessionId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      }
+    ]
+  },
+  usersFavoriteSessions: {
+    PK: { name: 'userId', type: DDB.AttributeType.STRING },
+    SK: { name: 'sessionId', type: DDB.AttributeType.STRING },
+    indexes: [
+      {
+        indexName: 'inverted-index',
+        partitionKey: { name: 'sessionId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'userId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      }
+    ]
+  },
+  connections: {
+    PK: { name: 'connectionId', type: DDB.AttributeType.STRING },
+    indexes: [
+      {
+        indexName: 'requesterId-targetId-index',
+        partitionKey: { name: 'requesterId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'targetId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      },
+      {
+        indexName: 'targetId-requesterId-index',
+        partitionKey: { name: 'targetId', type: DDB.AttributeType.STRING },
+        sortKey: { name: 'requesterId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      }
+    ]
   }
 };
 
@@ -66,6 +139,8 @@ const createApp = async (): Promise<void> => {
   //
 
   new IDEAStack(app, `idea-resources`);
+
+  new MapStack(app, `${parameters.project}-map`, { project: parameters.project });
 
   const mediaStack = new MediaStack(app, `${parameters.project}-media`, {
     env,
@@ -111,6 +186,7 @@ const createApp = async (): Promise<void> => {
       userPoolId: cognitoStack.userPool.userPoolId,
       audience: [cognitoStack.clientFrontEnd.userPoolClientId, cognitoStack.clientBackEnd.userPoolClientId]
     },
+    lambdaLogLevel: STAGE_VARIABLES.logLevel ?? 'INFO',
     removalPolicy: STAGE_VARIABLES.destroyDataOnDelete ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN
   });
   apiStack.addDependency(mediaStack);

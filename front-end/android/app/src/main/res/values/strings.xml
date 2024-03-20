@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">egm-app</string>
+    <string name="title_activity_main">egm-app</string>
+    <string name="package_name">org.esn.egm</string>
+    <string name="custom_url_scheme">org.esn.egm</string>
+</resources>

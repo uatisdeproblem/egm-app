@@ -2,7 +2,7 @@
 /// IMPORTS
 ///
 
-import { DynamoDB, RCError, ResourceController } from 'idea-aws';
+import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 
 import { User } from '../models/user.model';
 import { UsefulLink } from '../models/usefulLink.model';
@@ -33,7 +33,7 @@ class UsefulLinksRC extends ResourceController {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
     } catch (err) {
-      throw new RCError('User not found');
+      throw new HandledError('User not found');
     }
 
     if (!this.resourceId) return;
@@ -43,7 +43,7 @@ class UsefulLinksRC extends ResourceController {
         await ddb.get({ TableName: DDB_TABLES.usefulLinks, Key: { linkId: this.resourceId } })
       );
     } catch (err) {
-      throw new RCError('Link not found');
+      throw new HandledError('Link not found');
     }
   }
 
@@ -55,7 +55,7 @@ class UsefulLinksRC extends ResourceController {
 
   private async putSafeResource(opts: { noOverwrite: boolean }): Promise<UsefulLink> {
     const errors = this.usefulLink.validate();
-    if (errors.length) throw new RCError(`Invalid fields: ${errors.join(', ')}`);
+    if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     const putParams: any = { TableName: DDB_TABLES.usefulLinks, Item: this.usefulLink };
     if (opts.noOverwrite) putParams.ConditionExpression = 'attribute_not_exists(linkId)';
@@ -65,7 +65,7 @@ class UsefulLinksRC extends ResourceController {
   }
 
   protected async postResources(): Promise<UsefulLink> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     this.usefulLink = new UsefulLink(this.body);
     this.usefulLink.linkId = await ddb.IUNID(PROJECT);
@@ -78,7 +78,7 @@ class UsefulLinksRC extends ResourceController {
   }
 
   protected async putResource(): Promise<UsefulLink> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     const oldLink = new UsefulLink(this.usefulLink);
     this.usefulLink.safeLoad(this.body, oldLink);
@@ -91,12 +91,12 @@ class UsefulLinksRC extends ResourceController {
       case 'SWAP_SORT':
         return await this.swapSort(this.body.otherLinkId);
       default:
-        throw new RCError('Unsupported action');
+        throw new HandledError('Unsupported action');
     }
   }
   private async swapSort(otherLinkId: string): Promise<void> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
-    if (this.usefulLink.linkId === otherLinkId) throw new RCError('Same link');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
+    if (this.usefulLink.linkId === otherLinkId) throw new HandledError('Same link');
 
     const otherLink = new UsefulLink(
       await ddb.get({ TableName: DDB_TABLES.usefulLinks, Key: { linkId: otherLinkId } })
@@ -113,7 +113,7 @@ class UsefulLinksRC extends ResourceController {
   }
 
   protected async deleteResource(): Promise<void> {
-    if (!this.user.permissions.canManageContents) throw new RCError('Unauthorized');
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
     await ddb.delete({ TableName: DDB_TABLES.usefulLinks, Key: { linkId: this.usefulLink.linkId } });
   }

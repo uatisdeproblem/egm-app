@@ -12,12 +12,14 @@ export const stages: { [stage: string]: Stage } = {
     domain: 'egm-app.click',
     alternativeDomain: 'app.erasmusgeneration.org',
     frontEndCertificateARN: 'arn:aws:acm:us-east-1:767203414619:certificate/a82a1829-9d1b-4e0e-a2e7-fda8ef7a72d6',
-    destroyDataOnDelete: false
+    destroyDataOnDelete: false,
+    logLevel: 'INFO'
   },
   dev: {
     domain: 'dev.egm-app.click',
     frontEndCertificateARN: 'arn:aws:acm:us-east-1:767203414619:certificate/fb400353-44df-4148-a1f7-53f180c7db70',
-    destroyDataOnDelete: true
+    destroyDataOnDelete: true,
+    logLevel: 'DEBUG'
   }
 };
 
@@ -72,6 +74,10 @@ export interface Stage {
    * It should be True for dev and False for prod environments.
    */
   destroyDataOnDelete: boolean;
+  /**
+    * The minimum level of log to print in functions (default: `INFO`).
+    */
+  logLevel?: 'TRACE' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
 }
 
 export interface VersionStatus {

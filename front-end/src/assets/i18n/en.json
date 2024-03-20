@@ -74,8 +74,15 @@
     "SAVE_CHANGES": "Save changes",
     "NOT_FOUND": "Not found",
     "NOT_SELECTED": "Not selected",
-    "OR": "OR",
-    "COPIED": "Copied"
+    "COPIED": "Copied",
+    "MANAGE": "Manage",
+    "UNKNOWN": "Unknown",
+    "DUPLICATE": "Duplicate",
+    "ERROR": "Error",
+    "OR": "Or",
+    "COPY": "Copy",
+    "FULL": "Full",
+    "MINUTES": "Minutes"
   },
   "AUTH": {
     "TITLE": "Erasmus Generation Meeting",
@@ -117,8 +124,42 @@
     "NEW_PASSWORD": "New password"
   },
   "TABS": {
+    "HOME": "Home",
+    "AGENDA": "Agenda",
+    "VENUES": "Venues",
     "USER": "You",
+    "MENU": "Menu",
     "MANAGE": "Manage"
+  },
+  "HOME": {
+    "NEWS": "News",
+    "NEWS_I": "Bulletin board from the administrators.",
+    "USEFUL_LINKS": "Useful links",
+    "USEFUL_LINKS_I": "Access more information through these sources."
+  },
+  "USEFUL_LINKS": {
+    "USEFUL_LINKS": "Useful links",
+    "MANAGE_LINK": "Manage useful link",
+    "NAME": "Name",
+    "URL": "URL",
+    "AUDIENCE": "Audience",
+    "GENERAL": "General"
+  },
+  "COMMUNICATIONS": {
+    "COMMUNICATIONS": "Communications",
+    "MANAGE_COMMUNICATION": "Manage communication",
+    "NAME": "Title",
+    "BRIEF": "A brief description (for previews)",
+    "IMAGE_URL": "Image URL",
+    "CONTENT": "The full-content of the communication"
+  },
+  "MENU": {
+    "PAGES": "Pages",
+    "HOME": "Home",
+    "AGENDA": "Agenda",
+    "VENUES": "Venues",
+    "ORGANIZATIONS": "Organizations",
+    "SPEAKERS": "Speakers"
   },
   "USER": {
     "ESN_ACCOUNTS": "ESN Accounts",
@@ -247,10 +288,14 @@
     "SPEAKERS": "Speakers",
     "ORGANIZATIONS": "Organisations",
     "SESSIONS": "Sessions",
+    "VENUES": "Venues",
+    "ROOMS": "Rooms",
     "REGISTRATIONS_OPTIONS": "Registrations options",
     "REGISTRATIONS_OPTIONS_I": "Open/close the registrations and other options.",
     "ALLOW_REGISTRATIONS": "Allow registrations",
     "ALLOW_EXTERNALS": "Allow externals to register",
+    "ALLOW_SESSION_REGISTRATIONS": "Allow session registrations",
+    "SESSION_BUFFER": "Time interval between sessions for registration.",
     "ALLOW_COUNTRY_LEADER_ASSIGN_SPOT": "Allow country leaders to assign spots",
     "REGISTRATION_FORM": "Registration form",
     "REGISTRATION_FORM_I": "Add, manage and remove the fields requested during the registration.",
@@ -312,19 +357,86 @@
     "USEFUL_LINKS": "Useful links",
     "USEFUL_LINKS_I": "Manage the links you want to make available to all users for quick access."
   },
-  "USEFUL_LINKS": {
-    "USEFUL_LINKS": "Useful links",
-    "MANAGE_LINK": "Manage useful link",
-    "NAME": "Name",
-    "URL": "URL",
-    "AUDIENCE": "Audience",
-    "GENERAL": "General"
-  },
   "STRIPE": {
     "BEFORE_YOU_PROCEED": "Before you proceed",
     "DISCLAIMER": "Disclaimer",
     "DISCLAIMER_I": "In order for your spot to be paid for and subsequently validated by the organization, we kindly ask you to save the reference below and insert it, as it is, on the corresponding field in the Stripe payment platform. Price may increase to cover for Stripe's payment processing fees.",
     "CONFIRM_READ": "I have read and understood",
     "PROCEED_TO_STRIPE": "Go to Stripe"
+  },
+  "VENUES": {
+    "MANAGE_VENUE": "Manage venue",
+    "LIST": "List",
+    "MAP": "Map",
+    "DETAILS": "Venue's details",
+    "ROOMS": "Venue's rooms",
+    "NAME": "Name",
+    "IMAGE_URL": "Image URL",
+    "DESCRIPTION": "Description",
+    "ADDRESS": "Address",
+    "LATITUDE": "Latitude",
+    "LONGITUDE": "Longitude"
+  },
+  "ROOMS": {
+    "MANAGE_ROOM": "Manage room",
+    "DETAILS": "Room details",
+    "SESSIONS": "Sessions hosted in this room",
+    "NAME": "Name",
+    "IMAGE_URL": "Image URL",
+    "DESCRIPTION": "Description",
+    "VENUE": "Venue",
+    "INTERNAL_LOCATION": "Internal location"
+  },
+  "ORGANIZATIONS": {
+    "MANAGE_ORGANIZATION": "Manage organizations",
+    "LIST": "Organizations list",
+    "DETAILS": "Organization details",
+    "SPEAKERS": "Speakers from this organization",
+    "NAME": "Name",
+    "IMAGE_URL": "Image URL",
+    "WEBSITE": "Website",
+    "EMAIL": "Contact email",
+    "DESCRIPTION": "Description"
+  },
+  "SPEAKERS": {
+    "MANAGE_SPEAKER": "Manage speaker",
+    "LIST": "Speakers list",
+    "DETAILS": "Speaker details",
+    "SESSIONS": "Sessions given by this speaker",
+    "NAME": "Name",
+    "TITLE": "Title",
+    "ORGANIZATION": "Organization",
+    "IMAGE_URL": "Image URL",
+    "EMAIL": "Contact email",
+    "DESCRIPTION": "Description",
+    "SOCIAL_MEDIA": "Social media"
+  },
+  "SESSIONS": {
+    "MANAGE_SESSION": "Manage session",
+    "LIST": "Session list",
+    "TYPES": {
+      "DISCUSSION": "Discussion",
+      "TALK": "EG Talk",
+      "IGNITE": "Ignite Session",
+      "CAMPFIRE": "Campfire",
+      "INCUBATOR": "Incubator",
+      "HUB": "Knowledge Hub",
+      "COMMON": "Common"
+    },
+    "CANT_SIGN_UP": "User can't sign up for this session!",
+    "REGISTRATION_CLOSED": "Registrations are closed!",
+    "SESSION_FULL": "Session is full! Refresh your page.",
+    "OVERLAP": "You have 1 or more sessions during this time period.",
+    "CODE": "Session code",
+    "NAME": "Name",
+    "DESCRIPTION": "Description",
+    "TYPE": "Session type",
+    "STARTS_AT": "Session starts at",
+    "DURATION_MINUTES": "Session duration (minutes)",
+    "PARTICIPANT_LIMIT": "Participant limit",
+    "SPEAKERS": "Speakers",
+    "NO_SPEAKERS": "No speakers yet...",
+    "ADD_SPEAKER": "Add speaker",
+    "ROOM": "Room"
   }
 }
