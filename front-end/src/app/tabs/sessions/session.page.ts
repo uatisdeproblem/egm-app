@@ -17,7 +17,6 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./session.page.scss']
 })
 export class SessionPage implements OnInit {
-
   session: Session;
   favoriteSessionsIds: string[] = [];
   registeredSessionsIds: string[] = [];
@@ -45,7 +44,7 @@ export class SessionPage implements OnInit {
       // WARNING: do not pass any segment in order to get the favorites on the next api call.
       // @todo improvable. Just amke a call to see if a session is or isn't favorited/registerd using a getById
       const favoriteSessions = await this._sessions.getList({ force: true });
-      this.favoriteSessionsIds = favoriteSessions.map( s => s.sessionId);
+      this.favoriteSessionsIds = favoriteSessions.map(s => s.sessionId);
       this.registeredSessionsIds = (await this._sessions.loadUserRegisteredSessions()).map(ur => ur.sessionId);
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
@@ -59,7 +58,7 @@ export class SessionPage implements OnInit {
   }
 
   async toggleFavorite(ev: any, session: Session): Promise<void> {
-    ev?.stopPropagation()
+    ev?.stopPropagation();
     try {
       await this.loading.show();
       if (this.isSessionInFavorites(session)) {
@@ -68,7 +67,7 @@ export class SessionPage implements OnInit {
       } else {
         await this._sessions.addToFavorites(session.sessionId);
         this.favoriteSessionsIds.push(session.sessionId);
-      };
+      }
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
@@ -81,7 +80,7 @@ export class SessionPage implements OnInit {
   }
 
   async toggleRegister(ev: any, session: Session): Promise<void> {
-    ev?.stopPropagation()
+    ev?.stopPropagation();
     try {
       await this.loading.show();
       if (this.isUserRegisteredInSession(session)) {
@@ -92,16 +91,16 @@ export class SessionPage implements OnInit {
         await this._sessions.registerInSession(session.sessionId);
         this.favoriteSessionsIds.push(session.sessionId);
         this.registeredSessionsIds.push(session.sessionId);
-      };
+      }
       this.session = await this._sessions.getById(session.sessionId);
     } catch (error) {
-      if (error.message === "User can't sign up for this session!"){
+      if (error.message === "User can't sign up for this session!") {
         this.message.error('SESSIONS.CANT_SIGN_UP');
-      } else if (error.message === 'Registrations are closed!'){
+      } else if (error.message === 'Registrations are closed!') {
         this.message.error('SESSIONS.REGISTRATION_CLOSED');
-      } else if (error.message === 'Session is full! Refresh your page.'){
+      } else if (error.message === 'Session is full! Refresh your page.') {
         this.message.error('SESSIONS.SESSION_FULL');
-      } else if (error.message === 'You have 1 or more sessions during this time period.'){
+      } else if (error.message === 'You have 1 or more sessions during this time period.') {
         this.message.error('SESSIONS.OVERLAP');
       } else this.message.error('COMMON.OPERATION_FAILED');
     } finally {
@@ -109,11 +108,10 @@ export class SessionPage implements OnInit {
     }
   }
 
-
   async manageSession(): Promise<void> {
     if (!this.session) return;
 
-    if (!this.app.user.permissions.canManageContents) return
+    if (!this.app.user.permissions.canManageContents) return;
 
     const modal = await this.modalCtrl.create({
       component: ManageSessionComponent,
