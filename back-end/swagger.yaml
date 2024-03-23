@@ -1060,6 +1060,11 @@ paths:
           in: query
           schema:
             type: string
+        - name: export
+          in: query
+          description: If set, returns an exportable version of the registrations; it requires to be content manager
+          schema:
+            type: boolean
       responses:
         200:
           $ref: '#/components/responses/Registrations'

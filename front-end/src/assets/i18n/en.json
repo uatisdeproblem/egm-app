@@ -355,7 +355,8 @@
     "OTHER_CONFIGURATIONS": "Other configurations",
     "LIST_OF_ESN_COUNTRIES": "List of current ESN countries",
     "USEFUL_LINKS": "Useful links",
-    "USEFUL_LINKS_I": "Manage the links you want to make available to all users for quick access."
+    "USEFUL_LINKS_I": "Manage the links you want to make available to all users for quick access.",
+    "DOWNLOAD_SESSIONS_REGISTRATIONS": "Download a spreadsheet with all the sessions registrations"
   },
   "STRIPE": {
     "BEFORE_YOU_PROCEED": "Before you proceed",
@@ -437,6 +438,8 @@
     "SPEAKERS": "Speakers",
     "NO_SPEAKERS": "No speakers yet...",
     "ADD_SPEAKER": "Add speaker",
-    "ROOM": "Room"
+    "ROOM": "Room",
+    "DOWNLOAD_REGISTRATIONS": "Download a spreadsheet with all the session registrations",
+    "SESSION_REGISTRATIONS": "Session registrations"
   }
 }

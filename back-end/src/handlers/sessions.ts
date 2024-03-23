@@ -14,23 +14,21 @@ import { User } from '../models/user.model';
 ///
 
 const PROJECT = process.env.PROJECT;
-
 const DDB_TABLES = {
   users: process.env.DDB_TABLE_users,
   sessions: process.env.DDB_TABLE_sessions,
   rooms: process.env.DDB_TABLE_rooms,
   speakers: process.env.DDB_TABLE_speakers
 };
-
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any) => new Sessions(ev, cb).handleRequest();
+export const handler = (ev: any, _: any, cb: any): Promise<void> => new SessionsRC(ev, cb).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
 ///
 
-class Sessions extends ResourceController {
+class SessionsRC extends ResourceController {
   user: User;
   session: Session;
 
@@ -73,12 +71,11 @@ class Sessions extends ResourceController {
       await ddb.get({ TableName: DDB_TABLES.rooms, Key: { roomId: this.session.room.roomId } })
     );
 
-    const getSpeakers = await ddb.batchGet(
+    const getSpeakers: SpeakerLinked[] = await ddb.batchGet(
       DDB_TABLES.speakers,
       this.session.speakers?.map(s => ({ speakerId: s.speakerId })),
       true
-    )
-
+    );
     this.session.speakers = getSpeakers.map(s => new SpeakerLinked(s));
 
     const errors = this.session.validate();
@@ -98,11 +95,7 @@ class Sessions extends ResourceController {
   protected async deleteResource(): Promise<void> {
     if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
-    try {
-      await ddb.delete({ TableName: DDB_TABLES.sessions, Key: { sessionId: this.resourceId } });
-    } catch (err) {
-      throw new HandledError('Delete failed');
-    }
+    await ddb.delete({ TableName: DDB_TABLES.sessions, Key: { sessionId: this.resourceId } });
   }
 
   protected async postResources(): Promise<Session> {
@@ -115,20 +108,14 @@ class Sessions extends ResourceController {
   }
 
   protected async getResources(): Promise<Session[]> {
-    try {
-      const sessions = (await ddb.scan({ TableName: DDB_TABLES.sessions })).map((x: Session) => new Session(x));
+    const sessions = (await ddb.scan({ TableName: DDB_TABLES.sessions })).map(x => new Session(x));
 
-      const filtertedSessions = sessions.filter(
-        x =>
-          (!this.queryParams.speaker || x.speakers.some(speaker => speaker.speakerId === this.queryParams.speaker)) &&
-          (!this.queryParams.room || x.room.roomId === this.queryParams.room)
-      );
+    const filtertedSessions = sessions.filter(
+      x =>
+        (!this.queryParams.speaker || x.speakers.some(speaker => speaker.speakerId === this.queryParams.speaker)) &&
+        (!this.queryParams.room || x.room.roomId === this.queryParams.room)
+    );
 
-      const sortedSessions = filtertedSessions.sort((a, b) => a.startsAt.localeCompare(b.startsAt));
-
-      return sortedSessions;
-    } catch (err) {
-      throw new HandledError('Operation failed');
-    }
+    return filtertedSessions.sort((a, b): number => a.startsAt.localeCompare(b.startsAt));
   }
 }

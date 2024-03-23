@@ -7,6 +7,7 @@ import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from 
 import { ManageSessionComponent } from './manageSession.component';
 
 import { SessionsService } from './sessions.service';
+import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
 
 import { Session } from '@models/session.model';
 
@@ -19,20 +20,20 @@ export class SessionsPage {
   @ViewChild(IonContent) content: IonContent;
   @ViewChild(IonContent) searchbar: IonSearchbar;
 
-
-  days: string[]
+  days: string[];
   sessions: Session[];
   favoriteSessionsIds: string[] = [];
   registeredSessionsIds: string[] = [];
   selectedSession: Session;
 
-  segment = ''
+  segment = '';
 
   constructor(
     private modalCtrl: ModalController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     public _sessions: SessionsService,
+    private _sessionRegistrations: SessionRegistrationsService,
     public t: IDEATranslationsService,
     public app: AppService
   ) {}
@@ -45,22 +46,22 @@ export class SessionsPage {
     try {
       await this.loading.show();
       // WARNING: do not pass any segment in order to get the favorites on the next api call.
-      this.segment = ''
+      this.segment = '';
       this.sessions = await this._sessions.getList({ force: true });
-      this.favoriteSessionsIds = this.sessions.map( s => s.sessionId);
+      this.favoriteSessionsIds = this.sessions.map(s => s.sessionId);
       this.registeredSessionsIds = (await this._sessions.loadUserRegisteredSessions()).map(ur => ur.sessionId);
-      this.days = await this._sessions.getSessionDays()
+      this.days = await this._sessions.getSessionDays();
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
       this.loading.hide();
     }
   }
-  changeSegment (segment: string, search = ''): void {
+  changeSegment(segment: string, search = ''): void {
     this.selectedSession = null;
     this.segment = segment;
     this.filterSessions(search);
-  };
+  }
   async filterSessions(search = ''): Promise<void> {
     this.sessions = await this._sessions.getList({ search, segment: this.segment });
   }
@@ -70,7 +71,7 @@ export class SessionsPage {
   }
 
   async toggleFavorite(ev: any, session: Session): Promise<void> {
-    ev?.stopPropagation()
+    ev?.stopPropagation();
     try {
       await this.loading.show();
       if (this.isSessionInFavorites(session)) {
@@ -80,7 +81,7 @@ export class SessionsPage {
       } else {
         await this._sessions.addToFavorites(session.sessionId);
         this.favoriteSessionsIds.push(session.sessionId);
-      };
+      }
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
@@ -93,7 +94,7 @@ export class SessionsPage {
   }
 
   async toggleRegister(ev: any, session: Session): Promise<void> {
-    ev?.stopPropagation()
+    ev?.stopPropagation();
     try {
       await this.loading.show();
       if (this.isUserRegisteredInSession(session)) {
@@ -105,17 +106,17 @@ export class SessionsPage {
         await this._sessions.registerInSession(session.sessionId);
         this.favoriteSessionsIds.push(session.sessionId);
         this.registeredSessionsIds.push(session.sessionId);
-      };
+      }
       const updatedSession = await this._sessions.getById(session.sessionId);
       session.numberOfParticipants = updatedSession.numberOfParticipants;
     } catch (error) {
-      if (error.message === "User can't sign up for this session!"){
+      if (error.message === "User can't sign up for this session!") {
         this.message.error('SESSIONS.CANT_SIGN_UP');
-      } else if (error.message === 'Registrations are closed!'){
+      } else if (error.message === 'Registrations are closed!') {
         this.message.error('SESSIONS.REGISTRATION_CLOSED');
-      } else if (error.message === 'Session is full! Refresh your page.'){
+      } else if (error.message === 'Session is full! Refresh your page.') {
         this.message.error('SESSIONS.SESSION_FULL');
-      } else if (error.message === 'You have 1 or more sessions during this time period.'){
+      } else if (error.message === 'You have 1 or more sessions during this time period.') {
         this.message.error('SESSIONS.OVERLAP');
       } else this.message.error('COMMON.OPERATION_FAILED');
     } finally {
@@ -124,17 +125,16 @@ export class SessionsPage {
   }
 
   openDetail(ev: any, session: Session): void {
-    ev?.stopPropagation()
+    ev?.stopPropagation();
 
     if (this.app.isInMobileMode()) this.app.goToInTabs(['agenda', session.sessionId]);
     else this.selectedSession = session;
   }
 
-
   async manageSession(): Promise<void> {
     if (!this.selectedSession) return;
 
-    if (!this.app.user.permissions.canManageContents) return
+    if (!this.app.user.permissions.canManageContents) return;
 
     const modal = await this.modalCtrl.create({
       component: ManageSessionComponent,
@@ -147,9 +147,23 @@ export class SessionsPage {
       } catch (error) {
         // deleted
         this.selectedSession = null;
-        this.sessions = await this._sessions.getList({ force: true })
+        this.sessions = await this._sessions.getList({ force: true });
       }
     });
     await modal.present();
+  }
+
+  async downloadSessionsRegistrations(): Promise<void> {
+    try {
+      await this.loading.show();
+      await this._sessionRegistrations.downloadSpreadsheet(
+        this.t._('SESSIONS.SESSION_REGISTRATIONS'),
+        this.selectedSession
+      );
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
 }
