@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { EmailTemplateComponent } from './configurations/emailTemplate/emailTemplate.component';
 import { ManageUsefulLinkStandaloneComponent } from '@app/common/usefulLinks/manageUsefulLink.component';
@@ -12,6 +12,7 @@ import { ManageSessionComponent } from '../sessions/manageSession.component';
 
 import { AppService } from '@app/app.service';
 import { UsefulLinksService } from '@app/common/usefulLinks/usefulLinks.service';
+import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
 
 import { EmailTemplates, DocumentTemplates } from '@models/configurations.model';
 import { UsefulLink } from '@models/usefulLink.model';
@@ -36,7 +37,9 @@ export class ManagePage {
     private modalCtrl: ModalController,
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
+    private t: IDEATranslationsService,
     private _usefulLinks: UsefulLinksService,
+    private _sessionRegistrations: SessionRegistrationsService,
     public app: AppService
   ) {}
   async ionViewWillEnter(): Promise<void> {
@@ -121,5 +124,16 @@ export class ManagePage {
       backdropDismiss: false
     });
     await modal.present();
+  }
+  async downloadSessionsRegistrations(event?: Event): Promise<void> {
+    if (event) event.stopPropagation();
+    try {
+      await this.loading.show();
+      await this._sessionRegistrations.downloadSpreadsheet(this.t._('SESSIONS.SESSION_REGISTRATIONS'));
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
 }

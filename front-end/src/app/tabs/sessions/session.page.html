@@ -13,13 +13,22 @@
           <ion-icon slot="icon-only" name="arrow-back" />
         </ion-button>
       </ion-buttons>
-      <ion-buttons slot="end" *ngIf="session && app.user.permissions.canManageContents">
-        <ng-container>
-          <ion-button color="ESNgreen" (click)="manageSession()">
-            <ion-icon slot="icon-only" icon="hammer"></ion-icon>
-          </ion-button>
-        </ng-container>
+      @if(session && app.user.permissions.canManageContents) {
+      <ion-buttons slot="end">
+        <ion-button color="ESNgreen" (click)="manageSession()">
+          <ion-icon slot="icon-only" icon="hammer"></ion-icon>
+        </ion-button>
+        <ion-button
+          slot="end"
+          fill="clear"
+          color="ESNgreen"
+          [title]="'SESSIONS.DOWNLOAD_REGISTRATIONS' | translate"
+          (click)="downloadSessionsRegistrations()"
+        >
+          <ion-icon icon="download" slot="icon-only" />
+        </ion-button>
       </ion-buttons>
+      }
     </app-session-detail>
   </div>
 </ion-content>

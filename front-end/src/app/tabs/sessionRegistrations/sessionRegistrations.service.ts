@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { WorkBook, utils, writeFile } from 'xlsx';
 import { IDEAApiService } from '@idea-ionic/common';
 
-import { SessionRegistration } from '@models/sessionRegistration.model';
+import { Session } from '@models/session.model';
+import { SessionRegistration, SessionRegistrationExportable } from '@models/sessionRegistration.model';
 
 @Injectable({ providedIn: 'root' })
 export class SessionRegistrationsService {
@@ -34,5 +36,18 @@ export class SessionRegistrationsService {
    */
   async delete(registration: SessionRegistration): Promise<void> {
     await this.api.deleteResource(['registrations', registration.sessionId]);
+  }
+
+  /**
+   * Download a spreadsheet containing the sessions registrations selected.
+   */
+  async downloadSpreadsheet(title: string, session?: Session): Promise<void> {
+    const params: any = { export: true };
+    if (session) params.sessionId = session.sessionId;
+    const list: SessionRegistrationExportable[] = await this.api.getResource('registrations', { params });
+
+    const workbook: WorkBook = { SheetNames: [], Sheets: {}, Props: { Title: title } };
+    utils.book_append_sheet(workbook, utils.json_to_sheet(list), '1');
+    writeFile(workbook, title.concat('.xlsx'));
   }
 }

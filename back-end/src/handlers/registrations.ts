@@ -5,7 +5,7 @@
 import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
 
 import { Session } from '../models/session.model';
-import { SessionRegistration } from '../models/sessionRegistration.model';
+import { SessionRegistration, SessionRegistrationExportable } from '../models/sessionRegistration.model';
 import { User } from '../models/user.model';
 import { Configurations } from '../models/configurations.model';
 
@@ -67,9 +67,16 @@ class SessionRegistrationsRC extends ResourceController {
     }
   }
 
-  protected async getResources(): Promise<SessionRegistration[]> {
-    if (this.queryParams.sessionId) return this.getSessionRegistrations(this.queryParams.sessionId);
-    else return await this.getUsersRegistrations(this.principalId);
+  protected async getResources(): Promise<SessionRegistration[] | SessionRegistrationExportable[]> {
+    if (this.queryParams.sessionId) {
+      if (this.queryParams.export && this.user.permissions.canManageContents)
+        return await this.getExportableSessionRegistrations(this.queryParams.sessionId);
+      else return this.getRegistrationsOfSessionById(this.queryParams.sessionId);
+    } else {
+      if (this.queryParams.export && this.user.permissions.canManageContents)
+        return await this.getExportableSessionRegistrations();
+      else return await this.getRegistrationsOfUserById(this.principalId);
+    }
   }
 
   protected async postResource(): Promise<any> {
@@ -118,7 +125,7 @@ class SessionRegistrationsRC extends ResourceController {
 
   private async putSafeResource(): Promise<SessionRegistration> {
     const { sessionId, userId } = this.registration;
-    const session = new Session(await ddb.get({ TableName: DDB_TABLES.sessions, Key: { sessionId } }));
+    const session = await this.getSessionById(sessionId);
     const isValid = await this.validateRegistration(session, userId);
 
     if (!isValid) throw new HandledError("User can't sign up for this session!");
@@ -151,7 +158,7 @@ class SessionRegistrationsRC extends ResourceController {
     if (!session.requiresRegistration) throw new HandledError("User can't sign up for this session!");
     if (session.isFull()) throw new HandledError('Session is full! Refresh your page.');
 
-    const userRegistrations = await this.getUsersRegistrations(userId);
+    const userRegistrations = await this.getRegistrationsOfUserById(userId);
     if (!userRegistrations.length) return true;
 
     const sessions = (
@@ -185,7 +192,7 @@ class SessionRegistrationsRC extends ResourceController {
     return true;
   }
 
-  private async getUsersRegistrations(userId: string): Promise<SessionRegistration[]> {
+  private async getRegistrationsOfUserById(userId: string): Promise<SessionRegistration[]> {
     try {
       const registrationsOfUser: SessionRegistration[] = await ddb.query({
         TableName: DDB_TABLES.registrations,
@@ -198,7 +205,7 @@ class SessionRegistrationsRC extends ResourceController {
       throw new HandledError('Could not load registrations for this user');
     }
   }
-  private async getSessionRegistrations(sessionId: string): Promise<SessionRegistration[]> {
+  private async getRegistrationsOfSessionById(sessionId: string): Promise<SessionRegistration[]> {
     try {
       const registrationsOfSession: SessionRegistration[] = await ddb.query({
         TableName: DDB_TABLES.registrations,
@@ -209,5 +216,35 @@ class SessionRegistrationsRC extends ResourceController {
     } catch (error) {
       throw new HandledError('Could not load registrations for this session');
     }
+  }
+  private async getSessionById(sessionId: string): Promise<Session> {
+    try {
+      return new Session(await ddb.get({ TableName: DDB_TABLES.sessions, Key: { sessionId } }));
+    } catch (err) {
+      throw new HandledError('Session not found');
+    }
+  }
+  private async getExportableSessionRegistrations(sessionId?: string): Promise<SessionRegistrationExportable[]> {
+    let sessions: Session[], registrations: SessionRegistration[];
+
+    if (sessionId) {
+      sessions = [await this.getSessionById(sessionId)];
+      registrations = await this.getRegistrationsOfSessionById(sessionId);
+    } else {
+      sessions = (await ddb.scan({ TableName: DDB_TABLES.sessions })).map(x => new Session(x));
+      registrations = (await ddb.scan({ TableName: DDB_TABLES.registrations })).map(x => new SessionRegistration(x));
+    }
+
+    const list: SessionRegistrationExportable[] = [];
+    sessions.map(session =>
+      list.push(
+        ...SessionRegistration.export(
+          session,
+          registrations.filter(r => r.sessionId === session.sessionId)
+        )
+      )
+    );
+
+    return list;
   }
 }

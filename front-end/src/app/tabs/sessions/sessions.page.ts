@@ -7,6 +7,7 @@ import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from 
 import { ManageSessionComponent } from './manageSession.component';
 
 import { SessionsService } from './sessions.service';
+import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
 
 import { Session } from '@models/session.model';
 
@@ -32,6 +33,7 @@ export class SessionsPage {
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     public _sessions: SessionsService,
+    private _sessionRegistrations: SessionRegistrationsService,
     public t: IDEATranslationsService,
     public app: AppService
   ) {}
@@ -149,5 +151,19 @@ export class SessionsPage {
       }
     });
     await modal.present();
+  }
+
+  async downloadSessionsRegistrations(): Promise<void> {
+    try {
+      await this.loading.show();
+      await this._sessionRegistrations.downloadSpreadsheet(
+        this.t._('SESSIONS.SESSION_REGISTRATIONS'),
+        this.selectedSession
+      );
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
 }

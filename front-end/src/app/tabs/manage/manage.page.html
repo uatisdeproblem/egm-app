@@ -59,6 +59,14 @@
       <ion-item button detail (click)="addSession()">
         <ion-icon slot="start" icon="flame-outline"></ion-icon>
         <ion-label>{{ 'MANAGE.SESSIONS' | translate }}</ion-label>
+        <ion-button
+          slot="end"
+          fill="clear"
+          [title]="'MANAGE.DOWNLOAD_SESSIONS_REGISTRATIONS' | translate"
+          (click)="downloadSessionsRegistrations($event)"
+        >
+          <ion-icon icon="download" slot="icon-only" />
+        </ion-button>
       </ion-item>
     </ng-container>
     <ng-container *ngIf="app.user.permissions.isAdmin">
