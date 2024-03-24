@@ -99,10 +99,10 @@ export class User extends Resource {
     this.registrationForm = x.registrationForm ?? {};
     if (x.registrationAt) this.registrationAt = this.clean(x.registrationAt, t => new Date(t).toISOString());
     if (x.spot) this.spot = new EventSpotAttached(x.spot);
-    this.socialMedia = {}
-    if (x.socialMedia?.instagram) this.socialMedia.instagram = this.clean(x.socialMedia.instagram, String)
-    if (x.socialMedia?.linkedIn) this.socialMedia.linkedIn = this.clean(x.socialMedia.linkedIn, String)
-    if (x.socialMedia?.twitter) this.socialMedia.twitter = this.clean(x.socialMedia.twitter, String)
+    this.socialMedia = {};
+    if (x.socialMedia?.instagram) this.socialMedia.instagram = this.clean(x.socialMedia.instagram, String);
+    if (x.socialMedia?.linkedIn) this.socialMedia.linkedIn = this.clean(x.socialMedia.linkedIn, String);
+    if (x.socialMedia?.twitter) this.socialMedia.twitter = this.clean(x.socialMedia.twitter, String);
   }
 
   safeLoad(newData: any, safeData: any): void {
