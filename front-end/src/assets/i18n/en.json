@@ -159,7 +159,8 @@
     "AGENDA": "Agenda",
     "VENUES": "Venues",
     "ORGANIZATIONS": "Organizations",
-    "SPEAKERS": "Speakers"
+    "SPEAKERS": "Speakers",
+    "CONTESTS": "Contests"
   },
   "USER": {
     "ESN_ACCOUNTS": "ESN Accounts",
@@ -356,7 +357,8 @@
     "LIST_OF_ESN_COUNTRIES": "List of current ESN countries",
     "USEFUL_LINKS": "Useful links",
     "USEFUL_LINKS_I": "Manage the links you want to make available to all users for quick access.",
-    "DOWNLOAD_SESSIONS_REGISTRATIONS": "Download a spreadsheet with all the sessions registrations"
+    "DOWNLOAD_SESSIONS_REGISTRATIONS": "Download a spreadsheet with all the sessions registrations",
+    "CONTESTS": "Contests"
   },
   "STRIPE": {
     "BEFORE_YOU_PROCEED": "Before you proceed",
@@ -441,5 +443,34 @@
     "ROOM": "Room",
     "DOWNLOAD_REGISTRATIONS": "Download a spreadsheet with all the session registrations",
     "SESSION_REGISTRATIONS": "Session registrations"
+  },
+  "CONTESTS": {
+    "MANAGE_CONTEST": "Manage contest",
+    "NAME": "Name",
+    "IMAGE_URI": "Image URI",
+    "DESCRIPTION": "Description",
+    "VISIBLE": "Visible to users",
+    "OPTIONS": "Options",
+    "OPEN_VOTE": "Vote is open",
+    "VOTE_ENDS_AT": "Vote ends at ({{timezone}})",
+    "CANDIDATES": "Candidates",
+    "CANDIDATES_I": "If you set a country for a candidate, users of that country won't be able to vote them.",
+    "RESULTS": "Results",
+    "CANDIDATE_NAME": "Name of the candidate",
+    "CANDIDATE_URL": "URL to a page where to discover the candidate",
+    "CANDIDATE_COUNTRY": "Country of the candidate",
+    "LIST": "Contests list",
+    "DETAILS": "Contest details",
+    "VOTE_ENDED": "Vote ended",
+    "VOTE_NOW": "Vote now",
+    "VOTES": "Votes",
+    "VOTE_NOT_OPEN_YET": "Vote is not open yet",
+    "VOTE_NOW_UNTIL": "Vote now, until: {{deadline}}",
+    "VOTE": "Vote",
+    "VOTE_I": "The vote is anonymous; please not that you can vote only once and you won't be able to change your vote.",
+    "YOU_ALREADY_VOTED": "You have voted.",
+    "YOU_ARE_VOTING": "You are voting",
+    "NOT_NOW": "Not now",
+    "PUBLISH_RESULTS": "Publish results"
   }
 }

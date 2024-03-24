@@ -46,6 +46,8 @@ tags:
     description: The speakers of the event
   - name: Sessions
     description: The sessions of the event
+  - name: Contests
+    description: The contests of the event
 
 paths:
   /status:
@@ -1168,6 +1170,118 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
+  /contests:
+    get:
+      summary: Get the contests
+      tags: [Contests]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Contests'
+    post:
+      summary: Insert a new contest
+      description: Requires to be content manager
+      tags: [Contests]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Contest
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Contest'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /contests/{contestId}:
+    get:
+      summary: Get a contest
+      tags: [Contests]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Contest'
+    put:
+      summary: Edit a contest
+      description: Requires to be content manager
+      tags: [Contests]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Contest
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Contest'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on a contest
+      tags: [Contests]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [VOTE, PUBLISH_RESULTS]
+                candidate:
+                  type: string
+                  description: (VOTE)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a contest
+      description: Requires to be content manager
+      tags: [Contests]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Contest'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -1205,6 +1319,9 @@ components:
       type: object
       additionalProperties: {}
     Registration:
+      type: object
+      additionalProperties: {}
+    Contest:
       type: object
       additionalProperties: {}
 
@@ -1379,6 +1496,22 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Registration'
+    Contest:
+      description: Contest
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Contest'
+    Contests:
+      description: Contest[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Contest'
     BadParameters:
       description: Bad input parameters
       content:

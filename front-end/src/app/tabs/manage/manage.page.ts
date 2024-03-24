@@ -9,6 +9,7 @@ import { ManageSpeakerComponent } from '../speakers/manageSpeaker.component';
 import { ManageVenueComponent } from '../venues/manageVenue.component';
 import { ManageRoomComponent } from '../rooms/manageRooms.component';
 import { ManageSessionComponent } from '../sessions/manageSession.component';
+import { ManageContestComponent } from '../contests/manageContest.component';
 
 import { AppService } from '@app/app.service';
 import { UsefulLinksService } from '@app/common/usefulLinks/usefulLinks.service';
@@ -21,6 +22,7 @@ import { Venue } from '@models/venue.model';
 import { Speaker } from '@models/speaker.model';
 import { Room } from '@models/room.model';
 import { Session } from '@models/session.model';
+import { Contest } from '@models/contest.model';
 
 @Component({
   selector: 'manage',
@@ -135,5 +137,14 @@ export class ManagePage {
     } finally {
       this.loading.hide();
     }
+  }
+
+  async addContest(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: ManageContestComponent,
+      componentProps: { contest: new Contest() },
+      backdropDismiss: false
+    });
+    await modal.present();
   }
 }
