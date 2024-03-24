@@ -1,7 +1,7 @@
 import { Resource, epochISOString } from 'idea-toolbox';
 
 /**
- * A contest to which people can vote in.
+ * A contest to which users can vote in.
  */
 export class Contest extends Resource {
   /**
@@ -13,11 +13,11 @@ export class Contest extends Resource {
    */
   createdAt: epochISOString;
   /**
-   * Whether the contest is enabled and therefore shown in the menu.
+   * Whether the contest is enabled and therefore shown in the menu to everyone.
    */
   enabled: boolean;
   /**
-   * If set, the vote is active (users can vote) and ends at the configured timestamp.
+   * If set, the vote is active (users can vote), and it ends at the configured timestamp.
    */
   voteEndsAt?: epochISOString;
   /**
@@ -38,7 +38,7 @@ export class Contest extends Resource {
   candidates: ContestCandidate[];
   /**
    * The count of votes for each of the sorted candidates.
-   * Note: the order of the candidates list must not change after a vote is open.
+   * Note: the order of the candidates list must not change after the vote is open.
    * This attribute is not accessible to non-admin users until `publishedResults` is true.
    */
   results?: number[];
@@ -66,9 +66,10 @@ export class Contest extends Resource {
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
     this.contestId = safeData.contestId;
-    this.results = safeData.results;
+    this.createdAt = safeData.createdAt;
     if (safeData.isVoteStarted()) {
       this.candidates = safeData.candidates;
+      this.results = safeData.results;
     }
   }
 
@@ -110,7 +111,7 @@ export class ContestCandidate extends Resource {
    * The country of the candidate.
    * This is particularly important beacuse, if set, users can't vote for candidates of their own countries.
    */
-  country: string;
+  country: string | null;
 
   load(x: any): void {
     super.load(x);

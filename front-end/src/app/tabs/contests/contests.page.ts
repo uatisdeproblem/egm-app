@@ -27,11 +27,11 @@ import { Contest } from '@models/contest.model';
         <ion-item color="white" button detail (click)="selectContest(contest)">
           <ion-label class="ion-text-wrap">{{ contest.name }}</ion-label>
           @if(contest.isVoteStarted()) { @if(contest.isVoteEnded()) { @if(contest.publishedResults) {
-          <ion-badge color="primary">{{ 'CONTESTS.RESULTS' | translate }}</ion-badge>
+          <ion-badge color="ESNgreen">{{ 'CONTESTS.RESULTS' | translate }}</ion-badge>
           } @else {
           <ion-badge color="ESNpink">{{ 'CONTESTS.VOTE_ENDED' | translate }}</ion-badge>
           } } @else {
-          <ion-badge color="ESNgreen">{{ 'CONTESTS.VOTE_NOW' | translate }}</ion-badge>
+          <ion-badge color="primary">{{ 'CONTESTS.VOTE_NOW' | translate }}</ion-badge>
           } }
         </ion-item>
         } @empty { @if(contests) {

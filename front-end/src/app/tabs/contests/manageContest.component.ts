@@ -108,7 +108,7 @@ import { Contest, ContestCandidate } from '@models/contest.model';
           </ion-item>
           <ion-item [class.fieldHasError]="hasFieldAnError('candidates[' + $index + '].url')">
             <ion-label position="stacked">{{ 'CONTESTS.CANDIDATE_URL' | translate }}</ion-label>
-            <ion-input [(ngModel)]="candidate.url" [disabled]="contest.isVoteStarted()" />
+            <ion-input type="url" [(ngModel)]="candidate.url" [disabled]="contest.isVoteStarted()" />
           </ion-item>
           <ion-item [class.fieldHasError]="hasFieldAnError('candidates[' + $index + '].country')">
             <ion-select
@@ -118,6 +118,7 @@ import { Contest, ContestCandidate } from '@models/contest.model';
               [(ngModel)]="candidate.country"
               [disabled]="contest.isVoteStarted()"
             >
+              <ion-select-option [value]="null"></ion-select-option>
               @for(country of _app.configurations.sectionCountries; track $index) {
               <ion-select-option [value]="country">{{ country }}</ion-select-option>
               }
@@ -154,7 +155,7 @@ import { Contest, ContestCandidate } from '@models/contest.model';
           }
           <ion-badge
             slot="end"
-            style="width: 80px; text-align: right"
+            style="width: 80px; text-align: right; margin-left: 6px"
             [color]="isCandidateWinnerByIndex($index) ? 'ESNgreen' : 'primary'"
           >
             {{ contest.results[$index] ?? 0 }} {{ 'CONTESTS.VOTES' | translate | lowercase }}
@@ -281,7 +282,8 @@ export class ManageContestComponent implements OnInit {
     this.contest.candidates.push(new ContestCandidate());
   }
   removeCandidate(candidate: ContestCandidate): void {
-    this.contest.candidates.splice(this.contest.candidates.indexOf(candidate), 1);
+    const candidateIndex = this.contest.candidates.indexOf(candidate);
+    if (candidateIndex !== -1) this.contest.candidates.splice(candidateIndex, 1);
   }
 
   isCandidateWinnerByIndex(candidateIndex: number): boolean {
@@ -300,7 +302,7 @@ export class ManageContestComponent implements OnInit {
       } catch (err) {
         this._message.error('COMMON.OPERATION_FAILED');
       } finally {
-        await this._loading.hide();
+        this._loading.hide();
       }
     };
 

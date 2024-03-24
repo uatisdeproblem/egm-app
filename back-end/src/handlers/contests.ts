@@ -12,6 +12,7 @@ import { User } from '../models/user.model';
 ///
 
 const PROJECT = process.env.PROJECT;
+const STAGE = process.env.STAGE;
 const DDB_TABLES = { users: process.env.DDB_TABLE_users, contests: process.env.DDB_TABLE_contests };
 const ddb = new DynamoDB();
 
@@ -27,6 +28,7 @@ class ContestsRC extends ResourceController {
 
   constructor(event: any, callback: any) {
     super(event, callback, { resourceId: 'contestId' });
+    if (STAGE === 'prod') this.silentLambdaLogs(); // to make the vote anonymous
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
@@ -115,10 +117,11 @@ class ContestsRC extends ResourceController {
     await ddb.transactWrites([{ Update: markUserContestVoted }, { Update: addUserVoteToContest }]);
   }
   private async publishResults(): Promise<void> {
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
+
     if (this.contest.publishedResults) throw new HandledError('Already public');
 
-    if (!this.contest.voteEndsAt || new Date().toISOString() <= this.contest.voteEndsAt)
-      throw new HandledError('Vote is not done');
+    if (!this.contest.isVoteEnded()) throw new HandledError('Vote is not done');
 
     await ddb.update({
       TableName: DDB_TABLES.contests,
@@ -155,7 +158,7 @@ class ContestsRC extends ResourceController {
     if (!this.user.permissions.canManageContents) {
       contests = contests.filter(c => c.enabled);
       contests.forEach(contest => {
-        if (contest.publishedResults) delete contest.results;
+        if (!contest.publishedResults) delete contest.results;
       });
     }
 

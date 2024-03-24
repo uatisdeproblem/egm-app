@@ -49,11 +49,11 @@ import { Contest } from '@models/contest.model';
             <ion-card-title>{{ contest.name }}</ion-card-title>
             <ion-card-subtitle>
               @if(contest.isVoteStarted()) { @if(contest.isVoteEnded()) { @if(contest.publishedResults) {
-              <ion-badge color="primary">{{ 'CONTESTS.RESULTS' | translate }}</ion-badge>
+              <ion-badge color="ESNgreen">{{ 'CONTESTS.RESULTS' | translate }}</ion-badge>
               } @else {
               <ion-badge color="ESNpink">{{ 'CONTESTS.VOTE_ENDED' | translate }}</ion-badge>
               } } @else {
-              <ion-badge color="ESNgreen">
+              <ion-badge color="primary">
                 {{ 'CONTESTS.VOTE_NOW_UNTIL' | translate : { deadline: (contest.voteEndsAt | dateLocale : 'short') } }}
               </ion-badge>
               } } @else {
@@ -85,12 +85,12 @@ import { Contest } from '@models/contest.model';
                   <ion-button slot="end" fill="clear" (click)="_app.openURL(candidate.url)">
                     <ion-icon icon="link" slot="icon-only" />
                   </ion-button>
-                  } @if(contest.publishedResults) { @if( isCandidateWinnerByIndex($index)) {
-                  <ion-icon slot="end" icon="trophy" color="ESNgreen" />
+                  } @if(contest.publishedResults) { @if(isCandidateWinnerByIndex($index)) {
+                  <ion-icon slot="end" icon="trophy" color="ESNgreen" style="margin-left: 6px" />
                   }
                   <ion-badge
                     slot="end"
-                    style="width: 80px; text-align: right"
+                    style="width: 80px; text-align: right; margin-left: 6px"
                     [color]="isCandidateWinnerByIndex($index) ? 'ESNgreen' : 'primary'"
                   >
                     {{ contest.results[$index] ?? 0 }} {{ 'CONTESTS.VOTES' | translate | lowercase }}
@@ -161,7 +161,7 @@ export class ContestPage implements OnInit {
     } catch (err) {
       this._message.error('COMMON.NOT_FOUND');
     } finally {
-      await this._loading.hide();
+      this._loading.hide();
     }
   }
 
@@ -208,7 +208,7 @@ export class ContestPage implements OnInit {
       } catch (err) {
         this._message.error('COMMON.OPERATION_FAILED');
       } finally {
-        await this._loading.hide();
+        this._loading.hide();
       }
     };
 
