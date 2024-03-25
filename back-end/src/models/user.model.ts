@@ -77,6 +77,11 @@ export class User extends Resource {
    */
   socialMedia: SocialMedia;
 
+  /**
+   * The list of contests (IDs) the user voted in.
+   */
+  votedInContests: string[];
+
   load(x: any): void {
     super.load(x);
     this.userId = this.clean(x.userId, String);
@@ -99,10 +104,12 @@ export class User extends Resource {
     this.registrationForm = x.registrationForm ?? {};
     if (x.registrationAt) this.registrationAt = this.clean(x.registrationAt, t => new Date(t).toISOString());
     if (x.spot) this.spot = new EventSpotAttached(x.spot);
-    this.socialMedia = {}
-    if (x.socialMedia?.instagram) this.socialMedia.instagram = this.clean(x.socialMedia.instagram, String)
-    if (x.socialMedia?.linkedIn) this.socialMedia.linkedIn = this.clean(x.socialMedia.linkedIn, String)
-    if (x.socialMedia?.twitter) this.socialMedia.twitter = this.clean(x.socialMedia.twitter, String)
+    this.socialMedia = {};
+    if (x.socialMedia?.instagram) this.socialMedia.instagram = this.clean(x.socialMedia.instagram, String);
+    if (x.socialMedia?.linkedIn) this.socialMedia.linkedIn = this.clean(x.socialMedia.linkedIn, String);
+    if (x.socialMedia?.twitter) this.socialMedia.twitter = this.clean(x.socialMedia.twitter, String);
+
+    this.votedInContests = this.cleanArray(x.votedInContests, String);
   }
 
   safeLoad(newData: any, safeData: any): void {
@@ -123,6 +130,8 @@ export class User extends Resource {
     if (safeData.registrationForm) this.registrationForm = safeData.registrationForm;
     if (safeData.registrationAt) this.registrationAt = safeData.registrationAt;
     if (safeData.spot) this.spot = safeData.spot;
+
+    this.votedInContests = safeData.votedInContests;
   }
 
   validate(): string[] {
