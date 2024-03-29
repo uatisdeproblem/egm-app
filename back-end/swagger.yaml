@@ -1034,6 +1034,38 @@ paths:
           $ref: '#/components/responses/Session'
         400:
           $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on a session
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [GIVE_FEEDBACK]
+                rating:
+                  type: number
+                  description: (GIVE_FEEDBACK)
+                comment:
+                  type: string
+                  description: (GIVE_FEEDBACK)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
     delete:
       summary: Delete a session
       description: Requires to be content manager

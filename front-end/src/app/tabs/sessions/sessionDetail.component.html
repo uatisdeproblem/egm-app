@@ -20,6 +20,53 @@
           <ion-icon slot="start" name="pricetag" />
           <ion-label>{{ 'SESSIONS.TYPES.' + session.type | translate }}</ion-label>
         </ion-item>
+        <ion-item
+          *ngIf="hasSessionEnded && isUserRegisteredInSession && !hasUserRatedSession"
+          style="border: 1px solid #f9f9f9; border-radius: 10px; margin: 15px;"
+        >
+          <ion-list lines="none" style="width: 100%; ">
+            <ion-item style="margin-bottom: 0px;">
+              <ion-label style="font-weight: bold;">{{ 'SESSIONS.GIVE_FEEDBACK' | translate }}</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon
+                *ngFor="let star of [1, 2, 3, 4, 5]"
+                [name]="star <= selectedRating ? 'star' : 'star-outline'"
+                (click)="selectedRating = star"
+                style="--ionicon-stroke-width: 32px; width: 32px; height: 32px; margin-right: 10px;"
+              />
+            </ion-item>
+            <ion-item >
+              <ion-textarea
+                #commentInput placeholder="Optional: enter a comment here"
+                style="background-color: var(--ion-color-light); margin-top: 10px; --padding-start: 10px; --padding-stop: 10px; --padding-top: 10px; --padding-bottom: 10px;"
+              />
+            </ion-item>
+            <ion-item>
+              <ion-label color="medium" style="font-size: 14px; font-weight: 300;">
+                {{ 'SESSIONS.FEEDBACK_HINT' | translate}}
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-button
+                slot="end"
+                style="--padding-start: 20px; --padding-end: 20px; --padding-top: 10px; --padding-bottom: 10px;"
+                (click)="giveFeedback.emit({ rating: selectedRating, comment: commentInput.value.toString() })"
+              >
+                {{ 'SESSIONS.SUBMIT_FEEDBACK' | translate}}
+              </ion-button>
+            </ion-item>
+          </ion-list>
+        </ion-item>
+        <ion-item
+          *ngIf="hasSessionEnded && isUserRegisteredInSession && hasUserRatedSession"
+          style="border: 1px solid #f9f9f9; border-radius: 10px; margin: 15px;"
+        >
+          <ion-label>
+            {{ 'SESSIONS.ALREADY_RATED' | translate }}
+          </ion-label>
+        </ion-item>
+
         <ion-item>
           <ion-icon slot="start" name="calendar" />
           <ion-label>{{ app.formatDateShort(session.startsAt) }}</ion-label>

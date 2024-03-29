@@ -18,7 +18,8 @@ const DDB_TABLES = {
   users: process.env.DDB_TABLE_users,
   sessions: process.env.DDB_TABLE_sessions,
   rooms: process.env.DDB_TABLE_rooms,
-  speakers: process.env.DDB_TABLE_speakers
+  speakers: process.env.DDB_TABLE_speakers,
+  registrations: process.env.DDB_TABLE_registrations,
 };
 const ddb = new DynamoDB();
 
@@ -55,6 +56,10 @@ class SessionsRC extends ResourceController {
   }
 
   protected async getResource(): Promise<Session> {
+    if (!this.user.permissions.canManageContents) {
+      delete this.session.feedbackResults;
+      delete this.session.feedbackComments;
+    }
     return this.session;
   }
 
@@ -92,6 +97,52 @@ class SessionsRC extends ResourceController {
     }
   }
 
+  protected async patchResource(): Promise<void> {
+    switch (this.body.action) {
+      case 'GIVE_FEEDBACK':
+        return await this.userFeedback(this.body.rating, this.body.comment);
+      default:
+        throw new HandledError('Unsupported action');
+    }
+  }
+
+  private async userFeedback(rating: number, comment?: string): Promise<void> {
+    const sessionRegistration = await ddb.get({
+      TableName: DDB_TABLES.registrations,
+      Key: { sessionId: this.session.sessionId, userId: this.user.userId }
+    });
+
+    if (!sessionRegistration) {
+      throw new HandledError("Can't rate a session without being registered");
+    }
+
+    if (sessionRegistration.hasUserRated) throw new HandledError("Already rated this session");
+
+    if (new Date().toISOString() < this.session.endsAt) throw new HandledError("Can't rate a session before it has ended");
+
+    if (rating < 1 || rating > 5 || !Number.isInteger(rating)) throw new HandledError('Invalid rating');
+
+    const addUserRatingToSession = {
+      TableName: DDB_TABLES.sessions,
+      Key: { sessionId: this.session.sessionId },
+      UpdateExpression: `ADD feedbackResults[${rating - 1}] :one`,
+      ExpressionAttributeValues: { ':one': 1 } as Record<string, any>
+    };
+    if (comment) {
+      addUserRatingToSession.UpdateExpression += ', feedbackComments = list_append(feedbackComments, :comment)';
+      addUserRatingToSession.ExpressionAttributeValues[':comment'] = [comment];
+    }
+
+    const setHasUserRated = {
+      TableName: DDB_TABLES.registrations,
+      Key: { sessionId: this.session.sessionId, userId: this.user.userId },
+      UpdateExpression: 'SET hasUserRated = :true',
+      ExpressionAttributeValues: { ':true': true }
+    };
+
+    await ddb.transactWrites([{ Update: addUserRatingToSession }, { Update: setHasUserRated }]);
+  }
+
   protected async deleteResource(): Promise<void> {
     if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
 
@@ -103,6 +154,8 @@ class SessionsRC extends ResourceController {
 
     this.session = new Session(this.body);
     this.session.sessionId = await ddb.IUNID(PROJECT);
+    this.session.feedbackResults = [0,0,0,0,0];
+    this.session.feedbackComments = [];
 
     return await this.putSafeResource({ noOverwrite: true });
   }
@@ -110,12 +163,19 @@ class SessionsRC extends ResourceController {
   protected async getResources(): Promise<Session[]> {
     const sessions = (await ddb.scan({ TableName: DDB_TABLES.sessions })).map(x => new Session(x));
 
-    const filtertedSessions = sessions.filter(
+    const filteredSessions = sessions.filter(
       x =>
         (!this.queryParams.speaker || x.speakers.some(speaker => speaker.speakerId === this.queryParams.speaker)) &&
         (!this.queryParams.room || x.room.roomId === this.queryParams.room)
     );
 
-    return filtertedSessions.sort((a, b): number => a.startsAt.localeCompare(b.startsAt));
+    if (!this.user.permissions.canManageContents) {
+      filteredSessions.forEach(session => {
+        delete session.feedbackResults;
+        delete session.feedbackComments;
+      });
+    }
+
+    return filteredSessions.sort((a, b): number => a.startsAt.localeCompare(b.startsAt));
   }
 }

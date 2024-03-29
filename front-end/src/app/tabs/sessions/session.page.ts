@@ -21,6 +21,7 @@ export class SessionPage implements OnInit {
   session: Session;
   favoriteSessionsIds: string[] = [];
   registeredSessionsIds: string[] = [];
+  ratedSessionsIds: string[] = [];
   selectedSession: Session;
 
   constructor(
@@ -47,7 +48,9 @@ export class SessionPage implements OnInit {
       // @todo improvable. Just amke a call to see if a session is or isn't favorited/registerd using a getById
       const favoriteSessions = await this._sessions.getList({ force: true });
       this.favoriteSessionsIds = favoriteSessions.map(s => s.sessionId);
-      this.registeredSessionsIds = (await this._sessions.loadUserRegisteredSessions()).map(ur => ur.sessionId);
+      const userRegisteredSessions = await this._sessions.loadUserRegisteredSessions();
+      this.registeredSessionsIds = userRegisteredSessions.map(ur => ur.sessionId);
+      this.ratedSessionsIds = userRegisteredSessions.filter(ur => ur.hasUserRated).map(ur => ur.sessionId);
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
@@ -81,6 +84,14 @@ export class SessionPage implements OnInit {
     return this.registeredSessionsIds.includes(session.sessionId);
   }
 
+  hasUserRatedSession(session: Session): boolean {
+    return this.ratedSessionsIds.includes(session.sessionId);
+  }
+
+  hasSessionEnded(session: Session): boolean {
+    return new Date(session.endsAt) < new Date();
+  }
+
   async toggleRegister(ev: any, session: Session): Promise<void> {
     ev?.stopPropagation();
     try {
@@ -105,6 +116,24 @@ export class SessionPage implements OnInit {
       } else if (error.message === 'You have 1 or more sessions during this time period.') {
         this.message.error('SESSIONS.OVERLAP');
       } else this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
+  }
+
+  async onGiveFeedback(ev: any, session: Session ): Promise<void> {
+    try {
+      await this.loading.show();
+      let rating = ev.rating;
+      let comment = ev.comment;
+      if (rating === 0) {
+        this.message.error('SESSIONS.NO_RATING');
+        return;
+      }
+      await this._sessions.giveFeedback(session, rating, comment);
+      this.ratedSessionsIds.push(session.sessionId);
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
     } finally {
       this.loading.hide();
     }

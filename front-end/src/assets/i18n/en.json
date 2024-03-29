@@ -442,7 +442,11 @@
     "ADD_SPEAKER": "Add speaker",
     "ROOM": "Room",
     "DOWNLOAD_REGISTRATIONS": "Download a spreadsheet with all the session registrations",
-    "SESSION_REGISTRATIONS": "Session registrations"
+    "SESSION_REGISTRATIONS": "Session registrations",
+    "GIVE_FEEDBACK": "Give feedback for this session!",
+    "FEEDBACK_HINT": "Feedback is anonymous and cannot be changed once submitted.",
+    "SUBMIT_FEEDBACK": "Submit",
+    "NO_RATING": "Please provide a rating"
   },
   "CONTESTS": {
     "MANAGE_CONTEST": "Manage contest",

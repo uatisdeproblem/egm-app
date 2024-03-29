@@ -23,6 +23,10 @@ export class SessionRegistration extends Resource {
    * The user's ESN Country if any.
    */
   sectionCountry?: string;
+  /**
+   * Whether the user has rated the session.
+   */
+  hasUserRated: boolean;
 
   load(x: any): void {
     super.load(x);

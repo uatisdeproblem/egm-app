@@ -90,6 +90,7 @@
           [isUserRegisteredInSession]="isUserRegisteredInSession(selectedSession)"
           (favorite)="toggleFavorite($event, selectedSession)"
           (register)="toggleRegister($event, selectedSession)"
+          (giveFeedback)="onGiveFeedback($event, selectedSession)"
         >
           @if(selectedSession && app.user.permissions.canManageContents) {
           <ion-buttons slot="end">

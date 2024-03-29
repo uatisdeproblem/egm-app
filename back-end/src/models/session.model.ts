@@ -61,6 +61,16 @@ export class Session extends Resource {
    * Wether the sessions requires registration.
    */
   requiresRegistration: boolean;
+  /**
+   * The counts of each star rating given to the session as feedback.
+   * Indices 0-4 correspond to 1-5 star ratings.
+   */
+  feedbackResults?: number[];
+  /**
+   * A list of feedback comments from the participants.
+   */
+  feedbackComments?: string[];
+
 
   load(x: any): void {
     super.load(x);
