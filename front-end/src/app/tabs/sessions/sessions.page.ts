@@ -24,6 +24,7 @@ export class SessionsPage {
   sessions: Session[];
   favoriteSessionsIds: string[] = [];
   registeredSessionsIds: string[] = [];
+  ratedSessionsIds: string[] = [];
   selectedSession: Session;
 
   segment = '';
@@ -49,7 +50,9 @@ export class SessionsPage {
       this.segment = '';
       this.sessions = await this._sessions.getList({ force: true });
       this.favoriteSessionsIds = this.sessions.map(s => s.sessionId);
-      this.registeredSessionsIds = (await this._sessions.loadUserRegisteredSessions()).map(ur => ur.sessionId);
+      const userRegisteredSessions = await this._sessions.loadUserRegisteredSessions();
+      this.registeredSessionsIds = userRegisteredSessions.map(ur => ur.sessionId);
+      this.ratedSessionsIds = userRegisteredSessions.filter(ur => ur.hasUserRated).map(ur => ur.sessionId);
       this.days = await this._sessions.getSessionDays();
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
@@ -93,6 +96,14 @@ export class SessionsPage {
     return this.registeredSessionsIds.includes(session.sessionId);
   }
 
+  hasUserRatedSession(session: Session): boolean {
+    return this.ratedSessionsIds.includes(session.sessionId);
+  }
+
+  hasSessionEnded(session: Session): boolean {
+    return new Date(session.endsAt) < new Date();
+  }
+
   async toggleRegister(ev: any, session: Session): Promise<void> {
     ev?.stopPropagation();
     try {
@@ -129,6 +140,27 @@ export class SessionsPage {
 
     if (this.app.isInMobileMode()) this.app.goToInTabs(['agenda', session.sessionId]);
     else this.selectedSession = session;
+  }
+
+  async onGiveFeedback(ev: any, session: Session): Promise<void> {
+    try {
+      await this.loading.show();
+      if (ev.rating === 0) return this.message.error('SESSIONS.NO_RATING');
+
+      await this._sessions.giveFeedback(session, ev.rating, ev.comment);
+      this.ratedSessionsIds.push(session.sessionId);
+      this.message.success('SESSIONS.FEEDBACK_SENT');
+    } catch (error) {
+      if (error.message === "Can't rate a session without being registered")
+        this.message.error('SESSIONS.NOT_REGISTERED');
+      else if (error.message === 'Already rated this session') this.message.error('SESSIONS.ALREADY_RATED');
+      else if (error.message === "Can't rate a session before it has ended")
+        this.message.error('SESSIONS.STILL_TAKING_PLACE');
+      else if (error.message === 'Invalid rating') this.message.error('SESSIONS.INVALID_RATING');
+      else this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
 
   async manageSession(): Promise<void> {

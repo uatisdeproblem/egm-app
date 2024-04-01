@@ -23,6 +23,10 @@ export class SessionRegistration extends Resource {
    * The user's ESN Country if any.
    */
   sectionCountry?: string;
+  /**
+   * Whether the user has rated the session.
+   */
+  hasUserRated: boolean;
 
   load(x: any): void {
     super.load(x);
@@ -31,6 +35,7 @@ export class SessionRegistration extends Resource {
     this.registrationDateInMs = this.clean(x.registrationDateInMs, t => new Date(t).getTime());
     this.name = this.clean(x.name, String);
     if (x.sectionCountry) this.sectionCountry = this.clean(x.sectionCountry, String);
+    this.hasUserRated = this.clean(x.hasUserRated, Boolean);
   }
 
   /**

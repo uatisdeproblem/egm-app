@@ -1,0 +1,8 @@
+{
+  "extends": "./node_modules/@tsconfig/node14/tsconfig.json",
+  "compilerOptions": {
+    "strictPropertyInitialization": false,
+    "strictNullChecks": false
+  },
+  "include": ["src/**/*.ts"]
+}

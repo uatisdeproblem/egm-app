@@ -88,8 +88,11 @@
           [session]="selectedSession"
           [isSessionInFavorites]="isSessionInFavorites(selectedSession)"
           [isUserRegisteredInSession]="isUserRegisteredInSession(selectedSession)"
+          [hasUserRatedSession]="hasUserRatedSession(selectedSession)"
+          [hasSessionEnded]="hasSessionEnded(selectedSession)"
           (favorite)="toggleFavorite($event, selectedSession)"
           (register)="toggleRegister($event, selectedSession)"
+          (giveFeedback)="onGiveFeedback($event, selectedSession)"
         >
           @if(selectedSession && app.user.permissions.canManageContents) {
           <ion-buttons slot="end">

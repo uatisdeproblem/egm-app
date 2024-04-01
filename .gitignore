@@ -42,3 +42,4 @@ back-end/src/**/*.js
 back-end/src/**/*.js.map
 front-end/.angular/cache
 front-end/resources
+scripts/src/**/*.js
