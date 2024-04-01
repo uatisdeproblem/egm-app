@@ -35,6 +35,7 @@ export class SessionRegistration extends Resource {
     this.registrationDateInMs = this.clean(x.registrationDateInMs, t => new Date(t).getTime());
     this.name = this.clean(x.name, String);
     if (x.sectionCountry) this.sectionCountry = this.clean(x.sectionCountry, String);
+    this.hasUserRated = this.clean(x.hasUserRated, Boolean);
   }
 
   /**

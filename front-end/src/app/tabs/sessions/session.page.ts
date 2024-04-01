@@ -121,19 +121,24 @@ export class SessionPage implements OnInit {
     }
   }
 
-  async onGiveFeedback(ev: any, session: Session ): Promise<void> {
+  async onGiveFeedback(ev: any, session: Session): Promise<void> {
     try {
       await this.loading.show();
       let rating = ev.rating;
       let comment = ev.comment;
-      if (rating === 0) {
-        this.message.error('SESSIONS.NO_RATING');
-        return;
-      }
+      if (rating === 0) return this.message.error('SESSIONS.NO_RATING');
       await this._sessions.giveFeedback(session, rating, comment);
       this.ratedSessionsIds.push(session.sessionId);
+
+      this.message.success('SESSIONS.FEEDBACK_SENT');
     } catch (error) {
-      this.message.error('COMMON.OPERATION_FAILED');
+      if (error.message === "Can't rate a session without being registered")
+        this.message.error('SESSIONS.NOT_REGISTERED');
+      else if (error.message === 'Already rated this session') this.message.error('SESSIONS.ALREADY_RATED');
+      else if (error.message === "Can't rate a session before it has ended")
+        this.message.error('SESSIONS.STILL_TAKING_PLACE');
+      else if (error.message === 'Invalid rating') this.message.error('SESSIONS.INVALID_RATING');
+      else this.message.error('COMMON.OPERATION_FAILED');
     } finally {
       this.loading.hide();
     }

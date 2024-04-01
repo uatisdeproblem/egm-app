@@ -446,7 +446,12 @@
     "GIVE_FEEDBACK": "Give feedback for this session!",
     "FEEDBACK_HINT": "Feedback is anonymous and cannot be changed once submitted.",
     "SUBMIT_FEEDBACK": "Submit",
-    "NO_RATING": "Please provide a rating"
+    "NO_RATING": "Please provide a rating",
+    "ALREADY_RATED": "Already rated this session",
+    "FEEDBACK_SENT": "Feedback sent",
+    "STILL_TAKING_PLACE": "Session is still taking place",
+    "INVALID_RATING": "Invalid rating",
+    "NOT_REGISTERED": "Not registered"
   },
   "CONTESTS": {
     "MANAGE_CONTEST": "Manage contest",
