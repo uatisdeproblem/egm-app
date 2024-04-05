@@ -40,45 +40,37 @@
           <p>{{ 'MANAGE.CONTENTS_I' | translate }}</p>
         </ion-label>
       </ion-list-header>
-      <ion-item
-        button
-        detail
-        (click)="addVenue()"
-      >
-        <ion-icon slot="start" icon="home"></ion-icon>
+      <ion-item button detail (click)="addVenue()">
+        <ion-icon slot="start" icon="home-outline" />
         <ion-label>{{ 'MANAGE.VENUES' | translate }}</ion-label>
       </ion-item>
-      <ion-item
-        button
-        detail
-        (click)="addRoom()"
-      >
-        <ion-icon slot="start" icon="cube"></ion-icon>
+      <ion-item button detail (click)="addRoom()">
+        <ion-icon slot="start" icon="cube-outline" />
         <ion-label>{{ 'MANAGE.ROOMS' | translate }}</ion-label>
       </ion-item>
-      <ion-item
-        button
-        detail
-        (click)="addOrganization()"
-      >
-        <ion-icon slot="start" icon="briefcase-outline"></ion-icon>
+      <ion-item button detail (click)="addOrganization()">
+        <ion-icon slot="start" icon="briefcase-outline" />
         <ion-label>{{ 'MANAGE.ORGANIZATIONS' | translate }}</ion-label>
       </ion-item>
-      <ion-item
-        button
-        detail
-        (click)="addSpeaker()"
-      >
-        <ion-icon slot="start" icon="mic-outline"></ion-icon>
+      <ion-item button detail (click)="addSpeaker()">
+        <ion-icon slot="start" icon="mic-outline" />
         <ion-label>{{ 'MANAGE.SPEAKERS' | translate }}</ion-label>
       </ion-item>
-      <ion-item
-        button
-        detail
-        (click)="addSession()"
-      >
-        <ion-icon slot="start" icon="flame-outline"></ion-icon>
+      <ion-item button detail (click)="addSession()">
+        <ion-icon slot="start" icon="flame-outline" />
         <ion-label>{{ 'MANAGE.SESSIONS' | translate }}</ion-label>
+        <ion-button
+          slot="end"
+          fill="clear"
+          [title]="'MANAGE.DOWNLOAD_SESSIONS_REGISTRATIONS' | translate"
+          (click)="downloadSessionsRegistrations($event)"
+        >
+          <ion-icon icon="download" slot="icon-only" />
+        </ion-button>
+      </ion-item>
+      <ion-item button detail (click)="addContest()">
+        <ion-icon slot="start" icon="trophy-outline" />
+        <ion-label>{{ 'MANAGE.CONTESTS' | translate }}</ion-label>
       </ion-item>
     </ng-container>
     <ng-container *ngIf="app.user.permissions.isAdmin">

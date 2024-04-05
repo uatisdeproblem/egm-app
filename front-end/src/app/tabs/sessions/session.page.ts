@@ -7,6 +7,7 @@ import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from 
 import { ManageSessionComponent } from './manageSession.component';
 
 import { SessionsService } from './sessions.service';
+import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
 
 import { Session } from '@models/session.model';
 import { ActivatedRoute } from '@angular/router';
@@ -17,10 +18,10 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./session.page.scss']
 })
 export class SessionPage implements OnInit {
-
   session: Session;
   favoriteSessionsIds: string[] = [];
   registeredSessionsIds: string[] = [];
+  ratedSessionsIds: string[] = [];
   selectedSession: Session;
 
   constructor(
@@ -29,6 +30,7 @@ export class SessionPage implements OnInit {
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     public _sessions: SessionsService,
+    private _sessionRegistrations: SessionRegistrationsService,
     public t: IDEATranslationsService,
     public app: AppService
   ) {}
@@ -45,8 +47,10 @@ export class SessionPage implements OnInit {
       // WARNING: do not pass any segment in order to get the favorites on the next api call.
       // @todo improvable. Just amke a call to see if a session is or isn't favorited/registerd using a getById
       const favoriteSessions = await this._sessions.getList({ force: true });
-      this.favoriteSessionsIds = favoriteSessions.map( s => s.sessionId);
-      this.registeredSessionsIds = (await this._sessions.loadUserRegisteredSessions()).map(ur => ur.sessionId);
+      this.favoriteSessionsIds = favoriteSessions.map(s => s.sessionId);
+      const userRegisteredSessions = await this._sessions.loadUserRegisteredSessions();
+      this.registeredSessionsIds = userRegisteredSessions.map(ur => ur.sessionId);
+      this.ratedSessionsIds = userRegisteredSessions.filter(ur => ur.hasUserRated).map(ur => ur.sessionId);
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
@@ -59,7 +63,7 @@ export class SessionPage implements OnInit {
   }
 
   async toggleFavorite(ev: any, session: Session): Promise<void> {
-    ev?.stopPropagation()
+    ev?.stopPropagation();
     try {
       await this.loading.show();
       if (this.isSessionInFavorites(session)) {
@@ -68,7 +72,7 @@ export class SessionPage implements OnInit {
       } else {
         await this._sessions.addToFavorites(session.sessionId);
         this.favoriteSessionsIds.push(session.sessionId);
-      };
+      }
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
@@ -80,8 +84,16 @@ export class SessionPage implements OnInit {
     return this.registeredSessionsIds.includes(session.sessionId);
   }
 
+  hasUserRatedSession(session: Session): boolean {
+    return this.ratedSessionsIds.includes(session.sessionId);
+  }
+
+  hasSessionEnded(session: Session): boolean {
+    return new Date(session.endsAt) < new Date();
+  }
+
   async toggleRegister(ev: any, session: Session): Promise<void> {
-    ev?.stopPropagation()
+    ev?.stopPropagation();
     try {
       await this.loading.show();
       if (this.isUserRegisteredInSession(session)) {
@@ -92,16 +104,16 @@ export class SessionPage implements OnInit {
         await this._sessions.registerInSession(session.sessionId);
         this.favoriteSessionsIds.push(session.sessionId);
         this.registeredSessionsIds.push(session.sessionId);
-      };
+      }
       this.session = await this._sessions.getById(session.sessionId);
     } catch (error) {
-      if (error.message === "User can't sign up for this session!"){
+      if (error.message === "User can't sign up for this session!") {
         this.message.error('SESSIONS.CANT_SIGN_UP');
-      } else if (error.message === 'Registrations are closed!'){
+      } else if (error.message === 'Registrations are closed!') {
         this.message.error('SESSIONS.REGISTRATION_CLOSED');
-      } else if (error.message === 'Session is full! Refresh your page.'){
+      } else if (error.message === 'Session is full! Refresh your page.') {
         this.message.error('SESSIONS.SESSION_FULL');
-      } else if (error.message === 'You have 1 or more sessions during this time period.'){
+      } else if (error.message === 'You have 1 or more sessions during this time period.') {
         this.message.error('SESSIONS.OVERLAP');
       } else this.message.error('COMMON.OPERATION_FAILED');
     } finally {
@@ -109,11 +121,33 @@ export class SessionPage implements OnInit {
     }
   }
 
+  async onGiveFeedback(ev: any, session: Session): Promise<void> {
+    try {
+      await this.loading.show();
+      let rating = ev.rating;
+      let comment = ev.comment;
+      if (rating === 0) return this.message.error('SESSIONS.NO_RATING');
+      await this._sessions.giveFeedback(session, rating, comment);
+      this.ratedSessionsIds.push(session.sessionId);
+
+      this.message.success('SESSIONS.FEEDBACK_SENT');
+    } catch (error) {
+      if (error.message === "Can't rate a session without being registered")
+        this.message.error('SESSIONS.NOT_REGISTERED');
+      else if (error.message === 'Already rated this session') this.message.error('SESSIONS.ALREADY_RATED');
+      else if (error.message === "Can't rate a session before it has ended")
+        this.message.error('SESSIONS.STILL_TAKING_PLACE');
+      else if (error.message === 'Invalid rating') this.message.error('SESSIONS.INVALID_RATING');
+      else this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
+  }
 
   async manageSession(): Promise<void> {
     if (!this.session) return;
 
-    if (!this.app.user.permissions.canManageContents) return
+    if (!this.app.user.permissions.canManageContents) return;
 
     const modal = await this.modalCtrl.create({
       component: ManageSessionComponent,
@@ -129,5 +163,16 @@ export class SessionPage implements OnInit {
       }
     });
     await modal.present();
+  }
+
+  async downloadSessionsRegistrations(): Promise<void> {
+    try {
+      await this.loading.show();
+      await this._sessionRegistrations.downloadSpreadsheet(this.t._('SESSIONS.SESSION_REGISTRATIONS'), this.session);
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    } finally {
+      this.loading.hide();
+    }
   }
 }

@@ -1,8 +1,6 @@
 <ion-header>
   <ion-toolbar *ngIf="app.isInMobileMode()" color="ideaToolbar">
-    <ion-title class="ion-text-center">
-      {{ 'SESSIONS.LIST' | translate }}
-    </ion-title>
+    <ion-title class="ion-text-center"> {{ 'SESSIONS.LIST' | translate }} </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -14,9 +12,7 @@
             <ion-icon name="star" />
           </ion-segment-button>
           <ion-segment-button *ngFor="let day of days" [value]="day" (click)="changeSegment(day, searchbar.value)">
-            <ion-label>
-              {{ app.formatDateShort(day) }}
-            </ion-label>
+            <ion-label> {{ app.formatDateShort(day) }} </ion-label>
           </ion-segment-button>
         </ion-segment>
         <ion-list class="maxWidthContainer" lines="inset">
@@ -48,24 +44,18 @@
                 </ion-badge>
               </p>
               <p>
-                <ion-icon color="medium" name="location-outline"/>
-                <ion-text color="medium">
-                  {{ session.room.name }} ({{ session.room.venue.name }})
-                </ion-text>
+                <ion-icon color="medium" name="location-outline" />
+                <ion-text color="medium"> {{ session.room.name }} ({{ session.room.venue.name }}) </ion-text>
                 <br />
-                <ion-icon color="medium" name="mic-outline"/>
-                <ion-text color="medium">
-                  {{ session.getSpeakers() }}
-                </ion-text>
+                <ion-icon color="medium" name="mic-outline" />
+                <ion-text color="medium"> {{ session.getSpeakers() }} </ion-text>
               </p>
             </ion-label>
             <ion-note class="ion-text-center" slot="end">
               <ion-chip outline [color]="session.isFull() ? 'danger' : 'primary'">
-                @if(session.requiresRegistration) {
-                  {{ session.isFull() ? this.t._('COMMON.FULL') : session.numberOfParticipants + '/' + session.limitOfParticipants }}
-                } @else {
-                  {{ 'COMMON.OPEN' | translate }}
-                }
+                @if(session.requiresRegistration) { {{ session.isFull() ? this.t._('COMMON.FULL') :
+                session.numberOfParticipants + '/' + session.limitOfParticipants }} } @else { {{ 'COMMON.OPEN' |
+                translate }} }
               </ion-chip>
               <span class="ion-text-center">
                 <ion-button
@@ -93,21 +83,33 @@
         </ion-list>
       </ion-col>
       <ion-col *ngIf="!app.isInMobileMode()">
-          <app-session-detail
-            *ngIf="selectedSession"
-            [session]="selectedSession"
-            [isSessionInFavorites]="isSessionInFavorites(selectedSession)"
-            [isUserRegisteredInSession]="isUserRegisteredInSession(selectedSession)"
-            (favorite)="toggleFavorite($event, selectedSession)"
-            (register)="toggleRegister($event, selectedSession)"
-          >
-          <ion-buttons slot="end" *ngIf="selectedSession && app.user.permissions.canManageContents">
-            <ng-container>
-              <ion-button color="ESNgreen" (click)="manageSession()">
-                <ion-icon slot="icon-only" icon="hammer"></ion-icon>
-              </ion-button>
-            </ng-container>
+        <app-session-detail
+          *ngIf="selectedSession"
+          [session]="selectedSession"
+          [isSessionInFavorites]="isSessionInFavorites(selectedSession)"
+          [isUserRegisteredInSession]="isUserRegisteredInSession(selectedSession)"
+          [hasUserRatedSession]="hasUserRatedSession(selectedSession)"
+          [hasSessionEnded]="hasSessionEnded(selectedSession)"
+          (favorite)="toggleFavorite($event, selectedSession)"
+          (register)="toggleRegister($event, selectedSession)"
+          (giveFeedback)="onGiveFeedback($event, selectedSession)"
+        >
+          @if(selectedSession && app.user.permissions.canManageContents) {
+          <ion-buttons slot="end">
+            <ion-button color="ESNgreen" (click)="manageSession()">
+              <ion-icon slot="icon-only" icon="hammer"></ion-icon>
+            </ion-button>
+            <ion-button
+              slot="end"
+              fill="clear"
+              color="ESNgreen"
+              [title]="'SESSIONS.DOWNLOAD_REGISTRATIONS' | translate"
+              (click)="downloadSessionsRegistrations()"
+            >
+              <ion-icon icon="download" slot="icon-only" />
+            </ion-button>
           </ion-buttons>
+          }
         </app-session-detail>
       </ion-col>
     </ion-row>

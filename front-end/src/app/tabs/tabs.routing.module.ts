@@ -42,7 +42,8 @@ const routes: Routes = [
       },
       {
         path: 'organizations',
-        loadChildren: (): Promise<any> => import('./organizations/organizations.module').then(m => m.OrganizationsModule),
+        loadChildren: (): Promise<any> =>
+          import('./organizations/organizations.module').then(m => m.OrganizationsModule),
         canActivate: [spotGuard]
       },
       {
@@ -53,6 +54,11 @@ const routes: Routes = [
       {
         path: 'agenda',
         loadChildren: (): Promise<any> => import('./sessions/sessions.module').then(m => m.SessionsModule),
+        canActivate: [spotGuard]
+      },
+      {
+        path: 'contests',
+        loadChildren: (): Promise<any> => import('./contests/contests.module').then(m => m.ContestsModule),
         canActivate: [spotGuard]
       }
     ]

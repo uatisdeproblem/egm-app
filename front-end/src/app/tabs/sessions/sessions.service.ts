@@ -147,6 +147,17 @@ export class SessionsService {
     this.userFavoriteSessions = await this.api.deleteResource(['registrations', sessionId]);
   }
 
+  /**
+   * Rate a session with a number of stars (1-5) and optionally add a feedback comment.
+   */
+  async giveFeedback(session: Session, rating: number, comment?: string): Promise<void> {
+    const body: any = { action: 'GIVE_FEEDBACK', rating };
+    if (comment) {
+      body.comment = comment;
+    }
+    await this.api.patchResource(['sessions', session.sessionId], { body });
+  }
+
   getColourBySessionType(session: Session){
     switch(session.type) {
       case SessionType.DISCUSSION:

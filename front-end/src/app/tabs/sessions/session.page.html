@@ -1,25 +1,37 @@
 <ion-content>
   <div class="maxWidthContainer">
     <app-session-detail
-    *ngIf="session"
-    [session]="session"
-    [isSessionInFavorites]="isSessionInFavorites(session)"
-    [isUserRegisteredInSession]="isUserRegisteredInSession(session)"
-    (favorite)="toggleFavorite($event, session)"
-    (register)="toggleRegister($event, session)"
-  >
-    <ion-buttons slot="start">
-      <ion-button color="primary" (click)="app.goToInTabs(['agenda'], { back: true })">
-        <ion-icon slot="icon-only" name="arrow-back" />
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end" *ngIf="session && app.user.permissions.canManageContents">
-      <ng-container>
+      *ngIf="session"
+      [session]="session"
+      [isSessionInFavorites]="isSessionInFavorites(session)"
+      [isUserRegisteredInSession]="isUserRegisteredInSession(session)"
+      [hasUserRatedSession]="hasUserRatedSession(session)"
+      [hasSessionEnded]="hasSessionEnded(session)"
+      (favorite)="toggleFavorite($event, session)"
+      (register)="toggleRegister($event, session)"
+      (giveFeedback)="onGiveFeedback($event, session)"
+    >
+      <ion-buttons slot="start">
+        <ion-button color="primary" (click)="app.goToInTabs(['agenda'], { back: true })">
+          <ion-icon slot="icon-only" name="arrow-back" />
+        </ion-button>
+      </ion-buttons>
+      @if(session && app.user.permissions.canManageContents) {
+      <ion-buttons slot="end">
         <ion-button color="ESNgreen" (click)="manageSession()">
           <ion-icon slot="icon-only" icon="hammer"></ion-icon>
         </ion-button>
-      </ng-container>
-    </ion-buttons>
-  </app-session-detail>
+        <ion-button
+          slot="end"
+          fill="clear"
+          color="ESNgreen"
+          [title]="'SESSIONS.DOWNLOAD_REGISTRATIONS' | translate"
+          (click)="downloadSessionsRegistrations()"
+        >
+          <ion-icon icon="download" slot="icon-only" />
+        </ion-button>
+      </ion-buttons>
+      }
+    </app-session-detail>
   </div>
 </ion-content>

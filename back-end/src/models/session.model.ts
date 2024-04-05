@@ -8,6 +8,11 @@ import { SpeakerLinked } from './speaker.model';
  */
 type datetime = string;
 
+/**
+ * The max number of stars you can give to a session.
+ */
+const MAX_RATING = 5;
+
 export class Session extends Resource {
   /**
    * The session ID.
@@ -61,6 +66,15 @@ export class Session extends Resource {
    * Wether the sessions requires registration.
    */
   requiresRegistration: boolean;
+  /**
+   * The counts of each star rating given to the session as feedback.
+   * Indices 0-4 correspond to 1-5 star ratings.
+   */
+  feedbackResults?: number[];
+  /**
+   * A list of feedback comments from the participants.
+   */
+  feedbackComments?: string[];
 
   load(x: any): void {
     super.load(x);
@@ -81,6 +95,10 @@ export class Session extends Resource {
       this.numberOfParticipants = this.clean(x.numberOfParticipants, Number, 0);
       this.limitOfParticipants = this.clean(x.limitOfParticipants, Number);
     }
+    this.feedbackResults = [];
+    for (let i = 0; i < MAX_RATING; i++)
+      this.feedbackResults[i] = x.feedbackResults ? Number(x.feedbackResults[i] ?? 0) : 0;
+    this.feedbackComments = this.cleanArray(x.feedbackComments, String);
   }
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
@@ -116,14 +134,13 @@ export class Session extends Resource {
   }
 
   isFull(): boolean {
-    return this.requiresRegistration ? this.numberOfParticipants >= this.limitOfParticipants : false
+    return this.requiresRegistration ? this.numberOfParticipants >= this.limitOfParticipants : false;
   }
 
   getSpeakers(): string {
-    return this.speakers.map(s => s.name).join(', ')
+    return this.speakers.map(s => s.name).join(', ');
   }
 }
-
 
 export enum SessionType {
   DISCUSSION = 'DISCUSSION',
