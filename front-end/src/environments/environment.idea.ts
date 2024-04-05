@@ -7,7 +7,7 @@ export const environment = {
     app: {
       version: '3.5.0',
       bundle: 'com.esn.egmapp',
-      url: 'https://app.erasmusgeneration.org',
+      url: 'https://egm-app.click',
       mediaUrl: 'https://media.egm-app.click',
       appleStoreURL: '',
       googleStoreURL: ''

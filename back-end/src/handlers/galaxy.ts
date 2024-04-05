@@ -15,7 +15,8 @@ import { AuthServices, User } from '../models/user.model';
 ///
 
 const CAS_URL = 'https://accounts.esn.org/cas';
-const APP_URL = process.env.STAGE === 'prod' ? 'https://app.erasmusgeneration.org' : 'https://dev.egm-app.click';
+const APP_URL = process.env.STAGE === 'prod' ? 'https://egm-app.click' : 'https://dev.egm-app.click';
+// const APP_URL = process.env.STAGE === 'prod' ? 'https://app.erasmusgeneration.org' : 'https://dev.egm-app.click';
 
 const DDB_TABLES = { users: process.env.DDB_TABLE_users };
 const ddb = new DynamoDB();

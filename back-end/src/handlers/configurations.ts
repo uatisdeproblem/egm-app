@@ -23,7 +23,8 @@ const DDB_TABLES = {
 };
 const ddb = new DynamoDB();
 
-const BASE_URL = STAGE === 'prod' ? 'https://app.erasmusgeneration.org' : 'https://dev.egm-app.click';
+const BASE_URL = process.env.STAGE === 'prod' ? 'https://egm-app.click' : 'https://dev.egm-app.click';
+// const BASE_URL = STAGE === 'prod' ? 'https://app.erasmusgeneration.org' : 'https://dev.egm-app.click';
 const SES_CONFIG = {
   sourceName: 'EGM app',
   source: process.env.SES_SOURCE_ADDRESS,
