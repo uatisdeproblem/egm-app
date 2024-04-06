@@ -48,7 +48,8 @@ export class SessionsPage {
       await this.loading.show();
       // WARNING: do not pass any segment in order to get the favorites on the next api call.
       this.segment = '';
-      this.sessions = await this._sessions.getList({ force: true });
+      const force: boolean = this.app.configurations.areSessionRegistrationsOpen;
+      this.sessions = await this._sessions.getList({ force });
       this.favoriteSessionsIds = this.sessions.map(s => s.sessionId);
       const userRegisteredSessions = await this._sessions.loadUserRegisteredSessions();
       this.registeredSessionsIds = userRegisteredSessions.map(ur => ur.sessionId);
