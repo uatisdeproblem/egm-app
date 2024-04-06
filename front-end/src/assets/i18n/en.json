@@ -476,7 +476,7 @@
     "VOTE_NOT_OPEN_YET": "Vote is not open yet",
     "VOTE_NOW_UNTIL": "Vote now, until: {{deadline}}",
     "VOTE": "Vote",
-    "VOTE_I": "The vote is anonymous; please not that you can vote only once and you won't be able to change your vote.",
+    "VOTE_I": "The vote is anonymous; please note that you can vote only once and you won't be able to change your vote.",
     "YOU_ALREADY_VOTED": "You have voted.",
     "YOU_ARE_VOTING": "You are voting",
     "NOT_NOW": "Not now",
