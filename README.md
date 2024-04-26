@@ -20,4 +20,4 @@
 
 ![CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)
 
-**[EGM app](https://github.com/uatisdeproblem/egm-app)** was created in 2021 by [Matteo Carbone](https://matteocarbone.com) and Ricardo Bento for [Erasmus Student Network](https://esn.org); the latter is free to use it, develop it and maintan it at free will, forever. The work is licensed under [CC BY-NC-SA 4.0](/LICENSE).
+**[EGM app](https://github.com/uatisdeproblem/egm-app)** was created in 2021 by [Matteo Carbone](https://matteocarbone.com) and [Ricardo Bento](https://www.linkedin.com/in/ricardofbento/) for [Erasmus Student Network](https://esn.org); the latter is free to use it, develop it and maintan it at free will, forever. The work is licensed under [CC BY-NC-SA 4.0](/LICENSE).
