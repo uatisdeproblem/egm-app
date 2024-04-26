@@ -59,7 +59,9 @@ export class Contest extends Resource {
     this.imageURI = this.clean(x.imageURI, String);
     this.candidates = this.cleanArray(x.candidates, c => new ContestCandidate(c));
     this.results = [];
-    for (let i = 0; i < this.candidates.length; i++) this.results[i] = Number(x.results[i] ?? 0);
+    if (x.results) {
+      for (let i = 0; i < this.candidates.length; i++) this.results[i] = Number(x.results[i] ?? 0);
+    }
     this.publishedResults = this.clean(x.publishedResults, Boolean, false);
   }
 
