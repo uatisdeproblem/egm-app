@@ -192,10 +192,10 @@ class UsersRC extends ResourceController {
     const bucket = S3_BUCKET_MEDIA;
     const key = S3_DOWNLOADS_FOLDER + `/invoices/${filename}`;
 
-    const htmlBody = (await s3.getObjectAsText({
+    const htmlBody = await s3.getObjectAsText({
       bucket: S3_BUCKET_MEDIA,
       key: S3_ASSETS_FOLDER.concat('/payment-invoice.hbs')
-    })) as string;
+    });
 
     const pdfVariables = {
       reference: this.reqUser.spot.spotId,
@@ -215,7 +215,7 @@ class UsersRC extends ResourceController {
         pdfOptions: { margin: { top: '0cm', right: '0cm', bottom: '0cm', left: '0cm' } }
       });
 
-      s3.putObject({
+      await s3.putObject({
         bucket,
         key,
         body,

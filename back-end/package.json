@@ -13,7 +13,7 @@
     "axios": "^1.6.7",
     "date-fns": "^3.3.1",
     "idea-aws": "^4.4.7",
-    "idea-html2pdf": "^2.2.5",
+    "idea-html2pdf": "^2.2.9",
     "idea-toolbox": "^7.0.5",
     "jsonwebtoken": "^9.0.2",
     "xml2js": "^0.6.2"
