@@ -54,6 +54,10 @@ export class User extends Resource {
    */
   sectionName?: string;
 
+  gender?: string;
+
+  birthDate?: string;
+
   /**
    * The permissions of the user on the app.
    */
@@ -97,6 +101,8 @@ export class User extends Resource {
       this.sectionCode = this.clean(x.sectionCode, String);
       this.sectionCountry = this.clean(x.sectionCountry, String);
       this.sectionName = this.clean(x.sectionName, String);
+      this.gender = this.clean(x.gender, String);
+      this.birthDate = this.clean(x.birthDate, String);
     }
 
     this.permissions = new UserPermissions(x.permissions);
@@ -123,6 +129,8 @@ export class User extends Resource {
       this.sectionCode = safeData.sectionCode;
       this.sectionCountry = safeData.sectionCountry;
       this.sectionName = safeData.sectionName;
+      this.gender = safeData.gender;
+      this.birthDate = safeData.birthDate;
     }
 
     this.permissions = safeData.permissions;

@@ -64,6 +64,8 @@ class GalaxyRC extends ResourceController {
         user.sectionCode = attributes['cas:sc'][0];
         user.sectionCountry = attributes['cas:country'][0];
         user.sectionName = attributes['cas:section'][0];
+        user.gender = attributes['cas:gender'][0];
+        user.birthDate = attributes['cas:birthdate'][0];
       } catch (error) {
         firstAccess = true;
         user = new User({
@@ -75,7 +77,9 @@ class GalaxyRC extends ResourceController {
           avatarURL: attributes['cas:picture'][0],
           sectionCode: attributes['cas:sc'][0],
           sectionCountry: attributes['cas:country'][0],
-          sectionName: attributes['cas:section'][0]
+          sectionName: attributes['cas:section'][0],
+          gender: attributes['cas:gender'][0],
+          birthDate: attributes['cas:birthdate'][0]
         });
       }
 
