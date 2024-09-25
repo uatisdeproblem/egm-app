@@ -143,6 +143,7 @@
     "NAME": "Name",
     "URL": "URL",
     "AUDIENCE": "Audience",
+    "VISIBLE_TO": "Visible to",
     "GENERAL": "General"
   },
   "COMMUNICATIONS": {

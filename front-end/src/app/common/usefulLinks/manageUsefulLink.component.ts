@@ -51,6 +51,19 @@ import { UsefulLink } from '@models/usefulLink.model';
           <ion-label position="stacked">{{ 'USEFUL_LINKS.AUDIENCE' | translate }}</ion-label>
           <ion-input [(ngModel)]="link.audience"></ion-input>
         </ion-item>
+        <ion-item [class.fieldHasError]="hasFieldAnError('audience')">
+          <ion-label position="stacked">{{ 'USEFUL_LINKS.VISIBLE_TO' | translate }}</ion-label>
+          <ion-item lines="none">
+            <ion-checkbox slot="start" [checked]="isVisible('EA')"
+                          (ionChange)="updateVisibility('EA', $event)"></ion-checkbox>
+            <ion-label>{{ 'AUTH.AN_ESNER' | translate }}</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-checkbox slot="start" [checked]="isVisible('CO')"
+                          (ionChange)="updateVisibility('CO', $event)"></ion-checkbox>
+            <ion-label>{{ 'AUTH.EXTERNALS_SIGN_IN' | translate }}</ion-label>
+          </ion-item>
+        </ion-item>
         <ion-row class="ion-padding-top" *ngIf="link.linkId">
           <ion-col class="ion-text-right ion-padding-end">
             <ion-button color="danger" (click)="askAndDelete()">{{ 'COMMON.DELETE' | translate }}</ion-button>
@@ -124,5 +137,19 @@ export class ManageUsefulLinkStandaloneComponent {
     ];
     const alert = await this.alertCtrl.create({ header, subHeader, buttons });
     alert.present();
+  }
+
+  updateVisibility(type: string, event: CustomEvent) {
+    const isChecked = event.detail.checked;
+
+    if (isChecked && !this.link.visibleTo.includes(type)) {
+      this.link.visibleTo.push(type);
+    } else if (!isChecked) {
+      this.link.visibleTo = this.link.visibleTo.filter(item => item !== type);
+    }
+  }
+
+  isVisible(type: string): boolean {
+    return this.link.visibleTo.includes(type);
   }
 }

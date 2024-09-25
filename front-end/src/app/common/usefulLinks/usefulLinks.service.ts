@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { UsefulLink } from '@models/usefulLink.model';
+import { AppService } from 'src/app/app.service';
 
 @Injectable({ providedIn: 'root' })
 export class UsefulLinksService {
@@ -12,7 +13,7 @@ export class UsefulLinksService {
    */
   MAX_PAGE_SIZE = 24;
 
-  constructor(private api: IDEAApiService) {}
+  constructor(private api: IDEAApiService, private app: AppService) {}
 
   /**
    * Load the useful links from the back-end.
@@ -38,7 +39,8 @@ export class UsefulLinksService {
 
     options.search = options.search ? String(options.search).toLowerCase() : '';
 
-    let filteredList = this.usefulLinks.slice();
+    let filteredList = this.usefulLinks.slice().filter((link) => this.app.user.permissions.isAdmin ||
+                                                                 link.visibleTo.includes(this.app.user.authService));
 
     if (options.search)
       filteredList = filteredList.filter(x =>
