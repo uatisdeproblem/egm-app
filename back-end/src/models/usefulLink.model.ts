@@ -29,7 +29,7 @@ export class UsefulLink extends Resource {
   /**
    * The target people that can view the link
    */
-  visibleTo: string[];
+  visibleTo: AuthServices[];
 
   load(x: any): void {
     super.load(x);
@@ -38,7 +38,11 @@ export class UsefulLink extends Resource {
     this.url = this.clean(x.url, String);
     this.audience = this.clean(x.audience, String);
     this.sort = this.clean(x.sort, Number, Date.now());
-    this.visibleTo = this.cleanArray(x.visibleTo, String, [AuthServices.ESN_ACCOUNTS, AuthServices.COGNITO])
+    if (!x.visibleTo) this.visibleTo = [AuthServices.ESN_ACCOUNTS, AuthServices.COGNITO];
+    else this.visibleTo = this.cleanArray(x.visibleTo, String);
+
+    const typesOfUsers: string[] = Object.values(AuthServices);
+    this.visibleTo = this.visibleTo.filter(t => typesOfUsers.includes(t));
   }
 
   safeLoad(newData: any, safeData: any): void {
@@ -51,14 +55,7 @@ export class UsefulLink extends Resource {
     const e = super.validate();
     if (this.iE(this.name)) e.push('name');
     if (this.iE(this.url, 'url')) e.push('url');
-
-    const typeUsers: string[] = Object.values(AuthServices);
-    this.visibleTo.forEach((target: string) => {
-      if (!typeUsers.includes(target)) {
-        e.push('visibleTo');
-      }
-    })
-
+    if (!this.visibleTo?.length) e.push('visibleTo');
     return e;
   }
 }

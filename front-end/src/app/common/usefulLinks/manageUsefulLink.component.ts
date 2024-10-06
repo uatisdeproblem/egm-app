@@ -12,6 +12,7 @@ import {
 import { UsefulLinksService } from './usefulLinks.service';
 
 import { UsefulLink } from '@models/usefulLink.model';
+import { AuthServices } from '@models/user.model';
 
 @Component({
   standalone: true,
@@ -51,18 +52,18 @@ import { UsefulLink } from '@models/usefulLink.model';
           <ion-label position="stacked">{{ 'USEFUL_LINKS.AUDIENCE' | translate }}</ion-label>
           <ion-input [(ngModel)]="link.audience"></ion-input>
         </ion-item>
-        <ion-item [class.fieldHasError]="hasFieldAnError('audience')">
+        <ion-item [class.fieldHasError]="hasFieldAnError('visibleTo')">
           <ion-label position="stacked">{{ 'USEFUL_LINKS.VISIBLE_TO' | translate }}</ion-label>
-          <ion-item lines="none">
-            <ion-checkbox slot="start" [checked]="isVisible('EA')"
-                          (ionChange)="updateVisibility('EA', $event)"></ion-checkbox>
-            <ion-label>{{ 'AUTH.AN_ESNER' | translate }}</ion-label>
-          </ion-item>
-          <ion-item lines="none">
-            <ion-checkbox slot="start" [checked]="isVisible('CO')"
-                          (ionChange)="updateVisibility('CO', $event)"></ion-checkbox>
-            <ion-label>{{ 'AUTH.EXTERNALS_SIGN_IN' | translate }}</ion-label>
-          </ion-item>
+        </ion-item>
+        <ion-item *ngFor="let service of AuthServices | keyvalue" lines="none">
+          <ion-checkbox
+            slot="start"
+            [checked]="isVisible(service.value)"
+            (ionChange)="updateVisibility(service.value, $event)"
+          ></ion-checkbox>
+          <ion-label>
+            {{ getLabelForService(service.value) }}
+          </ion-label>
         </ion-item>
         <ion-row class="ion-padding-top" *ngIf="link.linkId">
           <ion-col class="ion-text-right ion-padding-end">
@@ -78,6 +79,8 @@ export class ManageUsefulLinkStandaloneComponent {
    * The useful link to manage.
    */
   @Input() link: UsefulLink;
+
+  AuthServices = AuthServices;
 
   errors = new Set<string>();
 
@@ -139,17 +142,22 @@ export class ManageUsefulLinkStandaloneComponent {
     alert.present();
   }
 
-  updateVisibility(type: string, event: CustomEvent) {
+  updateVisibility(service: AuthServices, event: CustomEvent): void {
     const isChecked = event.detail.checked;
 
-    if (isChecked && !this.link.visibleTo.includes(type)) {
-      this.link.visibleTo.push(type);
+    if (isChecked && !this.link.visibleTo.includes(service)) {
+      this.link.visibleTo.push(service);
     } else if (!isChecked) {
-      this.link.visibleTo = this.link.visibleTo.filter(item => item !== type);
+      this.link.visibleTo = this.link.visibleTo.filter(item => item !== service);
     }
   }
 
-  isVisible(type: string): boolean {
-    return this.link.visibleTo.includes(type);
+  isVisible(service: AuthServices): boolean {
+    return this.link.visibleTo.includes(service);
+  }
+
+  getLabelForService(service: AuthServices): string {
+    if (service === AuthServices.COGNITO) return this.t._('AUTH.EXTERNALS_SIGN_IN');
+    else if (service === AuthServices.ESN_ACCOUNTS) return this.t._('AUTH.AN_ESNER');
   }
 }
