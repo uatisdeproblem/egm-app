@@ -35,7 +35,8 @@
         slot="start"
         color="ESNgreen"
         *ngIf="!app.user.permissions.isAdmin && canAssignSpotAsCountryLeader()"
-        [disabled]="!numCountrySpotsAvailable || usersTable.selected[0]?.spot"
+        [disabled]="!numCountrySpotsAvailable || usersTable.selected[0]?.spot ||
+                    !usersTable.selected[0]?.registrationAt"
         (click)="assignCountrySpot(usersTable.selected[0])"
       >
         <ion-icon name="ticket" slot="icon-only"></ion-icon>
