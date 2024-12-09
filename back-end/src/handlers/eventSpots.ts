@@ -133,6 +133,7 @@ class EventSpotsRC extends ResourceController {
     const templateData = {
       name: user.getName(),
       spotType: this.spot.type,
+      price: this.configurations.pricePerSpotTypes[this.spot.type],
       reference: this.spot.spotId,
       deadline: toISODate(aWeekFromNow)
     };
@@ -205,6 +206,7 @@ class EventSpotsRC extends ResourceController {
       const templateData = {
         name: targetUser.getName(),
         spotType: this.spot.type,
+        price: this.configurations.pricePerSpotTypes[this.spot.type],
         reference: this.spot.spotId,
         deadline: toISODate(aWeekFromNow)
       };
