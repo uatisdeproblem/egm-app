@@ -109,6 +109,7 @@ class EventSpotsRC extends ResourceController {
     }
 
     if (user.spot) throw new HandledError('User already has spot');
+    if (!user.registrationAt) throw new HandledError('User has not registered to the event');
 
     const updateSpot = {
       TableName: DDB_TABLES.eventSpots,
@@ -160,6 +161,7 @@ class EventSpotsRC extends ResourceController {
     }
 
     if (targetUser.spot) throw new HandledError('Target user already has spot');
+    if (!targetUser.registrationAt) throw new HandledError('User has not registered to the event');
 
     const updateSpot = {
       TableName: DDB_TABLES.eventSpots,
