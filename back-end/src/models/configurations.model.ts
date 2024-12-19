@@ -110,11 +110,19 @@ export class Configurations extends Resource {
   }
 
   /**
-   * Returnts the payment link associated with the spot type.
+   * Returns the payment link associated with the spot type.
    */
   getSpotPaymentLink(spotType: string): string {
     if (!(this.stripeLinkPerSpotType || spotType)) return;
     return this.stripeLinkPerSpotType[spotType];
+  }
+
+  /**
+   * Returns the price associated with the spot type.
+   */
+  getSpotPrice(spotType: string): number {
+    if (!(this.pricePerSpotTypes || spotType)) return;
+    return this.pricePerSpotTypes[spotType];
   }
 }
 

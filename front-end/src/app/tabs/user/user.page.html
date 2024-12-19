@@ -119,7 +119,9 @@
           lines="none"
           *ngIf="app.user.registrationAt && app.user.spot && !(app.user.spot.proofOfPaymentURI || app.user.spot.paymentConfirmedAt)"
         >
-          <ion-label class="ion-text-wrap">{{ 'USER.YOU_HAVE_A_SPOT_BUT_NO_PROOF_PAYMENT' | translate }}</ion-label>
+          <ion-label class="ion-text-wrap" *ngIf="app.user.registrationAt && app.user.spot && (app.configurations.getSpotPrice(app.user.spot.type) !== 0)">{{ 'USER.YOU_HAVE_A_SPOT_BUT_NO_PROOF_PAYMENT' | translate }}
+          </ion-label>
+          <ion-label class="ion-text-wrap" *ngIf="app.user.registrationAt && app.user.spot && (app.configurations.getSpotPrice(app.user.spot.type) === 0)">{{ 'USER.YOU_HAVE_A_ZERO_FEE_SPOT' | translate }}</ion-label>
           <ion-badge slot="end" color="white">{{ app.user.spot.type }}</ion-badge>
         </ion-item>
         <ion-item
@@ -156,14 +158,14 @@
             style="display: none"
             (change)="uploadProofOfPayment($event)"
           />
-          <ion-item button detail color="white" (click)="popInput?.click()">
+          <ion-item button detail color="white" (click)="popInput?.click()" *ngIf="app.user.registrationAt && app.user.spot && (app.configurations.getSpotPrice(app.user.spot.type) !== 0)">
             <ion-label class="ion-text-wrap">
               {{ (app.user.spot.proofOfPaymentURI ? 'USER.REPLACE_PROOF_PAYMENT': 'USER.UPLOAD_PROOF_PAYMENT') |
               translate }}
             </ion-label>
           </ion-item>
         </ng-container>
-        <ion-item *ngIf="app.user.spot" button detail color="white" (click)="downloadInfoToPay()">
+        <ion-item *ngIf="app.user.registrationAt && app.user.spot && (app.configurations.getSpotPrice(app.user.spot.type) !== 0)" button detail color="white" (click)="downloadInfoToPay()">
           <ion-label class="ion-text-wrap"> {{ 'USER.DOWNLOAD_INFO_TO_PAY' | translate }} </ion-label>
         </ion-item>
         <ion-item
@@ -185,7 +187,7 @@
             {{ (app.user.registrationAt ? 'USER.VIEW_MY_REGISTRATION': 'USER.REGISTER_TO_EVENT') | translate }}
           </ion-label>
         </ion-item>
-        <ion-item color="primary" *ngIf="app.user.spot">
+        <ion-item color="primary" *ngIf="app.user.registrationAt && app.user.spot && (app.configurations.getSpotPrice(app.user.spot.type) !== 0)">
           <ion-icon slot="start" name="receipt"></ion-icon>
           <ion-label class="ion-text-wrap"> {{ 'USER.YOUR_REFERENCE' | translate }}: </ion-label>
           {{ app.user.spot.spotId}}
