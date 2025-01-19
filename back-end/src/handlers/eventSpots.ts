@@ -207,8 +207,8 @@ class EventSpotsRC extends ResourceController {
       const templateData = {
         name: targetUser.getName(),
         spotType: this.spot.type,
-        price: this.configurations.pricePerSpotTypes[this.spot.type],
-        show_payment: this.configurations.pricePerSpotTypes[this.spot.type] > 0 ? '' : 'display: none;',
+        price: 0,
+        show_payment: 'display: none;',
         reference: this.spot.spotId,
         deadline: toISODate(aWeekFromNow)
       };
