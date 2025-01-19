@@ -327,7 +327,7 @@ class UsersRC extends ResourceController {
 
     await ddb.transactWrites(writes);
 
-    const toAddresses = ['egm-technical@esn.org'];
+    const toAddresses = ['egm-technical@esn.org', 'egm-oc@esn.org'];
     const subject = '[EGM] User with spot deleted';
     const content = `A user with ID ${this.targetUser.userId} has deleted his account and released the spot ${this.targetUser.spot.spotId}`;
 

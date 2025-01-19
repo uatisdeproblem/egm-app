@@ -207,6 +207,7 @@ class EventSpotsRC extends ResourceController {
         name: targetUser.getName(),
         spotType: this.spot.type,
         price: this.configurations.pricePerSpotTypes[this.spot.type],
+        show_payment: 'display: none;',
         reference: this.spot.spotId,
         deadline: toISODate(aWeekFromNow)
       };
