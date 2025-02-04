@@ -129,7 +129,8 @@
     "VENUES": "Venues",
     "USER": "You",
     "MENU": "Menu",
-    "MANAGE": "Manage"
+    "MANAGE": "Manage",
+    "MEALS": "Meal Tickets"
   },
   "HOME": {
     "NEWS": "News",
@@ -161,10 +162,13 @@
     "VENUES": "Venues",
     "ORGANIZATIONS": "Organizations",
     "SPEAKERS": "Speakers",
-    "CONTESTS": "Contests"
+    "CONTESTS": "Contests",
+    "MEALS": "Meal Tickets"
   },
   "USER": {
     "ESN_ACCOUNTS": "ESN Accounts",
+    "PERSONAL_DATA": "Personal Data",
+    "NAME": "Name",
     "FIRST_NAME": "First name",
     "LAST_NAME": "Last name",
     "ESN_SECTION": "ESN section",
@@ -295,6 +299,10 @@
     "ROOMS": "Rooms",
     "REGISTRATIONS_OPTIONS": "Registrations options",
     "REGISTRATIONS_OPTIONS_I": "Open/close the registrations and other options.",
+    "MEALS_OPTIONS": "Meal Tickets options",
+    "MEALS_OPTIONS_I": "Number of tickets, period, food menu and other options.",
+    "MEALS_DAY_TIME": "Meal Ticket hours validity",
+    "MEALS_DAY_TIME_I": "Day and Hours of validity for every ticket",
     "ALLOW_REGISTRATIONS": "Allow registrations",
     "ALLOW_EXTERNALS": "Allow externals to register",
     "ALLOW_SESSION_REGISTRATIONS": "Allow session registrations",
@@ -483,5 +491,16 @@
     "YOU_ARE_VOTING": "You are voting",
     "NOT_NOW": "Not now",
     "PUBLISH_RESULTS": "Publish results"
+  },
+  "MEALS": {
+    "GENERATE_TICKET": "Generate Meal Ticket",
+    "NUMBER_OF_MEALS": "Number of Meals",
+    "MEAL_EVENT_PERIOD": "Meal Event Period",
+    "TYPE_TICKET": "Type of Ticket",
+    "VERIFY_TICKET": "Check Meal Ticket in progress",
+    "ERROR_TICKET": "Ticket not valid",
+    "VALID_TICKET": "Valid Ticket",
+    "VALIDATED_TICKET": "Ticket already used",
+    "NOT_VALIDATED_TICKET": "Ticket not yet used"
   }
 }

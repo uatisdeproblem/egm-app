@@ -35,7 +35,8 @@ const apiResources: ResourceController[] = [
   { name: 'sessions', paths: ['/sessions', '/sessions/{sessionId}'] },
   { name: 'registrations', paths: ['/registrations', '/registrations/{sessionId}'] },
   { name: 'connections', paths: ['/connections', '/connections/{connectionId}'] },
-  { name: 'contests', paths: ['/contests', '/contests/{contestId}'] }
+  { name: 'contests', paths: ['/contests', '/contests/{contestId}'] },
+  { name: 'meals', paths: ['/users/{userId}/meal-ticket'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {

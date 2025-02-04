@@ -1,0 +1,65 @@
+<ion-modal [isOpen]="true" [backdropDismiss]="false">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeModal()" fill="clear">
+            <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <!-- Loading State -->
+      @if (loading) {
+        <div class="ion-text-center ion-padding verification-loading">
+          <ion-spinner name="circular"></ion-spinner>
+          <p>{{ 'MEALS.VERIFY_TICKET' | translate }} </p>
+        </div>
+      }
+
+      <!-- Verification Result -->
+      @if (!loading && !error) {
+        <div class="verification-result ion-text-center">
+          <div>
+              <ion-icon name="checkmark-circle" color="success" size="large"></ion-icon>
+              <h2 class="status-text success">{{ 'MEALS.VALID_TICKET' | translate }}</h2>
+          </div>
+
+          <ion-list>
+            <ion-item-group>
+              <ion-item-divider>
+                <ion-label>{{ 'USER.PERSONAL_DATA' | translate }}</ion-label>
+              </ion-item-divider>
+
+              <ion-item>
+                <ion-label>
+                  <p>{{ 'USER.NAME' | translate }} </p>
+                  <ion-text>{{ app.user.firstName + ' ' + app.user.lastName }}</ion-text>
+                </ion-label>
+              </ion-item>
+
+              <ion-item>
+                <ion-label>
+                  <p>{{ 'MEALS.TYPE_TICKET' | translate }}</p>
+                  <h2>{{ ticket.type }}</h2>
+                </ion-label>
+              </ion-item>
+            </ion-item-group>
+
+
+          </ion-list>
+        </div>
+      }
+
+      <!-- Error State -->
+      @if (error) {
+        <div class="ion-text-center ion-padding verification-error">
+          <ion-icon name="close-circle" color="danger" size="large"></ion-icon>
+          <h2 class="status-text danger">{{ 'MEALS.NOT_VALID_TICKET' | translate }}</h2>
+        </div>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

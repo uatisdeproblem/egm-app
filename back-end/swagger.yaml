@@ -48,6 +48,8 @@ tags:
     description: The sessions of the event
   - name: Contests
     description: The contests of the event
+  - name: MealTickets
+    description: Manage meal tickets for the event
 
 paths:
   /status:
@@ -1315,6 +1317,56 @@ paths:
         400:
           $ref: '#/components/responses/BadParameters'
 
+  /users/{userId}/meal-ticket:
+    get:
+      summary: Get meal tickets for a specific user
+      tags: [MealTickets]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: userId
+          in: path
+          description: The user ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/MealTickets'
+        400:
+          $ref: '#/components/responses/BadParameters'
+
+    patch:
+      summary: Perform actions on meal tickets
+      tags: [MealTickets]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: userId
+          in: path
+          description: The user ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [SCAN_TICKET, GENERATE_TICKET]
+                  description: Action to perform on the meal ticket
+              required:
+                - action
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+
 components:
   schemas:
     AppStatus:
@@ -1354,6 +1406,9 @@ components:
       type: object
       additionalProperties: {}
     Contest:
+      type: object
+      additionalProperties: {}
+    MealTicket:
       type: object
       additionalProperties: {}
 
@@ -1496,6 +1551,14 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Speaker'
+    MealTickets:
+      description: MealTicket[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/MealTicket'
     Session:
       description: Session
       content:

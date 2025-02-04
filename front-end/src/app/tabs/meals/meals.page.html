@@ -1,0 +1,57 @@
+<ion-header class="ion-no-border">
+  @if (app.isInMobileMode()) {
+    <ion-toolbar color="ideaToolbar">
+      <ion-title>{{ 'TABS.MEALS' | translate }}</ion-title>
+    </ion-toolbar>
+  }
+</ion-header>
+
+<ion-content>
+  @if (editMode) {
+    <meals-manage />
+  } @else {
+    @if (!meals || meals.length === 0) {
+      <ion-card class="empty-card">
+        <ion-card-content class="ion-text-center">
+          <ion-button expand="block" (click)="generateTicket()">
+            {{ 'MEALS.GENERATE_TICKET' | translate }}
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    } @else {
+      <ion-card class="ticket-card" color="primary">
+        <ion-card-header>
+          <ion-card-title color="light" class="ion-text-center">
+            {{ meals[0].type | uppercase }}
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="qr-container">
+          <qrcode
+            [qrdata]="showTicket()"
+            [width]="200"
+            [errorCorrectionLevel]="'M'"
+            class="qr-code">
+          </qrcode>
+          <ion-text color="light" class="ion-text-center">
+            @if (meals[0].status) {
+              <ion-icon name="checkmark-circle" color="success" size="large"></ion-icon>
+              {{ 'MEALS.VALIDATED_TICKET' | translate }}
+            } @else {
+              <ion-icon name="close-circle" color="danger" size="large"></ion-icon>
+              {{ 'MEALS.NOT_VALIDATED_TICKET' | translate }}
+            }
+          </ion-text>
+
+        </ion-card-content>
+      </ion-card>
+    }
+  }
+</ion-content>
+
+@if (app.user.canManageMeals) {
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="ESNgreen" size="small" [title]="'COMMON.MANAGE' | translate" (click)="editMode = !editMode">
+      <ion-icon [icon]="editMode ? 'checkmark' : 'build'"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+}

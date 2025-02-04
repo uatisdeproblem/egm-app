@@ -1,0 +1,35 @@
+.verification-loading {
+  padding: 2rem;
+
+  ion-spinner {
+    margin-bottom: 1rem;
+  }
+}
+
+.verification-result {
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+
+  ion-icon {
+    font-size: 48px;
+    margin-bottom: 0.5rem;
+  }
+
+  .status-text {
+    margin: 0.5rem 0;
+    font-weight: bold;
+
+    &.success {
+      color: var(--ion-color-success);
+    }
+  }
+}
+
+.verification-error {
+  color: var(--ion-color-danger);
+  padding: 2rem;
+
+  ion-icon {
+    margin-bottom: 1rem;
+  }
+}

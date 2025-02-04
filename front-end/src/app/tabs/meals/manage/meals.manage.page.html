@@ -1,0 +1,43 @@
+<ion-list class="aList maxWidthContainer">
+  <ion-toolbar color="transparent">
+    <ion-buttons slot="end">
+      <ion-button *ngIf="editMode" (click)="exitEditMode()">
+        <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="editMode" (click)="save()">
+        <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="!editMode" (click)="enterEditMode()">
+        <ion-icon slot="icon-only" name="pencil"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-list-header>
+    <ion-label>
+      <h2>{{ 'MANAGE.MEALS_OPTIONS' | translate }}</h2>
+      <p>{{ 'MANAGE.MEALS_OPTIONS_I' | translate }}</p>
+    </ion-label>
+  </ion-list-header>
+  <ion-item>
+    <ion-input
+      type="number"
+      [ngModel]="configurations.mealConfigurations.numTickets"
+      min="1"
+      max="100"
+      label="{{ 'MEALS.NUMBER_OF_MEALS' | translate }}"
+      labelPlacement="start"
+      [disabled]="!editMode"
+    />
+  </ion-item>
+  <ion-item>
+    <ion-label position="start">{{ 'MEALS.MEAL_EVENT_PERIOD' | translate }}</ion-label>
+    <ion-datetime presentation="date" [disabled]="!editMode"> </ion-datetime>
+  </ion-item>
+
+  <ion-list-header>
+    <ion-label>
+      <h2>{{ 'MANAGE.MEALS_DAY_TIME' | translate }}</h2>
+      <p>{{ 'MANAGE.MEALS_DAY_TIME_I' | translate }}</p>
+    </ion-label>
+  </ion-list-header>
+</ion-list>

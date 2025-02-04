@@ -31,6 +31,7 @@
     "@ionic/storage-angular": "^4.0.0",
     "@kolkov/angular-editor": "^3.0.0-beta.0",
     "@swimlane/ngx-datatable": "^20.1.0",
+    "angularx-qrcode": "^17.0.1",
     "date-fns-tz": "^2.0.1",
     "docs-soap": "^1.2.1",
     "idea-toolbox": "^7.0.5",

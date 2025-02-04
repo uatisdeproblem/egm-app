@@ -3,6 +3,7 @@ import { CustomBlockMeta, Languages, Resource } from 'idea-toolbox';
 import { User } from '../models/user.model';
 
 import { ServiceLanguages } from './serviceLanguages.enum';
+import { MealConfigurations } from './meals.configurations.model';
 
 export const LANGUAGES = new Languages({ default: ServiceLanguages.English, available: [ServiceLanguages.English] });
 const DEFAULT_SESSION_REGISTRATION_BUFFER_MINUTES = 10;
@@ -59,6 +60,8 @@ export class Configurations extends Resource {
    */
   sectionCountries: string[];
 
+  mealConfigurations: MealConfigurations;
+
   load(x: any): void {
     super.load(x);
     this.PK = Configurations.PK;
@@ -71,6 +74,7 @@ export class Configurations extends Resource {
       DEFAULT_SESSION_REGISTRATION_BUFFER_MINUTES
     );
     this.canCountryLeadersAssignSpots = this.clean(x.canCountryLeadersAssignSpots, Boolean);
+    this.mealConfigurations = new MealConfigurations(x.mealConfigurations);
     this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);
     this.currency = this.clean(x.currency, String);
     this.spotTypes = this.cleanArray(x.spotTypes, String);

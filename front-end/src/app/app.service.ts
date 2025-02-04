@@ -217,4 +217,8 @@ export class AppService {
     if (!(date instanceof Date)) date = new Date(date);
     return new Date(date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
   }
+
+  isLocalhost(): boolean {
+    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  }
 }
