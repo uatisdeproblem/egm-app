@@ -303,6 +303,10 @@
     "MEALS_OPTIONS_I": "Number of tickets, period, food menu and other options.",
     "MEALS_DAY_TIME": "Meal Ticket hours validity",
     "MEALS_DAY_TIME_I": "Day and Hours of validity for every ticket",
+    "MEALS_TYPE": "Meal Ticket Types",
+    "MEALS_TYPE_I": "Types of ticket available for the event",
+    "ADD_MEAL_TYPE": "Add a meal type",
+    "MEAL_TYPE_NAME": "Meal type name",
     "ALLOW_REGISTRATIONS": "Allow registrations",
     "ALLOW_EXTERNALS": "Allow externals to register",
     "ALLOW_SESSION_REGISTRATIONS": "Allow session registrations",
@@ -500,6 +504,7 @@
     "VERIFY_TICKET": "Check Meal Ticket in progress",
     "ERROR_TICKET": "Ticket not valid",
     "VALID_TICKET": "Valid Ticket",
+    "TICKET": "Ticket",
     "VALIDATED_TICKET": "Ticket already used",
     "NOT_VALIDATED_TICKET": "Ticket not yet used"
   }

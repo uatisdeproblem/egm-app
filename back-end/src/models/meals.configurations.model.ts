@@ -3,11 +3,11 @@ import { Resource, epochISODateString, epochISOString, isEmpty } from 'idea-tool
 export class MealConfigurations extends Resource {
   numTickets: number;
 
-  startDay: epochISOString;
+  startDate: epochISOString;
 
-  endDay: epochISOString;
+  endDate: epochISOString;
 
-  spotTypes: string[];
+  mealTypes: string[];
 
   mealInfo: Meal[];
 
@@ -16,25 +16,34 @@ export class MealConfigurations extends Resource {
   load(x: any): void {
     super.load(x);
     this.numTickets = this.clean(x.numTickets, Number);
-    this.startDay = this.clean(x.startDay, t => new Date(t).toISOString(), new Date().toISOString());
-    this.endDay = this.clean(x.endDay, t => new Date(t).toISOString(), new Date().toISOString());
-    this.spotTypes = this.cleanArray(x.spotTypes, String);
+    this.startDate = this.clean(x.startDate, t => new Date(t).toISOString(), new Date().toISOString());
+    this.endDate = this.clean(x.endDate, t => new Date(t).toISOString(), new Date().toISOString());
+    this.mealTypes = this.cleanArray(x.mealTypes, String);
     this.mealInfo = this.cleanArray(x.mealInfo, m => new Meal(m), []);
     this.canAdminAddMeals = this.clean(x.canAdminAddMeals, Boolean, true);
   }
 
   safeLoad(newData: any, safeData: any, options?: any): void {
     super.safeLoad(newData, safeData);
-    this.spotTypes = safeData.spotTypes;
+    this.mealTypes = safeData.mealTypes;
     this.mealInfo = safeData.mealInfo;
   }
 
   validate(): string[] {
     const e = super.validate();
     if (this.numTickets <= 0) e.push('numTickets');
-    if (isEmpty(this.startDay, 'date')) e.push('startDay');
-    if (isEmpty(this.endDay, 'date')) e.push('endDay');
-    if (isEmpty(this.spotTypes)) e.push('spotTypes');
+    if (isEmpty(this.startDate, 'date')) e.push('startDay');
+    if (isEmpty(this.endDate, 'date')) e.push('endDay');
+    if (this.endDate < this.startDate) {
+      e.push('endDay');
+      e.push('startDay');
+    }
+    if (isEmpty(this.mealTypes)) e.push('mealTypes');
+    this.mealInfo.forEach(mealInfo => {
+      if (mealInfo.validate().length > 0) {
+        e.push(`mealInfo.${mealInfo.name}`);
+      }
+    });
     return e;
   }
 }
@@ -56,6 +65,10 @@ export class Meal extends Resource {
     if (isEmpty(this.name)) e.push('name');
     if (isEmpty(this.startValidity, 'date')) e.push('startValidity');
     if (isEmpty(this.endValidity, 'date')) e.push('endValidity');
+    if (this.endValidity < this.startValidity) {
+      e.push('startValidity');
+      e.push('endValidity');
+    }
 
     return e;
   }

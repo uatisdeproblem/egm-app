@@ -93,7 +93,8 @@ export class Configurations extends Resource {
   }
 
   validate(): string[] {
-    const e = super.validate();
+    let e = super.validate();
+    e = e.concat(this.mealConfigurations.validate());
     this.registrationFormDef.validate(LANGUAGES).forEach(ea => e.push(`registrationFormDef.${ea}`));
     if (this.sessionRegistrationBuffer < 0) e.push('sessionRegistrationBuffer')
     return e;

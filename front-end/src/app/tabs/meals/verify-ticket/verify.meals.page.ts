@@ -43,7 +43,7 @@ export class VerifyMealPage implements OnInit {
 
   async closeModal() {
     await this.modalCtrl.dismiss();
-    this.app.goToInTabs(['meals/manage']);
+    this.app.goToInTabs(['meals', 'manage']);
   }
 
 }

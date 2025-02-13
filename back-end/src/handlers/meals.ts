@@ -91,6 +91,9 @@ class MealTicketsRC extends ResourceController {
     if (!this.reqUser.canScanMealsTicket())
       throw new HandledError('Unauthorized');
 
+    if (this.targetUser.mealTickets[0].status)
+      throw new HandledError('Ticket already validated');
+
     this.targetUser.mealTickets[0].status = true;
     await ddb.update({
       TableName: DDB_TABLES.users,
