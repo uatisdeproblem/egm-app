@@ -354,6 +354,20 @@ export class UsersPage implements OnInit {
         value: 'canManageContents',
         checked: user.permissions.canManageContents,
         label: this.t._('USER.CAN_MANAGE_CONTENTS')
+      },
+      {
+        type: 'checkbox',
+        name: 'canManageMeals',
+        value: 'canManageMeals',
+        checked: user.permissions.canManageMeals,
+        label: this.t._('USER.CAN_MANAGE_MEALS')
+      },
+      {
+        type: 'checkbox',
+        name: 'canScanMeals',
+        value: 'canScanMeals',
+        checked: user.permissions.canScanMeals,
+        label: this.t._('USER.CAN_SCAN_MEALS')
       }
     ];
     const buttons = [

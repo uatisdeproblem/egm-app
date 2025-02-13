@@ -265,6 +265,8 @@ export class UserPermissions {
       this.isCountryLeader = true;
       this.canManageRegistrations = true;
       this.canManageContents = true;
+      this.canManageMeals = true;
+      this.canScanMeals = true;
     }
   }
 

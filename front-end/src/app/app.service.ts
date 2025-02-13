@@ -199,6 +199,10 @@ export class AppService {
       arrPermissions.push(this.t._('USER.CAN_MANAGE_REGISTRATIONS'.concat(short ? '_SHORT' : '')));
     if (permissions.canManageContents)
       arrPermissions.push(this.t._('USER.CAN_MANAGE_CONTENTS'.concat(short ? '_SHORT' : '')));
+    if (permissions.canManageMeals)
+      arrPermissions.push(this.t._('USER.CAN_MANAGE_MEALS'.concat(short ? '_SHORT' : '')));
+    if (permissions.canScanMeals)
+      arrPermissions.push(this.t._('USER.CAN_SCAN_MEALS'.concat(short ? '_SHORT' : '')));
     return arrPermissions.join(', ');
   }
   /**
@@ -206,7 +210,7 @@ export class AppService {
    */
   userCanManageSomething(): boolean {
     const p = this.user.permissions;
-    return p.isAdmin || p.canManageRegistrations || p.canManageContents;
+    return p.isAdmin || p.canManageRegistrations || p.canManageContents || p.canManageMeals;
   }
 
   formatDateShort = (date: string | Date): string => {

@@ -6,10 +6,7 @@ import { IDEATranslationsModule } from '@idea-ionic/common';
 import { QRCodeModule } from 'angularx-qrcode';
 import { MealsRoutingModule } from './meals.routing.module';
 import { MealsPage } from './meals.page';
-import { MealsManagePage } from './manage/meals.manage.page';
 import { VerifyMealPage } from './verify-ticket/verify.meals.page';
-import { DateRangeWithTimezoneStandaloneComponent } from '@app/common/dateRangeWithTimezone';
-import { DateTimeRangeWithTimezone } from '@app/common/datetimeRangeWithTimezone';
 
 @NgModule({
   imports: [
@@ -19,9 +16,7 @@ import { DateTimeRangeWithTimezone } from '@app/common/datetimeRangeWithTimezone
     IDEATranslationsModule,
     QRCodeModule,
     MealsRoutingModule,
-    DateRangeWithTimezoneStandaloneComponent,
-    DateTimeRangeWithTimezone
   ],
-  declarations: [MealsPage, MealsManagePage, VerifyMealPage]
+  declarations: [MealsPage, VerifyMealPage]
 })
 export class MealsModule {}

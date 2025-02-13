@@ -13,7 +13,6 @@ import { MealsService } from './meals.service';
 })
 export class MealsPage implements OnInit {
   meals: MealTicket[];
-  editMode: boolean;
 
   constructor(
     private modalCtrl: ModalController,
@@ -24,7 +23,6 @@ export class MealsPage implements OnInit {
   ) {}
   async ngOnInit(): Promise<void> {
     this.meals = await this._meals.getList(this.app.user.userId, { force: true });
-    this.editMode = false;
   }
 
   async generateTicket(): Promise<void> {

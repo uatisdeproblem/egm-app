@@ -3,17 +3,17 @@ import { AlertController, ModalController } from '@ionic/angular';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 import { AppService } from '@app/app.service';
 import { MealTicket } from '@models/meals.model';
-import { MealsService } from '../meals.service';
+import { MealsService } from '../../../meals/meals.service';
 import { Configurations } from '@models/configurations.model';
 import { Meal } from '@models/meals.configurations.model';
 import { ConfigurationsService } from '@app/tabs/manage/configurations/configurations.service';
 
 @Component({
-  selector: 'meals-manage',
-  templateUrl: 'meals.manage.page.html',
-  styleUrls: ['meals.manage.page.scss'],
+  selector: 'meals-configurations',
+  templateUrl: 'mealsConfig.page.html',
+  styleUrls: ['mealsConfig.page.scss'],
 })
-export class MealsManagePage implements OnInit {
+export class MealsConfigurationsPage implements OnInit {
   configurations: Configurations;
   configurationsBeforeChange: Configurations;
   editMode: boolean;
