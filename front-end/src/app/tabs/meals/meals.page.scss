@@ -9,21 +9,55 @@ $card-padding: 1.5rem 1rem;
   margin-right: auto;
 }
 
-.empty-card {
-  @extend %card-base;
-  border: 0.125rem solid black; // 2px
-  background-color: white;
-  min-height: 21.875rem; // 350px
+swiper-container {
+  width: 100%;
+  height: auto;
+  min-height: 25rem;
+}
+
+swiper-slide {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+}
+
+.empty-card {
+  @extend %card-base;
+  border: 0.125rem solid black;
+  background-color: white;
+  min-height: 21.875rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; // Per il blur effect
+
+  &.blur-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: none;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+  }
 
   ion-card-content {
     width: 100%;
     padding: $card-padding;
+    position: relative;
+    z-index: 2;
 
     ion-button {
-      max-width: 12.5rem; // 200px
+      max-width: 12.5rem;
       margin: 0 auto;
     }
   }
@@ -38,7 +72,7 @@ $card-padding: 1.5rem 1rem;
     align-items: center;
     justify-content: center;
     padding: $card-padding;
-    min-height: 18.75rem; // 300px
+    min-height: 18.75rem;
 
     .qr-code {
       margin: 1rem 0;
@@ -66,12 +100,12 @@ $card-padding: 1.5rem 1rem;
   ion-card-header {
     ion-card-title {
       font-weight: 600;
-      letter-spacing: 0.0625rem; // 1px
+      letter-spacing: 0.0625rem;
     }
   }
 }
 
-@media (min-width: 48rem) { // 768px
+@media (min-width: 48rem) {
   %card-base {
     margin: 2rem;
   }
@@ -82,5 +116,9 @@ $card-padding: 1.5rem 1rem;
     .qr-code {
       margin: 1.5rem 0;
     }
+  }
+
+  swiper-container {
+    min-height: 28rem;
   }
 }

@@ -1,5 +1,5 @@
 <ion-header class="ion-no-border">
-  @if (app.isInMobileMode()) {
+  @if (app?.isInMobileMode()) {
     <ion-toolbar color="ideaToolbar">
       <ion-title>{{ 'TABS.MEALS' | translate }}</ion-title>
     </ion-toolbar>
@@ -7,40 +7,54 @@
 </ion-header>
 
 <ion-content>
-  @if (!meals || meals.length === 0) {
-    <ion-card class="empty-card">
-      <ion-card-content class="ion-text-center">
-        <ion-button expand="block" (click)="generateTicket()">
-          {{ 'MEALS.GENERATE_TICKET' | translate }}
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
-  } @else {
-    <ion-card class="ticket-card" color="primary">
-      <ion-card-header>
-        <ion-card-title color="light" class="ion-text-center">
-          {{ meals[0].type | uppercase }}
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content class="qr-container">
-        <qrcode
-          [qrdata]="showTicket()"
-          [width]="200"
-          [errorCorrectionLevel]="'M'"
-          class="qr-code">
-        </qrcode>
-        <ion-text color="light" class="ion-text-center">
-          @if (meals[0].status) {
-            <ion-icon name="checkmark-circle" color="success" size="large"></ion-icon>
-            {{ 'MEALS.VALIDATED_TICKET' | translate }}
-          } @else {
-            <ion-icon name="close-circle" color="danger" size="large"></ion-icon>
-            {{ 'MEALS.NOT_VALIDATED_TICKET' | translate }}
-          }
-        </ion-text>
+  <swiper-container #swiper [options]="swiperOptions">
+    @if (meals && meals.length > 0) {
+      @for (meal of meals; track meal) {
+        <swiper-slide>
+          <ion-card class="ticket-card" color="primary">
+            <ion-card-header>
+              <ion-card-title color="light" class="ion-text-center">
+                {{ meal.type | uppercase }}
+              </ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="ion-padding ion-text-center">
+              <qrcode
+                [qrdata]="showTicket(meal)"
+                [width]="200"
+                [errorCorrectionLevel]="'M'">
+              </qrcode>
+              <div class="ion-padding-top">
+                <ion-text color="light" class="ion-text-center">
+                  @if (meal.status) {
+                    <ion-icon name="checkmark-circle" color="success" size="large"></ion-icon>
+                    {{ 'MEALS.VALIDATED_TICKET' | translate }}
+                  } @else {
+                    <ion-icon name="close-circle" color="danger" size="large"></ion-icon>
+                    {{ 'MEALS.NOT_VALIDATED_TICKET' | translate }}
+                  }
+                </ion-text>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </swiper-slide>
+      }
+    }
 
-      </ion-card-content>
-    </ion-card>
-  }
-
+    @for (info of getAvailableTickets(); track info) {
+      <swiper-slide>
+        <ion-card class="empty-card blur-card">
+          <ion-card-header>
+            <ion-card-title class="ion-text-center">
+              {{ info.name | uppercase }}
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="ion-text-center">
+            <ion-button expand="block" (click)="generateTicket(info.ticketId)">
+              {{ 'MEALS.GENERATE_TICKET' | translate }}
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </swiper-slide>
+    }
+  </swiper-container>
 </ion-content>

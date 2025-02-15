@@ -29,11 +29,11 @@ export class MealsService {
   /**
    * Generate a Meal Ticket
    */
-  async generateTicket(userId: string): Promise<void> {
-    await this.api.patchResource([`users/${userId}/meal-ticket`], { body: { action: 'GENERATE_TICKET'}});
+  async generateTicket(userId: string, ticketId: string): Promise<void> {
+    await this.api.patchResource([`users/${userId}/meal-ticket/${ticketId}`], { body: { action: 'GENERATE_TICKET'}});
   }
 
-  async scanTicket(userId: string): Promise<void> {
-    return await this.api.patchResource([`users/${userId}/meal-ticket`], { body: { action: 'SCAN_TICKET'}});
+  async scanTicket(userId: string, ticketId: string): Promise<void> {
+    return await this.api.patchResource([`users/${userId}/meal-ticket/${ticketId}`], { body: { action: 'SCAN_TICKET'}});
   }
 }

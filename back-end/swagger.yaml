@@ -1336,6 +1336,30 @@ paths:
         400:
           $ref: '#/components/responses/BadParameters'
 
+  /users/{userId}/meal-ticket/{mealTicketId}:
+    get:
+      summary: Get meal tickets for a specific Meal Ticket
+      tags: [MealTickets]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: userId
+          in: path
+          description: The user ID
+          required: true
+          schema:
+            type: string
+        - name: mealTicketId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/MealTickets'
+        400:
+          $ref: '#/components/responses/BadParameters'
+
     patch:
       summary: Perform actions on meal tickets
       tags: [MealTickets]
@@ -1345,6 +1369,11 @@ paths:
         - name: userId
           in: path
           description: The user ID
+          required: true
+          schema:
+            type: string
+        - name: mealTicketId
+          in: path
           required: true
           schema:
             type: string
@@ -1366,7 +1395,6 @@ paths:
           $ref: '#/components/responses/OperationCompleted'
         400:
           $ref: '#/components/responses/BadParameters'
-
 components:
   schemas:
     AppStatus:

@@ -12,6 +12,7 @@ import { MealTicket } from '@models/meals.model';
 })
 export class VerifyMealPage implements OnInit {
   userId: string;
+  ticketId: string;
   ticket: MealTicket;
   loading: boolean = false;
   verificationData: any = null;
@@ -26,14 +27,16 @@ export class VerifyMealPage implements OnInit {
 
   ngOnInit() {
     this.userId = this.route.snapshot.paramMap.get('userId');
+    this.ticketId = this.route.snapshot.paramMap.get('mealTicketId');
     this.verifyTicket();
   }
 
   async verifyTicket() {
     this.loading = true;
     try {
-      await this._meals.scanTicket(this.userId);
-      this.ticket = await this._meals.getList(this.userId, {force: true})[0];
+      await this._meals.scanTicket(this.userId, this.ticketId);
+      this.ticket = (await this._meals.getList(this.userId, {force: true}))
+                                      .find(ticket => ticket.mealTicketId == this.ticketId);
     } catch (err) {
       this.error = err;
     } finally {

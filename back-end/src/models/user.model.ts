@@ -84,11 +84,6 @@ export class User extends Resource {
   votedInContests: string[];
 
   /**
-   * The list of meal tickets connected to an user.
-   */
-  mealTickets: MealTicket[];
-
-  /**
    * The meal type connected to an user.
    */
   mealType: string;
@@ -121,7 +116,6 @@ export class User extends Resource {
     if (x.socialMedia?.twitter) this.socialMedia.twitter = this.clean(x.socialMedia.twitter, String);
 
     this.votedInContests = this.cleanArray(x.votedInContests, String);
-    this.mealTickets = x.mealTickets ?? [];
     this.mealType = x.mealType ?? '';
   }
 
@@ -145,7 +139,6 @@ export class User extends Resource {
     if (safeData.spot) this.spot = safeData.spot;
 
     this.votedInContests = safeData.votedInContests;
-    this.mealTickets = safeData.mealTickets ?? [];
     this.mealType = safeData.mealType ?? '';
   }
 

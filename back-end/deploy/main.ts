@@ -36,7 +36,7 @@ const apiResources: ResourceController[] = [
   { name: 'registrations', paths: ['/registrations', '/registrations/{sessionId}'] },
   { name: 'connections', paths: ['/connections', '/connections/{connectionId}'] },
   { name: 'contests', paths: ['/contests', '/contests/{contestId}'] },
-  { name: 'meals', paths: ['/users/{userId}/meal-ticket'] }
+  { name: 'meals', paths: ['/users/{userId}/meal-ticket', '/users/{userId}/meal-ticket/{mealTicketId}'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
@@ -120,6 +120,17 @@ const tables: { [tableName: string]: DDBTable } = {
   },
   contests: {
     PK: { name: 'contestId', type: DDB.AttributeType.STRING }
+  },
+  meals: {
+    PK: { name: 'mealTicketId', type: DDB.AttributeType.STRING},
+    SK: { name: 'userId', type: DDB.AttributeType.STRING},
+    indexes: [
+      {
+        indexName: 'userId-index',
+        partitionKey: { name: 'userId', type: DDB.AttributeType.STRING },
+        projectionType: DDB.ProjectionType.ALL
+      },
+    ]
   }
 };
 

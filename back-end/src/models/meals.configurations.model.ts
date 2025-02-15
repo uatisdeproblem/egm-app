@@ -1,16 +1,34 @@
 import { Resource, epochISODateString, epochISOString, isEmpty } from 'idea-toolbox';
 
 export class MealConfigurations extends Resource {
+  /**
+   * Number of meal tickets available during the event
+   */
   numTickets: number;
 
+  /**
+   * Start date of the event
+   */
   startDate: epochISOString;
 
+  /**
+   * End date of the event
+   */
   endDate: epochISOString;
 
+  /**
+   * Types of meal available during the event
+   */
   mealTypes: string[];
 
+  /**
+   * Meal info about name, menu and validity hours
+   */
   mealInfo: Meal[];
 
+  /**
+   * Estabilish whether admin can add manually meals
+   */
   canAdminAddMeals: boolean;
 
   load(x: any): void {
@@ -49,15 +67,37 @@ export class MealConfigurations extends Resource {
 }
 
 export class Meal extends Resource {
+  /**
+   * ID of the ticket used for recognition and used in the QRcode
+   */
+  ticketId: string;
+
+  /**
+   * Name of the ticket useful for the user to understand which ticket are using
+   */
   name: string;
+
+  /**
+   * Start Validity of the ticket
+   */
   startValidity: epochISOString;
+
+  /**
+   * End validity of the ticket
+   */
   endValidity: epochISOString;
 
   load(x: any): void {
     super.load(x);
+    this.ticketId = this.clean(x.ticketId, String);
     this.name = this.clean(x.name, String);
     this.startValidity = this.clean(x.startValidity, t => new Date(t).toISOString(), new Date().toISOString());
     this.endValidity = this.clean(x.endValidity, t => new Date(t).toISOString(), new Date().toISOString());
+  }
+
+  safeLoad(newData: any, safeData: any): void {
+    super.safeLoad(newData, safeData);
+    this.ticketId = safeData.ticketId;
   }
 
   validate(): string[] {

@@ -6,7 +6,7 @@ import { VerifyMealPage } from './verify-ticket/verify.meals.page';
 
 const routes: Routes = [
   { path: '', component: MealsPage },
-  { path: 'verify-ticket/:userId', component: VerifyMealPage },
+  { path: ':userId/verify-ticket/:mealTicketId', component: VerifyMealPage },
   { path: 'manage', component: MealsPage }
 ];
 
