@@ -42,19 +42,6 @@ export class MealsConfigurationsPage implements OnInit {
     this.editMode = true;
   }
 
-  resetTicketInfo(event: any): void {
-    this.configurations.mealConfigurations.numTickets = parseInt(event.detail.value);
-    this.configurations.mealConfigurations.mealInfo = Array(this.configurations.mealConfigurations.numTickets).fill(null).map(() => {
-      const meal = new Meal({
-        name: `Ticket ${this.configurations.mealConfigurations.mealInfo.length + 1}`,
-        startValidity: new Date().toISOString(),
-        endValidity: new Date().toISOString()
-      });
-      return meal;
-    });
-  }
-
-
   async save(): Promise<void> {
     this.errors = new Set(this.configurations.validate());
     if (this.errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
@@ -62,6 +49,7 @@ export class MealsConfigurationsPage implements OnInit {
 
     try {
       await this.loading.show();
+      this.configurations.mealConfigurations.numTickets = this.configurations.mealConfigurations.mealInfo.length;
       this.configurations.load(await this._configurations.update(this.configurations));
       this.app.configurations.load(this.configurations);
       this.message.success('COMMON.OPERATION_COMPLETED');
@@ -100,5 +88,37 @@ export class MealsConfigurationsPage implements OnInit {
 
   reorderMealTypes({ detail }): void {
     this.configurations.mealConfigurations.mealTypes = detail.complete(this.configurations.mealConfigurations.mealTypes);
+  }
+
+  removeMealTicket(mealTicket: Meal): void {
+    this.configurations.mealConfigurations.mealInfo.splice(this.configurations.mealConfigurations.mealInfo.indexOf(mealTicket), 1);
+  }
+
+  async addMealTicket(): Promise<void> {
+    const doAddMealTicket = (data: any): Promise<void> => {
+      const name = data?.name?.trim();
+      if (!name) return;
+      this.configurations.mealConfigurations.mealInfo.push(new Meal({
+        name: name,
+        startValidity: new Date().toISOString(),
+        endValidity: new Date().toISOString()
+      }));
+    };
+
+    const header = this.t._('MANAGE.ADD_MEAL_TICKET');
+    const inputs: any = [
+      { name: 'name', type: 'text', placeholder: this.t._('MANAGE.MEAL_TICKET_NAME') },
+    ];
+    const buttons = [
+      { text: this.t._('COMMON.CANCEL'), role: 'cancel' },
+      { text: this.t._('COMMON.CONFIRM'), handler: doAddMealTicket }
+    ];
+
+    const alert = await this.alertCtrl.create({ header, inputs, buttons });
+    await alert.present();
+  }
+
+  reorderMealTickets({ detail }): void {
+    this.configurations.mealConfigurations.mealInfo = detail.complete(this.configurations.mealConfigurations.mealInfo);
   }
 }

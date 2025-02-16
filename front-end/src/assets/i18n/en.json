@@ -313,6 +313,7 @@
     "MEALS_TYPE": "Meal Ticket Types",
     "MEALS_TYPE_I": "Types of ticket available for the event",
     "ADD_MEAL_TYPE": "Add a meal type",
+    "ADD_MEAL_TICKET": "Add a meal ticket",
     "MEAL_TYPE_NAME": "Meal type name",
     "ALLOW_REGISTRATIONS": "Allow registrations",
     "ALLOW_EXTERNALS": "Allow externals to register",
