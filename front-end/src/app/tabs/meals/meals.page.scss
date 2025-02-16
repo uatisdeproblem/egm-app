@@ -22,50 +22,14 @@ swiper-slide {
   padding: 1rem;
 }
 
-.empty-card {
-  @extend %card-base;
-  border: 0.125rem solid black;
-  background-color: white;
-  min-height: 21.875rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative; // Per il blur effect
-
-  &.blur-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: none;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1;
-    }
-  }
-
-  ion-card-content {
-    width: 100%;
-    padding: $card-padding;
-    position: relative;
-    z-index: 2;
-
-    ion-button {
-      max-width: 12.5rem;
-      margin: 0 auto;
-    }
-  }
-}
 
 .ticket-card {
   @extend %card-base;
+  height: 20rem;
 
+  ion-card-content {
+    min-height: 16rem;
+  }
   .qr-container {
     display: flex;
     flex-direction: column;

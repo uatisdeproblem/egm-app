@@ -7,6 +7,11 @@ export class MealTicket extends Resource {
   mealTicketId: string;
 
   /**
+   * The name of the Meal Ticket
+   */
+  name: string;
+
+  /**
    * The ID of the user related to the meal ticket.
    */
   userId: string;
@@ -55,6 +60,7 @@ export class MealTicket extends Resource {
   load(x: any): void {
     super.load(x);
     this.mealTicketId = this.clean(x.mealTicketId, String);
+    this.name = this.clean(x.name, String);
     this.userId = this.clean(x.userId, String);
     this.userName = this.clean(x.userName, String);
     this.userCountry = this.clean(x.userCountry, String);
@@ -71,6 +77,7 @@ export class MealTicket extends Resource {
   safeLoad(newData: any, safeData: any, options?: any): void {
     super.safeLoad(newData, safeData);
     this.mealTicketId = safeData.mealTicketId;
+    this.name = safeData.name;
     this.userId = safeData.userId;
     this.userName = safeData.userName;
     this.userCountry = safeData.userCountry;
@@ -84,6 +91,7 @@ export class MealTicket extends Resource {
   validate(): string[] {
     const e = super.validate();
     if (isEmpty(this.mealTicketId)) e.push('mealId');
+    if (isEmpty(this.name)) e.push('name');
     if (isEmpty(this.userId)) e.push('userId');
     if (isEmpty(this.type)) e.push('type');
     if (isEmpty(this.createdAt, 'date')) e.push('createdAt');

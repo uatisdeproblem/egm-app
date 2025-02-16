@@ -58,8 +58,9 @@ export class MealsPage implements OnInit {
   }
 
   async generateTicket(ticketId: string): Promise<void> {
-    this._meals.generateTicket(this.app.user.userId, ticketId);
-    this.meals = await this._meals.getMealsByUserId(this.app.user.userId);
+    await this._meals.generateTicket(this.app.user.userId, ticketId);
+    this.meals = await this._meals.getMealsByUserId(this.app.user.userId, {force: true});
+    console.log("MEALS: ", this.meals);
   }
 
   showTicket(meal: MealTicket): string {
@@ -69,5 +70,9 @@ export class MealsPage implements OnInit {
       `http://localhost:${8100}/t/meals/${this.app.user.userId}/verify-ticket/${meal.mealTicketId}` :
       `https://dev.egm-app.click/t/meals/${this.app.user.userId}/verify-ticket/${meal.mealTicketId}`;
 
+  }
+
+  goToManageMeals(): void {
+    this.app.goToInTabs(['meals', 'manage']);
   }
 }

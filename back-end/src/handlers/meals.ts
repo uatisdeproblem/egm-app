@@ -142,6 +142,7 @@ class MealTicketsRC extends ResourceController {
 
     const mealTicket: MealTicket = new MealTicket({
       mealTicketId: this.resourceId,
+      name: ticketConfig.name,
       userId: this.targetUser.userId,
       userName: this.targetUser.firstName + ' ' + this.targetUser.lastName,
       userCountry: this.targetUser.sectionCountry,
