@@ -35,7 +35,7 @@ export class VerifyMealPage implements OnInit {
     this.loading = true;
     try {
       await this._meals.scanTicket(this.userId, this.ticketId);
-      this.ticket = (await this._meals.getList(this.userId, {force: true}))
+      this.ticket = (await this._meals.getMealsByUserId(this.userId))
                                       .find(ticket => ticket.mealTicketId == this.ticketId);
     } catch (err) {
       this.error = err;

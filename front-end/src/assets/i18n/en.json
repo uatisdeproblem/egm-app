@@ -508,11 +508,18 @@
     "NUMBER_OF_MEALS": "Number of Meals",
     "MEAL_EVENT_PERIOD": "Meal Event Period",
     "TYPE_TICKET": "Type of Ticket",
+    "APPROVED_TYPE": "Approved Type",
+    "USED_TICKET": "Used Ticket",
+    "NUM_USED_TICKET": "Number of used ticket",
     "VERIFY_TICKET": "Check Meal Ticket in progress",
     "ERROR_TICKET": "Ticket not valid",
     "VALID_TICKET": "Valid Ticket",
     "TICKET": "Ticket",
+    "OPEN_PERIOD_MEALS": "Meal period open",
+    "END_PERIOD_MEALS": "Meal period closed",
     "VALIDATED_TICKET": "Ticket already used",
-    "NOT_VALIDATED_TICKET": "Ticket not yet used"
+    "NOT_VALIDATED_TICKET": "Ticket not yet used",
+    "MANAGE": "Ticket List",
+    "USERS": "Meals"
   }
 }

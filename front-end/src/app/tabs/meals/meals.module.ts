@@ -7,6 +7,9 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { MealsRoutingModule } from './meals.routing.module';
 import { MealsPage } from './meals.page';
 import { VerifyMealPage } from './verify-ticket/verify.meals.page';
+import { MealsListPage } from './manage/meals-list/meals.list.page';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { ManageMealsPage } from './manage/manage.meals.page';
 
 @NgModule({
   imports: [
@@ -15,9 +18,10 @@ import { VerifyMealPage } from './verify-ticket/verify.meals.page';
     IonicModule,
     IDEATranslationsModule,
     QRCodeModule,
+    NgxDatatableModule,
     MealsRoutingModule,
   ],
-  declarations: [MealsPage, VerifyMealPage],
+  declarations: [MealsPage, VerifyMealPage, ManageMealsPage, MealsListPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class MealsModule {}

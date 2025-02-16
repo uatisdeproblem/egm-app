@@ -42,7 +42,7 @@ export class MealsPage implements OnInit {
     public app: AppService
   ) {}
   async ngOnInit(): Promise<void> {
-    this.meals = await this._meals.getList(this.app.user.userId, { force: true });
+    this.meals = await this._meals.getMealsByUserId(this.app.user.userId);
     this.ticketInfos = this.app.configurations.mealConfigurations.mealInfo;
   }
 
@@ -59,7 +59,7 @@ export class MealsPage implements OnInit {
 
   async generateTicket(ticketId: string): Promise<void> {
     this._meals.generateTicket(this.app.user.userId, ticketId);
-    this.meals = await this._meals.getList(this.app.user.userId, {force: true});
+    this.meals = await this._meals.getMealsByUserId(this.app.user.userId);
   }
 
   showTicket(meal: MealTicket): string {

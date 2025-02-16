@@ -12,6 +12,16 @@ export class MealTicket extends Resource {
   userId: string;
 
   /**
+   * The name of the user related to the meal ticket (useful for frontend view)
+   */
+  userName: string;
+
+  /**
+   * The NO of the user related to the meal ticket (useful for frontend view)
+   */
+  userCountry?: string;
+
+  /**
    * The timestamp when the ticket has been generated.
    */
   createdAt: epochISOString;
@@ -46,6 +56,8 @@ export class MealTicket extends Resource {
     super.load(x);
     this.mealTicketId = this.clean(x.mealTicketId, String);
     this.userId = this.clean(x.userId, String);
+    this.userName = this.clean(x.userName, String);
+    this.userCountry = this.clean(x.userCountry, String);
     this.createdAt = this.clean(x.createdAt, t => new Date(t).toISOString(), new Date().toISOString());
 
     if (x.approvedAt) this.approvedAt = this.clean(x.createdAt, t => new Date(t).toISOString());
@@ -60,6 +72,8 @@ export class MealTicket extends Resource {
     super.safeLoad(newData, safeData);
     this.mealTicketId = safeData.mealTicketId;
     this.userId = safeData.userId;
+    this.userName = safeData.userName;
+    this.userCountry = safeData.userCountry;
     this.createdAt = safeData.createdAt;
 
     if (safeData.approvedAt) this.approvedAt = safeData.approvedAt;

@@ -5,25 +5,35 @@ import { MealTicket } from '@models/meals.model';
 
 @Injectable({ providedIn: 'root' })
 export class MealsService {
-  private meals: MealTicket[];
+  private mealsByUserId: MealTicket[];
+  private mealsByMealTicketId: MealTicket[];
 
   constructor(private api: IDEAApiService) {}
 
-  private async loadList(userId: string): Promise<void> {
-    this.meals = (await this.api.getResource([`/users/${userId}/meal-ticket`])).map(m => new MealTicket(m));
-    console.log("MEALS", this.meals);
+  /**
+   * Get (and optionally filter) the list of meals tickets for a specific user.
+   */
+  async getMealsByUserId(userId: string): Promise<MealTicket[]> {
+    if (!this.mealsByUserId) {
+      this.mealsByUserId = (await this.api.getResource([`/users/${userId}/meal-ticket`])).map(m => new MealTicket(m));
+    }
+    if (!this.mealsByUserId) return [];
+    return this.mealsByUserId;
   }
 
   /**
-   * Get (and optionally filter) the list of meals tickets.
+   * Get the list of meal for a specific meal Ticket Id (useful for admin to discover who is missing)
+   * @param userId userID needed for the request to make
+   * @param mealTicketId ticket ID used to obtain meal tickets
+   * @returns the list of meal tickets of all users for that specific meal
    */
-  async getList(userId: string, options: {
-    force?: boolean;
-  }): Promise<MealTicket[]> {
-    console.log("MEALS: ", this.meals);
-    if (!this.meals|| options.force) await this.loadList(userId);
-    if (!this.meals) return [];
-    return this.meals;
+  async getMealsByMealId(userId: string, mealTicketId: string): Promise<MealTicket[]> {
+    if (!this.mealsByMealTicketId) {
+      this.mealsByMealTicketId = (await this.api.getResource([`/users/${userId}/meal-ticket/${mealTicketId}`]))
+                                  .map(m => new MealTicket(m));
+    }
+    if (!this.mealsByMealTicketId) return [];
+    return this.mealsByMealTicketId;
   }
 
   /**
