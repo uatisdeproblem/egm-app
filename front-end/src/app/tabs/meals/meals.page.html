@@ -6,12 +6,12 @@
   }
 </ion-header>
 
-<ion-content>
+<ion-content class="maxWidthContainer">
   <swiper-container #swiper [options]="swiperOptions">
     @if (meals && meals.length > 0) {
       @for (meal of meals; track meal) {
         <swiper-slide>
-          <ion-card class="ticket-card" color="primary">
+          <ion-card class="ticket-card" [color]="getMealColor(meal.type)">
             <ion-card-header>
               <ion-card-title color="light" class="ion-text-center">
                 {{ meal.name }}
@@ -21,11 +21,13 @@
               </ion-card-subtitle>
             </ion-card-header>
             <ion-card-content class="ion-padding ion-text-center">
-              <qrcode
-                [qrdata]="showTicket(meal)"
-                [width]="200"
-                [errorCorrectionLevel]="'M'">
-              </qrcode>
+              @if (isValidTicket(meal)) {
+                <qrcode
+                  [qrdata]="showTicket(meal)"
+                  [width]="200"
+                  [errorCorrectionLevel]="'M'">
+                </qrcode>
+              }
               <div class="ion-padding-top">
                 <ion-text color="light" class="ion-text-center">
                   @if (meal.status) {

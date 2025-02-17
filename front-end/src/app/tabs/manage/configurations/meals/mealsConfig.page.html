@@ -62,9 +62,9 @@
     <ion-item *ngFor="let mealType of configurations.mealConfigurations.mealTypes">
       <ion-reorder slot="start" *ngIf="editMode"></ion-reorder>
       <ion-label>
-        {{ mealType }}
+        {{ mealType.name }}
       </ion-label>
-      <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeMealType(mealType)">
+      <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeMealType(mealType.name)">
         <ion-icon icon="trash" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-item>

@@ -106,7 +106,7 @@ import { AppService } from '@app/app.service';
     }
   `]
 })
-export class DateTimeRangeWithTimezone implements OnInit, OnChanges {
+export class DateTimeRangeWithTimezoneComponent implements OnInit, OnChanges {
   @Input() timezone: string;
   @Input() label: string;
   @Input() color: string;

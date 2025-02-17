@@ -5,8 +5,9 @@ import { AppService } from '@app/app.service';
 import { MealTicket } from '@models/meals.model';
 import { MealsService } from '../../../meals/meals.service';
 import { Configurations } from '@models/configurations.model';
-import { Meal } from '@models/meals.configurations.model';
+import { Meal, MealType } from '@models/meals.configurations.model';
 import { ConfigurationsService } from '@app/tabs/manage/configurations/configurations.service';
+import { AddMealTypeComponent } from './addMealType.component';
 
 @Component({
   selector: 'meals-configurations',
@@ -22,6 +23,7 @@ export class MealsConfigurationsPage implements OnInit {
   constructor(
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
+    private modalCtrl: ModalController,
     private alertCtrl: AlertController,
     private t: IDEATranslationsService,
     private _configurations: ConfigurationsService,
@@ -63,27 +65,25 @@ export class MealsConfigurationsPage implements OnInit {
   }
 
   removeMealType(mealType: string): void {
-    this.configurations.mealConfigurations.mealTypes.splice(this.configurations.mealConfigurations.mealTypes.indexOf(mealType), 1);
+    const index = this.configurations.mealConfigurations.mealTypes.findIndex(
+      m => m.name === mealType
+    );
+    if (index !== -1) {
+      this.configurations.mealConfigurations.mealTypes.splice(index, 1);
+    }
   }
 
   async addMealType(): Promise<void> {
-    const doAddMealType = (data: any): Promise<void> => {
-      const name = data?.name?.trim();
-      if (!name) return;
-      this.configurations.mealConfigurations.mealTypes.push(name);
-    };
+    const modal = await this.modalCtrl.create({
+      component: AddMealTypeComponent
+    });
 
-    const header = this.t._('MANAGE.ADD_MEAL_TYPE');
-    const inputs: any = [
-      { name: 'name', type: 'text', placeholder: this.t._('MANAGE.MEAL_TYPE_NAME') },
-    ];
-    const buttons = [
-      { text: this.t._('COMMON.CANCEL'), role: 'cancel' },
-      { text: this.t._('COMMON.CONFIRM'), handler: doAddMealType }
-    ];
+    await modal.present();
 
-    const alert = await this.alertCtrl.create({ header, inputs, buttons });
-    await alert.present();
+    const { data } = await modal.onWillDismiss();
+    if (data) {
+      this.configurations.mealConfigurations.mealTypes.push(new MealType(data));
+    }
   }
 
   reorderMealTypes({ detail }): void {
@@ -103,6 +103,7 @@ export class MealsConfigurationsPage implements OnInit {
         startValidity: new Date().toISOString(),
         endValidity: new Date().toISOString()
       }));
+
     };
 
     const header = this.t._('MANAGE.ADD_MEAL_TICKET');

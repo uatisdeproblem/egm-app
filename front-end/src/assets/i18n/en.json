@@ -315,6 +315,7 @@
     "ADD_MEAL_TYPE": "Add a meal type",
     "ADD_MEAL_TICKET": "Add a meal ticket",
     "MEAL_TYPE_NAME": "Meal type name",
+    "MEAL_TYPE_COLOR": "Meal type color",
     "ALLOW_REGISTRATIONS": "Allow registrations",
     "ALLOW_EXTERNALS": "Allow externals to register",
     "ALLOW_SESSION_REGISTRATIONS": "Allow session registrations",

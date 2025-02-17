@@ -6,7 +6,7 @@ import { IDEAApiService, IDEAMessageService, IDEATranslationsService } from '@id
 
 import { environment as env } from '@env';
 import { AuthServices, User, UserPermissions } from '@models/user.model';
-import { Configurations } from '@models/configurations.model';
+import { Configurations, ESNColors } from '@models/configurations.model';
 
 /**
  * The base URLs where the thumbnails are located.
@@ -34,6 +34,7 @@ export class AppService {
 
   user: User;
   configurations: Configurations;
+  ESNcolors: { name: string, value: string }[];
 
   linkToOpenViaFab: string;
 
@@ -46,6 +47,10 @@ export class AppService {
     private api: IDEAApiService
   ) {
     this.darkMode = this.respondToColorSchemePreferenceChanges();
+    this.ESNcolors = Object.entries(ESNColors).map(([key, value]) => ({
+      name: key,
+      value: value
+    }));
   }
   private respondToColorSchemePreferenceChanges(): boolean {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => (this.darkMode = e.matches));

@@ -14,7 +14,7 @@ export class MealsService {
    * Get (and optionally filter) the list of meals tickets for a specific user.
    */
   async getMealsByUserId(userId: string, options?: { force: boolean}): Promise<MealTicket[]> {
-    if (!this.mealsByUserId || options.force) {
+    if (!this.mealsByUserId || options?.force) {
       this.mealsByUserId = (await this.api.getResource([`/users/${userId}/meal-ticket`])).map(m => new MealTicket(m));
     }
     if (!this.mealsByUserId) return [];

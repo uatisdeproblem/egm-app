@@ -10,7 +10,8 @@ import { RegistrationsConfigurationsPage } from './registrations/registrationsCo
 import { EmailTemplateModule } from './emailTemplate/emailTemplate.module';
 import { MealsConfigurationsPage } from './meals/mealsConfig.page';
 import { DateRangeWithTimezoneStandaloneComponent } from '@app/common/dateRangeWithTimezone';
-import { DateTimeRangeWithTimezone } from '@app/common/datetimeRangeWithTimezone';
+import { DateTimeRangeWithTimezoneComponent } from '@app/common/datetimeRangeWithTimezone';
+import { AddMealTypeComponent } from './meals/addMealType.component';
 
 @NgModule({
   imports: [
@@ -23,8 +24,8 @@ import { DateTimeRangeWithTimezone } from '@app/common/datetimeRangeWithTimezone
     ConfigurationsRoutingModule,
     EmailTemplateModule,
     DateRangeWithTimezoneStandaloneComponent,
-    DateTimeRangeWithTimezone
+    DateTimeRangeWithTimezoneComponent
   ],
-  declarations: [RegistrationsConfigurationsPage, MealsConfigurationsPage]
+  declarations: [RegistrationsConfigurationsPage, MealsConfigurationsPage, AddMealTypeComponent]
 })
 export class ConfigurationsModule {}

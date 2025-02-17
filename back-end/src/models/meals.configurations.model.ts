@@ -19,7 +19,7 @@ export class MealConfigurations extends Resource {
   /**
    * Types of meal available during the event
    */
-  mealTypes: string[];
+  mealTypes: MealType[];
 
   /**
    * Meal info about name, menu and validity hours
@@ -36,15 +36,13 @@ export class MealConfigurations extends Resource {
     this.numTickets = this.clean(x.numTickets, Number);
     this.startDate = this.clean(x.startDate, t => new Date(t).toISOString(), new Date().toISOString());
     this.endDate = this.clean(x.endDate, t => new Date(t).toISOString(), new Date().toISOString());
-    this.mealTypes = this.cleanArray(x.mealTypes, String);
+    this.mealTypes = this.cleanArray(x.mealTypes, type => new MealType(type), []);
     this.mealInfo = this.cleanArray(x.mealInfo, m => new Meal(m), []);
     this.canAdminAddMeals = this.clean(x.canAdminAddMeals, Boolean, true);
   }
 
   safeLoad(newData: any, safeData: any, options?: any): void {
     super.safeLoad(newData, safeData);
-    this.mealTypes = safeData.mealTypes;
-    this.mealInfo = safeData.mealInfo;
   }
 
   validate(): string[] {
@@ -109,6 +107,37 @@ export class Meal extends Resource {
       e.push('startValidity');
       e.push('endValidity');
     }
+
+    return e;
+  }
+}
+
+export class MealType extends Resource {
+  /**
+   * Name of the type of meal
+   */
+  name: string;
+
+  /**
+   * Color of the meal used for Frontend recognize
+   */
+  color: string;
+
+  load(x: any): void {
+    super.load(x);
+    this.name = this.clean(x.name, String);
+    this.color = this.clean(x.color, String);
+  }
+
+  safeLoad(newData: any, safeData: any): void {
+    super.safeLoad(newData, safeData);
+    this.name = safeData.name;
+  }
+
+  validate(): string[] {
+    const e = super.validate();
+    if (isEmpty(this.name)) e.push('name');
+    if (isEmpty(this.color)) e.push('color');
 
     return e;
   }

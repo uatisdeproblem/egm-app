@@ -147,3 +147,11 @@ export enum EmailTemplates {
 export enum DocumentTemplates {
   INVOICE = 'INVOICE'
 }
+
+export enum ESNColors {
+  "ESN Green" = "ESNgreen",
+  "ESN Cyan" = "ESNcyan",
+  "ESN Magenta" = "ESNpink",
+  "ESN Orange" = "ESNorange",
+  "ESN Dark Blue" = "ESNdarkBlue"
+}
