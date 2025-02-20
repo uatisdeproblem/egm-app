@@ -156,7 +156,7 @@ class MealTicketsRC extends ResourceController {
   }
 
   protected async getResources(): Promise<MealTicket[]> {
-    if (this.principalId != this.pathParameters.userId)
+    if (this.principalId != this.pathParameters.userId && !this.reqUser.canManageMeals())
       throw new HandledError('Unauthorized');
 
     return (

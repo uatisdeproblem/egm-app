@@ -31,8 +31,8 @@
       >
         <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
         <ion-select-option value="no">{{ 'COMMON.NO' | translate }}</ion-select-option>
-        <ion-select-option *ngFor="let st of app.configurations.mealConfigurations.mealTypes" [value]="st">
-          {{ st }}</ion-select-option>
+        <ion-select-option *ngFor="let st of app.configurations.mealConfigurations.mealTypes" [value]="st.name">
+          {{ st.name }}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item color="ideaToolbar" lines="none">

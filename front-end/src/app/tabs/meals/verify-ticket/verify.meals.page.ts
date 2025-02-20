@@ -44,6 +44,11 @@ export class VerifyMealPage implements OnInit {
     }
   }
 
+  getMealColor(type: string): string {
+    const mealType = this.app.configurations.mealConfigurations.mealTypes.find(m => m.name == type);
+    return mealType?.color ?? 'primary';
+  }
+
   async closeModal() {
     await this.modalCtrl.dismiss();
     this.app.goToInTabs(['meals', 'manage']);

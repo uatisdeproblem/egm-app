@@ -36,14 +36,18 @@
               <ion-item>
                 <ion-label>
                   <p>{{ 'USER.NAME' | translate }} </p>
-                  <ion-text>{{ app.user.firstName + ' ' + app.user.lastName }}</ion-text>
+                  <ion-text>
+                    <h3>{{ ticket.userName }}</h3>
+                  </ion-text>
                 </ion-label>
               </ion-item>
 
               <ion-item>
                 <ion-label>
                   <p>{{ 'MEALS.TYPE_TICKET' | translate }}</p>
-                  <h2>{{ ticket.type }}</h2>
+                  <ion-text [color]="getMealColor(ticket.type)">
+                    <h3>{{ ticket.type }}</h3>
+                  </ion-text>
                 </ion-label>
               </ion-item>
             </ion-item-group>
