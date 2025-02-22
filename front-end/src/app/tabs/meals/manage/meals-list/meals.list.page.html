@@ -9,6 +9,10 @@
     <ion-item color="ideaToolbar" lines="none">
       <ion-searchbar (ionInput)="filter($event.target.value)"></ion-searchbar>
     </ion-item>
+    <ion-item color="ideaToolbar" lines="none" button (click)="addTicket()">
+      <ion-icon name="add" slot="start" color="ESNgreen"></ion-icon>
+      <ion-label>{{ 'MANAGE.ADD_MEAL_TICKET' | translate }}</ion-label>
+    </ion-item>
     <ion-item color="ideaToolbar" lines="none">
       <ion-icon icon="filter" slot="start" size="small"></ion-icon>
       <ion-select

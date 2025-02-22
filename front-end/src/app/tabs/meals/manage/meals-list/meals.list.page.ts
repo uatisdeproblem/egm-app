@@ -1,8 +1,6 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { AlertController, IonSearchbar, ModalController } from '@ionic/angular';
 import { ColumnMode, SelectionType, TableColumn, DatatableComponent } from '@swimlane/ngx-datatable';
-import { WorkBook, utils, writeFile } from 'xlsx';
-import { Suggestion } from 'idea-toolbox';
 import {
   IDEAActionSheetController,
   IDEALoadingService,
@@ -15,6 +13,8 @@ import { AppService } from '@app/app.service';
 import { MealsService } from '../../meals.service';
 import { ApprovedType, MealTicket } from '@models/meals.model';
 import { ActivatedRoute } from '@angular/router';
+import { UsersService } from '@app/tabs/manage/users/users.service';
+import { User } from '@models/user.model';
 
 @Component({
   selector: 'meals-list',
@@ -41,6 +41,7 @@ export class MealsListPage implements OnInit {
   footerHeight = 80;
 
   meals: MealTicket[];
+  users: User[];
   filteredMeals: MealTicket[];
   filters: RowsFilters = {
     type: null,
@@ -60,6 +61,7 @@ export class MealsListPage implements OnInit {
     private t: IDEATranslationsService,
     private actionsCtrl: IDEAActionSheetController,
     private route: ActivatedRoute,
+    private _users: UsersService,
     private _meals: MealsService,
     public app: AppService
   ) {}
@@ -79,7 +81,8 @@ export class MealsListPage implements OnInit {
 
     try {
       await this.loading.show();
-      this.meals = await this._meals.getMealsByMealId(this.app.user.userId, this.ticketId);
+      [this.users, this.meals] = await Promise.all([this._users.getList(),
+                                                    this._meals.getMealsByMealId(this.app.user.userId, this.ticketId)]);
       this.filter(this.searchbar?.value);
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
@@ -145,6 +148,50 @@ export class MealsListPage implements OnInit {
       if (meal.status) this.numUsedTickets++;
       this.numMeals++;
     });
+  }
+
+  hasMealUsed(userId: string): boolean {
+    return this.meals.find(meal => meal.userId === userId)?.status ?? false;
+  }
+
+  async addTicket() {
+    const data = this.users
+      .filter(x => x.registrationAt && x.spot && !this.hasMealUsed(x.userId))
+      .map(x => x.mapIntoSuggestion());
+    const componentProps = {
+      data,
+      hideIdFromUI: true,
+      sortData: true,
+      hideClearButton: true,
+      searchPlaceholder: this.t._('MANAGE.ADD_MEAL_TICKET')
+    };
+    const modal = await this.modalCtrl.create({ component: IDEASuggestionsComponent, componentProps });
+    modal.onDidDismiss().then(async ({ data }): Promise<void> => {
+      if (!data) return;
+      try {
+        await this.loading.show();
+        const user = this.users.find(x => x.userId === data.value);
+        const mealTicket = new MealTicket({
+          mealTicketId: this.ticketId,
+          name: this.app.configurations.mealConfigurations.mealInfo.find(info => info.ticketId = this.ticketId).name,
+          userName: user.firstName + ' ' + user.lastName,
+          userCountry: user.sectionCountry,
+          type: user.mealType,
+          userId: user.userId,
+          status: false
+        })
+        await this._meals.addTicket(mealTicket, user.userId);
+        this.meals = await this._meals.getMealsByMealId(this.app.user.userId, this.ticketId);
+        this.filter(this.searchbar?.value);
+        this.message.success('COMMON.OPERATION_COMPLETED');
+      } catch (error) {
+        this.message.error('COMMON.OPERATION_FAILED');
+      } finally {
+        this.loading.hide();
+      }
+    });
+    modal.present();
+
   }
 
 }

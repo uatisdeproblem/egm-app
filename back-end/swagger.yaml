@@ -1335,6 +1335,23 @@ paths:
           $ref: '#/components/responses/MealTickets'
         400:
           $ref: '#/components/responses/BadParameters'
+    post:
+      summary: Add manually a new meal Ticket
+      tags: [MealTickets]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: userId
+          in: path
+          description: The user ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/MealTickets'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
   /users/{userId}/meal-ticket/{mealTicketId}:
     get:
@@ -1354,6 +1371,8 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
       responses:
         200:
           $ref: '#/components/responses/MealTickets'

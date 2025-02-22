@@ -168,4 +168,23 @@ class MealTicketsRC extends ResourceController {
       })
     ).map((x) => new MealTicket(x));
   }
+
+  protected async postResources(): Promise<MealTicket> {
+    if (!this.reqUser.canManageMeals())
+      throw new HandledError('Unauthorized');
+
+    const mealTicket = new MealTicket(this.body);
+    mealTicket.status = true;
+    mealTicket.approvedType = ApprovedType.MANUAL;
+    mealTicket.approvedBy = this.reqUser.userId;
+    mealTicket.approvedAt = new Date().toISOString();
+
+    if (mealTicket.validate().length > 0) throw new HandledError('Validation Error');
+
+    await ddb.put({
+      TableName: DDB_TABLES.mealTickets, Item: mealTicket
+    });
+
+    return mealTicket;
+  }
 }

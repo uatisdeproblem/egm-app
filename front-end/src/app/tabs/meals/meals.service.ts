@@ -28,10 +28,9 @@ export class MealsService {
    * @returns the list of meal tickets of all users for that specific meal
    */
   async getMealsByMealId(userId: string, mealTicketId: string): Promise<MealTicket[]> {
-    if (!this.mealsByMealTicketId) {
-      this.mealsByMealTicketId = (await this.api.getResource([`/users/${userId}/meal-ticket/${mealTicketId}`]))
+    this.mealsByMealTicketId = (await this.api.getResource([`/users/${userId}/meal-ticket/${mealTicketId}`]))
                                   .map(m => new MealTicket(m));
-    }
+
     if (!this.mealsByMealTicketId) return [];
     return this.mealsByMealTicketId;
   }
@@ -45,5 +44,9 @@ export class MealsService {
 
   async scanTicket(userId: string, ticketId: string): Promise<void> {
     return await this.api.patchResource([`users/${userId}/meal-ticket/${ticketId}`], { body: { action: 'SCAN_TICKET'}});
+  }
+
+  async addTicket(meal: MealTicket, userId: string) {
+    return await this.api.postResource(`users/${userId}/meal-ticket`, {body: meal})
   }
 }
