@@ -6,71 +6,122 @@
   }
 </ion-header>
 
-<ion-content class="maxWidthContainer">
-  <swiper-container #swiper [options]="swiperOptions">
-    @if (meals && meals.length > 0) {
-      @for (meal of meals; track meal) {
+<ion-content>
+  <ion-list class="aList maxWidthContainer">
+    <swiper-container #swiper [options]="swiperOptions">
+      @if (meals && meals.length > 0) {
+        @for (meal of meals; track meal) {
+          <swiper-slide>
+            <div class="card-container">
+              <ion-card class="ticket-card" [class.flipped]="flipped === 'back'" [color]="getMealColor(meal.type)">
+                <div class="card-face card-front">
+                  <ion-card-header>
+                    <ion-card-title color="light" class="ion-text-center">
+                      {{ meal.name }}
+                    </ion-card-title>
+                    <ion-card-subtitle color="light" class="ion-text-center">
+                      {{ meal.type | uppercase }}
+                    </ion-card-subtitle>
+                  </ion-card-header>
+
+                  <ion-card-content>
+                    <div class="qr-container">
+                      <div class="qr-code">
+                        <qrcode
+                          [qrdata]="showTicket(meal)"
+                          [width]="200"
+                          [errorCorrectionLevel]="'M'">
+                        </qrcode>
+                      </div>
+
+                      <div class="controls-row">
+                        <div class="info-button">
+                          <ion-button fill="clear" color="light" (click)="flipCard($event)">
+                            <ion-icon name="information-circle-outline" size="large" slot="icon-only"></ion-icon>
+                          </ion-button>
+                        </div>
+
+                        <div class="validation-status">
+                          @if (!isValidTicket(meal)) {
+                            <ion-icon name="close-circle" color="danger" size="large"></ion-icon>
+                            <span>{{ 'MEALS.TICKET_EXPIRED' | translate }}</span>
+                          } @else if (meal.status) {
+                            <ion-icon name="checkmark-circle" color="success" size="large"></ion-icon>
+                            <span>{{ 'MEALS.VALIDATED_TICKET' | translate }}</span>
+                          } @else {
+                            <ion-icon name="close-circle" color="danger" size="large"></ion-icon>
+                            <span>{{ 'MEALS.NOT_VALIDATED_TICKET' | translate }}</span>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </ion-card-content>
+                </div>
+
+                <div class="card-face card-back">
+                  <ion-card-header>
+                    <ion-card-title color="light" class="ion-text-center">
+                      {{ meal.name }}
+                    </ion-card-title>
+                  </ion-card-header>
+
+                  <ion-card-content>
+                    <ion-list lines="none">
+                      <ion-item color="transparent">
+                        <ion-label class="ion-text-wrap">
+                          <h2 class="info-title">{{ 'MEALS.INGREDIENTS' | translate }}</h2>
+                          <p>{{ 'MEALS.NO_INGREDIENTS' | translate }}</p>
+                        </ion-label>
+                      </ion-item>
+
+                      <ion-item color="transparent">
+                        <ion-label class="ion-text-wrap">
+                          <h2 class="info-title">{{ 'MEALS.ALLERGENS' | translate }}</h2>
+                          <p>{{ 'MEALS.NO_ALLERGENS' | translate }}</p>
+                        </ion-label>
+                      </ion-item>
+                    </ion-list>
+
+                    <div class="ion-text-center ion-padding-top">
+                      <ion-button fill="clear" color="light" (click)="flipCard($event)">
+                        <ion-icon name="arrow-back" size="large" slot="icon-only"></ion-icon>
+                      </ion-button>
+                    </div>
+                  </ion-card-content>
+                </div>
+              </ion-card>
+            </div>
+          </swiper-slide>
+        }
+      }
+
+      @for (info of getAvailableTickets(); track info) {
         <swiper-slide>
-          <ion-card class="ticket-card" [color]="getMealColor(meal.type)">
+          <ion-card class="ticket-card">
             <ion-card-header>
-              <ion-card-title color="light" class="ion-text-center">
-                {{ meal.name }}
+              <ion-card-title class="ion-text-center">
+                {{ info.name | uppercase }}
               </ion-card-title>
-              <ion-card-subtitle color="light" class="ion-text-center">
-                {{ meal.type | uppercase }}
-              </ion-card-subtitle>
             </ion-card-header>
-            <ion-card-content class="ion-padding ion-text-center">
-              @if (isValidTicket(meal)) {
-                <qrcode
-                  [qrdata]="showTicket(meal)"
-                  [width]="200"
-                  [errorCorrectionLevel]="'M'">
-                </qrcode>
-              }
-              <div class="ion-padding-top">
-                <ion-icon name="information-circle-outline" size="large"></ion-icon>
-                <ion-text color="light" class="ion-text-center">
-                  @if (meal.status) {
-                    <ion-icon name="checkmark-circle" color="success" size="large"></ion-icon>
-                    <span>{{ 'MEALS.VALIDATED_TICKET' | translate }}</span>
-                  } @else {
-                    <ion-icon name="close-circle" color="danger" size="large"></ion-icon>
-                    <span>{{ 'MEALS.NOT_VALIDATED_TICKET' | translate }}</span>
-                  }
-                </ion-text>
+
+            <ion-card-content class="ion-text-center ion-justify-content-center">
+              <div class="center-button-container">
+                <ion-button expand="block" (click)="generateTicket(info.ticketId)">
+                  {{ 'MEALS.GENERATE_TICKET' | translate }}
+                </ion-button>
               </div>
             </ion-card-content>
           </ion-card>
         </swiper-slide>
       }
-    }
-
-    @for (info of getAvailableTickets(); track info) {
-      <swiper-slide>
-        <ion-card class="ticket-card">
-          <ion-card-header>
-            <ion-card-title class="ion-text-center">
-              {{ info.name | uppercase }}
-            </ion-card-title>
-          </ion-card-header>
-          <ion-card-content class="ion-text-center ion-justify-content-center">
-            <div class="center-button-container">
-              <ion-button expand="block" (click)="generateTicket(info.ticketId)">
-                {{ 'MEALS.GENERATE_TICKET' | translate }}
-              </ion-button>
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </swiper-slide>
-    }
-  </swiper-container>
+    </swiper-container>
+  </ion-list>
 </ion-content>
 
 @if (app.user.canManageMeals) {
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button color="ESNgreen" size="small" [title]="'COMMON.MANAGE' | translate" (click)="goToManageMeals()">
-      <ion-icon icon="build"></ion-icon>
+      <ion-icon icon="list"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 }
