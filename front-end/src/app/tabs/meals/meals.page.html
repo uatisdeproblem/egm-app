@@ -70,14 +70,14 @@
                       <ion-item color="transparent">
                         <ion-label class="ion-text-wrap">
                           <h2 class="info-title">{{ 'MEALS.INGREDIENTS' | translate }}</h2>
-                          <p>{{ 'MEALS.NO_INGREDIENTS' | translate }}</p>
+                          <p>{{ getMealIngredients(meal) }}</p>
                         </ion-label>
                       </ion-item>
 
                       <ion-item color="transparent">
                         <ion-label class="ion-text-wrap">
                           <h2 class="info-title">{{ 'MEALS.ALLERGENS' | translate }}</h2>
-                          <p>{{ 'MEALS.NO_ALLERGENS' | translate }}</p>
+                          <p >{{ getMealAllergens(meal) }}</p>
                         </ion-label>
                       </ion-item>
                     </ion-list>

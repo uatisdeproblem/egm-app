@@ -1,4 +1,5 @@
 import { Resource, epochISODateString, epochISOString, isEmpty } from 'idea-toolbox';
+import { Dish } from './dish.model';
 
 export class MealConfigurations extends Resource {
   /**
@@ -85,17 +86,24 @@ export class Meal extends Resource {
    */
   endValidity: epochISOString;
 
+  /**
+   * Dishes available for the given meal
+   */
+  dishes: Dish[];
+
   load(x: any): void {
     super.load(x);
     this.ticketId = this.clean(x.ticketId, String);
     this.name = this.clean(x.name, String);
     this.startValidity = this.clean(x.startValidity, t => new Date(t).toISOString(), new Date().toISOString());
     this.endValidity = this.clean(x.endValidity, t => new Date(t).toISOString(), new Date().toISOString());
+    this.dishes = this.cleanArray(x.dishes, dish => new Dish(dish), []);
   }
 
   safeLoad(newData: any, safeData: any): void {
     super.safeLoad(newData, safeData);
     this.ticketId = safeData.ticketId;
+    this.dishes = safeData.dishes || [];
   }
 
   validate(): string[] {

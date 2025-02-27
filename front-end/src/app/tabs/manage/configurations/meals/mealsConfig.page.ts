@@ -8,6 +8,7 @@ import { Configurations } from '@models/configurations.model';
 import { Meal, MealType } from '@models/meals.configurations.model';
 import { ConfigurationsService } from '@app/tabs/manage/configurations/configurations.service';
 import { AddMealTypeComponent } from './addMealType.component';
+import { DishListModalComponent } from './dish/dishList.component';
 
 @Component({
   selector: 'meals-configurations',
@@ -92,6 +93,27 @@ export class MealsConfigurationsPage implements OnInit {
 
   removeMealTicket(mealTicket: Meal): void {
     this.configurations.mealConfigurations.mealInfo.splice(this.configurations.mealConfigurations.mealInfo.indexOf(mealTicket), 1);
+  }
+
+  async openDishesModal(meal: Meal): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: DishListModalComponent,
+      componentProps: {
+        dishes: meal.dishes,
+        mealName: meal.name,
+        mealTicketId: meal.ticketId,
+        editMode: this.editMode
+      }
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onDidDismiss();
+    if (data && data.updated) {
+      meal.dishes = data.dishes;
+
+      this.save();
+    }
   }
 
   async addMealTicket(): Promise<void> {

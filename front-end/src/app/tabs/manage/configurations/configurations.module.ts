@@ -12,6 +12,9 @@ import { MealsConfigurationsPage } from './meals/mealsConfig.page';
 import { DateRangeWithTimezoneStandaloneComponent } from '@app/common/dateRangeWithTimezone';
 import { DateTimeRangeWithTimezoneComponent } from '@app/common/datetimeRangeWithTimezone';
 import { AddMealTypeComponent } from './meals/addMealType.component';
+import { DishListModalComponent } from './meals/dish/dishList.component';
+import { AddDishModalComponent } from './meals/dish/addDish.component';
+import { HTMLEditorComponent } from '@app/common/htmlEditor.component';
 
 @NgModule({
   imports: [
@@ -24,8 +27,10 @@ import { AddMealTypeComponent } from './meals/addMealType.component';
     ConfigurationsRoutingModule,
     EmailTemplateModule,
     DateRangeWithTimezoneStandaloneComponent,
-    DateTimeRangeWithTimezoneComponent
+    DateTimeRangeWithTimezoneComponent,
+    HTMLEditorComponent
   ],
-  declarations: [RegistrationsConfigurationsPage, MealsConfigurationsPage, AddMealTypeComponent]
+  declarations: [RegistrationsConfigurationsPage, MealsConfigurationsPage,
+                 AddMealTypeComponent, DishListModalComponent, AddDishModalComponent]
 })
 export class ConfigurationsModule {}

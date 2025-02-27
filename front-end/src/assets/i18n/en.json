@@ -508,6 +508,15 @@
     "NOT_NOW": "Not now",
     "PUBLISH_RESULTS": "Publish results"
   },
+  "DISH": {
+    "NAME": "Name",
+    "INGREDIENTS": "Ingredients",
+    "ALLERGENS": "Allergens",
+    "EDIT_DISH": "Edit Dish",
+    "MEAL_TYPE": "Meal Type",
+    "ADD_DISH": "Add Dish",
+    "DISH_LIST": "Dish List"
+  },
   "MEALS": {
     "GENERATE_TICKET": "Generate Meal Ticket",
     "NUMBER_OF_MEALS": "Number of Meals",

@@ -42,6 +42,9 @@
           [(endDate)]="configurations.mealConfigurations.mealInfo[$index].endValidity"
           [disabled]="!editMode"
         />
+        <ion-button slot="end" fill="clear" (click)="openDishesModal(mealInfo)">
+          <ion-icon name="restaurant-outline" slot="icon-only"></ion-icon>
+        </ion-button>
         <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeMealTicket(mealInfo)">
           <ion-icon icon="trash" slot="icon-only"></ion-icon>
         </ion-button>

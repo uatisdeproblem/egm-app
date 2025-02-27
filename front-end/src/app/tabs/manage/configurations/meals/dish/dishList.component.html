@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'DISH.DISH_LIST' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-reorder-group (ionItemReorder)="reorderDishes($event)">
+      <ion-item *ngFor="let dish of dishes">
+        <ion-reorder slot="start"></ion-reorder>
+        <ion-label>
+          <h2>{{ dish.name }}</h2>
+          <p>{{ 'DISH.MEAL_TYPE' | translate }}: {{ dish.mealType }}</p>
+          <p *ngIf="dish.ingredients && dish.ingredients.length > 0">
+            <ion-text color="medium">
+              <small>{{ dish.ingredients }}</small>
+            </ion-text>
+          </p>
+        </ion-label>
+        <ion-button slot="end" fill="clear" (click)="editDish(dish)" *ngIf="editMode">
+          <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeDish(dish)">
+          <ion-icon icon="trash" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-reorder-group>
+    <p class="ion-text-center" *ngIf="editMode">
+      <ion-button size="small" (click)="addNewDish()">{{ 'DISH.ADD_DISH' | translate }}</ion-button>
+    </p>
+  </ion-list>
+</ion-content>

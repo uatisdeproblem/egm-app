@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ editMode ? ('DISH.EDIT_DISH' | translate) : ('DISH.ADD_DISH' | translate) }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+      <ion-button [title]="'COMMON.SAVE' | translate" (click)="save()">
+        <ion-icon slot="icon-only" icon="checkmark-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [class.ion-padding]="!app.isInMobileMode()">
+  <ion-list class="aList" lines="full">
+    <ion-item [class.fieldHasError]="hasFieldAnError('name')">
+      <ion-label position="stacked">
+        {{ 'DISH.NAME' | translate }} <ion-text class="obligatoryDot"></ion-text>
+      </ion-label>
+      <ion-input [(ngModel)]="dish.name"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-select
+        [(ngModel)]="dish.mealType"
+        placeholder="{{ 'DISH.MEAL_TYPE' | translate }}">
+        <ion-select-option *ngFor="let mealType of mealTypes" [value]="mealType.name">
+          {{ mealType.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-list-header [class.fieldHasError]="hasFieldAnError('ingredients')">
+      <ion-label>
+        <h2>{{ 'DISH.INGREDIENTS' | translate }} <ion-text class="obligatoryDot"></ion-text></h2>
+      </ion-label>
+    </ion-list-header>
+    <app-html-editor [(content)]="dish.ingredients" [editMode]="true"></app-html-editor>
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'DISH.ALLERGENS' | translate }}</h2>
+      </ion-label>
+    </ion-list-header>
+    <app-html-editor [(content)]="dish.allergens" [editMode]="true"></app-html-editor>
+
+  </ion-list>
+</ion-content>

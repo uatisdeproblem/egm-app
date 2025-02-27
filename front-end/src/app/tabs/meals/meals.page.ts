@@ -73,6 +73,18 @@ export class MealsPage implements OnInit {
     return mealType?.color ?? 'primary';
   }
 
+  getMealIngredients(meal: MealTicket): string {
+    let ticket = this.ticketInfos.find(info => info.ticketId === meal.mealTicketId);
+    const dish = ticket.dishes.find(dish => dish.mealType == this.app.user.mealType);
+    return dish?.ingredients ?? '';
+  }
+
+  getMealAllergens(meal: MealTicket): string {
+    let ticket = this.ticketInfos.find(info => info.ticketId === meal.mealTicketId);
+    const dish = ticket.dishes.find(dish => dish.mealType == this.app.user.mealType);
+    return dish?.allergens ?? '';
+  }
+
   async generateTicket(ticketId: string): Promise<void> {
     await this._meals.generateTicket(this.app.user.userId, ticketId);
     this.meals = await this._meals.getMealsByUserId(this.app.user.userId, {force: true});

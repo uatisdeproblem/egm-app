@@ -56,7 +56,6 @@ export class MealTicket extends Resource {
    */
   status: boolean;
 
-
   load(x: any): void {
     super.load(x);
     this.mealTicketId = this.clean(x.mealTicketId, String);
