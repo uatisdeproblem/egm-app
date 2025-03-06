@@ -218,6 +218,10 @@ export class AppService {
     return p.isAdmin || p.canManageRegistrations || p.canManageContents || p.canManageMeals;
   }
 
+  userCanScanMeals(): boolean {
+    return this.user.canManageMeals();
+  }
+
   formatDateShort = (date: string | Date): string => {
     if (!(date instanceof Date)) date = new Date(date);
     return date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
