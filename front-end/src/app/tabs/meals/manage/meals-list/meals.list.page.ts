@@ -87,7 +87,7 @@ export class MealsListPage implements OnInit {
     try {
       await this.loading.show();
       [this.users, this.meals] = await Promise.all([
-        this._users.getList(),
+        this._users.getUsersConfirmed(),
         this._meals.getMealsByMealId(this.app.user.userId, this.ticketId)
       ]);
 
@@ -105,8 +105,6 @@ export class MealsListPage implements OnInit {
     const mealUserIds = this.meals.map(meal => meal.userId);
 
     this.usersWithoutTicket = this.users.filter(user =>
-      user.registrationAt &&
-      user.spot &&
       !mealUserIds.includes(user.userId)
     );
 
@@ -214,7 +212,6 @@ export class MealsListPage implements OnInit {
       });
     });
 
-    // Imposta i totali
     this.numMeals = 0;
     this.numUsedTickets = 0;
     this.numAvailableUsers = this.filteredMeals.length;
