@@ -40,18 +40,22 @@ export class MealsListPage implements OnInit {
   headerHeight = 56;
   footerHeight = 80;
 
-  meals: MealTicket[];
-  users: User[];
-  filteredMeals: MealTicket[];
+  meals: MealTicket[] = [];
+  users: User[] = [];
+  usersWithoutTicket: User[] = [];
+  filteredMeals: MealTicket[] = [];
+
   filters: RowsFilters = {
     type: null,
     approvedType: null,
     used: null,
-    sectionCountry: null
+    sectionCountry: null,
+    generateTicket: null
   };
 
   numMeals = 0;
   numUsedTickets = 0;
+  numAvailableUsers = 0;
 
   constructor(
     private modalCtrl: ModalController,
@@ -65,6 +69,7 @@ export class MealsListPage implements OnInit {
     private _meals: MealsService,
     public app: AppService
   ) {}
+
   async ngOnInit(): Promise<void> {
     this.ticketId = this.route.snapshot.paramMap.get('mealTicketId');
 
@@ -81,8 +86,13 @@ export class MealsListPage implements OnInit {
 
     try {
       await this.loading.show();
-      [this.users, this.meals] = await Promise.all([this._users.getList(),
-                                                    this._meals.getMealsByMealId(this.app.user.userId, this.ticketId)]);
+      [this.users, this.meals] = await Promise.all([
+        this._users.getList(),
+        this._meals.getMealsByMealId(this.app.user.userId, this.ticketId)
+      ]);
+
+      this.updateUsersWithoutTicket();
+
       this.filter(this.searchbar?.value);
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
@@ -90,6 +100,19 @@ export class MealsListPage implements OnInit {
       this.loading.hide();
     }
   }
+
+  updateUsersWithoutTicket(): void {
+    const mealUserIds = this.meals.map(meal => meal.userId);
+
+    this.usersWithoutTicket = this.users.filter(user =>
+      user.registrationAt &&
+      user.spot &&
+      !mealUserIds.includes(user.userId)
+    );
+
+    this.numAvailableUsers = this.usersWithoutTicket.length;
+  }
+
   ionViewWillEnter(): void {
     if (!(this.app.user.canManageMeals()))
       return this.app.closePage('COMMON.UNAUTHORIZED');
@@ -110,44 +133,139 @@ export class MealsListPage implements OnInit {
   filter(searchText?: string): void {
     searchText = (searchText ?? '').toLowerCase();
 
-    this.filteredMeals= this.meals.slice();
+    if (this.filters.generateTicket === 'no') {
+      this.showUsersWithoutTicket(searchText);
+    } else if (this.filters.generateTicket === 'yes') {
+      this.showUsersWithTicket(searchText);
+    } else {
+      this.showAllUsers(searchText);
+    }
+
+    this.mealsTable.offset = 0;
+  }
+
+  private showUsersWithTicket(searchText: string): void {
+    this.filteredMeals = this.meals.slice();
 
     this.filteredMeals = this.filteredMeals.filter(x =>
       [x.userId, x.userName, x.userCountry]
         .filter(f => f)
         .some(f => String(f).toLowerCase().includes(searchText))
     );
-    if (this.filters.approvedType)
-      this.filteredMeals = this.filteredMeals.filter(x =>
-        this.filters.approvedType === 'no' ? !x.approvedAt: x.approvedAt && this.filters.approvedType === x.approvedAt
-      );
-    if (this.filters.type)
-      this.filteredMeals = this.filteredMeals.filter(x =>
-        this.filters.type === 'no' ? !x.type : x.type && this.filters.type === x.type
-      );
 
-    if (this.filters.used)
+    if (this.filters.approvedType) {
+      this.filteredMeals = this.filteredMeals.filter(x =>
+        this.filters.approvedType === 'no' ? !x.approvedAt : x.approvedAt && this.filters.approvedType === x.approvedAt
+      );
+    }
+
+    if (this.filters.used) {
       this.filteredMeals = this.filteredMeals.filter(x =>
         this.filters.used === 'yes' ? x.status : !x.status
       );
-    if (this.filters.sectionCountry)
+    }
+
+    if (this.filters.type) {
+      this.filteredMeals = this.filteredMeals.filter(x =>
+        this.filters.type === 'no' ? !x.type : x.type && this.filters.type === x.type
+      );
+    }
+
+    if (this.filters.sectionCountry) {
       this.filteredMeals = this.filteredMeals.filter(x =>
         this.filters.sectionCountry === 'no' ? !x.userCountry : this.filters.sectionCountry === x.userCountry
       );
+    }
 
     this.calcFooterTotals();
+  }
 
-    // whenever the filter changes, always go back to the first page
-    this.mealsTable.offset = 0;
+  private showUsersWithoutTicket(searchText: string): void {
+    const filteredUsers = this.usersWithoutTicket.filter(user => {
+      const matchesSearch = [
+        user.userId,
+        user.firstName + ' ' + user.lastName,
+        user.sectionCountry
+      ]
+        .filter(f => f)
+        .some(f => String(f).toLowerCase().includes(searchText));
+
+      const matchesType = !this.filters.type ||
+                         this.filters.type === 'no' && !user.mealType ||
+                         user.mealType === this.filters.type;
+
+      const matchesCountry = !this.filters.sectionCountry ||
+                            this.filters.sectionCountry === 'no' && !user.sectionCountry ||
+                            user.sectionCountry === this.filters.sectionCountry;
+
+      return matchesSearch && matchesType && matchesCountry;
+    });
+
+    this.filteredMeals = filteredUsers.map(user => {
+      return new MealTicket({
+        mealTicketId: this.ticketId,
+        userId: user.userId,
+        userName: user.firstName + ' ' + user.lastName,
+        userCountry: user.sectionCountry || '',
+        type: user.mealType || '',
+        status: false,
+        name: this.app.configurations.mealConfigurations.mealInfo
+          .find(info => info.ticketId === this.ticketId)?.name || ''
+      });
+    });
+
+    // Imposta i totali
+    this.numMeals = 0;
+    this.numUsedTickets = 0;
+    this.numAvailableUsers = this.filteredMeals.length;
+  }
+
+  private showAllUsers(searchText: string): void {
+    this.showUsersWithTicket(searchText);
+
+    const filteredUsers = this.usersWithoutTicket.filter(user => {
+      const matchesSearch = [
+        user.userId,
+        user.firstName + ' ' + user.lastName,
+        user.sectionCountry
+      ]
+        .filter(f => f)
+        .some(f => String(f).toLowerCase().includes(searchText));
+
+      // Filtro per tipo di pasto
+      const matchesType = !this.filters.type ||
+                         this.filters.type === 'no' && !user.mealType ||
+                         user.mealType === this.filters.type;
+
+      // Filtro per paese
+      const matchesCountry = !this.filters.sectionCountry ||
+                            this.filters.sectionCountry === 'no' && !user.sectionCountry ||
+                            user.sectionCountry === this.filters.sectionCountry;
+
+      return matchesSearch && matchesType && matchesCountry;
+    });
+
+    const usersWithoutTicketsAsMeals = filteredUsers.map(user => {
+      return new MealTicket({
+        mealTicketId: this.ticketId,
+        userId: user.userId,
+        userName: user.firstName + ' ' + user.lastName,
+        userCountry: user.sectionCountry || '',
+        type: user.mealType || '',
+        status: false,
+        name: this.app.configurations.mealConfigurations.mealInfo
+          .find(info => info.ticketId === this.ticketId)?.name || ''
+      });
+    });
+
+    this.filteredMeals = [...this.filteredMeals, ...usersWithoutTicketsAsMeals];
+
+    this.numAvailableUsers = filteredUsers.length;
   }
 
   calcFooterTotals(): void {
-    this.numMeals = 0;
-    this.numUsedTickets = 0;
-    this.filteredMeals.forEach(meal => {
-      if (meal.status) this.numUsedTickets++;
-      this.numMeals++;
-    });
+    this.numMeals = this.filteredMeals.length;
+    this.numUsedTickets = this.filteredMeals.filter(meal => meal.status).length;
   }
 
   hasMealUsed(userId: string): boolean {
@@ -155,9 +273,7 @@ export class MealsListPage implements OnInit {
   }
 
   async addTicket() {
-    const data = this.users
-      .filter(x => x.registrationAt && x.spot && !this.hasMealUsed(x.userId))
-      .map(x => x.mapIntoSuggestion());
+    const data = this.usersWithoutTicket.map(x => x.mapIntoSuggestion());
     const componentProps = {
       data,
       hideIdFromUI: true,
@@ -173,15 +289,20 @@ export class MealsListPage implements OnInit {
         const user = this.users.find(x => x.userId === data.value);
         const mealTicket = new MealTicket({
           mealTicketId: this.ticketId,
-          name: this.app.configurations.mealConfigurations.mealInfo.find(info => info.ticketId = this.ticketId).name,
+          name: this.app.configurations.mealConfigurations.mealInfo
+            .find(info => info.ticketId === this.ticketId)?.name || '',
           userName: user.firstName + ' ' + user.lastName,
           userCountry: user.sectionCountry,
           type: user.mealType,
           userId: user.userId,
           status: false
-        })
+        });
+
         await this._meals.addTicket(mealTicket, user.userId);
         this.meals = await this._meals.getMealsByMealId(this.app.user.userId, this.ticketId);
+
+        this.updateUsersWithoutTicket();
+
         this.filter(this.searchbar?.value);
         this.message.success('COMMON.OPERATION_COMPLETED');
       } catch (error) {
@@ -191,9 +312,7 @@ export class MealsListPage implements OnInit {
       }
     });
     modal.present();
-
   }
-
 }
 
 interface RowsFilters {
@@ -201,4 +320,5 @@ interface RowsFilters {
   approvedType: string | 'no' | null;
   used: null | 'yes' | 'no';
   sectionCountry: string | 'no' | null;
+  generateTicket: null | 'yes' | 'no';
 }

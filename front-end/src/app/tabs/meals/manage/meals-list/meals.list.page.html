@@ -14,6 +14,19 @@
       <ion-label>{{ 'MANAGE.ADD_MEAL_TICKET' | translate }}</ion-label>
     </ion-item>
     <ion-item color="ideaToolbar" lines="none">
+      <ion-icon icon="people" slot="start" size="small"></ion-icon>
+      <ion-select
+        interface="popover"
+        [label]="('MEALS.SHOW_AVAILABLE_USERS' | translate) + ':'"
+        [(ngModel)]="filters.generateTicket"
+        (ionChange)="filter()"
+      >
+        <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
+        <ion-select-option value="yes">{{ 'COMMON.YES' | translate }}</ion-select-option>
+        <ion-select-option value="no">{{ 'COMMON.NO' | translate }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item color="ideaToolbar" lines="none">
       <ion-icon icon="filter" slot="start" size="small"></ion-icon>
       <ion-select
         interface="popover"

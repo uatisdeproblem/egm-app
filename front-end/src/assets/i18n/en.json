@@ -537,6 +537,7 @@
     "NOT_VALIDATED_TICKET": "Ticket not yet used",
     "MANAGE": "Ticket List",
     "USERS": "Meals",
+    "SHOW_AVAILABLE_USERS": "Show user with generated ticket",
     "INGREDIENTS": "Ingredients",
     "NO_INGREDIENTS": "No Ingredients",
     "ALLERGENS": "Food Allergens",
