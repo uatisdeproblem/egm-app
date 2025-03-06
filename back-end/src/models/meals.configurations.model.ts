@@ -91,6 +91,11 @@ export class Meal extends Resource {
    */
   dishes: Dish[];
 
+  /**
+   * Estabilish whether the ticket needs to be scan by OC or is only for information
+   */
+  needsScan: boolean;
+
   load(x: any): void {
     super.load(x);
     this.ticketId = this.clean(x.ticketId, String);
@@ -98,6 +103,7 @@ export class Meal extends Resource {
     this.startValidity = this.clean(x.startValidity, t => new Date(t).toISOString(), new Date().toISOString());
     this.endValidity = this.clean(x.endValidity, t => new Date(t).toISOString(), new Date().toISOString());
     this.dishes = this.cleanArray(x.dishes, dish => new Dish(dish), []);
+    this.needsScan = this.clean(x.needsScan, Boolean, false);
   }
 
   safeLoad(newData: any, safeData: any): void {

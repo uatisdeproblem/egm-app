@@ -65,7 +65,12 @@ export class MealsPage implements OnInit {
   isValidTicket(meal: MealTicket): boolean {
     let ticket = this.ticketInfos.find(info => info.ticketId === meal.mealTicketId);
     const now = new Date().toISOString();
-    return ticket && now >= ticket.startValidity && now < ticket.endValidity;
+    return (now >= ticket?.startValidity && now < ticket?.endValidity) ?? false;
+  }
+
+  needsScan(meal: MealTicket) {
+    let ticket = this.ticketInfos.find(info => info.ticketId === meal.mealTicketId);
+    return ticket?.needsScan ?? false;
   }
 
   getMealColor(type: string): string {
@@ -75,13 +80,13 @@ export class MealsPage implements OnInit {
 
   getMealIngredients(meal: MealTicket): string {
     let ticket = this.ticketInfos.find(info => info.ticketId === meal.mealTicketId);
-    const dish = ticket.dishes.find(dish => dish.mealType == this.app.user.mealType);
+    const dish = ticket?.dishes.find(dish => dish.mealType == this.app.user.mealType);
     return dish?.ingredients ?? '';
   }
 
   getMealAllergens(meal: MealTicket): string {
     let ticket = this.ticketInfos.find(info => info.ticketId === meal.mealTicketId);
-    const dish = ticket.dishes.find(dish => dish.mealType == this.app.user.mealType);
+    const dish = ticket?.dishes.find(dish => dish.mealType == this.app.user.mealType);
     return dish?.allergens ?? '';
   }
 

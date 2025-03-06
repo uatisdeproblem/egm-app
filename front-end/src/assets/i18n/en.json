@@ -317,6 +317,7 @@
     "MEAL_TYPE_NAME": "Meal type name",
     "MEAL_TYPE_COLOR": "Meal type color",
     "MEAL_TICKET_NAME": "Meal Name",
+    "MEAL_NEEDS_SCAN": "Needs QRcode scan",
     "MEAL_TICKET_INGREDIENTS": "Meal Ticket Ingredients",
     "MEAL_TICKET_ALLERGENS": "Meal Ticket Allergens",
     "ALLOW_REGISTRATIONS": "Allow registrations",

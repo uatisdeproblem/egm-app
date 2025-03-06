@@ -15,6 +15,7 @@ import { AddMealTypeComponent } from './meals/addMealType.component';
 import { DishListModalComponent } from './meals/dish/dishList.component';
 import { AddDishModalComponent } from './meals/dish/addDish.component';
 import { HTMLEditorComponent } from '@app/common/htmlEditor.component';
+import { AddMealTicketComponent } from './meals/addMealTicket.component';
 
 @NgModule({
   imports: [
@@ -31,6 +32,6 @@ import { HTMLEditorComponent } from '@app/common/htmlEditor.component';
     HTMLEditorComponent
   ],
   declarations: [RegistrationsConfigurationsPage, MealsConfigurationsPage,
-                 AddMealTypeComponent, DishListModalComponent, AddDishModalComponent]
+                 AddMealTypeComponent, AddMealTicketComponent, DishListModalComponent, AddDishModalComponent]
 })
 export class ConfigurationsModule {}
