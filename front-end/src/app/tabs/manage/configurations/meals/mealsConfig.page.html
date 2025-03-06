@@ -1,39 +1,38 @@
-<ion-list class="aList maxWidthContainer">
-  <ion-toolbar color="transparent">
-    <ion-buttons slot="end">
-      <ion-button *ngIf="editMode" (click)="exitEditMode()">
-        <ion-icon slot="icon-only" name="close-circle"></ion-icon>
-      </ion-button>
-      <ion-button *ngIf="editMode" (click)="save()">
-        <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
-      </ion-button>
-      <ion-button *ngIf="!editMode" (click)="enterEditMode()">
-        <ion-icon slot="icon-only" name="pencil"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-list-header>
-    <ion-label>
-      <h2>{{ 'MANAGE.MEALS_OPTIONS' | translate }}</h2>
-      <p>{{ 'MANAGE.MEALS_OPTIONS_I' | translate }}</p>
-    </ion-label>
-  </ion-list-header>
-  <ion-item>
-    <ion-label position="start">{{ 'MEALS.MEAL_EVENT_PERIOD' | translate }}</ion-label>
-    <app-daterange-timezone [(startDate)]="configurations.mealConfigurations.startDate"
-                            [(endDate)]="configurations.mealConfigurations.endDate"
-                            [disabled]="!editMode" />
-  </ion-item>
-
-  <ion-list-header>
-    <ion-label>
-      <h2>{{ 'MANAGE.MEALS_DAY_TIME' | translate }}</h2>
-      <p>{{ 'MANAGE.MEALS_DAY_TIME_I' | translate }}</p>
-    </ion-label>
-  </ion-list-header>
-
-  <ion-reorder-group [disabled]="!editMode" (ionItemReorder)="reorderMealTickets($event)">
-    @for (mealInfo of configurations.mealConfigurations.mealInfo; track $index) {
+<ion-content>
+  <ion-list class="aList maxWidthContainer">
+    <ion-toolbar color="transparent">
+      <ion-buttons slot="end">
+        <ion-button *ngIf="editMode" (click)="exitEditMode()">
+          <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="editMode" (click)="save()">
+          <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="!editMode" (click)="enterEditMode()">
+          <ion-icon slot="icon-only" name="pencil"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'MANAGE.MEALS_OPTIONS' | translate }}</h2>
+        <p>{{ 'MANAGE.MEALS_OPTIONS_I' | translate }}</p>
+      </ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-label position="start">{{ 'MEALS.MEAL_EVENT_PERIOD' | translate }}</ion-label>
+      <app-daterange-timezone [(startDate)]="configurations.mealConfigurations.startDate"
+        [(endDate)]="configurations.mealConfigurations.endDate"
+        [disabled]="!editMode" />
+    </ion-item>
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'MANAGE.MEALS_DAY_TIME' | translate }}</h2>
+        <p>{{ 'MANAGE.MEALS_DAY_TIME_I' | translate }}</p>
+      </ion-label>
+    </ion-list-header>
+    <ion-reorder-group [disabled]="!editMode" (ionItemReorder)="reorderMealTickets($event)">
+      @for (mealInfo of configurations.mealConfigurations.mealInfo; track $index) {
       <ion-item>
         <ion-reorder slot="start" *ngIf="editMode"></ion-reorder>
         <ion-label>{{ mealInfo.name }} </ion-label>
@@ -49,30 +48,30 @@
           <ion-icon icon="trash" slot="icon-only"></ion-icon>
         </ion-button>
       </ion-item>
-    }
-  </ion-reorder-group>
-  <p class="ion-text-center" *ngIf="editMode">
-    <ion-button size="small" (click)="addMealTicket()">{{ 'MANAGE.ADD_MEAL_TICKET' | translate }}</ion-button>
-  </p>
-
-  <ion-list-header>
-    <ion-label>
-      <h2>{{ 'MANAGE.MEALS_TYPE' | translate }}</h2>
-      <p>{{ 'MANAGE.MEALS_TYPE_I' | translate }}</p>
-    </ion-label>
-  </ion-list-header>
-  <ion-reorder-group [disabled]="!editMode" (ionItemReorder)="reorderMealTypes($event)">
-    <ion-item *ngFor="let mealType of configurations.mealConfigurations.mealTypes">
-      <ion-reorder slot="start" *ngIf="editMode"></ion-reorder>
+      }
+    </ion-reorder-group>
+    <p class="ion-text-center" *ngIf="editMode">
+      <ion-button size="small" (click)="addMealTicket()">{{ 'MANAGE.ADD_MEAL_TICKET' | translate }}</ion-button>
+    </p>
+    <ion-list-header>
       <ion-label>
-        {{ mealType.name }}
+        <h2>{{ 'MANAGE.MEALS_TYPE' | translate }}</h2>
+        <p>{{ 'MANAGE.MEALS_TYPE_I' | translate }}</p>
       </ion-label>
-      <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeMealType(mealType.name)">
-        <ion-icon icon="trash" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-item>
-  </ion-reorder-group>
-  <p class="ion-text-center" *ngIf="editMode">
-    <ion-button size="small" (click)="addMealType()">{{ 'MANAGE.ADD_MEAL_TYPE' | translate }}</ion-button>
-  </p>
-</ion-list>
+    </ion-list-header>
+    <ion-reorder-group [disabled]="!editMode" (ionItemReorder)="reorderMealTypes($event)">
+      <ion-item *ngFor="let mealType of configurations.mealConfigurations.mealTypes">
+        <ion-reorder slot="start" *ngIf="editMode"></ion-reorder>
+        <ion-label>
+          {{ mealType.name }}
+        </ion-label>
+        <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeMealType(mealType.name)">
+          <ion-icon icon="trash" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-reorder-group>
+    <p class="ion-text-center" *ngIf="editMode">
+      <ion-button size="small" (click)="addMealType()">{{ 'MANAGE.ADD_MEAL_TYPE' | translate }}</ion-button>
+    </p>
+  </ion-list>
+</ion-content>
