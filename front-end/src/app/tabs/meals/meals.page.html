@@ -104,12 +104,10 @@
               </ion-card-title>
             </ion-card-header>
 
-            <ion-card-content class="ion-text-center ion-justify-content-center">
-              <div class="center-button-container">
-                <ion-button expand="block" (click)="generateTicket(info.ticketId)">
-                  {{ 'MEALS.GENERATE_TICKET' | translate }}
-                </ion-button>
-              </div>
+            <ion-card-content class="center-button-container">
+              <ion-button (click)="generateTicket(info.ticketId)">
+                {{ 'MEALS.GENERATE_TICKET' | translate }}
+              </ion-button>
             </ion-card-content>
           </ion-card>
         </swiper-slide>
