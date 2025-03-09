@@ -358,7 +358,8 @@
     "USEFUL_LINKS": "Useful links",
     "USEFUL_LINKS_I": "Manage the links you want to make available to all users for quick access.",
     "DOWNLOAD_SESSIONS_REGISTRATIONS": "Download a spreadsheet with all the sessions registrations",
-    "CONTESTS": "Contests"
+    "CONTESTS": "Contests",
+    "IMPORT_FROM_CSV": "Import from CSV"
   },
   "STRIPE": {
     "BEFORE_YOU_PROCEED": "Before you proceed",
@@ -481,5 +482,61 @@
     "YOU_ARE_VOTING": "You are voting",
     "NOT_NOW": "Not now",
     "PUBLISH_RESULTS": "Publish results"
+  },
+  "IMPORT": {
+    "TITLE": "Import",
+    "STEPS": {
+      "SELECT_ENTITY": "Select entity",
+      "DOWNLOAD_TEMPLATE": "Template",
+      "UPLOAD_EXCEL": "Upload",
+      "METADATA_CONFIG": "Metadata",
+      "PREVIEW": "Preview",
+      "RESULTS": "Results"
+    },
+    "NEXT": "Next",
+    "NEXT_HINT": "Advance to the following step",
+    "SELECT_ENTITY_TO_IMPORT": "1. Select an entity to import",
+    "SELECT_ENTITY_TO_IMPORT_I": "Note: child entities must be imported after their parents.",
+    "SEL_ENTITIES_DISCLAIMERS": {
+      "ROOMS": "Rooms should be imported after the venues. Rooms of non existing venues will be ignored.",
+      "SPEAKERS": "Speakers should be imported after the organisations. Speakers of non existing organisations will be ignored.",
+      "SESSIONS": "Sessions should be imported after rooms and speakers. Sessions without an existing room or with non existing speakers will be ignored."
+    },
+    "PREPARE_DATA_DOWNLOAD_TEMPLATE": "2. Prepare your data on an Excel spreadsheet",
+    "PREPARE_DATA_DOWNLOAD_TEMPLATE_I": "Gather the data for this entity and prepare it on an Excel spreadsheet (.xls, .xlsx).",
+    "PREPARE_DATA_DOWNLOAD_TEMPLATE_II": "We suggest you use our template, to speed up the rest of the import process.",
+    "PREPARE_DATA_DOWNLOAD_TEMPLATE_III": "The template contains some sample elements between the ones currently avaiable on this team; you can safely delete those elements from the template before you insert your data.",
+    "CHOOSE_FILE": "Choose file",
+    "DOWNLOAD_TEMPLATE": "Download our template",
+    "UPLOAD_DATA": "3. Upload the Excel spreadsheet containing the elements",
+    "UPLOAD_DATA_I": "Pick the file (.xls, .xlsx) you filled in with your elements for the selected entity.",
+    "UPLOAD_DATA_II": "Note: the first row will be used as header, to identify the name of the columns.",
+    "METADATA_CONFIGURATION": "4. Import configuration",
+    "METADATA_CONFIGURATION_I": "Read carefully all the notes and configure the last options.",
+    "ENTITY_IS_CONFIGURED_WITH_AUTOMATIC_IDS": "The entity is configured to manage the ID (identifiers) automatically.\nThis means you won't be able to choose the identifiers: Scarlett will create them for you.\nYou can change this behaviour in the Team page.",
+    "ENTITY_IS_CONFIGURED_WITH_MANUAL_IDS": "The entity is configured to require manual ID (identifiers).\nYou can change this behaviour in the Team page.",
+    "METADATA_CONFIGURATION_COLS": "Attribute-columns association",
+    "METADATA_CONFIGURATION_COLS_I": "Associate each expected attribute for the entity with a column read from the Excel file.",
+    "METADATA_CONFIGURATION_COLS_II": "The attributes for which a value is obligatory are higlighted with an asterisk.",
+    "PREVIEW": "Preview",
+    "PREVIEW_IMPORT": "5. Select the elements to import",
+    "PREVIEW_IMPORT_I": "Decide if you want to skip some elements or whether to perform a full import.",
+    "PREVIEW_IMPORT_II": "Invalid elements (e.g. attributes are missing) won't be imported.",
+    "PREVIEW_IMPORT_III": "Existing elements are skipped by default, but you can include them back to overwrite their values.",
+    "IMPORT_SELECTED": "Import {{num}} selected elements",
+    "ELEMENT_EXISTS_WILL_BE_OVERWRITTEN": "The element exists already; if selected, it will be overwritten.",
+    "BACK_TO_DASHBOARD": "Back to dashboard",
+    "FAILED_TO_IMPORT_NUM_ELEMENTS_": "Failed to import {{num}} elements.",
+    "FIND_A_COLUMN_TO_LINK": "Find a column to link",
+    "FINISHED": "Finished.",
+    "IMPORT": "Import",
+    "INTERRUPT": "Interrupt",
+    "INTERRUPT_HINT": "Interrupt the import flow and avoid new insertions",
+    "INVALID_ELEMENT_WONT_BE_IMPORTED": "The element is invalid and it won't be imported.",
+    "RESULTS": "6. Import results",
+    "RESULTS_I": "Monitor the import results as it goes (it may take a few minutes).",
+    "SUCCESSFULLY_IMPORTED_NUM_ELEMENTS_": "Successfully imported {{num}} elements.",
+    "TAP_TO_MAP_COL_TO_ATTRIBUTE": "Tap to link a column...",
+    "YOU_WILL_IMPORT_NUM_ELEMENTS_": "You will import {{num}} elements."
   }
 }

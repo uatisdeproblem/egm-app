@@ -38,7 +38,7 @@ class Venues extends ResourceController {
       throw new HandledError('User not found');
     }
 
-    if (!this.resourceId) return;
+    if (this.httpMethod === 'POST' || !this.resourceId) return;
 
     try {
       this.venue = new Venue(await ddb.get({ TableName: DDB_TABLES.venues, Key: { venueId: this.resourceId } }));
@@ -59,6 +59,15 @@ class Venues extends ResourceController {
 
     return await this.putSafeResource();
   }
+
+  protected async postResource(): Promise<Venue> {
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
+
+    this.venue = new Venue(this.body);
+
+    return await this.putSafeResource({ noOverwrite: true });
+  }
+
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Venue> {
     const errors = this.venue.validate();
     if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
