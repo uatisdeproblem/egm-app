@@ -525,8 +525,11 @@ export class ImportPage implements OnInit {
 
     switch (this.entity) {
       case EntityTypes.SPEAKERS:
-        if (el.speaker.speakerId && !this.speakers.some(s => s.speakerId === el.speaker.speakerId))
-          errors.push('speaker id');
+        if (
+          el.organization.organizationId &&
+          !this.organizations.some(o => o.organizationId === el.organization.organizationId)
+        )
+          errors.push('organization id');
         break;
       case EntityTypes.ROOMS:
         if (el.venue.venueId && !this.venues.some(v => v.venueId === el.venue.venueId)) errors.push('venue id');
