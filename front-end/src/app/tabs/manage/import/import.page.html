@@ -1,6 +1,3 @@
-<ion-header class="ion-no-border">
-  <ion-title>{{ 'IMPORT.TITLE' | translate }}</ion-title>
-</ion-header>
 <ion-content>
   <ion-grid class="maxWidthContainer">
     <ion-breadcrumbs [maxItems]="4" [itemsBeforeCollapse]="1" [itemsAfterCollapse]="2">
@@ -106,7 +103,7 @@
             </ion-item>
           </ion-radio-group>
           @if (entity && _translate._('IMPORT.SEL_ENTITIES_DISCLAIMERS.' + entity)) {
-          <ion-item color="medium">
+          <ion-item color="warning">
             <ion-icon name="warning" slot="start" />
             <ion-label class="ion-text-wrap">
               {{ _translate._('IMPORT.SEL_ENTITIES_DISCLAIMERS.' + entity) }}
@@ -343,7 +340,7 @@
           @if (numElementsImported >= filteredElementsToImport.length) {
           <div>
             <p class="ion-text-center">
-              <ion-button class="normalCase" [title]="'COMMON.CLOSE' | translate" (click)="_app.goTo([''])">
+              <ion-button class="normalCase" [title]="'COMMON.CLOSE' | translate" (click)="_app.goTo(['t', 'manage'])">
                 {{ 'IMPORT.BACK_TO_DASHBOARD' | translate }}
               </ion-button>
             </p>
