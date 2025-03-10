@@ -94,7 +94,7 @@ export class RoomFlat {
     x = x || ({} as any);
     this['Room ID'] = x.roomId;
     this['Room name'] = x.name;
-    this['Venue ID'] = x.venue.venueId;
+    this['Venue ID'] = x.venue?.venueId;
     this['Internal Location'] = x.internalLocation;
     this['Description'] = x.description;
   }

@@ -210,8 +210,8 @@ export class SessionFlat {
     this['Starts At'] = x.startsAt;
     this['Ends At'] = x.endsAt;
     this['Duration (m)'] = x.durationMinutes;
-    this['Room Id'] = x.room.roomId;
-    this['Speaker Ids'] = x.speakers.map(s => s.speakerId).join(',');
+    this['Room Id'] = x.room?.roomId;
+    this['Speaker Ids'] = x.speakers?.map(s => s.speakerId).join(',');
     this['Nr. of Participants'] = x.numberOfParticipants;
     this['Limit of Participants'] = x.limitOfParticipants;
     this['Requires Registration'] = x.requiresRegistration;

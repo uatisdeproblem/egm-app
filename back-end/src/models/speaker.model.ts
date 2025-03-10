@@ -121,7 +121,7 @@ export class SpeakerFlat {
     x = x || ({} as any);
     this['Speaker ID'] = x.speakerId;
     this['Speaker name'] = x.name;
-    this['Organization ID'] = x.organization.organizationId;
+    this['Organization ID'] = x.organization?.organizationId;
     this['Description'] = x.description;
     this['Title'] = x.title;
     this['Contact Email'] = x.contactEmail;
