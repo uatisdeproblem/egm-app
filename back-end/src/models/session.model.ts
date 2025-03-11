@@ -119,14 +119,19 @@ export class Session extends Resource {
   // @todo add a method to check if a user/speaker is in the session or not
 
   calcDatetimeWithoutTimezone(dateToFormat: Date | string | number, bufferInMinutes = 0): datetime {
-    const date = new Date(dateToFormat);
-    return new Date(
-      date.getTime() -
-        this.convertMinutesToMilliseconds(date.getTimezoneOffset()) +
-        this.convertMinutesToMilliseconds(bufferInMinutes)
-    )
-      .toISOString()
-      .slice(0, 16);
+    try {
+      const date = new Date(dateToFormat);
+      return new Date(
+        date.getTime() -
+          this.convertMinutesToMilliseconds(date.getTimezoneOffset()) +
+          this.convertMinutesToMilliseconds(bufferInMinutes)
+      )
+        .toISOString()
+        .slice(0, 16);
+    } catch (error) {
+      // force null on invalid dates that might come from import
+      return null;
+    }
   }
 
   convertMinutesToMilliseconds(minutes: number) {
@@ -139,6 +144,82 @@ export class Session extends Resource {
 
   getSpeakers(): string {
     return this.speakers.map(s => s.name).join(', ');
+  }
+
+  /**
+   * Return an exportable flat version of the resource.
+   */
+  exportFlat(): SessionFlat {
+    return new SessionFlat(this);
+  }
+
+  /**
+   * Import a flat structure and set the internal attributes accordingly.
+   */
+  importFlat(x: SessionFlat): void {
+    this.sessionId = x['Session ID'];
+    this.code = x['Session Code'];
+    this.name = x['Session Name'];
+    this.description = x['Description'];
+    this.type = x['Session Type'];
+    this.startsAt = this.calcDatetimeWithoutTimezone(x['Starts At']);
+    this.endsAt = this.calcDatetimeWithoutTimezone(x['Ends At']);
+    this.durationMinutes = x['Duration (m)'];
+    this.room = new RoomLinked({ roomId: x['Room Id'] });
+    this.speakers = x['Speaker Ids'].split(',').map(speakerId => new SpeakerLinked({ speakerId }));
+    this.numberOfParticipants = x['Nr. of Participants'];
+    this.limitOfParticipants = x['Limit of Participants'];
+    this.requiresRegistration = !!x['Requires Registration'];
+  }
+}
+
+/**
+ * A flat version of the resource, useful for exports.
+ */
+export class SessionFlat {
+  sessionId: string;
+  code: string;
+  name: string;
+  description: string;
+  type: SessionType;
+  startsAt: datetime;
+  endsAt: datetime;
+  durationMinutes: number;
+  room: RoomLinked;
+  speakers: SpeakerLinked[];
+  numberOfParticipants: number;
+  limitOfParticipants: number;
+  requiresRegistration: boolean;
+
+  'Session ID': string;
+  'Session Code': string;
+  'Session Name': string;
+  'Description': string;
+  'Session Type': SessionType;
+  'Starts At': datetime;
+  'Ends At': datetime;
+  'Duration (m)': number;
+  'Room Id': string;
+  'Speaker Ids': string;
+  'Nr. of Participants': number;
+  'Limit of Participants': number;
+  'Requires Registration': boolean;
+
+  constructor(x?: Session) {
+    x = x || ({} as any);
+    this['Session ID'] = x.sessionId;
+    this['Session Code'] = x.code;
+    this['Session Name'] = x.name;
+    this['Description'] = x.description;
+    this['Session Type'] = x.type;
+    this['Starts At'] = x.startsAt;
+    this['Ends At'] = x.endsAt;
+    this['Duration (m)'] = x.durationMinutes;
+    this['Room Id'] = x.room?.roomId;
+    this['Speaker Ids'] = x.speakers?.map(s => s.speakerId).join(',');
+    this['Nr. of Participants'] = x.numberOfParticipants;
+    this['Limit of Participants'] = x.limitOfParticipants;
+    this['Requires Registration'] = x.requiresRegistration;
   }
 }
 

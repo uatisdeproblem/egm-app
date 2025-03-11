@@ -47,6 +47,24 @@ export class Room extends Resource {
     if (!this.venue.venueId) e.push('venue');
     return e;
   }
+
+  /**
+   * Return an exportable flat version of the resource.
+   */
+  exportFlat(): RoomFlat {
+    return new RoomFlat(this);
+  }
+
+  /**
+   * Import a flat structure and set the internal attributes accordingly.
+   */
+  importFlat(x: RoomFlat): void {
+    this.roomId = x['Room ID'];
+    this.name = x['Room name'];
+    this.internalLocation = x['Internal Location'];
+    this.description = x['Description'];
+    this.venue = new VenueLinked({ venueId: x['Venue ID'] });
+  }
 }
 
 export class RoomLinked extends Resource {
@@ -59,5 +77,25 @@ export class RoomLinked extends Resource {
     this.roomId = this.clean(x.roomId, String);
     this.name = this.clean(x.name, String);
     this.venue = new VenueLinked(x.venue);
+  }
+}
+
+/**
+ * A flat version of the resource, useful for exports.
+ */
+export class RoomFlat {
+  'Room ID': string;
+  'Room name': string;
+  'Venue ID': string;
+  'Internal Location': string;
+  'Description': string;
+
+  constructor(x?: Room) {
+    x = x || ({} as any);
+    this['Room ID'] = x.roomId;
+    this['Room name'] = x.name;
+    this['Venue ID'] = x.venue?.venueId;
+    this['Internal Location'] = x.internalLocation;
+    this['Description'] = x.description;
   }
 }
