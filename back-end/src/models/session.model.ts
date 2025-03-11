@@ -119,14 +119,19 @@ export class Session extends Resource {
   // @todo add a method to check if a user/speaker is in the session or not
 
   calcDatetimeWithoutTimezone(dateToFormat: Date | string | number, bufferInMinutes = 0): datetime {
-    const date = new Date(dateToFormat);
-    return new Date(
-      date.getTime() -
-        this.convertMinutesToMilliseconds(date.getTimezoneOffset()) +
-        this.convertMinutesToMilliseconds(bufferInMinutes)
-    )
-      .toISOString()
-      .slice(0, 16);
+    try {
+      const date = new Date(dateToFormat);
+      return new Date(
+        date.getTime() -
+          this.convertMinutesToMilliseconds(date.getTimezoneOffset()) +
+          this.convertMinutesToMilliseconds(bufferInMinutes)
+      )
+        .toISOString()
+        .slice(0, 16);
+    } catch (error) {
+      // force null on invalid dates that might come from import
+      return null;
+    }
   }
 
   convertMinutesToMilliseconds(minutes: number) {
