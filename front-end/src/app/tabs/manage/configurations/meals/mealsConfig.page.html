@@ -44,6 +44,9 @@
         <ion-button slot="end" fill="clear" (click)="openDishesModal(mealInfo)">
           <ion-icon name="restaurant-outline" slot="icon-only"></ion-icon>
         </ion-button>
+        <ion-button slot="end" fill="clear" *ngIf="editMode" (click)="editMealTicket(mealInfo)">
+          <ion-icon icon="settings" slot="icon-only"></ion-icon>
+        </ion-button>
         <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeMealTicket(mealInfo)">
           <ion-icon icon="trash" slot="icon-only"></ion-icon>
         </ion-button>
@@ -65,7 +68,10 @@
         <ion-label>
           {{ mealType.name }}
         </ion-label>
-        <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeMealType(mealType.name)">
+        <ion-button slot="end" fill="clear" *ngIf="editMode" (click)="editMealType(mealType)">
+          <ion-icon icon="settings" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button slot="end" color="danger" fill="clear" *ngIf="editMode" (click)="removeMealType(mealType)">
           <ion-icon icon="trash" slot="icon-only"></ion-icon>
         </ion-button>
       </ion-item>

@@ -66,13 +66,25 @@ export class MealsConfigurationsPage implements OnInit {
 
   }
 
-  removeMealType(mealType: string): void {
-    const index = this.configurations.mealConfigurations.mealTypes.findIndex(
-      m => m.name === mealType
-    );
-    if (index !== -1) {
-      this.configurations.mealConfigurations.mealTypes.splice(index, 1);
+  async editMealType(mealType: MealType): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: AddMealTypeComponent,
+      componentProps: {
+        mealType: mealType
+      }
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data) {
+      mealType = new MealType(data);
     }
+  }
+
+  removeMealType(mealType: MealType): void {
+    this.configurations.mealConfigurations.mealTypes.splice(
+      this.configurations.mealConfigurations.mealTypes.indexOf(mealType), 1);
   }
 
   async addMealType(): Promise<void> {
@@ -90,6 +102,25 @@ export class MealsConfigurationsPage implements OnInit {
 
   reorderMealTypes({ detail }): void {
     this.configurations.mealConfigurations.mealTypes = detail.complete(this.configurations.mealConfigurations.mealTypes);
+  }
+
+
+  async editMealTicket(ticket: Meal): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: AddMealTicketComponent,
+      componentProps: {
+        name: ticket.name,
+        needsScan: ticket.needsScan
+      }
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data && data.name) {
+      ticket.name = data.name;
+      ticket.needsScan = data.needsScan;
+    }
   }
 
   removeMealTicket(mealTicket: Meal): void {
