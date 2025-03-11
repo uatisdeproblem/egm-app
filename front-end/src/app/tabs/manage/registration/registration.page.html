@@ -35,6 +35,28 @@
         <ion-icon icon="open-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-item>
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'USER.PERSONAL_DATA' | translate }}</h2>
+      </ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-label position="stacked">{{ 'USER.FIRST_NAME' | translate }}</ion-label>
+      <ion-input [disabled]="!user.isExternal()" [(ngModel)]="user.firstName"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{ 'USER.LAST_NAME' | translate }}</ion-label>
+      <ion-input [disabled]="!user.isExternal()" [(ngModel)]="user.lastName"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{ 'USER.EMAIL_FOR_NOTIFICATIONS' | translate }}</ion-label>
+      <ion-input [disabled]="!user.isExternal()" [(ngModel)]="user.email"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label id="birthDateLabel" position="stacked">{{ 'USER.BIRTH_DATE' | translate }}</ion-label>
+      <idea-date-time [disabled]="!user.isExternal()" [(date)]="user.birthDate"></idea-date-time>
+    </ion-item>
+
     <idea-custom-block
       [sections]="form"
       [blockMeta]="app.configurations.registrationFormDef"

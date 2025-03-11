@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      {{ 'AUTH.TERMS_AND_CONDS' | translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="maxWidthContainer">
+    <ion-list class="aList">
+      <p
+        [innerHTML]="
+          t.instant('TERMS.INTRO')
+        "
+      ></p>
+    </ion-list>
+      <p
+        [innerHTML]="
+          t.instant('TERMS.SERVICE')
+        "
+      ></p>
+      <p
+        [innerHTML]="
+          t.instant('TERMS.RIGHTS')
+        "
+      ></p>
+      <p
+        [innerHTML]="
+          t.instant('TERMS.LIABILITY')
+        "
+      ></p>
+      <p
+        [innerHTML]="
+          t.instant('TERMS.LAW_AND_MISCELLANEOUS')
+        "
+      ></p>
+  </div>
+</ion-content>

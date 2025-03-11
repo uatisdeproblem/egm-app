@@ -18,7 +18,8 @@ export class UsersService {
    * Register the user to the event.
    */
   async registerToEvent(user: User, registrationForm: any, isDraft: boolean): Promise<User> {
-    const body = { action: 'REGISTER_TO_EVENT', registrationForm, isDraft };
+    await this.api.putResource(['users', user.userId], {body: user});
+    const body = { action: 'REGISTER_TO_EVENT', user, registrationForm, isDraft };
     return new User(await this.api.patchResource(['users', user.userId], { body }));
   }
 
