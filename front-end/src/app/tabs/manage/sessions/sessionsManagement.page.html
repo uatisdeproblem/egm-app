@@ -1,0 +1,56 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="ideaToolbar" *ngIf="app.isInMobileMode()">
+    <ion-buttons slot="start">
+      <ion-button (click)="app.closePage()"><ion-icon icon="arrow-back" slot="icon-only"></ion-icon></ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'MANAGE.SESSIONS_MANAGEMENT' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list class="aList maxWidthContainer" [class.viewMode]="!editMode">
+    <ion-toolbar color="transparent">
+      <ion-buttons slot="end">
+        <ion-button *ngIf="!editMode" (click)="enterEditMode()">
+          <ion-icon slot="icon-only" name="pencil"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="editMode" (click)="exitEditMode()">
+          <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="editMode" (click)="save()">
+          <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-list-header *ngIf="!app.isInMobileMode()">
+      <ion-label>
+        <h2>{{ 'MANAGE.SESSIONS_MANAGEMENT' | translate }}</h2>
+        <p>{{ 'MANAGE.SESSIONS_MANAGEMENT_I' | translate }}</p>
+      </ion-label>
+    </ion-list-header>
+    <ion-item>
+      {{ 'MANAGE.MIN_LIMIT' | translate }}
+      <input slot="end" type="number" [disabled]="!editMode" [(ngModel)]="configurations.minLimit">
+    </ion-item>
+    <ion-item>
+      {{ 'MANAGE.MAX_LIMIT' | translate }}
+      <input slot="end" type="number" [disabled]="!editMode" [(ngModel)]="configurations.maxLimit">
+    </ion-item>
+    <ion-list-header *ngIf="!app.isInMobileMode()">
+      <ion-label>
+        <h2>{{ 'USERS.PERMISSIONS' | translate }}</h2>
+      </ion-label>
+    </ion-list-header>
+    <ion-item >
+      <ion-checkbox slot="start" [disabled]="!editMode" [(ngModel)]="configurations.forParticipants"></ion-checkbox>
+      <ion-label class="ion-text-wrap"> {{ 'SESSIONS.APPLY_FOR_PARTICIPANTS' | translate }} </ion-label>
+    </ion-item>
+    <ion-item >
+      <ion-checkbox slot="start" [disabled]="!editMode" [(ngModel)]="configurations.forExternals"></ion-checkbox>
+      <ion-label class="ion-text-wrap"> {{ 'SESSIONS.APPLY_FOR_EXTERNALS' | translate}} </ion-label>
+    </ion-item>
+    <ion-item >
+      <ion-checkbox slot="start" [disabled]="!editMode" [(ngModel)]="configurations.forSpeakers"></ion-checkbox>
+      <ion-label class="ion-text-wrap"> {{ 'SESSIONS.APPLY_FOR_SPEAKERS' | translate}} </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
