@@ -1,10 +1,23 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="ideaToolbar" *ngIf="app.isInMobileMode()">
-    <ion-buttons slot="start">
-      <ion-button (click)="app.closePage()"><ion-icon icon="arrow-back" slot="icon-only"></ion-icon></ion-button>
-    </ion-buttons>
-    <ion-title>{{ 'USER.REGISTRATION' | translate }}</ion-title>
-  </ion-toolbar>
+  <ion-row>
+    <ion-toolbar color="ideaToolbar" *ngIf="app.isInMobileMode()">
+        <ion-buttons slot="start">
+          <ion-button (click)="app.closePage()"><ion-icon icon="arrow-back" slot="icon-only"></ion-icon></ion-button>
+        </ion-buttons>
+        <ion-title>{{ 'USER.REGISTRATION' | translate }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button *ngIf="!editMode" (click)="enterEditMode()">
+            <ion-icon slot="icon-only" name="pencil"></ion-icon>
+          </ion-button>
+          <ion-button *ngIf="editMode" (click)="exitEditMode()">
+            <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+          </ion-button>
+          <ion-button *ngIf="editMode" (click)="save()">
+            <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-row>
 </ion-header>
 <ion-content>
   <ion-list class="aList maxWidthContainer" *ngIf="form" [class.viewMode]="!editMode">
@@ -12,6 +25,17 @@
       <ion-label>
         <h2>{{ 'USER.REGISTRATION_OF' | translate }}</h2>
       </ion-label>
+      <ion-buttons>
+        <ion-button *ngIf="!editMode" (click)="enterEditMode()">
+          <ion-icon slot="icon-only" name="pencil"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="editMode" (click)="exitEditMode()">
+          <ion-icon slot="icon-only" name="close-circle"></ion-icon>
+        </ion-button>
+        <ion-button *ngIf="editMode" (click)="save()">
+          <ion-icon slot="icon-only" name="checkmark-circle"></ion-icon>
+        </ion-button>
+      </ion-buttons>
     </ion-list-header>
     <ion-item>
       <ion-avatar slot="start">
@@ -64,7 +88,7 @@
         <ion-icon slot="icon-only" icon="eye"></ion-icon>
       </ion-button>
     </ion-item>
-    <ion-row class="ion-margin-top" *ngIf="editMode && this.app.configurations.canUserRegister(user)">
+    <ion-row class="ion-margin-top" *ngIf="editMode && this.app.configurations.canUserRegister(user) && !editAfterRegistration">
       <ion-col>
         <ion-button expand="block" fill="clear" (click)="save(true)"> {{ 'USER.SAVE_DRAFT' | translate }} </ion-button>
       </ion-col>

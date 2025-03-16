@@ -17,6 +17,7 @@ export class RegistrationPage {
   form: Record<string, any>;
   errors = new Set<string>();
   editMode = true;
+  editAfterRegistration = false;
 
   acceptCOC = false;
   acceptTC = false;
@@ -86,10 +87,20 @@ export class RegistrationPage {
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
+      document.body.focus();
       this.loading.hide();
     }
   }
   hasFieldAnError(field: string): boolean {
     return this.errors.has(field);
+  }
+  exitEditMode(): void {
+    this.errors = new Set<string>();
+    this.editMode = false;
+    this.editAfterRegistration = false;
+  }
+  enterEditMode(): void {
+    this.editMode = true;
+    this.editAfterRegistration = true;
   }
 }
