@@ -53,4 +53,9 @@ export class UsersService {
     const users: User[] = await this.api.getResource('users');
     return users.map(u => new User(u));
   }
+
+  async getUsersConfirmed(): Promise<User[]> {
+    const users: User[] = await this.api.getResource('users');
+    return users.filter(user => user.spot?.paymentConfirmedAt).map(u => new User(u));
+  }
 }

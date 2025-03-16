@@ -1,0 +1,185 @@
+$card-margin: 1rem;
+$card-max-width: 25rem;
+$card-padding: 1.5rem 1rem;
+
+%card-base {
+  margin: $card-margin;
+  max-width: $card-max-width;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+swiper-container {
+  width: 100%;
+  height: auto;
+  min-height: 25rem;
+}
+
+swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.card-container {
+  perspective: 1000px;
+  width: 100%;
+  max-width: $card-max-width;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ticket-card {
+  @extend %card-base;
+  position: relative;
+  width: 100%;
+  transition: transform 0.6s;
+  min-height: 25rem;
+
+  &.flipped {
+    .card-front {
+      opacity: 0;
+      z-index: 0;
+      transform: rotateY(180deg);
+    }
+
+    .card-back {
+      opacity: 1;
+      z-index: 1;
+      transform: rotateY(0deg);
+    }
+  }
+}
+
+.card-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transition: all 0.6s;
+  border-radius: 0.5rem;
+}
+
+.card-front {
+  opacity: 1;
+  z-index: 1;
+  transform: rotateY(0deg);
+}
+
+.card-back {
+  opacity: 0;
+  z-index: 0;
+  transform: rotateY(-180deg);
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $card-padding;
+  min-height: 18.75rem;
+
+  .qr-code {
+    background-color: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+
+    &:hover {
+      box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+      transition: box-shadow 0.3s ease;
+    }
+  }
+
+  .timestamp {
+    width: 100%;
+    display: block;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+    opacity: 0.9;
+  }
+}
+
+.controls-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+
+  .info-button {
+    margin-right: 1rem;
+  }
+
+  .validation-status {
+    display: flex;
+    align-items: center;
+
+    ion-icon {
+      margin-right: 0.5rem;
+    }
+
+    span {
+      vertical-align: middle;
+    }
+  }
+}
+
+ion-card-header {
+  ion-card-title {
+    font-weight: 600;
+    letter-spacing: 0.0625rem;
+  }
+}
+
+ion-list {
+  background: transparent;
+}
+
+ion-item[color="transparent"] {
+  --background: transparent;
+  --background-hover: transparent;
+  --background-focused: transparent;
+  --border-color: transparent;
+  --padding-start: 0;
+  margin-bottom: 16px;
+}
+
+.info-title {
+  color: white;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+ion-card-content {
+  min-height: 18.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (min-width: 48rem) {
+  %card-base {
+    margin: 2rem;
+  }
+
+  .qr-container {
+    padding: 0.25rem 1.5rem;
+
+    .qr-code {
+      margin: 1.5rem 0;
+    }
+  }
+
+  swiper-container {
+    min-height: 28rem;
+  }
+}

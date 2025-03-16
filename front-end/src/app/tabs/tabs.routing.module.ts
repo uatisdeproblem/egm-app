@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { manageGuard } from '../manage.guard';
 import { spotGuard } from '../spot.guard';
-
+import { mealGuard } from '../meal.guard';
 import { TabsComponent } from './tabs.component';
 
 const routes: Routes = [
@@ -60,6 +60,11 @@ const routes: Routes = [
         path: 'contests',
         loadChildren: (): Promise<any> => import('./contests/contests.module').then(m => m.ContestsModule),
         canActivate: [spotGuard]
+      },
+      {
+        path: 'meals',
+        loadChildren: (): Promise<any> => import('./meals/meals.module').then(m => m.MealsModule),
+        canActivate: [mealGuard]
       }
     ]
   }

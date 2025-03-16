@@ -2,6 +2,7 @@ import { Resource, Suggestion, epochISOString } from 'idea-toolbox';
 
 import { EventSpotAttached } from './eventSpot.model';
 import { Speaker } from './speaker.model';
+import { MealTicket } from './meals.model';
 
 export class User extends Resource {
   /**
@@ -82,6 +83,11 @@ export class User extends Resource {
    */
   votedInContests: string[];
 
+  /**
+   * The meal type connected to an user.
+   */
+  mealType: string;
+
   load(x: any): void {
     super.load(x);
     this.userId = this.clean(x.userId, String);
@@ -110,6 +116,7 @@ export class User extends Resource {
     if (x.socialMedia?.twitter) this.socialMedia.twitter = this.clean(x.socialMedia.twitter, String);
 
     this.votedInContests = this.cleanArray(x.votedInContests, String);
+    this.mealType = x.mealType ?? '';
   }
 
   safeLoad(newData: any, safeData: any): void {
@@ -132,6 +139,7 @@ export class User extends Resource {
     if (safeData.spot) this.spot = safeData.spot;
 
     this.votedInContests = safeData.votedInContests;
+    this.mealType = safeData.mealType ?? '';
   }
 
   validate(): string[] {
@@ -173,6 +181,15 @@ export class User extends Resource {
   isSpeaker(speaker: Speaker) {
     return speaker.speakerId === this.userId;
   }
+
+  canManageMeals(): boolean {
+    return this.permissions.isAdmin || this.permissions.canManageMeals;
+  }
+
+  canScanMealsTicket(): boolean {
+    return this.permissions.isAdmin || this.permissions.canManageMeals || this.permissions.canScanMeals;
+  }
+
 
   isGalaxyInfoValid(): boolean {
     if (this.isExternal()) return true;
@@ -217,6 +234,16 @@ export class UserPermissions {
    * Whether the user havs administrative permissions on the contents (speakers, sessions, etc.).
    */
   canManageContents: boolean;
+
+  /**
+   * Whether the user has permission to configure, manage and scan meal tickets.
+   */
+  canManageMeals: boolean;
+
+  /**
+   * Whether the user has permission to see meal tickets and scan tickets.
+   */
+  canScanMeals: boolean;
   /**
    * Whether the user has maximum permissions over the app.
    * If this is true, all other permissions are.
@@ -231,6 +258,8 @@ export class UserPermissions {
       this.isCountryLeader = true;
       this.canManageRegistrations = true;
       this.canManageContents = true;
+      this.canManageMeals = true;
+      this.canScanMeals = true;
     }
   }
 
@@ -239,6 +268,7 @@ export class UserPermissions {
     this.isCountryLeader = Boolean(x.isCountryLeader);
     this.canManageRegistrations = Boolean(x.canManageRegistrations);
     this.canManageContents = Boolean(x.canManageContents);
+    this.canManageMeals = Boolean(x.canManageMeals);
     // as last, to change any other attribute in case it's `true`
     this.isAdmin = Boolean(x._isAdmin);
   }

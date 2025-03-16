@@ -17,6 +17,9 @@
     <ion-tab-button tab="user">
       <ion-label>{{ 'TABS.USER' | translate }}</ion-label>
     </ion-tab-button>
+    <ion-tab-button tab="meals" *ngIf="app.user.canManageMeals()">
+      <ion-label>{{ 'TABS.MEALS' | translate }}</ion-label>
+    </ion-tab-button>
     <ion-tab-button tab="menu" *ngIf="app?.user.spot?.paymentConfirmedAt">
       <ion-label>{{ 'TABS.MENU' | translate }}</ion-label>
     </ion-tab-button>
@@ -41,6 +44,9 @@
     </ng-container>
     <ion-tab-button tab="user">
       <ion-icon icon="person"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="meals" *ngIf="app.user.canManageMeals()">
+      <ion-icon icon="pizza"></ion-icon>
     </ion-tab-button>
     <ion-tab-button tab="menu" *ngIf="app?.user.spot?.paymentConfirmedAt">
       <ion-icon icon="menu"></ion-icon>

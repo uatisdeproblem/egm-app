@@ -8,6 +8,14 @@ import { ConfigurationsRoutingModule } from './configurations-routing.module';
 
 import { RegistrationsConfigurationsPage } from './registrations/registrationsConfig.page';
 import { EmailTemplateModule } from './emailTemplate/emailTemplate.module';
+import { MealsConfigurationsPage } from './meals/mealsConfig.page';
+import { DateRangeWithTimezoneStandaloneComponent } from '@app/common/dateRangeWithTimezone';
+import { DateTimeRangeWithTimezoneComponent } from '@app/common/datetimeRangeWithTimezone';
+import { AddMealTypeComponent } from './meals/addMealType.component';
+import { DishListModalComponent } from './meals/dish/dishList.component';
+import { AddDishModalComponent } from './meals/dish/addDish.component';
+import { HTMLEditorComponent } from '@app/common/htmlEditor.component';
+import { AddMealTicketComponent } from './meals/addMealTicket.component';
 
 @NgModule({
   imports: [
@@ -18,8 +26,12 @@ import { EmailTemplateModule } from './emailTemplate/emailTemplate.module';
     IDEACustomFieldsModule,
     IDEAListModule,
     ConfigurationsRoutingModule,
-    EmailTemplateModule
+    EmailTemplateModule,
+    DateRangeWithTimezoneStandaloneComponent,
+    DateTimeRangeWithTimezoneComponent,
+    HTMLEditorComponent
   ],
-  declarations: [RegistrationsConfigurationsPage]
+  declarations: [RegistrationsConfigurationsPage, MealsConfigurationsPage,
+                 AddMealTypeComponent, AddMealTicketComponent, DishListModalComponent, AddDishModalComponent]
 })
 export class ConfigurationsModule {}

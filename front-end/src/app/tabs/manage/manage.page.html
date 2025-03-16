@@ -8,7 +8,7 @@
 </ion-header>
 <ion-content>
   <ion-list class="aList maxWidthContainer">
-    <ng-container *ngIf=" app.user.permissions.canManageRegistrations">
+    <ng-container *ngIf="app.user.permissions.canManageRegistrations">
       <ion-list-header>
         <ion-label>
           <h2>{{ 'MANAGE.USERS_AND_REGISTRATIONS' | translate }}</h2>
@@ -71,6 +71,18 @@
       <ion-item button detail (click)="addContest()">
         <ion-icon slot="start" icon="trophy-outline" />
         <ion-label>{{ 'MANAGE.CONTESTS' | translate }}</ion-label>
+      </ion-item>
+    </ng-container>
+    <ng-container *ngIf="app.user.permissions.canManageMeals">
+      <ion-list-header>
+        <ion-label>
+          <h2>{{ 'MANAGE.MEALS' | translate }}</h2>
+          <p>{{ 'MANAGE.MEALS_I' | translate }}</p>
+        </ion-label>
+      </ion-list-header>
+      <ion-item button detail (click)="app.goToInTabs(['manage', 'configurations', 'meals'])">
+        <ion-icon slot="start" icon="pizza-outline"></ion-icon>
+        <ion-label>{{ 'MANAGE.MEALS_SETTINGS' | translate }}</ion-label>
       </ion-item>
     </ng-container>
     <ng-container *ngIf="app.user.permissions.isAdmin">

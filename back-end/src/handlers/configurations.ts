@@ -13,7 +13,7 @@ import { User } from '../models/user.model';
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
 ///
-
+const PROJECT = process.env.PROJECT;
 const STAGE = process.env.STAGE;
 
 const DDB_TABLES = {
@@ -88,7 +88,13 @@ class ConfigurationsRC extends ResourceController {
     const errors = this.configurations.validate();
     if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
+    for (const meal of this.configurations.mealConfigurations.mealInfo) {
+      if (!meal.ticketId) {
+        meal.ticketId = await ddb.IUNID(PROJECT);
+      }
+    }
     await ddb.put({ TableName: DDB_TABLES.configurations, Item: this.configurations });
+
     return this.configurations;
   }
 

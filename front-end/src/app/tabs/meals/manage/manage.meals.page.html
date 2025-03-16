@@ -1,0 +1,31 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="ideaToolbar" *ngIf="app.isInMobileMode()">
+    <ion-buttons slot="start">
+      <ion-button (click)="app.closePage()">
+        <ion-icon icon="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'MEALS.MANAGE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    @for (meal of ticketInfos; track meal.ticketId) {
+      <ion-item>
+        <ion-label>
+          <h2>{{ meal.name }}</h2>
+          <p>{{ meal.startValidity | date }} - {{ meal.endValidity | date }}</p>
+          @if (isOpenNow(meal)) {
+            <ion-badge color="success">{{ 'MEALS.OPEN_PERIOD_MEALS' | translate }}</ion-badge>
+          } @else {
+            <ion-badge color="medium">{{ 'MEALS.CLOSED_PERIOD_MEALS' | translate }}</ion-badge>
+          }
+        </ion-label>
+        <ion-button slot="end" (click)="goToTicketList(meal.ticketId)">
+          <ion-icon slot="icon-only" name="list-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    }
+  </ion-list>
+</ion-content>

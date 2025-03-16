@@ -6,7 +6,7 @@ import { IDEAApiService, IDEAMessageService, IDEATranslationsService } from '@id
 
 import { environment as env } from '@env';
 import { AuthServices, User, UserPermissions } from '@models/user.model';
-import { Configurations } from '@models/configurations.model';
+import { Configurations, ESNColors } from '@models/configurations.model';
 
 /**
  * The base URLs where the thumbnails are located.
@@ -34,6 +34,7 @@ export class AppService {
 
   user: User;
   configurations: Configurations;
+  ESNcolors: { name: string, value: string }[];
 
   linkToOpenViaFab: string;
 
@@ -46,6 +47,10 @@ export class AppService {
     private api: IDEAApiService
   ) {
     this.darkMode = this.respondToColorSchemePreferenceChanges();
+    this.ESNcolors = Object.entries(ESNColors).map(([key, value]) => ({
+      name: key,
+      value: value
+    }));
   }
   private respondToColorSchemePreferenceChanges(): boolean {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => (this.darkMode = e.matches));
@@ -199,6 +204,10 @@ export class AppService {
       arrPermissions.push(this.t._('USER.CAN_MANAGE_REGISTRATIONS'.concat(short ? '_SHORT' : '')));
     if (permissions.canManageContents)
       arrPermissions.push(this.t._('USER.CAN_MANAGE_CONTENTS'.concat(short ? '_SHORT' : '')));
+    if (permissions.canManageMeals)
+      arrPermissions.push(this.t._('USER.CAN_MANAGE_MEALS'.concat(short ? '_SHORT' : '')));
+    if (permissions.canScanMeals)
+      arrPermissions.push(this.t._('USER.CAN_SCAN_MEALS'.concat(short ? '_SHORT' : '')));
     return arrPermissions.join(', ');
   }
   /**
@@ -206,7 +215,11 @@ export class AppService {
    */
   userCanManageSomething(): boolean {
     const p = this.user.permissions;
-    return p.isAdmin || p.canManageRegistrations || p.canManageContents;
+    return p.isAdmin || p.canManageRegistrations || p.canManageContents || p.canManageMeals;
+  }
+
+  userCanScanMeals(): boolean {
+    return this.user.canManageMeals();
   }
 
   formatDateShort = (date: string | Date): string => {
@@ -216,5 +229,9 @@ export class AppService {
   formatTime(date: string | Date): string {
     if (!(date instanceof Date)) date = new Date(date);
     return new Date(date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  isLocalhost(): boolean {
+    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   }
 }
