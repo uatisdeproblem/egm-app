@@ -285,6 +285,10 @@
       "INVOICE": "The invoice for user spot payment"
     },
     "REGISTRATIONS_SETTINGS": "Registrations settings",
+    "SESSIONS_MANAGEMENT": "Sessions management",
+    "SESSIONS_MANAGEMENT_I": "Set the minimum number of sessions per day and the maximum number of total sessions for each user",
+    "MIN_LIMIT": "Minimum number of sessions per day",
+    "MAX_LIMIT": "Maximum number of total sessions",
     "CONTENTS": "Contents",
     "CONTENTS_I": "Create and organise the contents of the event.",
     "COMMUNICATIONS": "Communications",
@@ -419,6 +423,9 @@
   "SESSIONS": {
     "MANAGE_SESSION": "Manage session",
     "LIST": "Session list",
+    "SESSIONS_MIN_MAX_LIMITS": "Please note that you have to register to at least {{min}} sessions per day, and no more than {{max}} in total",
+    "SESSION_MIN_WARNING": "You have to register to at least {{min}} sessions per day",
+    "SESSION_MAX_WARNING": "You have reached the maximum number of sessions you can register to",
     "TYPES": {
       "DISCUSSION": "Discussion",
       "TALK": "EG Talk",
@@ -453,7 +460,10 @@
     "FEEDBACK_SENT": "Feedback sent",
     "STILL_TAKING_PLACE": "Session is still taking place",
     "INVALID_RATING": "Invalid rating",
-    "NOT_REGISTERED": "Not registered"
+    "NOT_REGISTERED": "Not registered",
+    "APPLY_FOR_PARTICIPANTS": "Apply for participants",
+    "APPLY_FOR_EXTERNALS": "Apply for externals",
+    "APPLY_FOR_SPEAKERS": "Apply for speakers"
   },
   "CONTESTS": {
     "MANAGE_CONTEST": "Manage contest",

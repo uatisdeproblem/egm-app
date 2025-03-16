@@ -20,6 +20,10 @@ const routes: Routes = [
   {
     path: 'registrations',
     loadChildren: (): Promise<any> => import('./registration/registration.module').then(m => m.RegistrationModule )
+  },
+  {
+    path: 'sessions',
+    loadChildren: (): Promise<any> => import('./sessions/sessionsManagement.module').then(m => m.SessionsManagementModule )
   }
 ];
 

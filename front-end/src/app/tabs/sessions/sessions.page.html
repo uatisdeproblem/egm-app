@@ -16,6 +16,18 @@
           </ion-segment-button>
         </ion-segment>
         <ion-list class="maxWidthContainer" lines="inset">
+          <ion-item>
+            <ion-icon name="warning" slot="start" />
+            <ion-label class="ion-text-wrap">
+              {{ 'SESSIONS.SESSIONS_MIN_MAX_LIMITS' | translate : {min: this.app.configurations.minLimit, max: this.app.configurations.maxLimit} }}
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="checkMinLimit | async" color="warning">
+            <ion-icon name="warning" slot="start" />
+            <ion-label class="ion-text-wrap">
+              {{ 'SESSIONS.SESSION_MIN_WARNING' | translate : {min: this.app.configurations.minLimit} }}
+            </ion-label>
+          </ion-item>
           <ion-searchbar #searchbar color="light" (ionInput)="filterSessions($event.target.value)"></ion-searchbar>
           <ion-item color="white" class="noElements" *ngIf="sessions && !sessions.length">
             <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
