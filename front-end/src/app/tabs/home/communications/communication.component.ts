@@ -42,7 +42,6 @@ import { Communication } from '@models/communication.model';
         max-width: 600px;
       }
       ion-img {
-        object-fit: cover;
         height: 180px;
         border-bottom: 1px solid var(--ion-color-light);
       }
