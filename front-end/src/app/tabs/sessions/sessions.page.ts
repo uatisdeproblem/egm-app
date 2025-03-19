@@ -10,7 +10,6 @@ import { SessionsService } from './sessions.service';
 import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
 
 import { Session } from '@models/session.model';
-//import { Speakers } from '../../../../../back-end/src/handlers/speakers';
 import { Speaker } from '@models/speaker.model';
 
 @Component({
@@ -172,8 +171,6 @@ export class SessionsPage {
     if(this.speakers.find(x => x.name == this.app.user.getName()) && this.app.configurations.getForSpeakers()){
       console.log("test");
     }
-    //console.log(this.app.configurations.getForSpeakers());
-    //this.speakers.find(x => x.name == this.app.user.getName()) && this.app.configurations.getForSpeakers()
    return false;
   }
   openDetail(ev: any, session: Session): void {
