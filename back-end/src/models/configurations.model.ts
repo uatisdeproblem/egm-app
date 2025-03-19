@@ -69,15 +69,15 @@ export class Configurations extends Resource {
   /**
    * Apply the min & max limits only for Participants role.
    */
-  forParticipants: false;
+  forParticipants: boolean;
   /**
    * Apply the min & max limits only for Externals role.
    */
-  forExternals: false;
+  forExternals: boolean;
   /**
    * Apply the min & max limits only for Speakers role.
    */
-  forSpeakers: false;
+  forSpeakers: boolean;
 
   load(x: any): void {
     super.load(x);
@@ -103,9 +103,9 @@ export class Configurations extends Resource {
     this.sectionCountries = this.cleanArray(x.sectionCountries, String);
     this.minLimit = this.clean(x.minLimit, Number);
     this.maxLimit = this.clean(x.maxLimit, Number);
-    this.forParticipants = this.clean(x.forParticipants, Boolean);
-    this.forExternals = this.clean(x.forExternals, Boolean);
-    this.forSpeakers = this.clean(x.forSpeakers, Boolean);
+    this.forParticipants = this.clean(x.forParticipants, Boolean, true);
+    this.forExternals = this.clean(x.forExternals, Boolean, false);
+    this.forSpeakers = this.clean(x.forSpeakers, Boolean, false);
   }
 
   safeLoad(newData: any, safeData: any): void {
@@ -151,17 +151,35 @@ export class Configurations extends Resource {
   }
 
   /**
-   * Returns the minimum limit for sessions per day.
+   * Returns the minimum limit for sessions per day
    */
   getMinLimit(): number {
     if(this.minLimit) return this.minLimit;
   }
 
   /**
-   * Returns the maximum limit for sessions.
+   * Returns the maximum limit for sessions
    */
   getMaxLimit(): number {
     if(this.maxLimit) return this.maxLimit;
+  }
+  /**
+   * Whether the restriction of min & max limits apply to Participants
+   */
+  getForParticipants(): boolean {
+    if(this.forParticipants) return this.forParticipants;
+  }
+  /**
+   * Whether the restriction of min & max limits apply to Externals
+   */
+  getForExternals(): boolean {
+    if(this.forExternals) return this.forExternals;
+  }
+  /**
+   * Whether the restriction of min & max limits apply to Speakers
+   */
+  getForSpeakers(): boolean {
+    if(this.forSpeakers) return this.forSpeakers;
   }
 }
 
