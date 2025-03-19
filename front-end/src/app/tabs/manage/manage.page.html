@@ -32,6 +32,15 @@
         <ion-icon slot="start" icon="settings-outline"></ion-icon>
         <ion-label>{{ 'MANAGE.REGISTRATIONS_SETTINGS' | translate }}</ion-label>
       </ion-item>
+      <ion-item
+        button
+        detail
+        *ngIf="app.user.permissions.canManageContents"
+        (click)="app.goToInTabs(['manage', 'sessions'])"
+      >
+        <ion-icon slot="start" icon="build-outline"></ion-icon>
+        <ion-label>{{ 'MANAGE.SESSIONS_MANAGEMENT' | translate }}</ion-label>
+      </ion-item>
     </ng-container>
     <ng-container *ngIf="app.user.permissions.canManageContents">
       <ion-list-header>

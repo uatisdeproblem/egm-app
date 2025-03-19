@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { IonContent, IonSearchbar, ModalController } from '@ionic/angular';
 
 import { AppService } from 'src/app/app.service';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEAApiService, IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { ManageSessionComponent } from './manageSession.component';
 
@@ -10,6 +10,7 @@ import { SessionsService } from './sessions.service';
 import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
 
 import { Session } from '@models/session.model';
+import { Speaker } from '@models/speaker.model';
 
 @Component({
   selector: 'app-sessions',
@@ -26,6 +27,9 @@ export class SessionsPage {
   registeredSessionsIds: string[] = [];
   ratedSessionsIds: string[] = [];
   selectedSession: Session;
+  speakers: Speaker[];
+  sessionCountByDate: Record<string, number>;
+  public checkMinLimit: Promise<boolean>;
 
   segment = '';
 
@@ -36,7 +40,8 @@ export class SessionsPage {
     public _sessions: SessionsService,
     private _sessionRegistrations: SessionRegistrationsService,
     public t: IDEATranslationsService,
-    public app: AppService
+    public app: AppService,
+    private api: IDEAApiService
   ) {}
 
   async ionViewDidEnter() {
@@ -54,6 +59,7 @@ export class SessionsPage {
       this.registeredSessionsIds = userRegisteredSessions.map(ur => ur.sessionId);
       this.ratedSessionsIds = userRegisteredSessions.filter(ur => ur.hasUserRated).map(ur => ur.sessionId);
       this.days = await this._sessions.getSessionDays();
+      this.checkMinLimit = this.checkMinSessionsLimit();
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
@@ -120,6 +126,7 @@ export class SessionsPage {
       }
       const updatedSession = await this._sessions.getById(session.sessionId);
       session.numberOfParticipants = updatedSession.numberOfParticipants;
+      this.checkMinLimit = this.checkMinSessionsLimit();
     } catch (error) {
       if (error.message === "User can't sign up for this session!") {
         this.message.error('SESSIONS.CANT_SIGN_UP');
@@ -129,12 +136,43 @@ export class SessionsPage {
         this.message.error('SESSIONS.SESSION_FULL');
       } else if (error.message === 'You have 1 or more sessions during this time period.') {
         this.message.error('SESSIONS.OVERLAP');
+      } else if (error.message === 'You have reached the maximum number of sessions you can register to!') {
+        this.message.error('SESSIONS.SESSION_MAX_LIMIT_WARNING');
       } else this.message.error('COMMON.OPERATION_FAILED');
     } finally {
       this.loading.hide();
     }
   }
 
+  async checkMinSessionsLimit(): Promise<boolean> {
+    //Check if the restriction applies to the user's type
+    this.speakers = (await this.api.getResource('speakers')).map(s => new Speaker(s));
+    if((this.app.user.isGalaxyInfoValid() && this.app.configurations.getForParticipants()) ||
+      (this.app.user.isExternal() && this.app.configurations.getForExternals()) ||
+      (this.speakers.find(x => x.name == this.app.user.getName()) && this.app.configurations.getForSpeakers())) {
+
+        let sessions = await Promise.all(this.registeredSessionsIds.map(id => this._sessions.getById(id)));
+        this.sessionCountByDate = sessions.reduce((acc, session) => {
+          acc[this.app.formatDateShort(session.startsAt)] = (acc[this.app.formatDateShort(session.startsAt)] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+        this.days.forEach(day => {
+          let formattedDay = this.app.formatDateShort(day);
+          if (!(formattedDay in this.sessionCountByDate)) {
+            this.sessionCountByDate[formattedDay] = 0;
+          }
+        });
+
+        if(this.registeredSessionsIds.length<1) return true;
+        for (let date in this.sessionCountByDate) {
+          if(this.sessionCountByDate[date]<this.app.configurations.minLimit) return true;
+        }
+    }
+    if(this.speakers.find(x => x.name == this.app.user.getName()) && this.app.configurations.getForSpeakers()){
+      console.log("test");
+    }
+   return false;
+  }
   openDetail(ev: any, session: Session): void {
     ev?.stopPropagation();
 

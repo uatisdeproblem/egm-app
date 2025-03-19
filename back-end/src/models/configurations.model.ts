@@ -58,6 +58,26 @@ export class Configurations extends Resource {
    * The list of all the current ESN countries.
    */
   sectionCountries: string[];
+  /**
+   * The minimum number of sessions that a user has to register to per day.
+   */
+  minLimit: number;
+  /**
+   * The maximum number of sessions that a user can register to.
+   */
+  maxLimit: number;
+  /**
+   * Apply the min & max limits only for Participants role.
+   */
+  forParticipants: boolean;
+  /**
+   * Apply the min & max limits only for Externals role.
+   */
+  forExternals: boolean;
+  /**
+   * Apply the min & max limits only for Speakers role.
+   */
+  forSpeakers: boolean;
 
   load(x: any): void {
     super.load(x);
@@ -81,6 +101,11 @@ export class Configurations extends Resource {
     if (x.stripeLinkPerSpotType)
       this.spotTypes.forEach(st => (this.stripeLinkPerSpotType[st] = this.clean(x.stripeLinkPerSpotType[st], String)));
     this.sectionCountries = this.cleanArray(x.sectionCountries, String);
+    this.minLimit = this.clean(x.minLimit, Number);
+    this.maxLimit = this.clean(x.maxLimit, Number);
+    this.forParticipants = this.clean(x.forParticipants, Boolean, true);
+    this.forExternals = this.clean(x.forExternals, Boolean, false);
+    this.forSpeakers = this.clean(x.forSpeakers, Boolean, false);
   }
 
   safeLoad(newData: any, safeData: any): void {
@@ -103,7 +128,7 @@ export class Configurations extends Resource {
   }
 
   /**
-   * Wether registrations are open based on user type
+   * Whether registrations are open based on user type
    */
   canUserRegister(user: User): boolean {
     return user.isExternal() ? this.isRegistrationOpenForExternals : this.isRegistrationOpenForESNers;
@@ -123,6 +148,38 @@ export class Configurations extends Resource {
   getSpotPrice(spotType: string): number {
     if (!(this.pricePerSpotTypes || spotType)) return;
     return this.pricePerSpotTypes[spotType];
+  }
+
+  /**
+   * Returns the minimum limit for sessions per day
+   */
+  getMinLimit(): number {
+    if(this.minLimit) return this.minLimit;
+  }
+
+  /**
+   * Returns the maximum limit for sessions
+   */
+  getMaxLimit(): number {
+    if(this.maxLimit) return this.maxLimit;
+  }
+  /**
+   * Whether the restriction of min & max limits apply to Participants
+   */
+  getForParticipants(): boolean {
+    if(this.forParticipants) return this.forParticipants;
+  }
+  /**
+   * Whether the restriction of min & max limits apply to Externals
+   */
+  getForExternals(): boolean {
+    if(this.forExternals) return this.forExternals;
+  }
+  /**
+   * Whether the restriction of min & max limits apply to Speakers
+   */
+  getForSpeakers(): boolean {
+    if(this.forSpeakers) return this.forSpeakers;
   }
 }
 
