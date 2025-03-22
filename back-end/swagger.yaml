@@ -48,6 +48,8 @@ tags:
     description: The sessions of the event
   - name: Contests
     description: The contests of the event
+  - name: Meals
+    description: The meals of the event
 
 paths:
   /status:
@@ -1434,6 +1436,145 @@ paths:
           $ref: '#/components/responses/Contest'
         400:
           $ref: '#/components/responses/BadParameters'
+  /meals:
+    get:
+      summary: Get the meals
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Meals'
+    post:
+      summary: Insert a new meal
+      description: Requires to be content manager
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Meal
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Meal'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /meals/{mealId}:
+    get:
+      summary: Get a meal
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: mealId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Meal'
+    post:
+      summary: Create a meal
+      description: Requires to be content manager
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: mealId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Meal
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Meal'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit a meal
+      description: Requires to be content manager
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: mealId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Meal
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Meal'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on a meal
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: mealId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [SCAN_TICKET]
+                userId:
+                  type: string
+                  description: (SCAN_TICKET)
+                approvedType:
+                  type: string
+                  description: (SCAN_TICKET)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a meal
+      description: Requires to be content manager
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: mealId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Meal'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -1474,6 +1615,9 @@ components:
       type: object
       additionalProperties: {}
     Contest:
+      type: object
+      additionalProperties: {}
+    Meal:
       type: object
       additionalProperties: {}
 
@@ -1664,6 +1808,22 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Contest'
+    Meal:
+      description: Meal
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Meal'
+    Meals:
+      description: Meal[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Meal'
     BadParameters:
       description: Bad input parameters
       content:

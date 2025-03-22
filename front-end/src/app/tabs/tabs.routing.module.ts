@@ -60,6 +60,11 @@ const routes: Routes = [
         path: 'contests',
         loadChildren: (): Promise<any> => import('./contests/contests.module').then(m => m.ContestsModule),
         canActivate: [spotGuard]
+      },
+      {
+        path: 'meals',
+        loadChildren: (): Promise<any> => import('./meals/meals.module').then(m => m.MealsModule),
+        canActivate: [spotGuard]
       }
     ]
   }

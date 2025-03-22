@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar *ngIf="_app.isInMobileMode()" color="ideaToolbar">
+    <ion-title class="ion-text-center"> {{ 'MEALS.LIST' | translate }} </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list lines="inset">
+    <ion-searchbar #searchbar color="light" (ionInput)="filter($event.target.value)"></ion-searchbar>
+    <ion-item color="white" class="noElements" *ngIf="meals && !meals.length">
+      <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
+    </ion-item>
+    <ion-item color="white" *ngIf="!meals">
+      <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
+    </ion-item>
+    @if(_app.user.permissions.isStaff) {
+    <ion-accordion-group>
+      <ion-accordion value="camera">
+        <ion-item slot="header" color="primary">
+          <ion-label> {{ 'COMMON.SCAN' | translate }} </ion-label>
+          <ion-icon slot="end" name="camera" />
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <zxing-scanner [device]="currentDevice" (scanSuccess)="onScanSuccess($event)"> </zxing-scanner>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    } @if(_app.user.mealType) {
+    <ion-accordion-group>
+      <ion-accordion *ngFor="let meal of meals" [value]="meal.mealId">
+        <ion-item slot="header" color="light">
+          <ion-label>
+            {{ meal.name }}
+            <p>{{ meal.validFrom | dateLocale : 'short' }}</p>
+          </ion-label>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <app-meal-card [meal]="meal" />
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    } @else {
+    <ion-item>
+      <ion-label>
+        {{ 'MEALS.NO_MEAL_TYPE' | translate }}
+        <p>{{ 'MEALS.NO_MEAL_TYPE_I' | translate }}</p>
+      </ion-label>
+      <ion-icon slot="end" color="warning" name="warning" />
+    </ion-item>
+    }
+  </ion-list>
+</ion-content>

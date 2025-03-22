@@ -183,7 +183,7 @@ export class ImportPage implements OnInit {
   currentPage: number;
 
   ngOnInit(): void {
-    if (!this._app.userCanManageSomething()) this._app.closePage('COMMON.UNAUTHORIZED');
+    if (!this._app.user.permissions.canManageContents) this._app.closePage('COMMON.UNAUTHORIZED');
     this.step = ImportSteps.SELECT_ENTITY;
   }
 

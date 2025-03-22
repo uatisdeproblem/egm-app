@@ -199,6 +199,7 @@ export class AppService {
       arrPermissions.push(this.t._('USER.CAN_MANAGE_REGISTRATIONS'.concat(short ? '_SHORT' : '')));
     if (permissions.canManageContents)
       arrPermissions.push(this.t._('USER.CAN_MANAGE_CONTENTS'.concat(short ? '_SHORT' : '')));
+    if (permissions.isStaff) arrPermissions.push(this.t._('USER.IS_STAFF'.concat(short ? '_SHORT' : '')));
     return arrPermissions.join(', ');
   }
   /**
@@ -206,7 +207,7 @@ export class AppService {
    */
   userCanManageSomething(): boolean {
     const p = this.user.permissions;
-    return p.isAdmin || p.canManageRegistrations || p.canManageContents;
+    return p.isAdmin || p.canManageRegistrations || p.canManageContents || p.isStaff;
   }
 
   formatDateShort = (date: string | Date): string => {
@@ -217,4 +218,7 @@ export class AppService {
     if (!(date instanceof Date)) date = new Date(date);
     return new Date(date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
   }
+
+  sleepForNumSeconds = (numSeconds = 1): Promise<void> =>
+    new Promise(resolve => setTimeout((): void => resolve(null), 1000 * numSeconds));
 }

@@ -8,129 +8,132 @@
 </ion-header>
 <ion-content>
   <ion-list class="aList maxWidthContainer">
-    <ng-container *ngIf=" app.user.permissions.canManageRegistrations">
-      <ion-list-header>
-        <ion-label>
-          <h2>{{ 'MANAGE.USERS_AND_REGISTRATIONS' | translate }}</h2>
-          <p>{{ 'MANAGE.USERS_AND_REGISTRATIONS_I' | translate }}</p>
-        </ion-label>
-      </ion-list-header>
-      <ion-item button detail (click)="app.goToInTabs(['manage', 'users'])">
-        <ion-icon slot="start" icon="people-outline"></ion-icon>
-        <ion-label>{{ 'MANAGE.USERS_LIST' | translate }}</ion-label>
-      </ion-item>
-      <ion-item button detail *ngIf="app.user.permissions.isAdmin" (click)="app.goToInTabs(['manage', 'spots'])">
-        <ion-icon slot="start" icon="ticket-outline"></ion-icon>
-        <ion-label>{{ 'MANAGE.SPOTS_MANAGEMENT' | translate }}</ion-label>
-      </ion-item>
-      <ion-item
-        button
-        detail
-        *ngIf="app.user.permissions.isAdmin"
-        (click)="app.goToInTabs(['manage', 'configurations', 'registrations'])"
+    @if(app.user.permissions.canManageRegistrations || app.user.permissions.isStaff) {
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'MANAGE.USERS_AND_REGISTRATIONS' | translate }}</h2>
+        <p>{{ 'MANAGE.USERS_AND_REGISTRATIONS_I' | translate }}</p>
+      </ion-label>
+    </ion-list-header>
+    } @if(app.user.permissions.canManageRegistrations) {
+    <ion-item button detail (click)="app.goToInTabs(['manage', 'users'])">
+      <ion-icon slot="start" icon="people-outline"></ion-icon>
+      <ion-label>{{ 'MANAGE.USERS_LIST' | translate }}</ion-label>
+    </ion-item>
+    } @if(app.user.permissions.isStaff) {
+    <ion-item button detail (click)="app.goToInTabs(['manage', 'meals'])">
+      <ion-icon slot="start" icon="restaurant-outline"></ion-icon>
+      <ion-label>{{ 'MANAGE.MEALS_MANAGEMENT' | translate }}</ion-label>
+    </ion-item>
+    } @if(app.user.permissions.isAdmin) {
+    <ion-item button detail (click)="app.goToInTabs(['manage', 'spots'])">
+      <ion-icon slot="start" icon="ticket-outline"></ion-icon>
+      <ion-label>{{ 'MANAGE.SPOTS_MANAGEMENT' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button detail (click)="app.goToInTabs(['manage', 'configurations', 'registrations'])">
+      <ion-icon slot="start" icon="settings-outline"></ion-icon>
+      <ion-label>{{ 'MANAGE.REGISTRATIONS_SETTINGS' | translate }}</ion-label>
+    </ion-item>
+    } @if(app.user.permissions.canManageContents) {
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'MANAGE.CONTENTS' | translate }}</h2>
+        <p>{{ 'MANAGE.CONTENTS_I' | translate }}</p>
+      </ion-label>
+    </ion-list-header>
+    <ion-item button detail (click)="app.goToInTabs(['manage', 'import'])">
+      <ion-icon slot="start" icon="list-outline" />
+      <ion-label>{{ 'MANAGE.IMPORT_FROM_CSV' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button detail (click)="addVenue()">
+      <ion-icon slot="start" icon="home-outline" />
+      <ion-label>{{ 'MANAGE.VENUES' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button detail (click)="addRoom()">
+      <ion-icon slot="start" icon="cube-outline" />
+      <ion-label>{{ 'MANAGE.ROOMS' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button detail (click)="addOrganization()">
+      <ion-icon slot="start" icon="briefcase-outline" />
+      <ion-label>{{ 'MANAGE.ORGANIZATIONS' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button detail (click)="addSpeaker()">
+      <ion-icon slot="start" icon="mic-outline" />
+      <ion-label>{{ 'MANAGE.SPEAKERS' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button detail (click)="addSession()">
+      <ion-icon slot="start" icon="flame-outline" />
+      <ion-label>{{ 'MANAGE.SESSIONS' | translate }}</ion-label>
+      <ion-button
+        slot="end"
+        fill="clear"
+        [title]="'MANAGE.DOWNLOAD_SESSIONS_REGISTRATIONS' | translate"
+        (click)="downloadSessionsRegistrations($event)"
       >
-        <ion-icon slot="start" icon="settings-outline"></ion-icon>
-        <ion-label>{{ 'MANAGE.REGISTRATIONS_SETTINGS' | translate }}</ion-label>
-      </ion-item>
-    </ng-container>
-    <ng-container *ngIf="app.user.permissions.canManageContents">
-      <ion-list-header>
-        <ion-label>
-          <h2>{{ 'MANAGE.CONTENTS' | translate }}</h2>
-          <p>{{ 'MANAGE.CONTENTS_I' | translate }}</p>
-        </ion-label>
-      </ion-list-header>
-      <ion-item button detail (click)="app.goToInTabs(['manage', 'import'])">
-        <ion-icon slot="start" icon="list-outline" />
-        <ion-label>{{ 'MANAGE.IMPORT_FROM_CSV' | translate }}</ion-label>
-      </ion-item>
-      <ion-item button detail (click)="addVenue()">
-        <ion-icon slot="start" icon="home-outline" />
-        <ion-label>{{ 'MANAGE.VENUES' | translate }}</ion-label>
-      </ion-item>
-      <ion-item button detail (click)="addRoom()">
-        <ion-icon slot="start" icon="cube-outline" />
-        <ion-label>{{ 'MANAGE.ROOMS' | translate }}</ion-label>
-      </ion-item>
-      <ion-item button detail (click)="addOrganization()">
-        <ion-icon slot="start" icon="briefcase-outline" />
-        <ion-label>{{ 'MANAGE.ORGANIZATIONS' | translate }}</ion-label>
-      </ion-item>
-      <ion-item button detail (click)="addSpeaker()">
-        <ion-icon slot="start" icon="mic-outline" />
-        <ion-label>{{ 'MANAGE.SPEAKERS' | translate }}</ion-label>
-      </ion-item>
-      <ion-item button detail (click)="addSession()">
-        <ion-icon slot="start" icon="flame-outline" />
-        <ion-label>{{ 'MANAGE.SESSIONS' | translate }}</ion-label>
-        <ion-button
-          slot="end"
-          fill="clear"
-          [title]="'MANAGE.DOWNLOAD_SESSIONS_REGISTRATIONS' | translate"
-          (click)="downloadSessionsRegistrations($event)"
-        >
-          <ion-icon icon="download" slot="icon-only" />
-        </ion-button>
-      </ion-item>
-      <ion-item button detail (click)="addContest()">
-        <ion-icon slot="start" icon="trophy-outline" />
-        <ion-label>{{ 'MANAGE.CONTESTS' | translate }}</ion-label>
-      </ion-item>
-    </ng-container>
-    <ng-container *ngIf="app.user.permissions.isAdmin">
-      <ion-list-header>
-        <ion-label>
-          <h2>{{ 'MANAGE.EMAIL_TEMPLATES' | translate }}</h2>
-          <p>{{ 'MANAGE.EMAIL_TEMPLATES_I' | translate }}</p>
-        </ion-label>
-      </ion-list-header>
-      <ion-item
-        *ngFor="let template of EmailTemplates | keyvalue"
-        button
-        detail
-        (click)="openTemplateEmailModal(template.value)"
+        <ion-icon icon="download" slot="icon-only" />
+      </ion-button>
+    </ion-item>
+    <ion-item button detail (click)="addContest()">
+      <ion-icon slot="start" icon="trophy-outline" />
+      <ion-label>{{ 'MANAGE.CONTESTS' | translate }}</ion-label>
+    </ion-item>
+    <ion-item button detail (click)="addMeal()">
+      <ion-icon slot="start" icon="restaurant-outline" />
+      <ion-label>{{ 'MANAGE.MEALS' | translate }}</ion-label>
+    </ion-item>
+    } @if(app.user.permissions.isAdmin) {
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'MANAGE.EMAIL_TEMPLATES' | translate }}</h2>
+        <p>{{ 'MANAGE.EMAIL_TEMPLATES_I' | translate }}</p>
+      </ion-label>
+    </ion-list-header>
+    <ion-item
+      *ngFor="let template of EmailTemplates | keyvalue"
+      button
+      detail
+      (click)="openTemplateEmailModal(template.value)"
+    >
+      <ion-label class="ion-text-wrap">{{ 'MANAGE.EMAIL_TEMPLATES_TYPES.' + template.key | translate }}</ion-label>
+    </ion-item>
+    } @if(app.user.permissions.canManageContents) {
+    <ion-list-header>
+      <ion-label>
+        <h2>{{ 'MANAGE.USEFUL_LINKS' | translate }}</h2>
+        <p>{{ 'MANAGE.USEFUL_LINKS_I' | translate }}</p>
+      </ion-label>
+      <ion-button color="ESNgreen" (click)="addUsefulLink()"> {{ 'COMMON.ADD' | translate }} </ion-button>
+    </ion-list-header>
+    <ion-item class="noElements" *ngIf="usefulLinks && !usefulLinks.length">
+      <ion-label>{{ 'COMMON.NO_ELEMENTS' | translate }}</ion-label>
+    </ion-item>
+    <app-useful-link *ngIf="!usefulLinks" />
+    <app-useful-link
+      *ngFor="let link of usefulLinks; let first = first; let last = last; let index = index"
+      [link]="link"
+    >
+      <ion-button
+        slot="end"
+        fill="clear"
+        color="ESNgreen"
+        [disabled]="first"
+        (click)="swapSortUsefulLinks(link, usefulLinks[index-1], $event)"
       >
-        <ion-label class="ion-text-wrap">{{ 'MANAGE.EMAIL_TEMPLATES_TYPES.' + template.key | translate }}</ion-label>
-      </ion-item>
-    </ng-container>
-    <ng-container *ngIf="app.user.permissions.canManageContents">
-      <ion-list-header>
-        <ion-label>
-          <h2>{{ 'MANAGE.USEFUL_LINKS' | translate }}</h2>
-          <p>{{ 'MANAGE.USEFUL_LINKS_I' | translate }}</p>
-        </ion-label>
-        <ion-button color="ESNgreen" (click)="addUsefulLink()"> {{ 'COMMON.ADD' | translate }} </ion-button>
-      </ion-list-header>
-      <ion-item class="noElements" *ngIf="usefulLinks && !usefulLinks.length">
-        <ion-label>{{ 'COMMON.NO_ELEMENTS' | translate }}</ion-label>
-      </ion-item>
-      <app-useful-link *ngIf="!usefulLinks" />
-      <app-useful-link
-        *ngFor="let link of usefulLinks; let first = first; let last = last; let index = index"
-        [link]="link"
+        <ion-icon icon="arrow-up" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button
+        slot="end"
+        fill="clear"
+        color="ESNgreen"
+        [disabled]="last"
+        (click)="swapSortUsefulLinks(link, usefulLinks[index+1], $event)"
       >
-        <ion-button
-          slot="end"
-          fill="clear"
-          color="ESNgreen"
-          [disabled]="first"
-          (click)="swapSortUsefulLinks(link, usefulLinks[index-1], $event)"
-        >
-          <ion-icon icon="arrow-up" slot="icon-only"></ion-icon>
-        </ion-button>
-        <ion-button
-          slot="end"
-          fill="clear"
-          color="ESNgreen"
-          [disabled]="last"
-          (click)="swapSortUsefulLinks(link, usefulLinks[index+1], $event)"
-        >
-          <ion-icon icon="arrow-down" slot="icon-only"></ion-icon>
-        </ion-button>
-        <ion-button slot="end" fill="clear" color="ESNgreen" (click)="editUsefulLink(link)">
-          <ion-icon icon="pencil" slot="icon-only"></ion-icon>
-        </ion-button>
-      </app-useful-link>
-    </ng-container>
+        <ion-icon icon="arrow-down" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button slot="end" fill="clear" color="ESNgreen" (click)="editUsefulLink(link)">
+        <ion-icon icon="pencil" slot="icon-only"></ion-icon>
+      </ion-button>
+    </app-useful-link>
+    }
   </ion-list>
 </ion-content>

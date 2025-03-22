@@ -23,6 +23,8 @@ import { Speaker } from '@models/speaker.model';
 import { Room } from '@models/room.model';
 import { Session } from '@models/session.model';
 import { Contest } from '@models/contest.model';
+import { ManageMealComponent } from '../meals/manageMeal.component';
+import { Meal } from '@models/meal.model';
 
 @Component({
   selector: 'manage',
@@ -138,11 +140,18 @@ export class ManagePage {
       this.loading.hide();
     }
   }
-
   async addContest(): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: ManageContestComponent,
       componentProps: { contest: new Contest() },
+      backdropDismiss: false
+    });
+    await modal.present();
+  }
+  async addMeal(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: ManageMealComponent,
+      componentProps: { meal: new Meal() },
       backdropDismiss: false
     });
     await modal.present();

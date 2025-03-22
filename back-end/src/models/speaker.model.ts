@@ -88,6 +88,11 @@ export class Speaker extends Resource {
     this.description = x['Description'];
     this.title = x['Title'];
     this.contactEmail = x['Contact Email'];
+    this.socialMedia = {
+      instagram: x['Instagram'],
+      linkedIn: x['LinkedIn'],
+      twitter: x['Twitter']
+    };
   }
 }
 
@@ -116,6 +121,9 @@ export class SpeakerFlat {
   'Description': string;
   'Title': string;
   'Contact Email': string;
+  'Instagram': string;
+  'LinkedIn': string;
+  'Twitter': string;
 
   constructor(x?: Speaker) {
     x = x || ({} as any);
@@ -125,5 +133,8 @@ export class SpeakerFlat {
     this['Description'] = x.description;
     this['Title'] = x.title;
     this['Contact Email'] = x.contactEmail;
+    this['Instagram'] = x.socialMedia?.instagram;
+    this['LinkedIn'] = x.socialMedia?.linkedIn;
+    this['Twitter'] = x.socialMedia?.twitter;
   }
 }
