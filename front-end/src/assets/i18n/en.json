@@ -82,7 +82,11 @@
     "OR": "Or",
     "COPY": "Copy",
     "FULL": "Full",
-    "MINUTES": "Minutes"
+    "MINUTES": "Minutes",
+    "ON": "On",
+    "TO": "To",
+    "SCAN": "Scan",
+    "APPROVE": "Approve"
   },
   "AUTH": {
     "TITLE": "Erasmus Generation Meeting",
@@ -131,6 +135,7 @@
     "VENUES": "Venues",
     "USER": "You",
     "MENU": "Menu",
+    "MEALS": "Meals",
     "MANAGE": "Manage"
   },
   "HOME": {
@@ -146,7 +151,6 @@
     "URL": "URL",
     "VISIBLE_TO": "Visible to",
     "AUDIENCE": "Audience",
-    "VISIBLE_TO": "Visible to",
     "GENERAL": "General"
   },
   "COMMUNICATIONS": {
@@ -164,7 +168,8 @@
     "VENUES": "Venues",
     "ORGANIZATIONS": "Organizations",
     "SPEAKERS": "Speakers",
-    "CONTESTS": "Contests"
+    "CONTESTS": "Contests",
+    "MEALS": "Meals"
   },
   "USER": {
     "PERSONAL_DATA": "Personal Data",
@@ -205,6 +210,8 @@
     "CAN_MANAGE_REGISTRATIONS_SHORT": "Reg.",
     "CAN_MANAGE_CONTENTS": "Can manage contents",
     "CAN_MANAGE_CONTENTS_SHORT": "Cont.",
+    "IS_STAFF": "Is staff",
+    "IS_STAFF_SHORT": "Staff",
     "COUNTRY_LEADER_MANAGE_USERS": "Manage delegation",
     "REGISTRATION": "Event registration",
     "SAVE_DRAFT": "Save draft",
@@ -276,6 +283,7 @@
     "USERS_AND_REGISTRATIONS_I": "Manage the users and everything related to the event registrations.",
     "USERS_LIST": "Users list",
     "SPOTS_MANAGEMENT": "Spots management",
+    "MEALS_MANAGEMENT": "Meals management",
     "EMAIL_TEMPLATES": "Email templates",
     "EMAIL_TEMPLATES_I": "Set the templates for the following notification emails.",
     "EMAIL_TEMPLATES_TYPES": {
@@ -298,6 +306,7 @@
     "SESSIONS": "Sessions",
     "VENUES": "Venues",
     "ROOMS": "Rooms",
+    "MEALS": "Meals",
     "REGISTRATIONS_OPTIONS": "Registrations options",
     "REGISTRATIONS_OPTIONS_I": "Open/close the registrations and other options.",
     "ALLOW_REGISTRATIONS": "Allow registrations",
@@ -380,7 +389,6 @@
     "RIGHTS": "9. Your rights <br/> &emsp; 9.1 You may instruct us to provide you with any personal information we hold about you by writing to wpa@esn.org; provision of such information will be subject to: the payment of a fee (currently fixed at €10), and the supply of appropriate evidence of your identity. For this purpose, we will usually accept a photocopy of your passport certified by a solicitor or bank plus an original copy of a utility bill showing your current address. <br/> &emsp; 9.2 We may withhold personal information that you request to the extent permitted by law. <br/> &emsp; 9.3 You may instruct us at any time not to process your personal information for marketing purposes. <br/> &emsp; 9.4 In practice, you will usually either expressly agree in advance to our use of your personal information for marketing purposes. <br/> &emsp; 9.5 You have the right to remove your ESN Galaxy account and all the information which is stored with it at any given time. You can do so by selecting 'Delete' on your profile page. <br/> &emsp; 9.6 When your account is deleted, all the personal information and other data linked to it is also deleted.",
     "THIRD_PART_AND_COOKIES": "10. Third party websites <br/> &emsp; 10.1 Our website includes hyperlinks to, and details of, third party websites. <br/> &emsp; 10.2 We have no control over, and are not responsible for, the privacy policies and practices of third parties. <br/> 11. Updating information <br/> &emsp; 11.1 Please let us know if the personal information that we hold about you needs to be corrected or updated. <br/> &emsp; 12. Cookies <br/> &emsp; 12.1 Our website uses cookies. <br/> &emsp; 12.2 A cookie is a file containing an identifier (a string of letters and numbers) that is sent by a web server to a web browser and is stored by the browser. The identifier is then sent back to the server each time the browser requests a page from the server. <br/> &emsp; 12.3 Cookies may be either 'persistent' cookies or 'session' cookies: a persistent cookie will be stored by a web browser and will remain valid until its set expiry date, unless deleted by the user before the expiry date; a session cookie, on the other hand, will expire at the end of the user session, when the web browser is closed. <br/> &emsp; 12.4 Cookies do not typically contain any information that personally identifies a user, but personal information that we store about you may be linked to the information stored in and obtained from cookies. <br/> &emsp; 12.5 We use both session and persistent cookies on our website. <br/> &emsp; 12.6 Most browsers allow you to refuse to accept cookies. <br/> &emsp; 12.7 Blocking all cookies will have a negative impact upon the usability of many websites. <br/> &emsp; 12.8 If you block cookies, you will not be able to use all the features on our website.",
     "ACCEPT_PRIVACY": "13. Erasmus Generation Meeting Specific Provisions <br/> &emsp; 13.1 By registering for the Erasmus Generation Meeting through our website, you consent to the collection and processing of your personal data as described in this policy, specifically for the purposes related to organizing and conducting the event. <br/> &emsp; 13.2 Your data collected for the Erasmus Generation Meeting will be used solely for the purposes of event management and communication. We will not use this data for unrelated marketing purposes. <br/> &emsp; 13.3 You have the right to request access to, correction of, or deletion of your event-related personal data at any time by contacting wpa@esn.org. <br/> &emsp; 13.4 After the conclusion of the Erasmus Generation Meeting, we will retain your data for the period specified in section 6.4 of this policy, after which it will be securely deleted unless you request otherwise or we are required to keep it for legal reasons."
-
   },
   "STRIPE": {
     "BEFORE_YOU_PROCEED": "Before you proceed",
@@ -510,6 +518,39 @@
     "YOU_ARE_VOTING": "You are voting",
     "NOT_NOW": "Not now",
     "PUBLISH_RESULTS": "Publish results"
+  },
+  "MEALS": {
+    "MEALS": "Meals",
+    "NO_MEAL_TYPE": "No meal type configured",
+    "NO_MEAL_TYPE_I": "You don't seem to have a meal type associated with your profile. Contact the organization in order to get your meal tickets.",
+    "LIST": "Meals list",
+    "MANAGE_MEAL": "Manage meal",
+    "TYPES": {
+      "GLUTEN_FREE": "Gluten free",
+      "GLUTEN_LACTOSE_FREE": "Gluten & lactose free",
+      "GLUTEN_LACTOSE_VEGETARIAN_FREE": "Gluten & lactose free (vegetarian)",
+      "LACTOSE_FREE": "Lactose free",
+      "VEGETARIAN_VEGAN": "Vegetarian",
+      "NO_BEEF": "No beef",
+      "NO_PORK": "No pork",
+      "REGULAR": "Regular",
+      "SPECIAL": "Special",
+      "REGULAR_SPECIAL": "Regular Special"
+    },
+    "VALIDATED_BY": "Validated by",
+    "NAME": "Name",
+    "VALID_FROM": "Valid from",
+    "VALID_TO": "Valid to",
+    "NEEDS_SCAN": "Needs scan",
+    "DESCRIPTION": "Description",
+    "VALIDATED_SUCCESSFULLY": "Validated successfully",
+    "VALIDATE_ERRORS": {
+      "UNAUTHORIZED": "Unauthorized",
+      "TICKET_UNAVAILABLE": "The ticket is unavailable. Check its validity dates.",
+      "TICKET_USED": "This ticket has already been used.",
+      "NO_MEAL": "Meal not found",
+      "NO_USER": "User not found"
+    }
   },
   "IMPORT": {
     "TITLE": "Import",

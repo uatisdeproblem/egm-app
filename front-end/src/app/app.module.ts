@@ -12,6 +12,7 @@ registerLocaleData(localeIt, 'it');
 
 import { IDEAEnvironment, IDEATranslationsModule, IDEAActionSheetModule } from '@idea-ionic/common';
 import { environment } from '@env';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,7 +22,8 @@ import { environment } from '@env';
     AppRoutingModule,
     IonicStorageModule.forRoot({ name: 'egm-app' }),
     IDEATranslationsModule,
-    IDEAActionSheetModule
+    IDEAActionSheetModule,
+    ZXingScannerModule
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
