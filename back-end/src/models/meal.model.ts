@@ -31,8 +31,8 @@ export class Meal extends Resource {
     super.load(x);
     this.mealId = this.clean(x.mealId, String);
     this.name = this.clean(x.name, String);
-    this.validFrom = this.clean(x.validFrom, t => new Date(t).toISOString());
-    this.validTo = this.clean(x.validTo, t => new Date(t).toISOString());
+    this.validFrom = this.clean(x.validFrom, t => new Date(t).toISOString().slice(0, 16));
+    this.validTo = this.clean(x.validTo, t => new Date(t).toISOString().slice(0, 16));
     this.needsScan = this.clean(x.needsScan, Boolean);
     this.dishDescription = {};
     if (x.dishDescription) this.dishDescription = x.dishDescription;

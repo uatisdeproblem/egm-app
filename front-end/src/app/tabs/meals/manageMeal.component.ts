@@ -45,8 +45,6 @@ import { Meal, MealTypes } from '@models/meal.model';
           </ion-label>
           <ion-input [(ngModel)]="meal.name"></ion-input>
         </ion-item>
-        <!-- @todo test date inputs -->
-        <!-- @todo date isn't holding up on edit... -->
         <ion-item [class.fieldHasError]="hasFieldAnError('validFrom')">
           <ion-label position="stacked">{{ 'MEALS.VALID_FROM' | translate }}</ion-label>
           <ion-input type="datetime-local" [(ngModel)]="meal.validFrom"></ion-input>
@@ -62,7 +60,6 @@ import { Meal, MealTypes } from '@models/meal.model';
           </ion-label>
         </ion-item>
         <ion-item class="ion-text-wrap">
-          <!-- @todo fix button width? -->
           <ion-label class="ion-text-wrap">
             <ion-button
               *ngFor="let mealType of MealTypes | keyvalue"
@@ -122,7 +119,7 @@ export class ManageMealComponent implements OnInit {
     public app: AppService
   ) {}
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     this.entityBeforeChange = new Meal(this.meal);
   }
 
