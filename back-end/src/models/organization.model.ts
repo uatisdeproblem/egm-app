@@ -44,6 +44,24 @@ export class Organization extends Resource {
     if (isEmpty(this.name)) e.push('name');
     return e;
   }
+
+  /**
+   * Return an exportable flat version of the resource.
+   */
+  exportFlat(): OrganizationFlat {
+    return new OrganizationFlat(this);
+  }
+
+  /**
+   * Import a flat structure and set the internal attributes accordingly.
+   */
+  importFlat(x: OrganizationFlat): void {
+    this.organizationId = x['Organization ID'];
+    this.name = x['Organization name'];
+    this.description = x['Description'];
+    this.website = x['Website'];
+    this.contactEmail = x['Contact Email'];
+  }
 }
 
 export class OrganizationLinked extends Resource {
@@ -54,5 +72,25 @@ export class OrganizationLinked extends Resource {
     super.load(x);
     this.organizationId = this.clean(x.organizationId, String);
     this.name = this.clean(x.name, String);
+  }
+}
+
+/**
+ * A flat version of the resource, useful for exports.
+ */
+export class OrganizationFlat {
+  'Organization ID': string;
+  'Organization name': string;
+  'Description': string;
+  'Website': string;
+  'Contact Email': string;
+
+  constructor(x?: Organization) {
+    x = x || ({} as any);
+    this['Organization ID'] = x.organizationId;
+    this['Organization name'] = x.name;
+    this['Description'] = x.description;
+    this['Website'] = x.website;
+    this['Contact Email'] = x.contactEmail;
   }
 }

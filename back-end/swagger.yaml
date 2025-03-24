@@ -548,6 +548,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Venue'
+    post:
+      summary: Insert a new venue
+      description: Requires to be content manager
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: venueId
+          in: path
+          description: Venue ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Venue'
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+        400:
+          $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit a venue
       description: Requires to be content manager
@@ -742,6 +766,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Organization'
+    post:
+      summary: Insert an organization
+      description: Requires to be content manager
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Organization
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+        400:
+          $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit an organization
       description: Requires to be content manager
@@ -830,6 +878,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Room'
+    post:
+      summary: Insert a room
+      description: Requires to be content manager
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Room
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit a room
       description: Requires to be content manager
@@ -918,6 +990,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Speaker'
+    post:
+      summary: Insert a speaker
+      description: Requires to be content manager
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Speaker
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+        400:
+          $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit a speaker
       description: Requires to be content manager
@@ -1010,6 +1106,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Session'
+    post:
+      summary: Insert a session
+      description: Requires to be content manager
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Session
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+        400:
+          $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit a session
       description: Requires to be content manager

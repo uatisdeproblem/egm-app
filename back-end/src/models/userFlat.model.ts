@@ -10,6 +10,7 @@ export class UserFlat {
   'First name': string;
   'Last name': string;
   'Email address': string;
+  'Birth Date': string;
   'Section Code': string;
   'Section Country': string;
   'Section Name': string;
@@ -27,6 +28,7 @@ export class UserFlat {
     this['First name'] = x.firstName;
     this['Last name'] = x.lastName;
     this['Email address'] = x.email;
+    this['Birth Date'] = new Date(x.birthDate).toLocaleDateString() ?? '';
     this['Section Code'] = x.sectionCode ?? '';
     this['Section Country'] = x.sectionCountry ?? '';
     this['Section Name'] = x.sectionName ?? '';

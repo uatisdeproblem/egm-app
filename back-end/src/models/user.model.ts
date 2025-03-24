@@ -1,4 +1,4 @@
-import { Resource, Suggestion, epochISOString } from 'idea-toolbox';
+import { Resource, Suggestion, epochDateTime, epochISOString } from 'idea-toolbox';
 
 import { EventSpotAttached } from './eventSpot.model';
 import { Speaker } from './speaker.model';
@@ -54,6 +54,8 @@ export class User extends Resource {
    */
   sectionName?: string;
 
+  birthDate: epochISOString;
+
   /**
    * The permissions of the user on the app.
    */
@@ -92,6 +94,7 @@ export class User extends Resource {
     this.lastName = this.clean(x.lastName, String);
     this.email = this.clean(x.email, String);
     this.avatarURL = this.clean(x.avatarURL, String);
+    this.birthDate = this.clean(x.birthDate, t => new Date(t).toISOString());
 
     if (this.authService === AuthServices.ESN_ACCOUNTS) {
       this.sectionCode = this.clean(x.sectionCode, String);
@@ -123,6 +126,7 @@ export class User extends Resource {
       this.sectionCode = safeData.sectionCode;
       this.sectionCountry = safeData.sectionCountry;
       this.sectionName = safeData.sectionName;
+      this.birthDate = safeData.birthDate;
     }
 
     this.permissions = safeData.permissions;

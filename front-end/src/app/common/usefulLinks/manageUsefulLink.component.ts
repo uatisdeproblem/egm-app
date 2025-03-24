@@ -161,3 +161,4 @@ export class ManageUsefulLinkStandaloneComponent {
     else if (service === AuthServices.ESN_ACCOUNTS) return this.t._('AUTH.AN_ESNER');
   }
 }
+

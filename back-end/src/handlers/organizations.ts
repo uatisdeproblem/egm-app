@@ -59,7 +59,7 @@ class Organizations extends ResourceController {
       throw new HandledError('User not found');
     }
 
-    if (!this.resourceId) return;
+    if (this.httpMethod === 'POST' || !this.resourceId) return;
 
     try {
       this.organization = new Organization(
@@ -82,6 +82,15 @@ class Organizations extends ResourceController {
 
     return await this.putSafeResource();
   }
+
+  protected async postResource(): Promise<Organization> {
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
+
+    this.organization = new Organization(this.body);
+
+    return await this.putSafeResource({ noOverwrite: true });
+  }
+
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Organization> {
     const errors = this.organization.validate();
     if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);

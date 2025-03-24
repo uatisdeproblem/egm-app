@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      {{ 'AUTH.PRIVACY_POLICY' | translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="maxWidthContainer">
+    <ion-list class="aList">
+      <p
+        [innerHTML]="
+          t.instant('PRIVACY_POLICY.DISCLAIMER')
+        "
+      ></p>
+    </ion-list>
+      <p
+        [innerHTML]="
+          t.instant('PRIVACY_POLICY.INTRODUCTION')
+        "
+      ></p>
+      <p
+        [innerHTML]="
+          t.instant('PRIVACY_POLICY.PRIVATE_DATA')
+        "
+      ></p>
+      <p
+        [innerHTML]="
+          t.instant('PRIVACY_POLICY.USE_PRIVATE_DATA')
+        "
+      ></p>
+      <p
+        [innerHTML]="
+          t.instant('PRIVACY_POLICY.INTERNATIONAL_TRANSFER')
+        "
+      ></p>
+
+      <p
+        [innerHTML]="
+          t.instant('PRIVACY_POLICY.RETAINING_DATA')
+        "
+      ></p>
+      <p
+      [innerHTML]="
+        t.instant('PRIVACY_POLICY.SECURITY_DATA')
+      "
+    ></p>
+
+    <p
+      [innerHTML]="
+        t.instant('PRIVACY_POLICY.DATA_AMENDEMENT')
+      "
+    ></p>
+    <p
+      [innerHTML]="
+        t.instant('PRIVACY_POLICY.RIGHTS')
+      "
+    ></p>
+    <p
+      [innerHTML]="
+        t.instant('PRIVACY_POLICY.THIRD_PART_AND_COOKIES')
+      "
+    ></p>
+
+    <p
+      [innerHTML]="
+        t.instant('PRIVACY_POLICY.ACCEPT_PRIVACY')
+      "
+    ></p>
+  </div>
+</ion-content>

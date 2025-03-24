@@ -56,6 +56,25 @@ export class Venue extends Resource {
     if (isEmpty(this.latitude)) e.push('latitude');
     return e;
   }
+
+  /**
+   * Return an exportable flat version of the resource.
+   */
+  exportFlat(): VenueFlat {
+    return new VenueFlat(this);
+  }
+
+  /**
+   * Import a flat structure and set the internal attributes accordingly.
+   */
+  importFlat(x: VenueFlat): void {
+    this.venueId = x['Venue ID'];
+    this.name = x['Venue name'];
+    this.address = x['Address'];
+    this.description = x['Description'];
+    this.longitude = x['Longitude'];
+    this.latitude = x['Latitude'];
+  }
 }
 
 export class VenueLinked extends Resource {
@@ -66,5 +85,27 @@ export class VenueLinked extends Resource {
     super.load(x);
     this.venueId = this.clean(x.venueId, String);
     this.name = this.clean(x.name, String);
+  }
+}
+
+/**
+ * A flat version of the resource, useful for exports.
+ */
+export class VenueFlat {
+  'Venue ID': string;
+  'Venue name': string;
+  'Address': string;
+  'Description': string;
+  'Longitude': number;
+  'Latitude': number;
+
+  constructor(x?: Venue) {
+    x = x || ({} as any);
+    this['Venue ID'] = x.venueId;
+    this['Venue name'] = x.name;
+    this['Address'] = x.address;
+    this['Description'] = x.description;
+    this['Longitude'] = x.longitude;
+    this['Latitude'] = x.latitude;
   }
 }

@@ -49,6 +49,10 @@
           <p>{{ 'MANAGE.CONTENTS_I' | translate }}</p>
         </ion-label>
       </ion-list-header>
+      <ion-item button detail (click)="app.goToInTabs(['manage', 'import'])">
+        <ion-icon slot="start" icon="list-outline" />
+        <ion-label>{{ 'MANAGE.IMPORT_FROM_CSV' | translate }}</ion-label>
+      </ion-item>
       <ion-item button detail (click)="addVenue()">
         <ion-icon slot="start" icon="home-outline" />
         <ion-label>{{ 'MANAGE.VENUES' | translate }}</ion-label>
