@@ -10,6 +10,8 @@ import { SessionsService } from './sessions.service';
 import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
 
 import { Session } from '@models/session.model';
+import { Speaker } from '@models/speaker.model';
+import { SpeakersService } from '../speakers/speakers.service';
 
 @Component({
   selector: 'app-sessions',
@@ -26,6 +28,9 @@ export class SessionsPage {
   registeredSessionsIds: string[] = [];
   ratedSessionsIds: string[] = [];
   selectedSession: Session;
+  speakers: Speaker[];
+  hasSessionLimitations: boolean;
+  sessionCountByDate: Record<string, number> = {};
 
   segment = '';
 
@@ -34,26 +39,36 @@ export class SessionsPage {
     private loading: IDEALoadingService,
     private message: IDEAMessageService,
     public _sessions: SessionsService,
+    public _speakers: SpeakersService,
     private _sessionRegistrations: SessionRegistrationsService,
     public t: IDEATranslationsService,
     public app: AppService
   ) {}
 
-  async ionViewDidEnter() {
+  async ionViewDidEnter(): Promise<void> {
     await this.loadData();
   }
 
-  async loadData() {
+  async loadData(): Promise<void> {
     try {
       await this.loading.show();
       // WARNING: do not pass any segment in order to get the favorites on the next api call.
       this.segment = '';
       this.sessions = await this._sessions.getList({ force: true });
+      this.speakers = await this._speakers.getList({});
+      const isSpeaker = this.speakers.some(s => this.app.user.isSpeaker(s));
+      this.hasSessionLimitations = isSpeaker
+        ? this.app.configurations.forSpeakers
+        : this.app.user.isExternal()
+        ? this.app.configurations.forExternals
+        : this.app.configurations.forParticipants;
+
       this.favoriteSessionsIds = this.sessions.map(s => s.sessionId);
       const userRegisteredSessions = await this._sessions.loadUserRegisteredSessions();
       this.registeredSessionsIds = userRegisteredSessions.map(ur => ur.sessionId);
       this.ratedSessionsIds = userRegisteredSessions.filter(ur => ur.hasUserRated).map(ur => ur.sessionId);
       this.days = await this._sessions.getSessionDays();
+      this.checkMinSessionsLimit();
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
     } finally {
@@ -64,6 +79,7 @@ export class SessionsPage {
     this.selectedSession = null;
     this.segment = segment;
     this.filterSessions(search);
+    this.checkMinSessionsLimit();
   }
   async filterSessions(search = ''): Promise<void> {
     this.sessions = await this._sessions.getList({ search, segment: this.segment });
@@ -120,6 +136,7 @@ export class SessionsPage {
       }
       const updatedSession = await this._sessions.getById(session.sessionId);
       session.numberOfParticipants = updatedSession.numberOfParticipants;
+      this.checkMinSessionsLimit();
     } catch (error) {
       if (error.message === "User can't sign up for this session!") {
         this.message.error('SESSIONS.CANT_SIGN_UP');
@@ -129,12 +146,23 @@ export class SessionsPage {
         this.message.error('SESSIONS.SESSION_FULL');
       } else if (error.message === 'You have 1 or more sessions during this time period.') {
         this.message.error('SESSIONS.OVERLAP');
+      } else if (error.message === 'You have reached the maximum number of sessions you can register to!') {
+        this.message.error('SESSIONS.SESSION_MAX_LIMIT_WARNING');
       } else this.message.error('COMMON.OPERATION_FAILED');
     } finally {
       this.loading.hide();
     }
   }
 
+  async checkMinSessionsLimit(): Promise<void> {
+    if (!this.hasSessionLimitations) return;
+
+    for (const day of this.days) {
+      const sessionsInDay = await this._sessions.getList({ segment: day });
+      const registeredSessions = sessionsInDay.filter(s => this.registeredSessionsIds.includes(s.sessionId));
+      this.sessionCountByDate[day] = registeredSessions.length;
+    }
+  }
   openDetail(ev: any, session: Session): void {
     ev?.stopPropagation();
 

@@ -58,6 +58,26 @@ export class Configurations extends Resource {
    * The list of all the current ESN countries.
    */
   sectionCountries: string[];
+  /**
+   * The minimum number of sessions that a user has to register to per day.
+   */
+  minSessionPerDay: number;
+  /**
+   * The maximum number of sessions that a user can register to.
+   */
+  maxNrOfSessions: number;
+  /**
+   * Apply the min & max limits only for Participants role.
+   */
+  forParticipants: boolean;
+  /**
+   * Apply the min & max limits only for Externals role.
+   */
+  forExternals: boolean;
+  /**
+   * Apply the min & max limits only for Speakers role.
+   */
+  forSpeakers: boolean;
 
   load(x: any): void {
     super.load(x);
@@ -81,6 +101,11 @@ export class Configurations extends Resource {
     if (x.stripeLinkPerSpotType)
       this.spotTypes.forEach(st => (this.stripeLinkPerSpotType[st] = this.clean(x.stripeLinkPerSpotType[st], String)));
     this.sectionCountries = this.cleanArray(x.sectionCountries, String);
+    this.minSessionPerDay = this.clean(x.minSessionPerDay, Number, 2);
+    this.maxNrOfSessions = this.clean(x.maxNrOfSessions, Number, 7);
+    this.forParticipants = this.clean(x.forParticipants, Boolean);
+    this.forExternals = this.clean(x.forExternals, Boolean);
+    this.forSpeakers = this.clean(x.forSpeakers, Boolean);
   }
 
   safeLoad(newData: any, safeData: any): void {
@@ -91,7 +116,7 @@ export class Configurations extends Resource {
   validate(): string[] {
     const e = super.validate();
     this.registrationFormDef.validate(LANGUAGES).forEach(ea => e.push(`registrationFormDef.${ea}`));
-    if (this.sessionRegistrationBuffer < 0) e.push('sessionRegistrationBuffer')
+    if (this.sessionRegistrationBuffer < 0) e.push('sessionRegistrationBuffer');
     return e;
   }
 
@@ -103,18 +128,26 @@ export class Configurations extends Resource {
   }
 
   /**
-   * Wether registrations are open based on user type
+   * Whether registrations are open based on user type
    */
   canUserRegister(user: User): boolean {
     return user.isExternal() ? this.isRegistrationOpenForExternals : this.isRegistrationOpenForESNers;
   }
 
   /**
-   * Returnts the payment link associated with the spot type.
+   * Returns the payment link associated with the spot type.
    */
   getSpotPaymentLink(spotType: string): string {
     if (!(this.stripeLinkPerSpotType || spotType)) return;
     return this.stripeLinkPerSpotType[spotType];
+  }
+
+  /**
+   * Returns the price associated with the spot type.
+   */
+  getSpotPrice(spotType: string): number {
+    if (!(this.pricePerSpotTypes || spotType)) return;
+    return this.pricePerSpotTypes[spotType];
   }
 }
 

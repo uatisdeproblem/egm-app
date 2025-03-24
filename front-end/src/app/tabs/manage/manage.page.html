@@ -34,7 +34,12 @@
       <ion-icon slot="start" icon="settings-outline"></ion-icon>
       <ion-label>{{ 'MANAGE.REGISTRATIONS_SETTINGS' | translate }}</ion-label>
     </ion-item>
-    } @if(app.user.permissions.canManageContents) {
+    @if(app.user.permissions.canManageRegistrations) {
+    <ion-item button detail (click)="app.goToInTabs(['manage', 'sessions'])">
+      <ion-icon slot="start" icon="build-outline"></ion-icon>
+      <ion-label>{{ 'MANAGE.SESSIONS_MANAGEMENT' | translate }}</ion-label>
+    </ion-item>
+    } } @if(app.user.permissions.canManageContents) {
     <ion-list-header>
       <ion-label>
         <h2>{{ 'MANAGE.CONTENTS' | translate }}</h2>
