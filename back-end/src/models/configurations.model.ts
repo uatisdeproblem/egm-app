@@ -61,11 +61,11 @@ export class Configurations extends Resource {
   /**
    * The minimum number of sessions that a user has to register to per day.
    */
-  minLimit: number;
+  minSessionPerDay: number;
   /**
    * The maximum number of sessions that a user can register to.
    */
-  maxLimit: number;
+  maxNrOfSessions: number;
   /**
    * Apply the min & max limits only for Participants role.
    */
@@ -101,11 +101,11 @@ export class Configurations extends Resource {
     if (x.stripeLinkPerSpotType)
       this.spotTypes.forEach(st => (this.stripeLinkPerSpotType[st] = this.clean(x.stripeLinkPerSpotType[st], String)));
     this.sectionCountries = this.cleanArray(x.sectionCountries, String);
-    this.minLimit = this.clean(x.minLimit, Number);
-    this.maxLimit = this.clean(x.maxLimit, Number);
-    this.forParticipants = this.clean(x.forParticipants, Boolean, true);
-    this.forExternals = this.clean(x.forExternals, Boolean, false);
-    this.forSpeakers = this.clean(x.forSpeakers, Boolean, false);
+    this.minSessionPerDay = this.clean(x.minSessionPerDay, Number, 2);
+    this.maxNrOfSessions = this.clean(x.maxNrOfSessions, Number, 7);
+    this.forParticipants = this.clean(x.forParticipants, Boolean);
+    this.forExternals = this.clean(x.forExternals, Boolean);
+    this.forSpeakers = this.clean(x.forSpeakers, Boolean);
   }
 
   safeLoad(newData: any, safeData: any): void {
@@ -116,7 +116,7 @@ export class Configurations extends Resource {
   validate(): string[] {
     const e = super.validate();
     this.registrationFormDef.validate(LANGUAGES).forEach(ea => e.push(`registrationFormDef.${ea}`));
-    if (this.sessionRegistrationBuffer < 0) e.push('sessionRegistrationBuffer')
+    if (this.sessionRegistrationBuffer < 0) e.push('sessionRegistrationBuffer');
     return e;
   }
 
@@ -148,38 +148,6 @@ export class Configurations extends Resource {
   getSpotPrice(spotType: string): number {
     if (!(this.pricePerSpotTypes || spotType)) return;
     return this.pricePerSpotTypes[spotType];
-  }
-
-  /**
-   * Returns the minimum limit for sessions per day
-   */
-  getMinLimit(): number {
-    if(this.minLimit) return this.minLimit;
-  }
-
-  /**
-   * Returns the maximum limit for sessions
-   */
-  getMaxLimit(): number {
-    if(this.maxLimit) return this.maxLimit;
-  }
-  /**
-   * Whether the restriction of min & max limits apply to Participants
-   */
-  getForParticipants(): boolean {
-    if(this.forParticipants) return this.forParticipants;
-  }
-  /**
-   * Whether the restriction of min & max limits apply to Externals
-   */
-  getForExternals(): boolean {
-    if(this.forExternals) return this.forExternals;
-  }
-  /**
-   * Whether the restriction of min & max limits apply to Speakers
-   */
-  getForSpeakers(): boolean {
-    if(this.forSpeakers) return this.forSpeakers;
   }
 }
 

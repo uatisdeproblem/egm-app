@@ -28,31 +28,27 @@
       </ion-label>
     </ion-list-header>
     <ion-item>
-      <ion-label position="stacked">
-        {{ 'MANAGE.MIN_LIMIT' | translate }}
-      </ion-label>
-      <ion-input [disabled]="!editMode" [(ngModel)]="configurations.minLimit"></ion-input>
+      <ion-label position="stacked"> {{ 'MANAGE.MIN_SESSION_DAY_LIMIT' | translate }} </ion-label>
+      <ion-input [disabled]="!editMode" [(ngModel)]="configurations.minSessionPerDay"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label position="stacked">
-        {{ 'MANAGE.MAX_LIMIT' | translate }}
-      </ion-label>
-      <ion-input [disabled]="!editMode" [(ngModel)]="configurations.maxLimit"></ion-input>
+      <ion-label position="stacked"> {{ 'MANAGE.MAX_SESSION_LIMIT' | translate }} </ion-label>
+      <ion-input [disabled]="!editMode" [(ngModel)]="configurations.maxNrOfSessions"></ion-input>
     </ion-item>
     <ion-list-header *ngIf="!app.isInMobileMode()">
       <ion-label>
         <h2>{{ 'USERS.APPLY_TO' | translate }}</h2>
       </ion-label>
     </ion-list-header>
-    <ion-item >
+    <ion-item>
       <ion-checkbox slot="start" [disabled]="!editMode" [(ngModel)]="configurations.forParticipants"></ion-checkbox>
       <ion-label class="ion-text-wrap"> {{ 'SESSIONS.APPLY_TO_PARTICIPANTS' | translate }} </ion-label>
     </ion-item>
-    <ion-item >
+    <ion-item>
       <ion-checkbox slot="start" [disabled]="!editMode" [(ngModel)]="configurations.forExternals"></ion-checkbox>
       <ion-label class="ion-text-wrap"> {{ 'SESSIONS.APPLY_TO_EXTERNALS' | translate}} </ion-label>
     </ion-item>
-    <ion-item >
+    <ion-item>
       <ion-checkbox slot="start" [disabled]="!editMode" [(ngModel)]="configurations.forSpeakers"></ion-checkbox>
       <ion-label class="ion-text-wrap"> {{ 'SESSIONS.APPLY_TO_SPEAKERS' | translate}} </ion-label>
     </ion-item>

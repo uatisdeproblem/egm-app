@@ -1,22 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
 
 import { AppService } from '@app/app.service';
-
 import { ConfigurationsService } from '../configurations/configurations.service';
+
 import { Configurations } from '@models/configurations.model';
 
 @Component({
-  selector: 'sessions',
+  selector: 'app-sessions-management',
   templateUrl: 'sessionsManagement.page.html'
 })
 export class SessionsManagementPage implements OnInit {
   configurations: Configurations;
-  errors = new Set<string>();
-  editMode = false;
   entityBeforeChange: Configurations;
-  minLimit: number;
-  maxLimit: number;
+
+  editMode = false;
+
+  errors = new Set<string>();
 
   constructor(
     private loading: IDEALoadingService,
@@ -28,17 +28,20 @@ export class SessionsManagementPage implements OnInit {
     this.configurations = new Configurations(this.app.configurations);
   }
   ionViewWillEnter(): void {
-    if (!this.app.user.permissions.canManageContents) return this.app.closePage('COMMON.UNAUTHORIZED');
+    if (!this.app.user.permissions.canManageRegistrations) return this.app.closePage('COMMON.UNAUTHORIZED');
   }
+
   exitEditMode(): void {
     this.configurations = this.entityBeforeChange;
     this.errors = new Set<string>();
     this.editMode = false;
   }
+
   enterEditMode(): void {
     this.entityBeforeChange = new Configurations(this.configurations);
     this.editMode = true;
   }
+
   async save(): Promise<void> {
     this.errors = new Set(this.configurations.validate());
     if (this.errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');

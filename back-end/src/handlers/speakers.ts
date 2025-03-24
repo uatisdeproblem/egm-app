@@ -28,7 +28,7 @@ export const handler = (ev: any, _: any, cb: any) => new Speakers(ev, cb).handle
 /// RESOURCE CONTROLLER
 ///
 
-export class Speakers extends ResourceController {
+class Speakers extends ResourceController {
   user: User;
   speaker: Speaker;
 

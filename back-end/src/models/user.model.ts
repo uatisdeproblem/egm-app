@@ -170,7 +170,7 @@ export class User extends Resource {
     return this.authService !== AuthServices.ESN_ACCOUNTS;
   }
 
-  isSpeaker(speaker: Speaker) {
+  isSpeaker(speaker: Speaker): boolean {
     return speaker.speakerId === this.userId;
   }
 

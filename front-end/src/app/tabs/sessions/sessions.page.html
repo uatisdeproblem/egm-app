@@ -16,12 +16,16 @@
           </ion-segment-button>
         </ion-segment>
         <ion-list class="maxWidthContainer" lines="inset">
-          <ion-item *ngIf="checkMinLimit | async" color="warning">
+          @if(segment && hasSessionLimitations && sessionCountByDate[this.segment] <
+          app.configurations.minSessionPerDay) {
+          <ion-item color="warning">
             <ion-icon name="warning" slot="start" />
-            <ion-label class="ion-text-wrap">
-              {{ 'SESSIONS.SESSION_MIN_LIMIT_WARNING' | translate : {min: this.app.configurations.minLimit, max: this.app.configurations.maxLimit} }}
+            <ion-label>
+              {{ 'SESSIONS.SESSION_MIN_LIMIT_WARNING' | translate : {min: this.app.configurations.minSessionPerDay, max:
+              this.app.configurations.maxNrOfSessions} }}
             </ion-label>
           </ion-item>
+          }
           <ion-searchbar #searchbar color="light" (ionInput)="filterSessions($event.target.value)"></ion-searchbar>
           <ion-item color="white" class="noElements" *ngIf="sessions && !sessions.length">
             <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
@@ -31,6 +35,7 @@
           </ion-item>
           <ion-item
             *ngFor="let session of sessions"
+            class="sessionItem"
             [class.favoritedSession]="this.isSessionInFavorites(session)"
             [class.registeredSession]="this.isUserRegisteredInSession(session)"
             button
