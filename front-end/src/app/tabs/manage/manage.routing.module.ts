@@ -27,7 +27,8 @@ const routes: Routes = [
   },
   {
     path: 'sessions',
-    loadChildren: (): Promise<any> => import('./sessions/sessionsManagement.module').then(m => m.SessionsManagementModule )
+    loadChildren: (): Promise<any> =>
+      import('./sessions/sessionsManagement.module').then(m => m.SessionsManagementModule)
   }
 ];
 
