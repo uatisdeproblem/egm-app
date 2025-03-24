@@ -3,25 +3,25 @@ ion-list {
   max-height: 100vh;
 }
 
-ion-item {
+ion-item.sessionItem {
   box-shadow: '0 0 5px 3px rgba(0, 0, 0, 0.05)';
   border-radius: 12px;
   margin: 8;
+
+  ion-label {
+    margin-top: 0px;
+    padding-top: 0px;
+  }
 }
 
 .registeredSession.favoritedSession {
   border-color: var(--ion-color-primary);
-  border-style: solid ;
+  border-style: solid;
 }
 
 .favoritedSession {
   border-color: var(--ion-color-warning);
   border-style: solid;
-}
-
-ion-label {
-  margin-top: 0px;
-  padding-top: 0px;
 }
 
 .sessionTitle {
@@ -36,10 +36,11 @@ ion-note {
   margin-top: auto;
   margin-bottom: auto;
 
-  b, span {
+  b,
+  span {
     display: block;
     padding: 5px;
-    margin: 0px
+    margin: 0px;
   }
 }
 

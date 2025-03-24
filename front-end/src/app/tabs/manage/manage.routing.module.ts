@@ -18,8 +18,21 @@ const routes: Routes = [
     loadChildren: (): Promise<any> => import('./spots/spots.module').then(m => m.SpotsModule)
   },
   {
+    path: 'meals',
+    loadChildren: (): Promise<any> => import('./meals/mealsInfo.module').then(m => m.MealsInfoModule)
+  },
+  {
     path: 'registrations',
-    loadChildren: (): Promise<any> => import('./registration/registration.module').then(m => m.RegistrationModule )
+    loadChildren: (): Promise<any> => import('./registration/registration.module').then(m => m.RegistrationModule)
+  },
+  {
+    path: 'import',
+    loadChildren: (): Promise<any> => import('./import/import.module').then(m => m.ImportModule)
+  },
+  {
+    path: 'sessions',
+    loadChildren: (): Promise<any> =>
+      import('./sessions/sessionsManagement.module').then(m => m.SessionsManagementModule)
   }
 ];
 

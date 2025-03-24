@@ -43,7 +43,7 @@ class Rooms extends ResourceController {
       throw new HandledError('User not found');
     }
 
-    if (!this.resourceId) return;
+    if (this.httpMethod === 'POST' || !this.resourceId) return;
 
     try {
       this.room = new Room(await ddb.get({ TableName: DDB_TABLES.rooms, Key: { roomId: this.resourceId } }));
@@ -64,6 +64,15 @@ class Rooms extends ResourceController {
 
     return await this.putSafeResource();
   }
+
+  protected async postResource(): Promise<Room> {
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
+
+    this.room = new Room(this.body);
+
+    return await this.putSafeResource({ noOverwrite: true });
+  }
+
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Room> {
     const errors = this.room.validate();
     if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);

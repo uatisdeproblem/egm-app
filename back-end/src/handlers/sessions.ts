@@ -45,7 +45,7 @@ class SessionsRC extends ResourceController {
       throw new HandledError('User not found');
     }
 
-    if (!this.resourceId) return;
+    if (this.httpMethod === 'POST' || !this.resourceId) return;
 
     try {
       this.session = new Session(
@@ -72,6 +72,15 @@ class SessionsRC extends ResourceController {
 
     return await this.putSafeResource();
   }
+
+  protected async postResource(): Promise<Session> {
+    if (!this.user.permissions.canManageContents) throw new HandledError('Unauthorized');
+
+    this.session = new Session(this.body);
+
+    return await this.putSafeResource({ noOverwrite: true });
+  }
+
   private async putSafeResource(opts: { noOverwrite?: boolean } = {}): Promise<Session> {
     this.session.room = new RoomLinked(
       await ddb.get({ TableName: DDB_TABLES.rooms, Key: { roomId: this.session.room.roomId } })

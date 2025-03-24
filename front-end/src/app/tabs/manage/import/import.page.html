@@ -1,0 +1,388 @@
+<ion-content>
+  <ion-grid class="maxWidthContainer">
+    <ion-breadcrumbs [maxItems]="4" [itemsBeforeCollapse]="1" [itemsAfterCollapse]="2">
+      @if (step >= STEPS.SELECT_ENTITY) {
+      <ion-breadcrumb>
+        <ion-button
+          fill="clear"
+          color="dark"
+          [disabled]="step <= STEPS.SELECT_ENTITY"
+          (click)="step = STEPS.SELECT_ENTITY"
+        >
+          {{ 'IMPORT.STEPS.' + STEPS[STEPS.SELECT_ENTITY] | translate }}
+        </ion-button>
+        <ion-icon slot="separator" name="chevron-forward" />
+      </ion-breadcrumb>
+      } @if (step >= STEPS.DOWNLOAD_TEMPLATE) {
+      <ion-breadcrumb>
+        <ion-button
+          fill="clear"
+          color="dark"
+          [disabled]="step <= STEPS.DOWNLOAD_TEMPLATE"
+          (click)="step = STEPS.DOWNLOAD_TEMPLATE"
+        >
+          {{ 'IMPORT.STEPS.' + STEPS[STEPS.DOWNLOAD_TEMPLATE] | translate }}
+        </ion-button>
+        <ion-icon slot="separator" name="chevron-forward" />
+      </ion-breadcrumb>
+      } @if (step >= STEPS.UPLOAD_EXCEL) {
+      <ion-breadcrumb>
+        <ion-button
+          fill="clear"
+          color="dark"
+          [disabled]="step <= STEPS.UPLOAD_EXCEL"
+          (click)="step = STEPS.UPLOAD_EXCEL"
+        >
+          {{ 'IMPORT.STEPS.' + STEPS[STEPS.UPLOAD_EXCEL] | translate }}
+        </ion-button>
+        <ion-icon slot="separator" name="chevron-forward" />
+      </ion-breadcrumb>
+      } @if (step >= STEPS.METADATA_CONFIG) {
+      <ion-breadcrumb>
+        <ion-button
+          fill="clear"
+          color="dark"
+          [disabled]="step <= STEPS.METADATA_CONFIG"
+          (click)="step = STEPS.METADATA_CONFIG"
+        >
+          {{ 'IMPORT.STEPS.' + STEPS[STEPS.METADATA_CONFIG] | translate }}
+        </ion-button>
+        <ion-icon slot="separator" name="chevron-forward" />
+      </ion-breadcrumb>
+      } @if (step >= STEPS.PREVIEW) {
+      <ion-breadcrumb>
+        <ion-button fill="clear" color="dark" [disabled]="step <= STEPS.PREVIEW" (click)="step = STEPS.PREVIEW">
+          {{ 'IMPORT.STEPS.' + STEPS[STEPS.PREVIEW] | translate }}
+        </ion-button>
+        <ion-icon slot="separator" name="chevron-forward" />
+      </ion-breadcrumb>
+      } @if (step >= STEPS.RESULTS) {
+      <ion-breadcrumb>
+        <ion-button fill="clear" color="dark" [disabled]="step <= STEPS.RESULTS" (click)="step = STEPS.RESULTS">
+          {{ 'IMPORT.STEPS.' + STEPS[STEPS.RESULTS] | translate }}
+        </ion-button>
+        <ion-icon slot="separator" name="chevron-forward" />
+      </ion-breadcrumb>
+      }
+    </ion-breadcrumbs>
+    <ion-row>
+      <ion-col>
+        @if (step === STEPS.SELECT_ENTITY) {
+        <ion-list class="aList">
+          <ion-radio-group [(ngModel)]="entity">
+            <ion-list-header>
+              <ion-label>
+                <h2>{{ 'IMPORT.SELECT_ENTITY_TO_IMPORT' | translate }}</h2>
+                <p>{{ 'IMPORT.SELECT_ENTITY_TO_IMPORT_I' | translate }}</p>
+              </ion-label>
+            </ion-list-header>
+            <ion-item>
+              <ion-radio justify="space-between" [value]="EntityTypes.VENUES">
+                {{ getEntityLabel(EntityTypes.VENUES) }}
+              </ion-radio>
+            </ion-item>
+            <ion-item class="childEntity">
+              <ion-radio justify="space-between" [value]="EntityTypes.ROOMS">
+                {{ getEntityLabel(EntityTypes.ROOMS) }}
+              </ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-radio justify="space-between" [value]="EntityTypes.ORGANIZATIONS">
+                {{ getEntityLabel(EntityTypes.ORGANIZATIONS) }}
+              </ion-radio>
+            </ion-item>
+            <ion-item class="childEntity">
+              <ion-radio justify="space-between" [value]="EntityTypes.SPEAKERS">
+                {{ getEntityLabel(EntityTypes.SPEAKERS) }}
+              </ion-radio>
+            </ion-item>
+            <ion-item class="grandchildEntity">
+              <ion-radio justify="space-between" [value]="EntityTypes.SESSIONS">
+                {{ getEntityLabel(EntityTypes.SESSIONS) }}
+              </ion-radio>
+            </ion-item>
+          </ion-radio-group>
+          @if (entity && _translate._('IMPORT.SEL_ENTITIES_DISCLAIMERS.' + entity)) {
+          <ion-item color="warning">
+            <ion-icon name="warning" slot="start" />
+            <ion-label class="ion-text-wrap">
+              {{ _translate._('IMPORT.SEL_ENTITIES_DISCLAIMERS.' + entity) }}
+            </ion-label>
+          </ion-item>
+          }
+          <p class="ion-text-right">
+            <ion-button [title]="'IMPORT.NEXT_HINT' | translate" [disabled]="!entity" (click)="nextStep()">
+              <ion-icon name="arrow-forward" slot="end" />
+              {{ 'IMPORT.NEXT' | translate }}
+            </ion-button>
+          </p>
+        </ion-list>
+        } @if (step === STEPS.DOWNLOAD_TEMPLATE) {
+        <ion-list class="aList">
+          <ion-list-header>
+            <ion-label>
+              <h2>{{ 'IMPORT.PREPARE_DATA_DOWNLOAD_TEMPLATE' | translate }}</h2>
+              <p>{{ 'IMPORT.PREPARE_DATA_DOWNLOAD_TEMPLATE_I' | translate }}</p>
+              <p>{{ 'IMPORT.PREPARE_DATA_DOWNLOAD_TEMPLATE_II' | translate }}</p>
+            </ion-label>
+          </ion-list-header>
+          <p class="ion-text-center">
+            <ion-button
+              color="light"
+              class="normalCase"
+              [title]="'IMPORT.PREPARE_DATA_DOWNLOAD_TEMPLATE_II' | translate"
+              (click)="downloadTemplate()"
+            >
+              <ion-icon name="download" slot="start" />
+              {{ 'IMPORT.DOWNLOAD_TEMPLATE' | translate }}
+            </ion-button>
+          </p>
+          <ion-item color="medium">
+            <ion-icon name="information-circle" slot="start" />
+            <ion-label class="ion-text-wrap">{{ 'IMPORT.PREPARE_DATA_DOWNLOAD_TEMPLATE_III' | translate }}</ion-label>
+          </ion-item>
+          <p class="ion-text-right">
+            <ion-button [title]="'IMPORT.NEXT_HINT' | translate" (click)="nextStep()">
+              <ion-icon name="arrow-forward" slot="end" />
+              {{ 'IMPORT.NEXT' | translate }}
+            </ion-button>
+          </p>
+        </ion-list>
+        } @if (step === STEPS.UPLOAD_EXCEL) {
+        <ion-list class="aList">
+          <ion-list-header>
+            <ion-label>
+              <h2>{{ 'IMPORT.UPLOAD_DATA' | translate }}</h2>
+              <p>{{ 'IMPORT.UPLOAD_DATA_I' | translate }}</p>
+              <p>{{ 'IMPORT.UPLOAD_DATA_II' | translate }}</p>
+            </ion-label>
+          </ion-list-header>
+          @if (fileToImport) {
+          <ion-item>
+            <ion-label>{{ fileToImport.name }}</ion-label>
+          </ion-item>
+          }
+          <p class="ion-text-center">
+            <ion-button
+              color="light"
+              class="normalCase"
+              [title]="'IMPORT.UPLOAD_DATA_I' | translate"
+              (click)="browseFiles()"
+            >
+              <ion-icon name="folder" slot="start" />
+              {{ 'IMPORT.CHOOSE_FILE' | translate }}
+            </ion-button>
+          </p>
+          <input
+            id="inputFileToImport"
+            type="file"
+            name="xls"
+            accept=".xls,.xlsx"
+            [style.display]="'none'"
+            (change)="selectFile($event)"
+          />
+          <p class="ion-text-right">
+            @if (somethingInProgress) {
+            <ion-button fill="clear">
+              <ion-spinner size="small" />
+            </ion-button>
+            }
+            <ion-button
+              [title]="'IMPORT.NEXT_HINT' | translate"
+              [disabled]="!fileToImport || somethingInProgress"
+              (click)="analyseFileToImport()"
+            >
+              <ion-icon name="arrow-forward" slot="end" />
+              {{ 'IMPORT.NEXT' | translate }}
+            </ion-button>
+          </p>
+        </ion-list>
+        } @if (step === STEPS.METADATA_CONFIG) {
+        <ion-list class="aList">
+          <ion-list-header>
+            <ion-label>
+              <h2>{{ 'IMPORT.METADATA_CONFIGURATION' | translate }}</h2>
+              <p>{{ 'IMPORT.METADATA_CONFIGURATION_I' | translate }}</p>
+            </ion-label>
+          </ion-list-header>
+          <ion-item color="light">
+            <ion-icon name="information-circle" slot="start" />
+            <span
+              class="ion-text-wrap"
+              [innerHtml]="
+                  (entityUsesAutomaticIDs()
+                    ? 'IMPORT.ENTITY_IS_CONFIGURED_WITH_AUTOMATIC_IDS'
+                    : 'IMPORT.ENTITY_IS_CONFIGURED_WITH_MANUAL_IDS'
+                  ) | translate
+                "
+            ></span>
+          </ion-item>
+          <ion-list-header>
+            <ion-label>
+              <h3>{{ 'IMPORT.METADATA_CONFIGURATION_COLS' | translate }}</h3>
+              <p>{{ 'IMPORT.METADATA_CONFIGURATION_COLS_I' | translate }}</p>
+              <p>{{ 'IMPORT.METADATA_CONFIGURATION_COLS_II' | translate }}</p>
+            </ion-label>
+          </ion-list-header>
+          @for (attr of entityAttributes; track attr) {
+          <idea-select
+            [data]="excelColsHeaderSuggestions"
+            [description]="entityAttributesColsMap[attr]"
+            [label]="attr"
+            [obligatory]="entityObligatoryAttributes.has(attr)"
+            [avoidAutoSelection]="true"
+            [placeholder]="'IMPORT.TAP_TO_MAP_COL_TO_ATTRIBUTE' | translate"
+            [searchPlaceholder]="'IMPORT.FIND_A_COLUMN_TO_LINK' | translate"
+            (select)="$event ? linkAttributeToColumn(attr, $event) : null"
+          />
+          }
+          <p class="ion-text-right">
+            <ion-button
+              [title]="'IMPORT.NEXT_HINT' | translate"
+              [disabled]="!isMetadataConfigurationDone()"
+              (click)="createPreview()"
+            >
+              <ion-icon name="eye" slot="end" />
+              {{ 'IMPORT.PREVIEW' | translate }}
+            </ion-button>
+          </p>
+        </ion-list>
+        } @if (step === STEPS.PREVIEW) {
+        <ion-list class="aList">
+          <ion-list-header>
+            <ion-label>
+              <h2>{{ 'IMPORT.PREVIEW_IMPORT' | translate }}</h2>
+              <p>{{ 'IMPORT.PREVIEW_IMPORT_I' | translate }}</p>
+              <p>{{ 'IMPORT.PREVIEW_IMPORT_II' | translate }}</p>
+              <p>{{ 'IMPORT.PREVIEW_IMPORT_III' | translate }}</p>
+            </ion-label>
+          </ion-list-header>
+          <ion-row class="ion-padding">
+            <ion-col [size]="12" [sizeSm]="7">
+              <ion-button
+                class="normalCase"
+                [title]="'IMPORT.NEXT_HINT' | translate"
+                [disabled]="!getNumElementSelectedToImport()"
+                (click)="doImport()"
+              >
+                <ion-icon name="cloud-upload" slot="end" />
+                {{ 'IMPORT.IMPORT_SELECTED' | translate: { num: getNumElementSelectedToImport() } }}
+              </ion-button>
+            </ion-col>
+            <ion-col class="ion-text-right" [size]="12" [sizeSm]="5">
+              <ion-button color="medium" fill="clear" (click)="selectAll(false)">
+                <ion-icon slot="icon-only" name="square-outline" />
+              </ion-button>
+              <ion-button color="medium" fill="clear" (click)="selectAll(true)">
+                <ion-icon slot="icon-only" name="checkbox-outline" />
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          @for (el of filteredImportableElements; track el) {
+          <ion-item>
+            @if (!isElementToImportValid(el)) {
+            <ion-icon slot="start" name="alert" color="danger" />
+            } @if (isElementToImportValid(el) && doesElementToImportExist(el)) {
+            <ion-icon slot="start" name="warning" color="warning" />
+            } @if (isElementToImportValid(el) && !doesElementToImportExist(el)) {
+            <ion-icon slot="start" name="thumbs-up-outline" color="success" />
+            }
+            <ion-checkbox
+              [disabled]="!isElementToImportValid(el)"
+              [checked]="shouldImportElement(el)"
+              (ionChange)="markToImport(el, $event?.detail?.checked)"
+            >
+              <span class="ion-text-wrap">
+                {{ getEntityElementName(el) }} @if (!isElementToImportValid(el)) {
+                <ion-text style="display: block">
+                  {{ 'IMPORT.INVALID_ELEMENT_WONT_BE_IMPORTED' | translate }}
+                </ion-text>
+                } @if (isElementToImportValid(el) && doesElementToImportExist(el)) {
+                <ion-text style="display: block">
+                  {{ 'IMPORT.ELEMENT_EXISTS_WILL_BE_OVERWRITTEN' | translate }}
+                </ion-text>
+                }
+                <ion-note> {{ invalidElementFields(el) }} </ion-note>
+              </span>
+            </ion-checkbox>
+          </ion-item>
+          }
+          <p class="ion-text-right">
+            <ion-button
+              class="normalCase"
+              [title]="'IMPORT.NEXT_HINT' | translate"
+              [disabled]="!getNumElementSelectedToImport()"
+              (click)="doImport()"
+            >
+              <ion-icon name="cloud-upload" slot="end" />
+              {{ 'IMPORT.IMPORT_SELECTED' | translate: { num: getNumElementSelectedToImport() } }}
+            </ion-button>
+          </p>
+          <ion-infinite-scroll (ionInfinite)="scrollImportable($event.target)">
+            <ion-infinite-scroll-content />
+          </ion-infinite-scroll>
+        </ion-list>
+        } @if (step === STEPS.RESULTS) {
+        <ion-list class="aList">
+          <ion-list-header>
+            <ion-label>
+              <h2>{{ 'IMPORT.RESULTS' | translate }}</h2>
+              <p>{{ 'IMPORT.RESULTS_I' | translate }}</p>
+            </ion-label>
+            @if (numElementsImported < filteredElementsToImport.length) {
+            <ion-button color="medium" [title]="'IMPORT.INTERRUPT_HINT' | translate" (click)="interruptImport = true">
+              <ion-icon slot="start" name="hand-left" />
+              {{ 'IMPORT.INTERRUPT' | translate }}
+            </ion-button>
+            }
+          </ion-list-header>
+          <ion-progress-bar [value]="numElementsImported / filteredElementsToImport.length" />
+          @if (numElementsImported >= filteredElementsToImport.length) {
+          <div>
+            <p class="ion-text-center">
+              <ion-button class="normalCase" [title]="'COMMON.CLOSE' | translate" (click)="_app.goTo(['t', 'manage'])">
+                {{ 'IMPORT.BACK_TO_DASHBOARD' | translate }}
+              </ion-button>
+            </p>
+            <ion-list-header>
+              <ion-label class="ion-text-center">
+                <h2>{{ 'IMPORT.FINISHED' | translate }}</h2>
+                @if (numElementsImportedKo()) {
+                <h3>
+                  <ion-text color="danger">
+                    {{ 'IMPORT.FAILED_TO_IMPORT_NUM_ELEMENTS_' | translate: { num: numElementsImportedKo() } }}
+                  </ion-text>
+                </h3>
+                } @if (numElementsImportedOk()) {
+                <h3>
+                  {{ 'IMPORT.SUCCESSFULLY_IMPORTED_NUM_ELEMENTS_' | translate: { num: numElementsImportedOk() } }}
+                </h3>
+                }
+              </ion-label>
+            </ion-list-header>
+          </div>
+          } @if (numElementsImported > 0) {
+          <div>
+            @for (el of filteredElementsToImport; track el) {
+            <ion-item>
+              @if (getElementImportStatus(el) === IS.KO) {
+              <ion-icon slot="start" name="alert" color="danger" />
+              } @if (getElementImportStatus(el) === IS.OK) {
+              <ion-icon slot="start" name="checkmark" color="success" />
+              } @if (getElementImportStatus(el) === IS.TODO) {
+              <ion-icon slot="start" name="code" color="medium" />
+              }
+              <ion-label class="ion-text-wrap">{{ getEntityElementName(el) }}</ion-label>
+            </ion-item>
+            }
+          </div>
+          }
+          <ion-infinite-scroll (ionInfinite)="scrollToImport($event.target)">
+            <ion-infinite-scroll-content />
+          </ion-infinite-scroll>
+        </ion-list>
+        }
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

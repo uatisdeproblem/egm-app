@@ -6,6 +6,10 @@ import { authGuard } from './auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 't', pathMatch: 'full' },
+  { path: 'documents',
+    loadChildren: (): Promise<any> => import('./privacy/privacy.module').then(m => m.PrivacyModule),
+    canActivate: [initGuard]
+  },
   {
     path: 'app-status',
     loadChildren: (): Promise<any> => import('@idea-ionic/common').then(m => m.IDEAAppStatusModule),

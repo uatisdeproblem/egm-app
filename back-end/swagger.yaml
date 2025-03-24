@@ -48,6 +48,8 @@ tags:
     description: The sessions of the event
   - name: Contests
     description: The contests of the event
+  - name: Meals
+    description: The meals of the event
 
 paths:
   /status:
@@ -548,6 +550,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Venue'
+    post:
+      summary: Insert a new venue
+      description: Requires to be content manager
+      tags: [Venues]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: venueId
+          in: path
+          description: Venue ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Venue'
+      responses:
+        200:
+          $ref: '#/components/responses/Venue'
+        400:
+          $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit a venue
       description: Requires to be content manager
@@ -742,6 +768,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Organization'
+    post:
+      summary: Insert an organization
+      description: Requires to be content manager
+      tags: [Organizations]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Organization
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Organization'
+        400:
+          $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit an organization
       description: Requires to be content manager
@@ -830,6 +880,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Room'
+    post:
+      summary: Insert a room
+      description: Requires to be content manager
+      tags: [Rooms]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Room
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Room'
+        400:
+          $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit a room
       description: Requires to be content manager
@@ -918,6 +992,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Speaker'
+    post:
+      summary: Insert a speaker
+      description: Requires to be content manager
+      tags: [Speakers]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: speakerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Speaker
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Speaker'
+        400:
+          $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit a speaker
       description: Requires to be content manager
@@ -1010,6 +1108,30 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Session'
+    post:
+      summary: Insert a session
+      description: Requires to be content manager
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Session
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Session'
+        400:
+          $ref: '#/components/responses/BadParameters'
     put:
       summary: Edit a session
       description: Requires to be content manager
@@ -1314,6 +1436,145 @@ paths:
           $ref: '#/components/responses/Contest'
         400:
           $ref: '#/components/responses/BadParameters'
+  /meals:
+    get:
+      summary: Get the meals
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      responses:
+        200:
+          $ref: '#/components/responses/Meals'
+    post:
+      summary: Insert a new meal
+      description: Requires to be content manager
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      requestBody:
+        required: true
+        description: Meal
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Meal'
+        400:
+          $ref: '#/components/responses/BadParameters'
+  /meals/{mealId}:
+    get:
+      summary: Get a meal
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: mealId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Meal'
+    post:
+      summary: Create a meal
+      description: Requires to be content manager
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: mealId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Meal
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Meal'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    put:
+      summary: Edit a meal
+      description: Requires to be content manager
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: mealId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Meal
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/Meal'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Actions on a meal
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: mealId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [SCAN_TICKET]
+                userId:
+                  type: string
+                  description: (SCAN_TICKET)
+                approvedType:
+                  type: string
+                  description: (SCAN_TICKET)
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
+    delete:
+      summary: Delete a meal
+      description: Requires to be content manager
+      tags: [Meals]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: mealId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Meal'
+        400:
+          $ref: '#/components/responses/BadParameters'
 
 components:
   schemas:
@@ -1354,6 +1615,9 @@ components:
       type: object
       additionalProperties: {}
     Contest:
+      type: object
+      additionalProperties: {}
+    Meal:
       type: object
       additionalProperties: {}
 
@@ -1544,6 +1808,22 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Contest'
+    Meal:
+      description: Meal
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/Meal'
+    Meals:
+      description: Meal[]
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Meal'
     BadParameters:
       description: Bad input parameters
       content:

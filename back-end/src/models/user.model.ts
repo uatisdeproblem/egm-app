@@ -2,6 +2,7 @@ import { Resource, Suggestion, epochISOString } from 'idea-toolbox';
 
 import { EventSpotAttached } from './eventSpot.model';
 import { Speaker } from './speaker.model';
+import { ApprovedType, MealTypes } from './meal.model';
 
 export class User extends Resource {
   /**
@@ -53,12 +54,14 @@ export class User extends Resource {
    * Set only for `AuthService.ESN_ACCOUNTS`.
    */
   sectionName?: string;
-
+  /**
+   * The user's birth date.
+   */
+  birthDate: epochISOString;
   /**
    * The permissions of the user on the app.
    */
   permissions: UserPermissions;
-
   /**
    * A custom block containing custom sections and fields for the registration form.
    */
@@ -76,11 +79,19 @@ export class User extends Resource {
    * The user's social media links, if any.
    */
   socialMedia: SocialMedia;
-
   /**
    * The list of contests (IDs) the user voted in.
    */
   votedInContests: string[];
+  // @todo add this to registration field.
+  /**
+   * The user's meal preference.
+   */
+  mealType: MealTypes;
+  /**
+   * The user's meal tickets and their status.
+   */
+  mealTickets: { [mealId: string]: MealTicket };
 
   load(x: any): void {
     super.load(x);
@@ -92,6 +103,7 @@ export class User extends Resource {
     this.lastName = this.clean(x.lastName, String);
     this.email = this.clean(x.email, String);
     this.avatarURL = this.clean(x.avatarURL, String);
+    this.birthDate = this.clean(x.birthDate, t => new Date(t).toISOString());
 
     if (this.authService === AuthServices.ESN_ACCOUNTS) {
       this.sectionCode = this.clean(x.sectionCode, String);
@@ -110,6 +122,10 @@ export class User extends Resource {
     if (x.socialMedia?.twitter) this.socialMedia.twitter = this.clean(x.socialMedia.twitter, String);
 
     this.votedInContests = this.cleanArray(x.votedInContests, String);
+
+    this.mealType = x.mealType;
+    if (!x.mealTickets) this.mealTickets = {};
+    else this.mealTickets = x.mealTickets;
   }
 
   safeLoad(newData: any, safeData: any): void {
@@ -123,6 +139,7 @@ export class User extends Resource {
       this.sectionCode = safeData.sectionCode;
       this.sectionCountry = safeData.sectionCountry;
       this.sectionName = safeData.sectionName;
+      this.birthDate = safeData.birthDate;
     }
 
     this.permissions = safeData.permissions;
@@ -132,6 +149,7 @@ export class User extends Resource {
     if (safeData.spot) this.spot = safeData.spot;
 
     this.votedInContests = safeData.votedInContests;
+    this.mealType = safeData.mealType;
   }
 
   validate(): string[] {
@@ -170,7 +188,7 @@ export class User extends Resource {
     return this.authService !== AuthServices.ESN_ACCOUNTS;
   }
 
-  isSpeaker(speaker: Speaker) {
+  isSpeaker(speaker: Speaker): boolean {
     return speaker.speakerId === this.userId;
   }
 
@@ -190,6 +208,10 @@ export class User extends Resource {
       category1: this.sectionCountry,
       category2: this.sectionName
     });
+  }
+
+  isMealTicketApproved(mealId: string): boolean {
+    return !!this.mealTickets?.[mealId]?.approvedAt;
   }
 }
 
@@ -218,6 +240,10 @@ export class UserPermissions {
    */
   canManageContents: boolean;
   /**
+   * Whether the user has staff permissions.
+   */
+  isStaff: boolean;
+  /**
    * Whether the user has maximum permissions over the app.
    * If this is true, all other permissions are.
    */
@@ -231,6 +257,7 @@ export class UserPermissions {
       this.isCountryLeader = true;
       this.canManageRegistrations = true;
       this.canManageContents = true;
+      this.isStaff = true;
     }
   }
 
@@ -239,6 +266,7 @@ export class UserPermissions {
     this.isCountryLeader = Boolean(x.isCountryLeader);
     this.canManageRegistrations = Boolean(x.canManageRegistrations);
     this.canManageContents = Boolean(x.canManageContents);
+    this.isStaff = Boolean(x.isStaff);
     // as last, to change any other attribute in case it's `true`
     this.isAdmin = Boolean(x._isAdmin);
   }
@@ -259,4 +287,10 @@ export interface SocialMedia {
   instagram?: string;
   linkedIn?: string;
   twitter?: string;
+}
+
+export interface MealTicket {
+  approvedAt?: epochISOString;
+  approvedBy?: string;
+  approvedType?: ApprovedType;
 }

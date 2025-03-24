@@ -50,27 +50,27 @@ import { OrganizationsService } from './organizations.service';
           <ion-input [(ngModel)]="organization.imageURI"></ion-input>
           <input type="file" accept="image/*" style="display: none" id="upload-image" (change)="uploadImage($event)" />
           <ion-button
-          slot="end"
-          fill="clear"
-          color="medium"
-          class="ion-margin-top"
-          (click)="browseImagesForElementId('upload-image')"
+            slot="end"
+            fill="clear"
+            color="medium"
+            class="ion-margin-top"
+            (click)="browseImagesForElementId('upload-image')"
           >
-          <ion-icon icon="cloud-upload-outline" slot="icon-only"></ion-icon>
-        </ion-button>
-      </ion-item>
-      <ion-item>
-        <ion-label position="stacked">
-          {{ 'ORGANIZATIONS.WEBSITE' | translate }}
-        </ion-label>
-        <ion-input [(ngModel)]="organization.website"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="stacked">
-          {{ 'ORGANIZATIONS.EMAIL' | translate }}
-        </ion-label>
-        <ion-input [(ngModel)]="organization.contactEmail"></ion-input>
-      </ion-item>
+            <ion-icon icon="cloud-upload-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">
+            {{ 'ORGANIZATIONS.WEBSITE' | translate }}
+          </ion-label>
+          <ion-input [(ngModel)]="organization.website"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">
+            {{ 'ORGANIZATIONS.EMAIL' | translate }}
+          </ion-label>
+          <ion-input [(ngModel)]="organization.contactEmail"></ion-input>
+        </ion-item>
         <ion-list-header [class.fieldHasError]="hasFieldAnError('description')">
           <ion-label>
             <h2>{{ 'ORGANIZATION.DESCRIPTION' | translate }}</h2>
@@ -92,7 +92,7 @@ export class ManageOrganizationComponent implements OnInit {
    */
   @Input() organization: Organization;
 
-  entityBeforeChange: Organization
+  entityBeforeChange: Organization;
 
   errors = new Set<string>();
 
@@ -108,7 +108,7 @@ export class ManageOrganizationComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.entityBeforeChange = new Organization(this.organization)
+    this.entityBeforeChange = new Organization(this.organization);
   }
 
   hasFieldAnError(field: string): boolean {
@@ -125,7 +125,7 @@ export class ManageOrganizationComponent implements OnInit {
     try {
       await this.loading.show();
       const imageURI = await this._media.uploadImage(file);
-      await sleepForNumSeconds(3);
+      await this.app.sleepForNumSeconds(3);
       this.organization.imageURI = imageURI;
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
@@ -154,7 +154,7 @@ export class ManageOrganizationComponent implements OnInit {
     }
   }
   close(): void {
-    this.organization = this.entityBeforeChange
+    this.organization = this.entityBeforeChange;
     this.modalCtrl.dismiss();
   }
 
@@ -165,7 +165,7 @@ export class ManageOrganizationComponent implements OnInit {
         await this._organizations.delete(this.organization);
         this.message.success('COMMON.OPERATION_COMPLETED');
         this.close();
-        this.app.goToInTabs(['organizations'])
+        this.app.goToInTabs(['organizations']);
       } catch (error) {
         this.message.error('COMMON.OPERATION_FAILED');
       } finally {
@@ -182,6 +182,3 @@ export class ManageOrganizationComponent implements OnInit {
     alert.present();
   }
 }
-
-const sleepForNumSeconds = (numSeconds = 1): Promise<void> =>
-  new Promise(resolve => setTimeout((): void => resolve(null), 1000 * numSeconds));

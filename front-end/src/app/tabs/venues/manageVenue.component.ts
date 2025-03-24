@@ -131,7 +131,7 @@ export class ManageVenueComponent implements OnInit {
     try {
       await this.loading.show();
       const imageURI = await this._media.uploadImage(file);
-      await sleepForNumSeconds(3);
+      await this.app.sleepForNumSeconds(3);
       this.venue.imageURI = imageURI;
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
@@ -188,6 +188,3 @@ export class ManageVenueComponent implements OnInit {
     alert.present();
   }
 }
-
-const sleepForNumSeconds = (numSeconds = 1): Promise<void> =>
-  new Promise(resolve => setTimeout((): void => resolve(null), 1000 * numSeconds));

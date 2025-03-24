@@ -1,4 +1,33 @@
-<ion-tabs class="desktopTabs" *ngIf="!app.isInMobileMode()">
+@if(app.isInMobileMode()) {
+<ion-tabs #mobileTabs class="mobileTabs" (ionTabsDidChange)="setCurrentTab()">
+  <ion-tab-bar color="ideaToolbar" slot="bottom">
+    <ion-tab-button tab="home">
+      <ion-icon [icon]="getTabIcon('home', 'home')" />
+    </ion-tab-button>
+    <ng-container *ngIf="app?.user.spot?.paymentConfirmedAt">
+      <ion-tab-button tab="agenda">
+        <ion-icon [icon]="getTabIcon('agenda', 'calendar')" />
+      </ion-tab-button>
+      <ion-tab-button tab="venues">
+        <ion-icon [icon]="getTabIcon('venues', 'map')" />
+      </ion-tab-button>
+    </ng-container>
+    <ion-tab-button tab="user">
+      <ion-icon [icon]="getTabIcon('user', 'person')" />
+    </ion-tab-button>
+    <ion-tab-button tab="meals">
+      <ion-icon [icon]="getTabIcon('meals', 'restaurant')" />
+    </ion-tab-button>
+    <ion-tab-button tab="menu" *ngIf="app?.user.spot?.paymentConfirmedAt">
+      <ion-icon [icon]="getTabIcon('menu', 'menu')" />
+    </ion-tab-button>
+    <ion-tab-button tab="manage" *ngIf="app.userCanManageSomething()">
+      <ion-icon [icon]="getTabIcon('manage', 'settings')" />
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+}@else {
+<ion-tabs class="desktopTabs">
   <ion-tab-bar color="ideaToolbar" slot="top">
     <ion-tab-button (click)="app.goTo([''])">
       <ion-img [src]="app.getIcon()"></ion-img>
@@ -14,6 +43,9 @@
         <ion-label>{{ 'TABS.VENUES' | translate }}</ion-label>
       </ion-tab-button>
     </ng-container>
+    <ion-tab-button tab="meals">
+      <ion-label>{{ 'TABS.MEALS' | translate }}</ion-label>
+    </ion-tab-button>
     <ion-tab-button tab="user">
       <ion-label>{{ 'TABS.USER' | translate }}</ion-label>
     </ion-tab-button>
@@ -25,28 +57,4 @@
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
-
-<ion-tabs class="mobileTabs" *ngIf="app.isInMobileMode()">
-  <ion-tab-bar color="ideaToolbar" slot="bottom">
-    <ion-tab-button tab="home">
-      <ion-icon icon="home"></ion-icon>
-    </ion-tab-button>
-    <ng-container *ngIf="app?.user.spot?.paymentConfirmedAt">
-      <ion-tab-button tab="agenda">
-        <ion-icon icon="calendar"></ion-icon>
-      </ion-tab-button>
-      <ion-tab-button tab="venues">
-        <ion-icon icon="map"></ion-icon>
-      </ion-tab-button>
-    </ng-container>
-    <ion-tab-button tab="user">
-      <ion-icon icon="person"></ion-icon>
-    </ion-tab-button>
-    <ion-tab-button tab="menu" *ngIf="app?.user.spot?.paymentConfirmedAt">
-      <ion-icon icon="menu"></ion-icon>
-    </ion-tab-button>
-    <ion-tab-button tab="manage" *ngIf="app.userCanManageSomething()">
-      <ion-icon icon="settings"></ion-icon>
-    </ion-tab-button>
-  </ion-tab-bar>
-</ion-tabs>
+}

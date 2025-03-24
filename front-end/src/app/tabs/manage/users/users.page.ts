@@ -354,6 +354,13 @@ export class UsersPage implements OnInit {
         value: 'canManageContents',
         checked: user.permissions.canManageContents,
         label: this.t._('USER.CAN_MANAGE_CONTENTS')
+      },
+      {
+        type: 'checkbox',
+        name: 'isStaff',
+        value: 'isStaff',
+        checked: user.permissions.isStaff,
+        label: this.t._('USER.IS_STAFF')
       }
     ];
     const buttons = [

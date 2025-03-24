@@ -98,12 +98,14 @@ export class HTMLEditorComponent implements OnInit, OnChanges {
   _sanitizer = inject(DomSanitizer);
 
   ngOnInit(): void {
-    this.text = this.content;
+    this.forceTextChange();
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.editMode) this.sanitizedHtml = this._sanitizer.sanitize(SecurityContext.HTML, this.content);
     if (changes.content) this.sanitizedHtml = this._sanitizer.sanitize(SecurityContext.HTML, this.content);
-
+  }
+  forceTextChange(): void {
+    this.text = this.content;
   }
 
   cleanHTMLCode(): void {

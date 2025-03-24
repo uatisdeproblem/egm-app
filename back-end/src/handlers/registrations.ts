@@ -161,6 +161,9 @@ class SessionRegistrationsRC extends ResourceController {
     const userRegistrations = await this.getRegistrationsOfUserById(userId);
     if (!userRegistrations.length) return true;
 
+    if (userRegistrations.length === this.configurations.maxNrOfSessions)
+      throw new HandledError('You have reached the maximum number of sessions you can register to!');
+
     const sessions = (
       await ddb.batchGet(
         DDB_TABLES.sessions,

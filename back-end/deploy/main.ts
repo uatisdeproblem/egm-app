@@ -35,7 +35,8 @@ const apiResources: ResourceController[] = [
   { name: 'sessions', paths: ['/sessions', '/sessions/{sessionId}'] },
   { name: 'registrations', paths: ['/registrations', '/registrations/{sessionId}'] },
   { name: 'connections', paths: ['/connections', '/connections/{connectionId}'] },
-  { name: 'contests', paths: ['/contests', '/contests/{contestId}'] }
+  { name: 'contests', paths: ['/contests', '/contests/{contestId}'] },
+  { name: 'meals', paths: ['/meals', '/meals/{mealId}'] }
 ];
 
 const tables: { [tableName: string]: DDBTable } = {
@@ -119,6 +120,9 @@ const tables: { [tableName: string]: DDBTable } = {
   },
   contests: {
     PK: { name: 'contestId', type: DDB.AttributeType.STRING }
+  },
+  meals: {
+    PK: { name: 'mealId', type: DDB.AttributeType.STRING }
   }
 };
 

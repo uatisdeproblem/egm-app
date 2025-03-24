@@ -222,7 +222,7 @@ export class ManageContestComponent implements OnInit {
     try {
       await this._loading.show();
       const imageURI = await this._media.uploadImage(file);
-      await sleepForNumSeconds(3);
+      await this._app.sleepForNumSeconds(3);
       this.contest.imageURI = imageURI;
     } catch (error) {
       this._message.error('COMMON.OPERATION_FAILED');
@@ -316,6 +316,3 @@ export class ManageContestComponent implements OnInit {
     alert.present();
   }
 }
-
-const sleepForNumSeconds = (numSeconds = 1): Promise<void> =>
-  new Promise(resolve => setTimeout((): void => resolve(null), 1000 * numSeconds));

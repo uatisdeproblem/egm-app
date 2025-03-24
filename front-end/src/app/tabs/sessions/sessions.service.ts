@@ -29,7 +29,7 @@ export class SessionsService {
 
   async loadUserRegisteredSessions(): Promise<SessionRegistration[]> {
     this.userRegisteredSessions = await this.api.getResource(['registrations']);
-    return this.userRegisteredSessions
+    return this.userRegisteredSessions;
   }
 
   async getSpeakerSessions(speaker: string, search?: string): Promise<Session[]> {
@@ -50,13 +50,15 @@ export class SessionsService {
    * Note: if speaker id is passed, it will filter sessions for that speaker.
    * Note: if room id is passed, it will filter sessions for that room.
    */
-  async getList(options: {
-    force?: boolean;
-    withPagination?: boolean;
-    startPaginationAfterId?: string;
-    search?: string;
-    segment?: string,
-  } = {}): Promise<Session[]> {
+  async getList(
+    options: {
+      force?: boolean;
+      withPagination?: boolean;
+      startPaginationAfterId?: string;
+      search?: string;
+      segment?: string;
+    } = {}
+  ): Promise<Session[]> {
     if (!this.sessions || options.force) await this.loadList();
     if (!this.sessions) return null;
 
@@ -64,14 +66,13 @@ export class SessionsService {
 
     let filteredList = this.sessions.slice();
 
-    if (options.search) filteredList = this.applySearchToSessions(filteredList, options.search)
+    if (options.search) filteredList = this.applySearchToSessions(filteredList, options.search);
 
-      // @todo should we hide past sessions? or disable them?
-      if (!options.segment) {
-        await this.loadUserFavoriteSessions();
-        filteredList = filteredList.filter(s => this.userFavoriteSessions.includes(s.sessionId)) || [];
-      }
-      else filteredList = filteredList.filter(s => s.startsAt.startsWith(options.segment)) || [];
+    // @todo should we hide past sessions? or disable them?
+    if (!options.segment) {
+      await this.loadUserFavoriteSessions();
+      filteredList = filteredList.filter(s => this.userFavoriteSessions.includes(s.sessionId)) || [];
+    } else filteredList = filteredList.filter(s => s.startsAt.startsWith(options.segment)) || [];
 
     if (options.withPagination && filteredList.length > this.MAX_PAGE_SIZE) {
       let indexOfLastOfPreviousPage = 0;
@@ -85,21 +86,23 @@ export class SessionsService {
 
   private applySearchToSessions(sessions: Session[], search: string) {
     if (search)
-    sessions = sessions.filter(x =>
-      search
-        .split(' ')
-        .every(searchTerm =>
-          [x.sessionId, x.code, x.name, x.getSpeakers()].filter(f => f).some(f => f.toLowerCase().includes(searchTerm))
-        )
-    );
+      sessions = sessions.filter(x =>
+        search
+          .split(' ')
+          .every(searchTerm =>
+            [x.sessionId, x.code, x.name, x.getSpeakers()]
+              .filter(f => f)
+              .some(f => f.toLowerCase().includes(searchTerm))
+          )
+      );
 
-    return sessions
+    return sessions;
   }
 
   async getSessionDays(): Promise<string[]> {
     if (!this.sessions) await this.loadList();
 
-    return Array.from(new Set(this.sessions.map(s => s.startsAt.slice(0, 10)))).sort()
+    return Array.from(new Set(this.sessions.map(s => s.startsAt.slice(0, 10)))).sort();
   }
 
   /**
@@ -132,18 +135,18 @@ export class SessionsService {
     await this.api.deleteResource(['sessions', session.sessionId]);
   }
 
-  async addToFavorites(sessionId: string){
+  async addToFavorites(sessionId: string) {
     const body: any = { action: 'ADD_FAVORITE_SESSION', sessionId };
     this.userFavoriteSessions = await this.api.patchResource(['users', 'me'], { body });
   }
-  async removeFromFavorites(sessionId: string){
+  async removeFromFavorites(sessionId: string) {
     const body: any = { action: 'REMOVE_FAVORITE_SESSION', sessionId };
     this.userFavoriteSessions = await this.api.patchResource(['users', 'me'], { body });
   }
-  async registerInSession(sessionId: string){
+  async registerInSession(sessionId: string) {
     this.userFavoriteSessions = await this.api.postResource(['registrations', sessionId]);
   }
-  async unregisterFromSession(sessionId: string){
+  async unregisterFromSession(sessionId: string) {
     this.userFavoriteSessions = await this.api.deleteResource(['registrations', sessionId]);
   }
 
@@ -158,8 +161,8 @@ export class SessionsService {
     await this.api.patchResource(['sessions', session.sessionId], { body });
   }
 
-  getColourBySessionType(session: Session){
-    switch(session.type) {
+  getColourBySessionType(session: Session) {
+    switch (session.type) {
       case SessionType.DISCUSSION:
         return 'ESNcyan';
       case SessionType.TALK:

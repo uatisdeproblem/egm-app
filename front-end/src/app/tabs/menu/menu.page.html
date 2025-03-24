@@ -32,5 +32,9 @@
       <ion-icon name="trophy" slot="start" />
       <ion-label>{{ 'MENU.CONTESTS' | translate }}</ion-label>
     </ion-item>
+    <ion-item button color="white" (click)="app.goToInTabs(['meals'])">
+      <ion-icon name="restaurant" slot="start" />
+      <ion-label>{{ 'MENU.MEALS' | translate }}</ion-label>
+    </ion-item>
   </ion-list>
 </ion-content>
