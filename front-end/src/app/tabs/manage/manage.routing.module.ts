@@ -28,6 +28,11 @@ const routes: Routes = [
   {
     path: 'import',
     loadChildren: (): Promise<any> => import('./import/import.module').then(m => m.ImportModule)
+  },
+  {
+    path: 'sessions',
+    loadChildren: (): Promise<any> =>
+      import('./sessions/sessionsManagement.module').then(m => m.SessionsManagementModule)
   }
 ];
 

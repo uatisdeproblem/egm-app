@@ -192,6 +192,7 @@
     "YOU_ARE_NOT_REGISTERED": "You are not registered to the event",
     "REGISTER_TO_EVENT": "Tap here to register for the event",
     "YOU_ARE_REGISTERED_BUT_NO_SPOT": "You are registered, but don't have a spot yet",
+    "YOU_HAVE_A_ZERO_FEE_SPOT": "Congratulations, you have a zero fee spot!",
     "YOU_HAVE_A_SPOT_BUT_NO_PROOF_PAYMENT": "Congratulations, you have a spot! Please upload your proof of payment to confirm your participation",
     "YOU_HAVE_SPOT_PROOF_BUT_NO_CONFIRM": "Your proof of payment will soon be checked",
     "YOU_ARE_CONFIRMED": "Your participation to the event has been confirmed. Enjoy!",
@@ -264,7 +265,7 @@
     "PAYMENT_CONFIRMED": "Payment confirmed",
     "SECTION_COUNTRY": "ESN country",
     "EXTERNAL_GUEST": "External guest",
-    "PERMISSIONS": "Permissions",
+    "APPLY_TO": "Apply to:",
     "ACTIONS_ON_USER": "Actions on {{user}}",
     "ASSIGN_SPOT": "Assign spot",
     "TRANSFER_SPOT": "Transfer spot",
@@ -298,6 +299,10 @@
       "INVOICE": "The invoice for user spot payment"
     },
     "REGISTRATIONS_SETTINGS": "Registrations settings",
+    "SESSIONS_MANAGEMENT": "Sessions management",
+    "SESSIONS_MANAGEMENT_I": "Set the minimum number of sessions per day and the maximum number of total sessions for each user",
+    "MIN_SESSION_DAY_LIMIT": "Minimum number of sessions per day",
+    "MAX_SESSION_LIMIT": "Maximum number of total sessions",
     "CONTENTS": "Contents",
     "CONTENTS_I": "Create and organise the contents of the event.",
     "COMMUNICATIONS": "Communications",
@@ -454,6 +459,8 @@
   "SESSIONS": {
     "MANAGE_SESSION": "Manage session",
     "LIST": "Session list",
+    "SESSION_MIN_LIMIT_WARNING": "You have to register to at least {{min}} sessions per day, and no more than {{max}} in total!",
+    "SESSION_MAX_LIMIT_WARNING": "You have reached the maximum number of sessions you can register to",
     "TYPES": {
       "DISCUSSION": "Discussion",
       "TALK": "EG Talk",
@@ -488,7 +495,10 @@
     "FEEDBACK_SENT": "Feedback sent",
     "STILL_TAKING_PLACE": "Session is still taking place",
     "INVALID_RATING": "Invalid rating",
-    "NOT_REGISTERED": "Not registered"
+    "NOT_REGISTERED": "Not registered",
+    "APPLY_TO_PARTICIPANTS": "Participants",
+    "APPLY_TO_EXTERNALS": "Externals",
+    "APPLY_TO_SPEAKERS": "Speakers"
   },
   "CONTESTS": {
     "MANAGE_CONTEST": "Manage contest",

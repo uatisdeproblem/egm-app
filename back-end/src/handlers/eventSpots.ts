@@ -109,6 +109,7 @@ class EventSpotsRC extends ResourceController {
     }
 
     if (user.spot) throw new HandledError('User already has spot');
+    if (!user.registrationAt) throw new HandledError('User has not registered to the event');
 
     const updateSpot = {
       TableName: DDB_TABLES.eventSpots,
@@ -132,6 +133,8 @@ class EventSpotsRC extends ResourceController {
     const templateData = {
       name: user.getName(),
       spotType: this.spot.type,
+      price: this.configurations.pricePerSpotTypes[this.spot.type],
+      show_payment: this.configurations.pricePerSpotTypes[this.spot.type] > 0 ? '' : 'display: none;',
       reference: this.spot.spotId,
       deadline: toISODate(aWeekFromNow)
     };
@@ -160,6 +163,7 @@ class EventSpotsRC extends ResourceController {
     }
 
     if (targetUser.spot) throw new HandledError('Target user already has spot');
+    if (!targetUser.registrationAt) throw new HandledError('User has not registered to the event');
 
     const updateSpot = {
       TableName: DDB_TABLES.eventSpots,
@@ -203,6 +207,8 @@ class EventSpotsRC extends ResourceController {
       const templateData = {
         name: targetUser.getName(),
         spotType: this.spot.type,
+        price: 0,
+        show_payment: 'display: none;',
         reference: this.spot.spotId,
         deadline: toISODate(aWeekFromNow)
       };
