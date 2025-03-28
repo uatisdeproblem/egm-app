@@ -540,9 +540,14 @@
       "GLUTEN_LACTOSE_FREE": "Gluten & lactose free",
       "GLUTEN_LACTOSE_VEGETARIAN_FREE": "Gluten & lactose free (vegetarian)",
       "LACTOSE_FREE": "Lactose free",
-      "VEGETARIAN_VEGAN": "Vegetarian",
+      "VEGETARIAN": "Vegetarian",
+      "VEGAN": "Vegan",
       "NO_BEEF": "No beef",
       "NO_PORK": "No pork",
+      "NO_FISH": "No fish",
+      "NO_PORK_AND_FISH": "No Pork and Fish",
+      "NO_FISH_AND_MUSHROOMS": "No Fish and Mushrooms",
+      "NO_MUSHROOMS": "No Mushrooms",
       "REGULAR": "Regular",
       "SPECIAL": "Special",
       "REGULAR_SPECIAL": "Regular Special"
@@ -553,6 +558,7 @@
     "VALID_TO": "Valid to",
     "NEEDS_SCAN": "Needs scan",
     "DESCRIPTION": "Description",
+    "TYPE": "Meal Type",
     "VALIDATED_SUCCESSFULLY": "Validated successfully",
     "VALIDATE_ERRORS": {
       "UNAUTHORIZED": "Unauthorized",
