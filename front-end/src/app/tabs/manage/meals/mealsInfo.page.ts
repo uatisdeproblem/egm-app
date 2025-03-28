@@ -12,7 +12,7 @@ import { AppService } from '@app/app.service';
 import { UsersService } from '../users/users.service';
 
 import { User } from '@models/user.model';
-import { ApprovedType, Meal } from '@models/meal.model';
+import { ApprovedType, Meal, MealTypes } from '@models/meal.model';
 import { MealsService } from '@app/tabs/meals/meals.service';
 
 @Component({
@@ -76,8 +76,13 @@ export class MealsInfoPage implements OnInit {
       { prop: 'firstName', name: this.t._('USER.FIRST_NAME') },
       { prop: 'lastName', name: this.t._('USER.LAST_NAME') },
       { prop: 'sectionCountry', name: this.t._('USER.ESN_COUNTRY') },
-      { prop: 'sectionName', name: this.t._('USER.ESN_SECTION') }
+      { prop: 'sectionName', name: this.t._('USER.ESN_SECTION') },
+      { prop: 'mealType',
+        name: this.t._('MEALS.TYPE'),
+        pipe: { transform: x => this.t._('MEALS.TYPES.' + MealTypes[x]) }
+      }
     ];
+
     for (const meal of this.filteredMeals) {
       this.col.push({
         prop: `mealTickets.${meal.mealId}`,
