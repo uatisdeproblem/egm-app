@@ -97,8 +97,7 @@ export class MealsService {
       case MealTypes.GLUTEN_LACTOSE_VEGETARIAN_FREE:
         return 'ESNcyan';
       case MealTypes.LACTOSE_FREE:
-      case MealTypes.VEGETARIAN:
-      case MealTypes.VEGAN:
+      case MealTypes.VEGETARIAN_VEGAN:
         return 'ESNgreen';
       case MealTypes.NO_FISH:
       case MealTypes.NO_FISH_AND_MUSHROOMS:
