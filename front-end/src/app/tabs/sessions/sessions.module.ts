@@ -9,6 +9,8 @@ import { SessionPage } from './session.page';
 import { SessionsRoutingModule } from './sessions-routing.module';
 import { SessionDetailComponent } from './sessionDetail.component';
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
+import { QrScannerModalComponent } from './QRScanner.component';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
 @NgModule({
   imports: [
@@ -17,8 +19,9 @@ import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
     IonicModule,
     IDEATranslationsModule,
     SessionsRoutingModule,
-    HTMLEditorComponent
+    HTMLEditorComponent,
+    ZXingScannerModule
   ],
-  declarations: [SessionsPage, SessionPage, SessionDetailComponent]
+  declarations: [SessionsPage, SessionPage, SessionDetailComponent, QrScannerModalComponent]
 })
 export class SessionsModule {}

@@ -11,6 +11,8 @@ import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegi
 
 import { Session } from '@models/session.model';
 import { ActivatedRoute } from '@angular/router';
+import { QrScannerModalComponent } from './QRScanner.component';
+import { SessionRegistration } from '@models/sessionRegistration.model';
 
 @Component({
   selector: 'app-session',
@@ -19,6 +21,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SessionPage implements OnInit {
   session: Session;
+  registration: SessionRegistration;
   favoriteSessionsIds: string[] = [];
   registeredSessionsIds: string[] = [];
   ratedSessionsIds: string[] = [];
@@ -44,6 +47,7 @@ export class SessionPage implements OnInit {
       await this.loading.show();
       const sessionId = this.route.snapshot.paramMap.get('sessionId');
       this.session = await this._sessions.getById(sessionId);
+      this.registration = await this._sessionRegistrations.getById(sessionId);
       // WARNING: do not pass any segment in order to get the favorites on the next api call.
       // @todo improvable. Just amke a call to see if a session is or isn't favorited/registerd using a getById
       const favoriteSessions = await this._sessions.getList({ force: true });
@@ -79,6 +83,50 @@ export class SessionPage implements OnInit {
       this.loading.hide();
     }
   }
+
+  async toggleConfirm(ev: any, session: Session): Promise<void> {
+    ev?.stopPropagation();
+    try {
+      const modal = await this.modalCtrl.create({
+        component: QrScannerModalComponent,
+        componentProps: {
+          sessionId: session.sessionId
+        },
+        backdropDismiss: true
+      });
+
+      // Present the modal
+      await modal.present();
+
+      const { data: scannedData } = await modal.onDidDismiss();
+
+      if (scannedData) {
+        try {
+          await this.loading.show();
+          await this._sessionRegistrations.confirmParticipation(session.sessionId);
+        } catch (error) {
+          if (error.message === 'Unauthorized') this.message.error('SESSIONS.CONFIRM_ERRORS.UNAUTHORIZED');
+          else if (error.message === 'Session not available') this.message.error('SESSIONS.CONFIRM_ERRORS.SESSION_UNAVAILABLE');
+          else if (error.message === 'Participation already confirmed') this.message.error('SESSIONS.CONFIRM_ERRORS.ALREADY_CONFIRMED');
+          else if (error.message === 'Invalid Time period') this.message.error('SESSIONS.CONFIRM_ERRORS.INVALID_TIME');
+          else if (error.message === 'User not Registered') this.message.error('SESSIONS.CONFIRM_ERRORS.USER_NOT_REGISTERED');
+          else this.message.error('COMMON.OPERATION_FAILED');
+
+        } finally {
+          this.loading.hide();
+        }
+      }
+
+      await modal.present();
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    }
+  }
+
+  hasUserConfirmParticipation(): boolean {
+    return this.registration?.hasUserConfirmed;
+  }
+
 
   isUserRegisteredInSession(session: Session): boolean {
     return this.registeredSessionsIds.includes(session.sessionId);
@@ -175,4 +223,6 @@ export class SessionPage implements OnInit {
       this.loading.hide();
     }
   }
+
+
 }

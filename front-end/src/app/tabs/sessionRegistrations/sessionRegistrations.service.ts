@@ -31,6 +31,11 @@ export class SessionRegistrationsService {
   async insert(sessionId: string): Promise<SessionRegistration> {
     return new SessionRegistration(await this.api.postResource(['registrations', sessionId]));
   }
+
+  async confirmParticipation(sessionId: string): Promise<void> {
+    return await this.api.patchResource(['registrations', sessionId], { body: {action: 'CONFIRM_PARTICIPATION'}});
+  }
+
   /**
    * Delete a registration.
    */

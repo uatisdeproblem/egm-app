@@ -7,9 +7,11 @@
       [isUserRegisteredInSession]="isUserRegisteredInSession(session)"
       [hasUserRatedSession]="hasUserRatedSession(session)"
       [hasSessionEnded]="hasSessionEnded(session)"
+      [hasUserConfirmParticipation]="hasUserConfirmParticipation()"
       (favorite)="toggleFavorite($event, session)"
       (register)="toggleRegister($event, session)"
       (giveFeedback)="onGiveFeedback($event, session)"
+      (confirmParticipation)="toggleConfirm($event, session)"
     >
       <ion-buttons slot="start">
         <ion-button color="primary" (click)="app.goToInTabs(['agenda'], { back: true })">

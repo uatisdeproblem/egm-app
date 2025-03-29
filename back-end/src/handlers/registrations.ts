@@ -97,6 +97,36 @@ class SessionRegistrationsRC extends ResourceController {
     return this.registration;
   }
 
+  protected async patchResource(): Promise<void> {
+    const { sessionId, userId } = this.registration;
+
+    if (!this.body || this.body.action !== 'CONFIRM_PARTICIPATION') {
+      throw new HandledError('Invalid action.');
+    }
+
+    if (this.registration.hasUserConfirmed) {
+      throw new HandledError('Participation already confirmed');
+    }
+
+    const session = await this.getSessionById(sessionId);
+
+    if (!session.canConfirmSession()) {
+      throw new HandledError('Invalid Time period');
+    }
+
+    const updateParams = {
+      TableName: DDB_TABLES.registrations,
+      Key: { sessionId, userId },
+      UpdateExpression: 'SET hasUserConfirmed = :confirmed',
+      ExpressionAttributeValues: {
+        ':confirmed': true,
+      },
+      ReturnValues: 'ALL_NEW' as const
+    };
+
+    await ddb.update(updateParams);
+  }
+
   protected async deleteResource(): Promise<void> {
     if (!this.configurations.areSessionRegistrationsOpen) throw new HandledError('Registrations are closed!');
 

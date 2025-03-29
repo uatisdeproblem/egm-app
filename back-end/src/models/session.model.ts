@@ -116,6 +116,17 @@ export class Session extends Resource {
     return e;
   }
 
+  /**
+   * Checks if the current time is within the confirmation window for the session.
+   * The confirmation window is from 15 minutes before the start time to 15 minutes after the end time.
+   */
+  canConfirmSession(): boolean {
+    const now = this.calcDatetimeWithoutTimezone(new Date());
+    const fifteenMinutesBeforeStart = this.calcDatetimeWithoutTimezone(this.startsAt, -15);
+    const fifteenMinutesAfterEnd = this.calcDatetimeWithoutTimezone(this.endsAt, 15);
+
+    return now >= fifteenMinutesBeforeStart && now <= fifteenMinutesAfterEnd;
+  }
   // @todo add a method to check if a user/speaker is in the session or not
 
   calcDatetimeWithoutTimezone(dateToFormat: Date | string | number, bufferInMinutes = 0): datetime {
