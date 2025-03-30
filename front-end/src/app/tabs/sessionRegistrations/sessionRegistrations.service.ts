@@ -33,7 +33,7 @@ export class SessionRegistrationsService {
   }
 
   async confirmParticipation(sessionId: string): Promise<void> {
-    return await this.api.patchResource(['registrations', sessionId], { body: {action: 'CONFIRM_PARTICIPATION'}});
+    return await this.api.patchResource(['registrations', sessionId], { body: { action: 'CONFIRM_PARTICIPATION' } });
   }
 
   /**

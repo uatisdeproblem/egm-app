@@ -149,7 +149,7 @@ export class SessionsPage {
     }
   }
 
-  hasUserConfirmParticipation(): boolean {
+  hasUserConfirmedParticipation(): boolean {
     return this.registration?.hasUserConfirmed;
   }
 

@@ -18,10 +18,7 @@ import { AppService } from 'src/app/app.service';
     </ion-header>
     <ion-content>
       <div class="ion-padding">
-        <zxing-scanner
-          [device]="currentDevice"
-          (scanSuccess)="onScanSuccess($event)">
-        </zxing-scanner>
+        <zxing-scanner [device]="currentDevice" (scanSuccess)="onScanSuccess($event)"> </zxing-scanner>
       </div>
     </ion-content>
   `
@@ -47,15 +44,13 @@ export class QrScannerModalComponent {
     try {
       await this._loading.show();
       this.isScanning = true;
-
-      this.modalCtrl.dismiss(result);
-
     } catch (error) {
       this._message.error('COMMON.OPERATION_FAILED');
     } finally {
       await this._app.sleepForNumSeconds(1);
       this.isScanning = false;
       this._loading.hide();
+      this.modalCtrl.dismiss(result);
     }
   }
 

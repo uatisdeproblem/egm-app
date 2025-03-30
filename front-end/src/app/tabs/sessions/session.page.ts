@@ -86,47 +86,41 @@ export class SessionPage implements OnInit {
 
   async toggleConfirm(ev: any, session: Session): Promise<void> {
     ev?.stopPropagation();
-    try {
-      const modal = await this.modalCtrl.create({
-        component: QrScannerModalComponent,
-        componentProps: {
-          sessionId: session.sessionId
-        },
-        backdropDismiss: true
-      });
+    const modal = await this.modalCtrl.create({
+      component: QrScannerModalComponent,
+      componentProps: {
+        sessionId: session.sessionId
+      },
+      backdropDismiss: true
+    });
 
-      // Present the modal
-      await modal.present();
-
-      const { data: scannedData } = await modal.onDidDismiss();
-
+    modal.onDidDismiss().then(async ({ data: scannedData }): Promise<void> => {
       if (scannedData) {
         try {
           await this.loading.show();
           await this._sessionRegistrations.confirmParticipation(session.sessionId);
         } catch (error) {
           if (error.message === 'Unauthorized') this.message.error('SESSIONS.CONFIRM_ERRORS.UNAUTHORIZED');
-          else if (error.message === 'Session not available') this.message.error('SESSIONS.CONFIRM_ERRORS.SESSION_UNAVAILABLE');
-          else if (error.message === 'Participation already confirmed') this.message.error('SESSIONS.CONFIRM_ERRORS.ALREADY_CONFIRMED');
+          else if (error.message === 'Session not available')
+            this.message.error('SESSIONS.CONFIRM_ERRORS.SESSION_UNAVAILABLE');
+          else if (error.message === 'Participation already confirmed')
+            this.message.error('SESSIONS.CONFIRM_ERRORS.ALREADY_CONFIRMED');
           else if (error.message === 'Invalid Time period') this.message.error('SESSIONS.CONFIRM_ERRORS.INVALID_TIME');
-          else if (error.message === 'User not Registered') this.message.error('SESSIONS.CONFIRM_ERRORS.USER_NOT_REGISTERED');
+          else if (error.message === 'User not Registered')
+            this.message.error('SESSIONS.CONFIRM_ERRORS.USER_NOT_REGISTERED');
           else this.message.error('COMMON.OPERATION_FAILED');
-
         } finally {
           this.loading.hide();
         }
       }
+    });
 
-      await modal.present();
-    } catch (error) {
-      this.message.error('COMMON.OPERATION_FAILED');
-    }
+    await modal.present();
   }
 
-  hasUserConfirmParticipation(): boolean {
+  hasUserConfirmedParticipation(): boolean {
     return this.registration?.hasUserConfirmed;
   }
-
 
   isUserRegisteredInSession(session: Session): boolean {
     return this.registeredSessionsIds.includes(session.sessionId);
@@ -223,6 +217,4 @@ export class SessionPage implements OnInit {
       this.loading.hide();
     }
   }
-
-
 }

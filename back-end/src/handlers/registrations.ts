@@ -98,33 +98,37 @@ class SessionRegistrationsRC extends ResourceController {
   }
 
   protected async patchResource(): Promise<void> {
+    switch (this.body.action) {
+      case 'CONFIRM_PARTICIPATION':
+        return await this.confirmParticipation();
+      default:
+        throw new HandledError('Unsupported action');
+    }
+  }
+
+  private async confirmParticipation(): Promise<void> {
     const { sessionId, userId } = this.registration;
 
-    if (!this.body || this.body.action !== 'CONFIRM_PARTICIPATION') {
-      throw new HandledError('Invalid action.');
-    }
-
-    if (this.registration.hasUserConfirmed) {
-      throw new HandledError('Participation already confirmed');
-    }
+    if (this.registration.hasUserConfirmed) throw new HandledError('Participation already confirmed');
 
     const session = await this.getSessionById(sessionId);
 
-    if (!session.canConfirmSession()) {
-      throw new HandledError('Invalid Time period');
+    if (!session.canConfirmSession()) throw new HandledError('Invalid Time period');
+
+    try {
+      const updateParams = {
+        TableName: DDB_TABLES.registrations,
+        Key: { sessionId, userId },
+        UpdateExpression: 'SET hasUserConfirmed = :confirmed',
+        ExpressionAttributeValues: {
+          ':confirmed': true
+        }
+      };
+
+      await ddb.update(updateParams);
+    } catch (error) {
+      throw new HandledError('Could not confirm session participation for this user');
     }
-
-    const updateParams = {
-      TableName: DDB_TABLES.registrations,
-      Key: { sessionId, userId },
-      UpdateExpression: 'SET hasUserConfirmed = :confirmed',
-      ExpressionAttributeValues: {
-        ':confirmed': true,
-      },
-      ReturnValues: 'ALL_NEW' as const
-    };
-
-    await ddb.update(updateParams);
   }
 
   protected async deleteResource(): Promise<void> {
@@ -191,7 +195,7 @@ class SessionRegistrationsRC extends ResourceController {
     const userRegistrations = await this.getRegistrationsOfUserById(userId);
     if (!userRegistrations.length) return true;
 
-    if (userRegistrations.length === this.configurations.maxNrOfSessions)
+    if (userRegistrations.length >= this.configurations.maxNrOfSessions)
       throw new HandledError('You have reached the maximum number of sessions you can register to!');
 
     const sessions = (

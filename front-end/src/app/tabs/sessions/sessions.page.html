@@ -101,7 +101,7 @@
           [isUserRegisteredInSession]="isUserRegisteredInSession(selectedSession)"
           [hasUserRatedSession]="hasUserRatedSession(selectedSession)"
           [hasSessionEnded]="hasSessionEnded(selectedSession)"
-          [hasUserConfirmParticipation]="hasUserConfirmParticipation()"
+          [hasUserConfirmedParticipation]="hasUserConfirmedParticipation()"
           (favorite)="toggleFavorite($event, selectedSession)"
           (register)="toggleRegister($event, selectedSession)"
           (giveFeedback)="onGiveFeedback($event, selectedSession)"

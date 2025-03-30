@@ -118,7 +118,7 @@ export class Session extends Resource {
 
   /**
    * Checks if the current time is within the confirmation window for the session.
-   * The confirmation window is from 15 minutes before the start time to 15 minutes after the end time.
+   * The confirmation window starts 15 minutes before the start time and ends 15 minutes after the end time.
    */
   canConfirmSession(): boolean {
     const now = this.calcDatetimeWithoutTimezone(new Date());

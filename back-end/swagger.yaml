@@ -1264,7 +1264,6 @@ paths:
           $ref: '#/components/responses/BadParameters'
     patch:
       summary: Confirm partecipation to a session
-      description: Requires to be Admin or the registered user.
       tags: [Sessions]
       security:
         - AuthFunction: []

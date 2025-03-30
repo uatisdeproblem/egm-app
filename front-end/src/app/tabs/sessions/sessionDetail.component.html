@@ -130,9 +130,9 @@
           <ion-icon [name]="isSessionInFavorites ? 'star' : 'star-outline'" slot="icon-only" />
         </ion-button>
       </ion-col>
-      <ion-col *ngIf="!hasUserConfirmParticipation && session.canConfirmSession">
+      <ion-col *ngIf="!hasUserConfirmedParticipation && session.canConfirmSession()">
         <ion-button fill="clear" expand="block" color="warning" (click)="confirmParticipation.emit()">
-          <ion-icon name='camera' slot="icon-only" />
+          <ion-icon name="camera" slot="icon-only" />
         </ion-button>
       </ion-col>
     </ion-row>

@@ -27,7 +27,6 @@ export class SessionRegistration extends Resource {
    * Whether the user has rated the session.
    */
   hasUserRated: boolean;
-
   /**
    * Whether the user has confirmed the session.
    */
