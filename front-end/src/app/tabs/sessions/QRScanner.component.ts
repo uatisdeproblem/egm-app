@@ -10,7 +10,7 @@ import { AppService } from 'src/app/app.service';
       <ion-toolbar color="primary">
         <ion-title>{{ 'SESSIONS.SCAN_QR_CODE' | translate }}</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="dismissModal()">
+          <ion-button (click)="close()">
             <ion-icon name="close"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -24,37 +24,20 @@ import { AppService } from 'src/app/app.service';
   `
 })
 export class QrScannerModalComponent {
+  // @todo future improvement: refactor this into a common component to read QR Codes.
+
   @Input() sessionId: string;
 
   currentDevice: MediaDeviceInfo = null;
   availableDevices: MediaDeviceInfo[];
-  isScanning: boolean = false;
 
-  constructor(
-    private modalCtrl: ModalController,
-    private _loading: IDEALoadingService,
-    private _message: IDEAMessageService,
-    private _app: AppService,
-    public t: IDEATranslationsService
-  ) {}
+  constructor(private modalCtrl: ModalController, public t: IDEATranslationsService) {}
 
   async onScanSuccess(result: string): Promise<void> {
-    if (this.isScanning) return;
-
-    try {
-      await this._loading.show();
-      this.isScanning = true;
-    } catch (error) {
-      this._message.error('COMMON.OPERATION_FAILED');
-    } finally {
-      await this._app.sleepForNumSeconds(1);
-      this.isScanning = false;
-      this._loading.hide();
-      this.modalCtrl.dismiss(result);
-    }
+    this.modalCtrl.dismiss(result);
   }
 
-  dismissModal(): void {
+  close(): void {
     this.modalCtrl.dismiss();
   }
 }
