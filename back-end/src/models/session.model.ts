@@ -121,6 +121,7 @@ export class Session extends Resource {
    * The confirmation window starts 15 minutes before the start time and ends 15 minutes after the end time.
    */
   canConfirmSession(): boolean {
+    // IMPORTANT NOTE: Only works on the user's front-end. As this date will be in UNIX time on the back-end and thus likely to have a different hour to the session's
     const now = this.calcDatetimeWithoutTimezone(new Date());
     const fifteenMinutesBeforeStart = this.calcDatetimeWithoutTimezone(this.startsAt, -15);
     const fifteenMinutesAfterEnd = this.calcDatetimeWithoutTimezone(this.endsAt, 15);

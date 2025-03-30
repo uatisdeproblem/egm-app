@@ -111,9 +111,9 @@ class SessionRegistrationsRC extends ResourceController {
 
     if (this.registration.hasUserConfirmed) throw new HandledError('Participation already confirmed');
 
-    const session = await this.getSessionById(sessionId);
-
-    if (!session.canConfirmSession()) throw new HandledError('Invalid Time period');
+    // @todo find a way to check the date without timezone problems
+    // const session = await this.getSessionById(sessionId);
+    // if (!session.canConfirmSession()) throw new HandledError('Invalid Time period');
 
     try {
       const updateParams = {

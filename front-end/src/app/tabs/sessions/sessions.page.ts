@@ -130,14 +130,17 @@ export class SessionsPage {
         try {
           await this.loading.show();
           await this._sessionRegistrations.confirmParticipation(session.sessionId);
+          this.message.success('COMMON.OPERATION_COMPLETED');
         } catch (error) {
           if (error.message === 'Unauthorized') this.message.error('SESSIONS.CONFIRM_ERRORS.UNAUTHORIZED');
-          else if (error.message === 'Session not available') this.message.error('SESSIONS.CONFIRM_ERRORS.SESSION_UNAVAILABLE');
-          else if (error.message === 'Participation already confirmed') this.message.error('SESSIONS.CONFIRM_ERRORS.ALREADY_CONFIRMED');
+          else if (error.message === 'Session not available')
+            this.message.error('SESSIONS.CONFIRM_ERRORS.SESSION_UNAVAILABLE');
+          else if (error.message === 'Participation already confirmed')
+            this.message.error('SESSIONS.CONFIRM_ERRORS.ALREADY_CONFIRMED');
           else if (error.message === 'Invalid Time period') this.message.error('SESSIONS.CONFIRM_ERRORS.INVALID_TIME');
-          else if (error.message === 'User not Registered') this.message.error('SESSIONS.CONFIRM_ERRORS.USER_NOT_REGISTERED');
+          else if (error.message === 'User not Registered')
+            this.message.error('SESSIONS.CONFIRM_ERRORS.USER_NOT_REGISTERED');
           else this.message.error('COMMON.OPERATION_FAILED');
-
         } finally {
           this.loading.hide();
         }

@@ -99,6 +99,7 @@ export class SessionPage implements OnInit {
         try {
           await this.loading.show();
           await this._sessionRegistrations.confirmParticipation(session.sessionId);
+          this.message.success('COMMON.OPERATION_COMPLETED');
         } catch (error) {
           if (error.message === 'Unauthorized') this.message.error('SESSIONS.CONFIRM_ERRORS.UNAUTHORIZED');
           else if (error.message === 'Session not available')
