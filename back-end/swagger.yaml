@@ -1262,6 +1262,32 @@ paths:
           $ref: '#/components/responses/Registration'
         400:
           $ref: '#/components/responses/BadParameters'
+    patch:
+      summary: Confirm partecipation to a session
+      tags: [Sessions]
+      security:
+        - AuthFunction: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [CONFIRM_PARTICIPATION]
+      responses:
+        200:
+          $ref: '#/components/responses/OperationCompleted'
+        400:
+          $ref: '#/components/responses/BadParameters'
     delete:
       summary: Delete a registration
       description: Requires to be Admin or the registered user.

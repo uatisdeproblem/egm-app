@@ -27,6 +27,10 @@ export class SessionRegistration extends Resource {
    * Whether the user has rated the session.
    */
   hasUserRated: boolean;
+  /**
+   * Whether the user has confirmed the session.
+   */
+  hasUserConfirmed: boolean;
 
   load(x: any): void {
     super.load(x);
@@ -36,6 +40,7 @@ export class SessionRegistration extends Resource {
     this.name = this.clean(x.name, String);
     if (x.sectionCountry) this.sectionCountry = this.clean(x.sectionCountry, String);
     this.hasUserRated = this.clean(x.hasUserRated, Boolean);
+    this.hasUserConfirmed = this.clean(x.hasUserConfirmed, Boolean);
   }
 
   /**

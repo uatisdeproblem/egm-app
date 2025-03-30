@@ -12,6 +12,8 @@ import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegi
 import { Session } from '@models/session.model';
 import { Speaker } from '@models/speaker.model';
 import { SpeakersService } from '../speakers/speakers.service';
+import { QrScannerModalComponent } from './QRScanner.component';
+import { SessionRegistration } from '@models/sessionRegistration.model';
 
 @Component({
   selector: 'app-sessions',
@@ -31,7 +33,7 @@ export class SessionsPage {
   speakers: Speaker[];
   hasSessionLimitations: boolean;
   sessionCountByDate: Record<string, number> = {};
-
+  registration: SessionRegistration;
   segment = '';
 
   constructor(
@@ -108,6 +110,54 @@ export class SessionsPage {
     }
   }
 
+  async toggleConfirm(ev: any, session: Session): Promise<void> {
+    if (!session.canConfirmSession()) return;
+
+    ev?.stopPropagation();
+    try {
+      const modal = await this.modalCtrl.create({
+        component: QrScannerModalComponent,
+        componentProps: {
+          sessionId: session.sessionId
+        },
+        backdropDismiss: true
+      });
+
+      // Present the modal
+      await modal.present();
+
+      const { data: scannedData } = await modal.onDidDismiss();
+
+      if (scannedData) {
+        try {
+          await this.loading.show();
+          await this._sessionRegistrations.confirmParticipation(session.sessionId);
+          this.message.success('COMMON.OPERATION_COMPLETED');
+        } catch (error) {
+          if (error.message === 'Unauthorized') this.message.error('SESSIONS.CONFIRM_ERRORS.UNAUTHORIZED');
+          else if (error.message === 'Session not available')
+            this.message.error('SESSIONS.CONFIRM_ERRORS.SESSION_UNAVAILABLE');
+          else if (error.message === 'Participation already confirmed')
+            this.message.error('SESSIONS.CONFIRM_ERRORS.ALREADY_CONFIRMED');
+          else if (error.message === 'Invalid Time period') this.message.error('SESSIONS.CONFIRM_ERRORS.INVALID_TIME');
+          else if (error.message === 'User not Registered')
+            this.message.error('SESSIONS.CONFIRM_ERRORS.USER_NOT_REGISTERED');
+          else this.message.error('COMMON.OPERATION_FAILED');
+        } finally {
+          this.loading.hide();
+        }
+      }
+
+      await modal.present();
+    } catch (error) {
+      this.message.error('COMMON.OPERATION_FAILED');
+    }
+  }
+
+  hasUserConfirmedParticipation(): boolean {
+    return this.registration?.hasUserConfirmed;
+  }
+
   isUserRegisteredInSession(session: Session): boolean {
     return this.registeredSessionsIds.includes(session.sessionId);
   }
@@ -163,11 +213,15 @@ export class SessionsPage {
       this.sessionCountByDate[day] = registeredSessions.length;
     }
   }
-  openDetail(ev: any, session: Session): void {
+
+  async openDetail(ev: any, session: Session): Promise<void> {
     ev?.stopPropagation();
 
     if (this.app.isInMobileMode()) this.app.goToInTabs(['agenda', session.sessionId]);
-    else this.selectedSession = session;
+    else {
+      this.selectedSession = session;
+      this.registration = await this._sessionRegistrations.getById(session.sessionId);
+    }
   }
 
   async onGiveFeedback(ev: any, session: Session): Promise<void> {

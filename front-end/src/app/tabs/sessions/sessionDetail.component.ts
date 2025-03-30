@@ -17,9 +17,11 @@ export class SessionDetailComponent {
   @Input() isUserRegisteredInSession: boolean;
   @Input() hasUserRatedSession: boolean;
   @Input() hasSessionEnded: boolean;
+  @Input() hasUserConfirmedParticipation: boolean;
   @Output() favorite = new EventEmitter<void>();
   @Output() register = new EventEmitter<void>();
   @Output() giveFeedback = new EventEmitter<{ rating: number; comment?: string }>();
+  @Output() confirmParticipation = new EventEmitter<void>();
 
   selectedRating = 0;
 
