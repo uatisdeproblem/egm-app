@@ -111,6 +111,8 @@ export class SessionsPage {
   }
 
   async toggleConfirm(ev: any, session: Session): Promise<void> {
+    if (!session.canConfirmSession()) return;
+
     ev?.stopPropagation();
     try {
       const modal = await this.modalCtrl.create({
