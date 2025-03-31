@@ -81,6 +81,9 @@ export class ConfirmSessionComponent implements OnInit {
       await this._loading.show();
       const sessionId = this.route.snapshot.paramMap.get('sessionId');
       this.session = await this._sessions.getById(sessionId);
+
+      if (!this.session.canConfirmSession()) throw new Error('Invalid Time period');
+
       await this._sessionRegistrations.confirmParticipation(sessionId);
       this.success = true;
     } catch (error) {
