@@ -6,12 +6,7 @@
 <ion-content>
   <ion-list lines="inset">
     <ion-searchbar #searchbar color="light" (ionInput)="filter($event.target.value)"></ion-searchbar>
-    <ion-item color="white" class="noElements" *ngIf="meals && !meals.length">
-      <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
-    </ion-item>
-    <ion-item color="white" *ngIf="!meals">
-      <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
-    </ion-item>
+
     @if(_app.user.permissions.isStaff) {
     <ion-accordion-group>
       <ion-accordion value="camera">
@@ -24,7 +19,14 @@
         </div>
       </ion-accordion>
     </ion-accordion-group>
-    } @if(_app.user.mealType) {
+    }
+    <ion-item color="white" class="noElements" *ngIf="meals && !meals.length">
+      <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
+    </ion-item>
+    <ion-item color="white" *ngIf="!meals">
+      <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
+    </ion-item>
+    @if(_app.user.mealType) {
     <ion-accordion-group>
       <ion-accordion *ngFor="let meal of meals" [value]="meal.mealId">
         <ion-item slot="header" color="light">
