@@ -109,7 +109,7 @@ export class MealsService {
         return 'ESNpink';
       case MealTypes.SPECIAL:
       case MealTypes.NO_BEEF:
-      case MealTypes.REGULAR_SPECIAL:
+      case MealTypes.SPECIAL_OLIVE:
         return 'ESNorange';
       default:
         return 'medium';
