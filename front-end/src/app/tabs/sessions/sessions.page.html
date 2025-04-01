@@ -44,7 +44,8 @@
             (click)="openDetail($event, session)"
           >
             <ion-note class="ion-text-center borderRight" slot="start">
-              <b>{{ app.formatTime(session.startsAt) }}</b>
+              <b> {{ app.formatDateShort(session.startsAt)}}</b>
+              <span>{{ app.formatTime(session.startsAt) }}</span>
               <span>{{ app.formatTime(session.endsAt) }}</span>
             </ion-note>
             <ion-label class="ion-text-wrap">
