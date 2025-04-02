@@ -132,6 +132,7 @@ export class SessionsPage {
         try {
           await this.loading.show();
           await this._sessionRegistrations.confirmParticipation(session.sessionId);
+          this.registration.hasUserConfirmed = true;
           this.message.success('COMMON.OPERATION_COMPLETED');
         } catch (error) {
           if (error.message === 'Unauthorized') this.message.error('SESSIONS.CONFIRM_ERRORS.UNAUTHORIZED');

@@ -4,9 +4,18 @@
 <ion-card color="white">
   <ion-card-header>
     <ion-card-subtitle>
-      <ion-badge color="primary">
-        {{ session.code }}
-      </ion-badge>
+      <ion-item lines="none">
+        <ion-badge color="primary" slot="start">
+          {{ session.code }}
+        </ion-badge>
+        @if (hasUserConfirmedParticipation) {
+          <ion-badge color="success" slot="end">
+            <ion-text>
+              {{ 'SESSIONS.CHECKED_IN' |  translate }}
+            </ion-text>
+          </ion-badge>
+        }
+      </ion-item>
     </ion-card-subtitle>
     <ion-card-title>
       <ion-text style="font-weight: 600">

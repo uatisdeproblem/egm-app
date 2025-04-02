@@ -460,6 +460,7 @@
     "SCAN_QR_CODE": "Scan QRcode",
     "MANAGE_SESSION": "Manage session",
     "LIST": "Session list",
+    "CHECKED_IN": "Attendance confirmed",
     "CONFIRMED_SESSION": "Session {{name}} confirmed correctly",
     "SESSION_MIN_LIMIT_WARNING": "You have to register to at least {{min}} sessions per day, and no more than {{max}} in total!",
     "SESSION_MAX_LIMIT_WARNING": "You have reached the maximum number of sessions you can register to",
