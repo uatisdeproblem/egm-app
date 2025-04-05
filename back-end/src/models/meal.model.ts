@@ -1,6 +1,11 @@
 // import { isAfter } from 'date-fns';
 import { Resource, epochISOString, isEmpty } from 'idea-toolbox';
 
+/**
+ * YYYY-MM-DDTHH:MM, without timezone.
+ */
+type datetime = string;
+
 export class Meal extends Resource {
   /**
    * The ID of the Meal.
@@ -31,8 +36,8 @@ export class Meal extends Resource {
     super.load(x);
     this.mealId = this.clean(x.mealId, String);
     this.name = this.clean(x.name, String);
-    this.validFrom = this.clean(x.validFrom, t => new Date(t).toISOString().slice(0, 16));
-    this.validTo = this.clean(x.validTo, t => new Date(t).toISOString().slice(0, 16));
+    this.validFrom = this.clean(x.validFrom, t => this.calcDatetimeWithoutTimezone(t));
+    this.validTo = this.clean(x.validTo, t => this.calcDatetimeWithoutTimezone(t));
     this.needsScan = this.clean(x.needsScan, Boolean);
     this.dishDescription = {};
     if (x.dishDescription) this.dishDescription = x.dishDescription;
@@ -54,10 +59,32 @@ export class Meal extends Resource {
     return e;
   }
 
+  // @todo move this to utils file so we don't have repeated code
+  calcDatetimeWithoutTimezone(dateToFormat: Date | string | number, bufferInMinutes = 0): datetime {
+    try {
+      const date = new Date(dateToFormat);
+      return new Date(
+        date.getTime() -
+          this.convertMinutesToMilliseconds(date.getTimezoneOffset()) +
+          this.convertMinutesToMilliseconds(bufferInMinutes)
+      )
+        .toISOString()
+        .slice(0, 16);
+    } catch (error) {
+      // force null on invalid dates that might come from import
+      return null;
+    }
+  }
+
+  convertMinutesToMilliseconds(minutes: number): number {
+    return minutes * 60 * 1000;
+  }
+
   isMealValid(date: Date): boolean {
-    const from = new Date(this.validFrom).toISOString().slice(0, 16);
-    const to = new Date(this.validTo).toISOString().slice(0, 16);
-    const reference = new Date(date).toISOString().slice(0, 16);
+    const to = this.calcDatetimeWithoutTimezone(this.validTo);
+    const from = this.calcDatetimeWithoutTimezone(this.validFrom);
+    const reference = this.calcDatetimeWithoutTimezone(date);
+
     return reference >= from && reference <= to;
   }
 }
