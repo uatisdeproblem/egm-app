@@ -53,7 +53,7 @@ export class MealsService {
       filteredList = filteredList.slice(0, indexOfLastOfPreviousPage + this.MAX_PAGE_SIZE);
     }
 
-    return filteredList;
+    return filteredList.sort((a, b): number => a.validFrom.localeCompare(b.validFrom));
   }
 
   /**

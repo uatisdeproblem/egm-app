@@ -52,6 +52,7 @@ export class MealsPage implements OnInit {
       const meal = await this._meals.getById(mealId);
 
       await this._meals.validateTicket(meal, userId, ApprovedType.QR_SCAN);
+      this._message.success('COMMON.OPERATION_COMPLETED');
     } catch (err) {
       let error: string;
       if (err.message === 'Unauthorized') error = 'MEALS.VALIDATE_ERRORS.UNAUTHORIZED';

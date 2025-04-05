@@ -65,8 +65,21 @@ class MealsRC extends ResourceController {
   private async scanTicket(userId: string, approvedType: ApprovedType): Promise<void> {
     if (!this.user.permissions.isStaff) throw new HandledError('Unauthorized');
 
+    // @todo change these dates, they are a temporary fix for the timezone to work.
     const now = new Date();
-    if (!this.meal.isMealValid(now)) throw new HandledError('Ticket not available');
+    const italianDate = new Date(
+      new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Europe/Rome',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).format(new Date())
+    );
+    if (!this.meal.isMealValid(italianDate)) throw new HandledError('Ticket not available');
 
     const targetUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
 
