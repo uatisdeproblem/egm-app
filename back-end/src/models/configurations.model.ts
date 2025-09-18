@@ -1,8 +1,7 @@
 import { CustomBlockMeta, Languages, Resource } from 'idea-toolbox';
-
 import { User } from '../models/user.model';
-
 import { ServiceLanguages } from './serviceLanguages.enum';
+import { WrapperCustomBlockMeta } from './wrappedCustomBlock.model';
 
 export const LANGUAGES = new Languages({ default: ServiceLanguages.English, available: [ServiceLanguages.English] });
 const DEFAULT_SESSION_REGISTRATION_BUFFER_MINUTES = 10;
@@ -37,7 +36,7 @@ export class Configurations extends Resource {
   /**
    * A custom block containing the definition of custom sections and fields for the registration form.
    */
-  registrationFormDef: CustomBlockMeta;
+  registrationFormDef: WrapperCustomBlockMeta;
   /**
    * The currency for the event, expressed in three letters (e.g. EUR).
    */
@@ -91,7 +90,7 @@ export class Configurations extends Resource {
       DEFAULT_SESSION_REGISTRATION_BUFFER_MINUTES
     );
     this.canCountryLeadersAssignSpots = this.clean(x.canCountryLeadersAssignSpots, Boolean);
-    this.registrationFormDef = new CustomBlockMeta(x.registrationFormDef, LANGUAGES);
+    this.registrationFormDef = new WrapperCustomBlockMeta(x.registrationFormDef, LANGUAGES);
     this.currency = this.clean(x.currency, String);
     this.spotTypes = this.cleanArray(x.spotTypes, String);
     this.pricePerSpotTypes = {};
@@ -123,7 +122,8 @@ export class Configurations extends Resource {
   /**
    * Load a registration form to use in the UI.
    */
-  loadRegistrationForm(registrationDef: CustomBlockMeta, existingForm?: any): CustomBlockMeta {
+  loadRegistrationForm(registrationDef: WrapperCustomBlockMeta,
+                       existingForm?: any): WrapperCustomBlockMeta {
     return existingForm ? registrationDef.loadSections(existingForm) : registrationDef.setSectionsDefaultValues();
   }
 

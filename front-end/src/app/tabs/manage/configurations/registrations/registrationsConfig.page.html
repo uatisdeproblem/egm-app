@@ -59,11 +59,11 @@
         <p>{{ 'MANAGE.REGISTRATION_FORM_I' | translate }}</p>
       </ion-label>
     </ion-list-header>
-    <idea-custom-block-meta
+    <wrapper-custom-block-meta
       [block]="configurations.registrationFormDef"
       [disabled]="!editMode"
       [lines]="editMode ? 'inset' : 'none'"
-    ></idea-custom-block-meta>
+    ></wrapper-custom-block-meta>
     <ion-list-header>
       <ion-label>
         <h2>{{ 'MANAGE.EVENT_SPOTS' | translate }}</h2>

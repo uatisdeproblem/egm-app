@@ -6,6 +6,7 @@ import { IDEACustomFieldsModule, IDEADateTimeComponent, IDEADateTimeModule, IDEA
 
 import { RegistrationRoutingModule } from './registration-routing.module';
 import { RegistrationPage } from './registration.page';
+import { WrapperCustomBlockComponent } from '@app/common/customBlock/wrapperCustomBlock.component';
 
 @NgModule({
   imports: [
@@ -18,6 +19,6 @@ import { RegistrationPage } from './registration.page';
     IDEADateTimeModule,
     RegistrationRoutingModule
   ],
-  declarations: [RegistrationPage]
+  declarations: [RegistrationPage, WrapperCustomBlockComponent]
 })
 export class RegistrationModule {}
