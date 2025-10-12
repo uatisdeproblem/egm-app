@@ -67,13 +67,15 @@ export class RegistrationPage {
     this.errors = new Set();
     if (!isDraft) {
       this.app.configurations.registrationFormDef
-        .validateSections(this.form)
+        .validateSections(this.form, this.user)
         .forEach(ea => this.errors.add(`sections.${ea}`));
+
+      this.user.validate().forEach(error => this.errors.add(error));
       if (!this.acceptCOC) this.errors.add('coc');
       if (!this.acceptTC) this.errors.add('tc');
     }
-    if (this.errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
 
+    if (this.errors.size) return this.message.error('COMMON.FORM_HAS_ERROR_TO_CHECK');
     try {
       await this.loading.show();
       this.user.load(await this._users.registerToEvent(this.user, this.form, isDraft));
@@ -84,7 +86,7 @@ export class RegistrationPage {
         else this.editMode = false;
       }
     } catch (error) {
-      this.message.error('COMMON.OPERATION_FAILED');
+      this.message.error(error.message, true);
     } finally {
       this.loading.hide();
     }

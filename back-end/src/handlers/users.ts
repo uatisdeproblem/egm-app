@@ -32,8 +32,14 @@ const S3_ASSETS_FOLDER = process.env.S3_ASSETS_FOLDER;
 const S3_DOWNLOADS_FOLDER = process.env.S3_DOWNLOADS_FOLDER;
 const s3 = new S3();
 
+const USERNAME = process.env.USERNAME;
+const PASSWORD = process.env.PASSWORD;
+
 const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
 const cognito = new Cognito();
+
+const ESNCARD_API_URL = 'https://api.esncard.org/api/v1/esncards';
+const ESNCARD_TIMEOUT = 5000;
 
 export const handler = (ev: any, _: any, cb: any): Promise<void> => new UsersRC(ev, cb).handleRequest();
 
@@ -48,6 +54,42 @@ class UsersRC extends ResourceController {
 
   constructor(event: any, callback: any) {
     super(event, callback, { resourceId: 'userId' });
+  }
+
+  protected async validateESNcard(cardCode: string): Promise<boolean> {
+    if (!cardCode || cardCode.trim() === '') return false;
+
+    const trimmedCode = cardCode.trim();
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), ESNCARD_TIMEOUT);
+
+      const response = await fetch(
+        `${ESNCARD_API_URL}/${trimmedCode}?firstName=${encodeURIComponent(this.targetUser.firstName)}&lastName=${encodeURIComponent(this.reqUser.lastName)}&esnSection=${encodeURIComponent(this.targetUser.sectionName)}`,
+        {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json',
+            'X-AUTH-TOKEN': `${USERNAME}:${PASSWORD}`
+          }
+        }
+      );
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.warn(`ESNcard API returned status: ${response.status} for code: ${trimmedCode}`);
+        return false;
+      }
+
+      const cardData: any = await response.json();
+      return !cardData.cardExpired && cardData.firstNameIsValidated &&
+              cardData.lastNameIsValidated && cardData.esnSectionIsValidated;
+
+    } catch (error) {
+      return false;
+    }
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
@@ -152,12 +194,20 @@ class UsersRC extends ResourceController {
     if (this.targetUser.registrationAt && !this.reqUser.permissions.canManageRegistrations)
       throw new HandledError("Can't edit a submitted registration");
 
-    this.targetUser.registrationForm = this.configurations.registrationFormDef.loadSections(registrationForm);
-
+    this.targetUser.registrationForm = registrationForm;
     if (isDraft) this.targetUser.registrationAt = null;
     else {
-      const errors = this.configurations.registrationFormDef.validateSections(this.targetUser.registrationForm);
+      const errors = this.configurations.registrationFormDef
+                         .validateSections(this.targetUser.registrationForm, this.targetUser);
       if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
+
+      if (!this.targetUser.isExternal()) {
+        const isESNcardValid = await this.validateESNcard(this.targetUser.ESNcard);
+        if (!isESNcardValid) {
+          throw new HandledError('Invalid ESNcard');
+        }
+      }
+
       this.targetUser.registrationAt = new Date().toISOString();
     }
 
@@ -170,6 +220,7 @@ class UsersRC extends ResourceController {
 
     return this.targetUser;
   }
+
   private async changeUserPermissions(permissions: UserPermissions): Promise<User> {
     if (!this.reqUser.permissions.isAdmin) throw new HandledError('Unauthorized');
 
@@ -236,6 +287,7 @@ class UsersRC extends ResourceController {
     const key = `${S3_ATTACHMENTS_FOLDER}/${this.targetUser.userId}_${this.targetUser.spot.proofOfPaymentURI}`;
     return await s3.signedURLGet(S3_BUCKET_MEDIA, key);
   }
+
   private async getSignedURLToUploadProofOfPayment(): Promise<SignedURL> {
     if (this.reqUser !== this.targetUser) throw new HandledError('Unauthorized');
     if (!this.targetUser.spot) throw new HandledError('No spot');
@@ -247,6 +299,7 @@ class UsersRC extends ResourceController {
     signedURL.id = fileURI;
     return signedURL;
   }
+
   private async confirmUploadProofOfPayment(fileURI: string): Promise<User> {
     if (!this.targetUser.spot) throw new HandledError('No spot');
 
@@ -306,7 +359,6 @@ class UsersRC extends ResourceController {
     if (!(this.reqUser.permissions.canManageRegistrations || this.reqUser.permissions.isCountryLeader))
       throw new HandledError('Unauthorized');
 
-    // @todo we may want to add an index here to limit the fields in lists
     let users = (await ddb.scan({ TableName: DDB_TABLES.users })).map(x => new User(x));
     if (!this.reqUser.permissions.canManageRegistrations)
       users = users.filter(x => x.sectionCountry === this.reqUser.sectionCountry);
@@ -337,12 +389,14 @@ class UsersRC extends ResourceController {
       this.logger.warn('Error sending email', error);
     }
   }
+
   private async setFavoriteSession(sessionId: string, isFavorite: boolean): Promise<void> {
     if (isFavorite)
       await ddb.put({ TableName: DDB_TABLES.usersFavoriteSessions, Item: { userId: this.principalId, sessionId } });
     else
       await ddb.delete({ TableName: DDB_TABLES.usersFavoriteSessions, Key: { userId: this.principalId, sessionId } });
   }
+
   private async getFavoriteSessions(): Promise<string[]> {
     return (
       await ddb.query({

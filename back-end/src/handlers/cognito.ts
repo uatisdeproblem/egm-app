@@ -61,7 +61,6 @@ class CognitoRC extends ResourceController {
     try {
       user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
     } catch (error) {
-      if (String(error) !== 'Error: Not found') throw error;
       user = new User({ userId, authService: AuthServices.COGNITO, email });
     }
     await ddb.put({ TableName: DDB_TABLES.users, Item: user });

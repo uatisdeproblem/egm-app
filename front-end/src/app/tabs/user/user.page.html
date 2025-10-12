@@ -83,6 +83,10 @@
           [class.fieldHasError]="hasFieldAnError('email')"
         />
       </ion-item>
+      <ion-item [class.fieldHasError]="hasFieldAnError('birthDate')">
+        <ion-label id="birthDateLabel" position="stacked">{{ 'USER.BIRTH_DATE' | translate }}</ion-label>
+        <idea-date-time [disabled]="!app.user.isExternal()" [(date)]="app.user.birthDate"></idea-date-time>
+      </ion-item>
       <ion-item></ion-item>
       <ion-item color="medium" lines="full">
         <ion-button slot="start" fill="clear" color="white" *ngIf="!editProfileMode" (click)="startEditProfile()">

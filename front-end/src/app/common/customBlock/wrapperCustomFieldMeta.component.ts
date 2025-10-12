@@ -151,7 +151,7 @@ import { WrapperCustomFieldMeta } from '@models/wrappedCustomBlock.model';
               </ion-item>
             }
 
-            @if (field.type === CFT.ENUM) {
+            @if (field.type === CFT.ENUM && !field.allowMultipleSelection) {
               <ion-item [lines]="lines" [class.fieldHasError]="hasFieldAnError('default')">
                 <ion-select
                   labelPlacement="stacked"
@@ -161,6 +161,24 @@ import { WrapperCustomFieldMeta } from '@models/wrappedCustomBlock.model';
                   <ion-select-option [value]="null">
                     {{ 'IDEA_COMMON.CUSTOM_FIELDS.NO_DEFAULT_CHOICE' | translate }}
                   </ion-select-option>
+                  @for (e of field.enum; track e) {
+                    <ion-select-option [value]="e">
+                      {{ getEnumElement(e) }}
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+            }
+
+            @if (field.type === CFT.ENUM && field.allowMultipleSelection) {
+              <ion-item [lines]="lines" [class.fieldHasError]="hasFieldAnError('default')">
+                <ion-select
+                  multiple="true"
+                  labelPlacement="stacked"
+                  [label]="'Default Choices' | translate"
+                  [(ngModel)]="multiSelectDefaults"
+                  (ngModelChange)="updateMultiSelectDefault()"
+                >
                   @for (e of field.enum; track e) {
                     <ion-select-option [value]="e">
                       {{ getEnumElement(e) }}
@@ -204,6 +222,14 @@ import { WrapperCustomFieldMeta } from '@models/wrappedCustomBlock.model';
               {{ 'IDEA_COMMON.CUSTOM_FIELDS.OBLIGATORY' | translate }}
             </ion-toggle>
           </ion-item>
+
+          @if (field.type === CFT.ENUM) {
+            <ion-item lines="none">
+              <ion-toggle justify="end" [(ngModel)]="field.allowMultipleSelection">
+                Allow Multiple Selection
+              </ion-toggle>
+            </ion-item>
+          }
         </ion-list>
       }
 
@@ -264,7 +290,6 @@ import { WrapperCustomFieldMeta } from '@models/wrappedCustomBlock.model';
         </ion-list>
       }
 
-      <!-- LA TUA SEZIONE CUSTOM PER VISIBILITY OPTIONS -->
       @if (!disabled) {
         <ion-list class="aList ion-padding">
           <ion-list-header>
@@ -314,8 +339,9 @@ export class WrapperCustomFieldMetaComponent implements OnInit {
 
   errors = new Set<string>();
   FIELD_TYPES: string[] = ['STRING', 'NUMBER', 'BOOLEAN', 'DATE', 'ENUM'];
-  CFT = { STRING: 'STRING', NUMBER: 'NUMBER', BOOLEAN: 'BOOLEAN', DATE: 'DATE', ENUM: 'ENUM' };
-
+  CFT = { STRING: 'STRING', NUMBER: 'NUMBER', BOOLEAN: 'BOOLEAN',
+          DATE: 'DATE', ENUM: 'ENUM' };
+  multiSelectDefaults: string[] = [];
   constructor(private _modal: ModalController) {}
 
   ngOnInit() {
@@ -325,7 +351,18 @@ export class WrapperCustomFieldMetaComponent implements OnInit {
       this.visibleToExternals = opts.visibleTo === 'both' || opts.visibleTo === 'externals';
       this.showIfField = opts.showIfField || '';
     }
+
     this.buildAvailableFields();
+
+    if (this.field.type === this.CFT.ENUM && this.field.allowMultipleSelection && this.field.default) {
+      this.multiSelectDefaults = this.field.default.split(', ');
+    }
+  }
+
+  updateMultiSelectDefault() {
+    if (this.field.type === this.CFT.ENUM && this.field.allowMultipleSelection) {
+      this.field.default = this.multiSelectDefaults.length > 0 ? this.multiSelectDefaults.join(', ') : '';
+    }
   }
 
   private buildAvailableFields() {
@@ -375,12 +412,10 @@ export class WrapperCustomFieldMetaComponent implements OnInit {
       showIfValue: this.showIfField ? true : undefined
     };
 
-    console.log('WRAPPER SAVE CHIAMATO!!!', this.field);
     this._modal.dismiss(this.field);
   }
 
   close() {
-    console.log('WRAPPEr!!!', this.field);
     this._modal.dismiss();
   }
 

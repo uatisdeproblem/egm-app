@@ -124,7 +124,8 @@ export class Configurations extends Resource {
    */
   loadRegistrationForm(registrationDef: WrapperCustomBlockMeta,
                        existingForm?: any): WrapperCustomBlockMeta {
-    return existingForm ? registrationDef.loadSections(existingForm) : registrationDef.setSectionsDefaultValues();
+
+    return existingForm ? existingForm : registrationDef.setSectionsDefaultValues();
   }
 
   /**

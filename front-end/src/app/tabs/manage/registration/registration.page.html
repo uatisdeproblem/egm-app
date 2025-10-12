@@ -52,11 +52,14 @@
       <ion-label position="stacked">{{ 'USER.EMAIL_FOR_NOTIFICATIONS' | translate }}</ion-label>
       <ion-input [disabled]="!user.isExternal()" [(ngModel)]="user.email"></ion-input>
     </ion-item>
-    <ion-item>
+    <ion-item [class.fieldHasError]="hasFieldAnError('birthDate')">
       <ion-label id="birthDateLabel" position="stacked">{{ 'USER.BIRTH_DATE' | translate }}</ion-label>
       <idea-date-time [disabled]="!user.isExternal()" [(date)]="user.birthDate"></idea-date-time>
     </ion-item>
-
+    <ion-item *ngIf="!user.isExternal()" [class.fieldHasError]="hasFieldAnError('ESNcard')">
+      <ion-label position="stacked">{{ 'USER.ESNCARD' | translate }}</ion-label>
+      <ion-input [(ngModel)]="user.ESNcard"></ion-input>
+    </ion-item>
     <wrapper-custom-block
       [sections]="form"
       [blockMeta]="app.configurations.registrationFormDef"

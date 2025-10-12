@@ -59,6 +59,11 @@ export class User extends Resource {
    */
   birthDate: epochISOString;
   /**
+   * The number of the ESNcard. Must be valid to register for ESNers.
+   * Set only for `AuthService.ESN_ACCOUNTS`
+   */
+  ESNcard?: string;
+  /**
    * The permissions of the user on the app.
    */
   permissions: UserPermissions;
@@ -103,12 +108,13 @@ export class User extends Resource {
     this.lastName = this.clean(x.lastName, String);
     this.email = this.clean(x.email, String);
     this.avatarURL = this.clean(x.avatarURL, String);
-    this.birthDate = this.clean(x.birthDate, t => new Date(t).toISOString());
+    this.birthDate = this.clean(x.birthDate, t => new Date(t).toISOString(), new Date().toISOString());
 
     if (this.authService === AuthServices.ESN_ACCOUNTS) {
       this.sectionCode = this.clean(x.sectionCode, String);
       this.sectionCountry = this.clean(x.sectionCountry, String);
       this.sectionName = this.clean(x.sectionName, String);
+      this.ESNcard = this.clean(x.ESNcard, String);
     }
 
     this.permissions = new UserPermissions(x.permissions);
@@ -157,6 +163,8 @@ export class User extends Resource {
     if (this.iE(this.firstName)) e.push('firstName');
     if (this.iE(this.lastName)) e.push('lastName');
     if (this.iE(this.email, 'email')) e.push('email');
+    if (new Date().getFullYear() - new Date(this.birthDate).getFullYear() < 18) e.push('birthDate');
+
     return e;
   }
 

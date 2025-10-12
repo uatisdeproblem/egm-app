@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { IDEACustomFieldsModule, IDEADateTimeComponent, IDEADateTimeModule, IDEATranslationsModule, IDEAUserAvatarModule } from '@idea-ionic/common';
+import { IDEACustomFieldsModule, IDEADateTimeComponent, IDEADateTimeModule, IDEASelectComponent, IDEASelectModule, IDEATranslationsModule, IDEAUserAvatarModule } from '@idea-ionic/common';
 
 import { RegistrationRoutingModule } from './registration-routing.module';
 import { RegistrationPage } from './registration.page';
@@ -15,7 +15,7 @@ import { WrapperCustomBlockComponent } from '@app/common/customBlock/wrapperCust
     IonicModule,
     IDEATranslationsModule,
     IDEAUserAvatarModule,
-    IDEACustomFieldsModule,
+    IDEASelectModule,
     IDEADateTimeModule,
     RegistrationRoutingModule
   ],
