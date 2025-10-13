@@ -5,3 +5,15 @@ ion-item {
 #birthDateLabel {
   padding-bottom: 0.5rem;
 }
+
+.fieldHasError {
+  --border-color: var(--ion-color-danger);
+}
+
+.fieldHasError ion-label,
+.fieldHasError ion-input,
+.fieldHasError ion-select,
+.fieldHasError ion-textarea,
+.fieldHasError ion-checkbox {
+  --color: var(--ion-color-danger);
+}

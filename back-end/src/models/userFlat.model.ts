@@ -11,6 +11,7 @@ export class UserFlat {
   'Last name': string;
   'Email address': string;
   'Birth Date': string;
+  'ESNcard': string;
   'Section Code': string;
   'Section Country': string;
   'Section Name': string;
@@ -29,6 +30,7 @@ export class UserFlat {
     this['Last name'] = x.lastName;
     this['Email address'] = x.email;
     this['Birth Date'] = new Date(x.birthDate).toLocaleDateString() ?? '';
+    this['ESNcard'] = x.ESNcard ?? '';
     this['Section Code'] = x.sectionCode ?? '';
     this['Section Country'] = x.sectionCountry ?? '';
     this['Section Name'] = x.sectionName ?? '';
@@ -48,13 +50,18 @@ export class UserFlatWithRegistration extends UserFlat {
     super(x);
 
     if (configurations && language) {
-      const fields = configurations.registrationFormDef.loadSections(x.registrationForm);
+      const fields = x.registrationForm;
       for (const sectionId of configurations.registrationFormDef.sectionsLegend) {
         const section = configurations.registrationFormDef.sections[sectionId];
         const sectionName = section.name[language];
         for (const fieldId of section.fieldsLegend) {
           const fieldName = section.fields[fieldId].name[language];
-          this[`Form > ${sectionName} > ${fieldName}`] = fields[sectionId][fieldId];
+
+          try {
+            this[`Form > ${sectionName} > ${fieldName}`] = fields[sectionId][fieldId] ?? '';
+          } catch {
+            this[`Form > ${sectionName} > ${fieldName}`] = '';
+          }
         }
       }
     }

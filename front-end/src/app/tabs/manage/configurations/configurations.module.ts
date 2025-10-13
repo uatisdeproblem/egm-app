@@ -8,6 +8,10 @@ import { ConfigurationsRoutingModule } from './configurations-routing.module';
 
 import { RegistrationsConfigurationsPage } from './registrations/registrationsConfig.page';
 import { EmailTemplateModule } from './emailTemplate/emailTemplate.module';
+import { WrapperCustomSectionMetaComponent } from '@app/common/customBlock/wrapperCustomSectionMeta.component';
+import { WrapperCustomFieldMetaComponent } from '@app/common/customBlock/wrapperCustomFieldMeta.component';
+import { WrapperCustomBlockComponent } from '@app/common/customBlock/wrapperCustomBlock.component';
+import { WrapperCustomBlockMetaComponent } from '@app/common/customBlock/wrapperCustomBlockMeta.component';
 
 @NgModule({
   imports: [
@@ -20,6 +24,9 @@ import { EmailTemplateModule } from './emailTemplate/emailTemplate.module';
     ConfigurationsRoutingModule,
     EmailTemplateModule
   ],
-  declarations: [RegistrationsConfigurationsPage]
+  declarations: [RegistrationsConfigurationsPage,
+                 WrapperCustomBlockMetaComponent,
+                 WrapperCustomSectionMetaComponent,
+                 WrapperCustomFieldMetaComponent]
 })
 export class ConfigurationsModule {}
