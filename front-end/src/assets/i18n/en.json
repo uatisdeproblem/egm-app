@@ -266,6 +266,7 @@
     "PAYMENT_CONFIRMED": "Payment confirmed",
     "SECTION_COUNTRY": "ESN country",
     "EXTERNAL_GUEST": "External guest",
+    "ESN_INTERNATIONAL": "ESN International",
     "APPLY_TO": "Apply to:",
     "ACTIONS_ON_USER": "Actions on {{user}}",
     "ASSIGN_SPOT": "Assign spot",

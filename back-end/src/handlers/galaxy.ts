@@ -60,6 +60,7 @@ class GalaxyRC extends ResourceController {
       let user: User;
       let firstAccess = false;
       const [day, month, year] = attributes['cas:birthdate'][0].split('/');
+      const isESNInternational = attributes['cas:roles'].some((role: string) => role.startsWith('International'));
 
       try {
         user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
@@ -67,6 +68,7 @@ class GalaxyRC extends ResourceController {
         user.sectionCountry = attributes['cas:country'][0];
         user.sectionName = attributes['cas:section'][0];
         user.birthDate = new Date(`${year}-${month}-${day}`).toISOString();
+        user.isESNInternational = isESNInternational;
       } catch (error) {
         firstAccess = true;
         user = new User({
@@ -79,7 +81,8 @@ class GalaxyRC extends ResourceController {
           sectionCode: attributes['cas:sc'][0],
           sectionCountry: attributes['cas:country'][0],
           sectionName: attributes['cas:section'][0],
-          birthDate: new Date(`${year}-${month}-${day}`).toISOString()
+          birthDate: new Date(`${year}-${month}-${day}`).toISOString(),
+          isESNInternational
         });
       }
 

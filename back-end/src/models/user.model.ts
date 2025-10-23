@@ -97,6 +97,10 @@ export class User extends Resource {
    * The user's meal tickets and their status.
    */
   mealTickets: { [mealId: string]: MealTicket };
+  /**
+   * Whether the user is part of the ESN International.
+   */
+  isESNInternational: boolean;
 
   load(x: any): void {
     super.load(x);
@@ -115,6 +119,7 @@ export class User extends Resource {
       this.sectionCountry = this.clean(x.sectionCountry, String);
       this.sectionName = this.clean(x.sectionName, String);
       this.ESNcard = this.clean(x.ESNcard, String);
+      this.isESNInternational = this.clean(x.isESNInternational, Boolean, false);
     }
 
     this.permissions = new UserPermissions(x.permissions);
@@ -146,6 +151,7 @@ export class User extends Resource {
       this.sectionCountry = safeData.sectionCountry;
       this.sectionName = safeData.sectionName;
       this.birthDate = safeData.birthDate;
+      this.isESNInternational = safeData.isESNInternational;
     }
 
     this.permissions = safeData.permissions;

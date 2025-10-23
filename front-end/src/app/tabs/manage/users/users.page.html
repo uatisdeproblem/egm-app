@@ -106,6 +106,7 @@
       >
         <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
         <ion-select-option value="no">{{ 'USERS.EXTERNAL_GUEST' | translate }}</ion-select-option>
+        <ion-select-option value="international">{{ 'USERS.ESN_INTERNATIONAL' | translate }}</ion-select-option>
         <ion-select-option *ngFor="let country of app.configurations.sectionCountries" [value]="country">
           {{ country }}
         </ion-select-option>

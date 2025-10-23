@@ -155,9 +155,10 @@ export class UsersPage implements OnInit {
         this.filters.paymentConfirmed === 'yes' ? !!x.spot?.paymentConfirmedAt : !x.spot?.paymentConfirmedAt
       );
     if (this.filters.sectionCountry)
-      this.filteredUsers = this.filteredUsers.filter(x =>
-        this.filters.sectionCountry === 'no' ? !x.sectionCountry : this.filters.sectionCountry === x.sectionCountry
-      );
+      this.filteredUsers = this.filteredUsers.filter(x => {
+        if (this.filters.sectionCountry === 'international') return x.isESNInternational;
+        return this.filters.sectionCountry === 'no' ? !x.sectionCountry : this.filters.sectionCountry === x.sectionCountry;
+      });
 
     this.calcFooterTotals();
 
@@ -485,5 +486,5 @@ interface RowsFilters {
   spot: null | 'no' | string;
   proofOfPaymentUploaded: null | 'yes' | 'no';
   paymentConfirmed: null | 'yes' | 'no';
-  sectionCountry: string | 'no' | null;
+  sectionCountry: string | 'no' | 'international' | null;
 }
