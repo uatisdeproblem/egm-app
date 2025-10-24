@@ -63,6 +63,9 @@ class GalaxyRC extends ResourceController {
 
       try {
         user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
+        user.firstName = attributes['cas:first'][0];
+        user.lastName = attributes['cas:last'][0];
+        user.email = attributes['cas:mail'][0];
         user.sectionCode = attributes['cas:sc'][0];
         user.sectionCountry = attributes['cas:country'][0];
         user.sectionName = attributes['cas:section'][0];
