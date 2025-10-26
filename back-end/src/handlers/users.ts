@@ -202,6 +202,8 @@ class UsersRC extends ResourceController {
       issueDate: toISODate(new Date()),
       dueDate: toISODate(addDays(new Date(), 7)),
       invoiceAddress: this.reqUser.registrationForm.financial.invoiceAddress,
+      vatNumber: this.reqUser.registrationForm.financial.VATNumber,
+      legalName: this.reqUser.registrationForm.financial.LegalNameoftheInstitution,
       name: `${this.reqUser.firstName} ${this.reqUser.lastName}`,
       spotType: this.reqUser.spot.type,
       spotPrice: `${this.configurations.pricePerSpotTypes[this.reqUser.spot.type]}.00€`
