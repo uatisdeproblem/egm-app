@@ -40,6 +40,9 @@
         [(ngModel)]="spot.sectionCountry"
         [class.fieldHasError]="hasFieldAnError('sectionCountry')"
       >
+        <ion-select-option value="ESN International">
+          {{ 'USERS.ESN_INTERNATIONAL' | translate }}
+        </ion-select-option>
         <ion-select-option *ngFor="let country of app.configurations.sectionCountries" [value]="country">
           {{ country }}
         </ion-select-option>

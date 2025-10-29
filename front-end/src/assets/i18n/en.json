@@ -213,6 +213,7 @@
     "CAN_MANAGE_CONTENTS": "Can manage contents",
     "CAN_MANAGE_CONTENTS_SHORT": "Cont.",
     "IS_STAFF": "Is staff",
+    "IS_ESN_INTERNATIONAL_LEADER": "Is ESN International leader",
     "IS_STAFF_SHORT": "Staff",
     "COUNTRY_LEADER_MANAGE_USERS": "Manage delegation",
     "REGISTRATION": "Event registration",

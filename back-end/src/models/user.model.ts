@@ -262,6 +262,11 @@ export class UserPermissions {
    * If this is true, all other permissions are.
    */
   protected _isAdmin: boolean;
+  /**
+   * Whether the user can manage spots for the ESN International delegation.
+   */
+  isESNInternationalLeader: boolean;
+
   get isAdmin(): boolean {
     return this._isAdmin;
   }
@@ -272,6 +277,7 @@ export class UserPermissions {
       this.canManageRegistrations = true;
       this.canManageContents = true;
       this.isStaff = true;
+      this.isESNInternationalLeader = true;
     }
   }
 
@@ -281,6 +287,7 @@ export class UserPermissions {
     this.canManageRegistrations = Boolean(x.canManageRegistrations);
     this.canManageContents = Boolean(x.canManageContents);
     this.isStaff = Boolean(x.isStaff);
+    this.isESNInternationalLeader = Boolean(x.isESNInternationalLeader);
     // as last, to change any other attribute in case it's `true`
     this.isAdmin = Boolean(x._isAdmin);
   }
