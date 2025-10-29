@@ -60,7 +60,8 @@ class GalaxyRC extends ResourceController {
       let user: User;
       let firstAccess = false;
       const [day, month, year] = attributes['cas:birthdate'][0].split('/');
-      const isESNInternational = attributes['cas:roles'].some((role: string) => role.startsWith('International'));
+      const isESNInternational = attributes['cas:roles'].some((role: string) =>
+        role.startsWith('International') || role.startsWith('IT.') || role.startsWith('EG.'));
 
       try {
         user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
