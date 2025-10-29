@@ -361,7 +361,9 @@ class UsersRC extends ResourceController {
 
     let users = (await ddb.scan({ TableName: DDB_TABLES.users })).map(x => new User(x));
     if (!this.reqUser.permissions.canManageRegistrations)
-      users = users.filter(x => x.sectionCountry === this.reqUser.sectionCountry);
+      users = users.filter(x =>
+       (!this.reqUser.permissions.isESNInternationalLeader && x.sectionCountry === this.reqUser.sectionCountry) ||
+       (this.reqUser.permissions.isESNInternationalLeader && x.isESNInternational));
 
     return users;
   }

@@ -71,7 +71,9 @@ class EventSpotsRC extends ResourceController {
       throw new HandledError('Spot not found');
     }
 
-    if (!this.user.permissions.canManageRegistrations && this.spot.sectionCountry !== this.user.sectionCountry)
+    if (!this.user.permissions.canManageRegistrations &&
+        (!this.user.permissions.isESNInternationalLeader && this.spot.sectionCountry !== this.user.sectionCountry) &&
+        (this.user.permissions.isESNInternationalLeader && this.spot.sectionCountry !== "ESN International"))
       throw new HandledError('Unauthorized');
   }
 
@@ -347,7 +349,10 @@ class EventSpotsRC extends ResourceController {
   protected async getResources(): Promise<EventSpot[]> {
     let spots = (await ddb.scan({ TableName: DDB_TABLES.eventSpots })).map(x => new EventSpot(x));
     if (!this.user.permissions.canManageRegistrations)
-      spots = spots.filter(x => x.sectionCountry === this.user.sectionCountry);
+      spots = spots.filter(x =>
+       (!this.user.permissions.isESNInternationalLeader && x.sectionCountry === this.user.sectionCountry) ||
+       (this.user.permissions.isESNInternationalLeader && x.sectionCountry === 'ESN International'));
+
     return spots;
   }
 

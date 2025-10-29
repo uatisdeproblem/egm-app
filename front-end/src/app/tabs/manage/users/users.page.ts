@@ -104,7 +104,7 @@ export class UsersPage implements OnInit {
 
       if (this.app.user.permissions.isESNInternationalLeader) {
         this.numCountrySpotsAvailable = this.spots.filter(
-          x => this.app.user.sectionCountry === 'ESN International' && !x.userId
+          x => x.sectionCountry === 'ESN International' && !x.userId
         ).length;
       } else {
         this.numCountrySpotsAvailable = this.spots.filter(
@@ -409,7 +409,10 @@ export class UsersPage implements OnInit {
     alert.present();
   }
   async assignCountrySpot(user: User): Promise<void> {
-    if (!this.numCountrySpotsAvailable || user.spot || user.sectionCountry !== this.app.user.sectionCountry) return;
+    if (!this.numCountrySpotsAvailable || user.spot ||
+        (!this.app.user.permissions.isESNInternationalLeader && user.sectionCountry !== this.app.user.sectionCountry) ||
+        (this.app.user.permissions.isESNInternationalLeader && !user.isESNInternational)
+       ) return;
 
     const doAssign = async (): Promise<void> => {
       try {
@@ -417,7 +420,7 @@ export class UsersPage implements OnInit {
         let firstAvailableSpot = null;
         if (this.app.user.permissions.isESNInternationalLeader) {
           firstAvailableSpot = this.spots.find(
-            x => this.app.user.sectionCountry === 'ESN International' && !x.userId
+            x => x.sectionCountry === 'ESN International' && !x.userId
           );
         } else {
           firstAvailableSpot = this.spots.find(
