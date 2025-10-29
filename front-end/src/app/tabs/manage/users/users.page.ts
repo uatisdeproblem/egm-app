@@ -101,15 +101,24 @@ export class UsersPage implements OnInit {
     try {
       await this.loading.show();
       [this.users, this.spots] = await Promise.all([this._users.getList(), this._spots.getList()]);
-      this.numCountrySpotsAvailable = this.spots.filter(
-        x => x.sectionCountry === this.app.user.sectionCountry && !x.userId
-      ).length;
+
+      if (this.app.user.permissions.isESNInternationalLeader) {
+        this.numCountrySpotsAvailable = this.spots.filter(
+          x => x.sectionCountry === 'ESN International' && !x.userId
+        ).length;
+      } else {
+        this.numCountrySpotsAvailable = this.spots.filter(
+          x => x.sectionCountry === this.app.user.sectionCountry && !x.userId
+        ).length;
+      }
+
       this.filter(this.searchbar?.value);
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
     } finally {
       this.loading.hide();
     }
+
   }
   ionViewWillEnter(): void {
     if (!(this.app.user.permissions.canManageRegistrations || this.app.user.permissions.isCountryLeader))
@@ -155,9 +164,10 @@ export class UsersPage implements OnInit {
         this.filters.paymentConfirmed === 'yes' ? !!x.spot?.paymentConfirmedAt : !x.spot?.paymentConfirmedAt
       );
     if (this.filters.sectionCountry)
-      this.filteredUsers = this.filteredUsers.filter(x =>
-        this.filters.sectionCountry === 'no' ? !x.sectionCountry : this.filters.sectionCountry === x.sectionCountry
-      );
+      this.filteredUsers = this.filteredUsers.filter(x => {
+        if (this.filters.sectionCountry === 'international') return x.isESNInternational;
+        return this.filters.sectionCountry === 'no' ? !x.sectionCountry : this.filters.sectionCountry === x.sectionCountry;
+      });
 
     this.calcFooterTotals();
 
@@ -361,6 +371,13 @@ export class UsersPage implements OnInit {
         value: 'isStaff',
         checked: user.permissions.isStaff,
         label: this.t._('USER.IS_STAFF')
+      },
+      {
+        type: 'checkbox',
+        name: 'isESNInternationalLeader',
+        value: 'isESNInternationalLeader',
+        checked: user.permissions.isESNInternationalLeader,
+        label: this.t._('USER.IS_ESN_INTERNATIONAL_LEADER')
       }
     ];
     const buttons = [
@@ -392,12 +409,24 @@ export class UsersPage implements OnInit {
     alert.present();
   }
   async assignCountrySpot(user: User): Promise<void> {
-    if (!this.numCountrySpotsAvailable || user.spot || user.sectionCountry !== this.app.user.sectionCountry) return;
+    if (!this.numCountrySpotsAvailable || user.spot ||
+        (!this.app.user.permissions.isESNInternationalLeader && user.sectionCountry !== this.app.user.sectionCountry) ||
+        (this.app.user.permissions.isESNInternationalLeader && !user.isESNInternational)
+       ) return;
 
     const doAssign = async (): Promise<void> => {
       try {
         await this.loading.show();
-        const firstAvailableSpot = this.spots.find(x => x.sectionCountry === this.app.user.sectionCountry && !x.userId);
+        let firstAvailableSpot = null;
+        if (this.app.user.permissions.isESNInternationalLeader) {
+          firstAvailableSpot = this.spots.find(
+            x => x.sectionCountry === 'ESN International' && !x.userId
+          );
+        } else {
+          firstAvailableSpot = this.spots.find(
+            x => x.sectionCountry === this.app.user.sectionCountry && !x.userId
+          );
+        }
         if (!firstAvailableSpot) return;
         await this._spots.assignToUser(firstAvailableSpot, user);
         firstAvailableSpot.userId = user.userId;
@@ -485,5 +514,5 @@ interface RowsFilters {
   spot: null | 'no' | string;
   proofOfPaymentUploaded: null | 'yes' | 'no';
   paymentConfirmed: null | 'yes' | 'no';
-  sectionCountry: string | 'no' | null;
+  sectionCountry: string | 'no' | 'international' | null;
 }
