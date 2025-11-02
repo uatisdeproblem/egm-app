@@ -20,15 +20,15 @@ const DDB_TABLES = {
 
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any) => new Connections(ev, cb).handleRequest();
+export const handler = (ev: any) => new Connections(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
 ///
 
 class Connections extends ResourceController {
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'connectionId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'connectionId' });
   }
 
   protected async getResources(): Promise<ConnectionWithUserData[]> {
@@ -69,7 +69,7 @@ class Connections extends ResourceController {
       );
 
       return sortedUserConnections;
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }
@@ -81,7 +81,7 @@ class Connections extends ResourceController {
     let target: User;
     try {
       target = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.body.userId } }));
-    } catch (error) {
+    } catch (_) {
       throw new HandledError('Target profile not found');
     }
     if (!target.getName()) throw new HandledError('Target profile incomplete');
@@ -108,7 +108,7 @@ class Connections extends ResourceController {
       await ddb.put({ TableName: DDB_TABLES.connections, Item: connection });
 
       return new ConnectionWithUserData({ ...connection, userProfile: target });
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Connection failed');
     }
   }
@@ -117,7 +117,7 @@ class Connections extends ResourceController {
     let connection: Connection;
     try {
       connection = await ddb.get({ TableName: DDB_TABLES.connections, Key: { connectionId: this.resourceId } });
-    } catch (error) {
+    } catch (_) {
       throw new HandledError('Not found');
     }
 
@@ -126,7 +126,7 @@ class Connections extends ResourceController {
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.connections, Key: { connectionId: this.resourceId } });
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Delete failed');
     }
   }

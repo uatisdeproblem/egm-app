@@ -8,7 +8,6 @@ AWS_PROFILE='egm'
 # other parameters
 ACTION=$1
 STAGE=$2
-SRC_FOLDER='src/'
 C='\033[4;32m' # color
 NC='\033[0m'   # reset (no color)
 
@@ -49,7 +48,7 @@ npm i --silent 1>/dev/null
 
 # lint the code in search for errors
 echo -e "${C}Linting...${NC}"
-npm run lint ${SRC_FOLDER} 1>/dev/null
+npm run lint 1>/dev/null
 
 # compiling models
 echo -e "${C}Compiling...${NC}"

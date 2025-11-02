@@ -16,7 +16,7 @@ const LATEST_VERSION = process.env.LATEST_VERSION;
 const MIN_VERSION = process.env.MIN_VERSION;
 const MAINTENANCE = Boolean(process.env.MAINTENANCE);
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new Status(ev, cb).handleRequest();
+export const handler = (ev: any) => new Status(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER

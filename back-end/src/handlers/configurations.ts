@@ -42,7 +42,7 @@ const s3 = new S3();
 const S3_BUCKET_MEDIA = process.env.S3_BUCKET_MEDIA;
 const S3_ASSETS_FOLDER = process.env.S3_ASSETS_FOLDER;
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new ConfigurationsRC(ev, cb).handleRequest();
+export const handler = (ev: any) => new ConfigurationsRC(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -52,14 +52,14 @@ class ConfigurationsRC extends ResourceController {
   user: User;
   configurations: Configurations;
 
-  constructor(event: any, callback: any) {
-    super(event, callback);
+  constructor(event: any) {
+    super(event);
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -69,7 +69,7 @@ class ConfigurationsRC extends ResourceController {
       this.configurations = new Configurations(
         await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Configuration not found');
     }
   }
@@ -110,7 +110,7 @@ class ConfigurationsRC extends ResourceController {
     try {
       const template = await ses.getTemplate(`${emailTemplate}-${STAGE}`);
       return { subject: template.Subject, content: template.Html };
-    } catch (error) {
+    } catch (_) {
       throw new HandledError('Template not found');
     }
   }

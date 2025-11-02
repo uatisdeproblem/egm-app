@@ -2,7 +2,7 @@
  * Wrapper models for custom fields, that extend the model used in iter-idea package
  * Required to make possible to filter visualization of form items based on user type/selection.
  */
-import { CustomFieldMeta, CustomSectionMeta, CustomBlockMeta, Label, Languages, CustomFieldTypes } from 'idea-toolbox';
+import { CustomFieldMeta, CustomSectionMeta, CustomBlockMeta, Languages, CustomFieldTypes } from 'idea-toolbox';
 
 export interface VisibilityOptions {
   visibleTo: 'both' | 'esners' | 'externals';

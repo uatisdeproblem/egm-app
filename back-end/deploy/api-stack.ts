@@ -43,7 +43,7 @@ export interface DDBTable {
 }
 
 const defaultLambdaFnProps: NodejsFunctionProps = {
-  runtime: Lambda.Runtime.NODEJS_18_X,
+  runtime: Lambda.Runtime.NODEJS_22_X,
   architecture: Lambda.Architecture.ARM_64,
   timeout: Duration.seconds(30),
   memorySize: 1024,

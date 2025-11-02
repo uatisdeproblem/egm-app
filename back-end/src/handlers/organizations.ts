@@ -38,7 +38,7 @@ const ddb = new DynamoDB();
 // const ses = new SES();
 // const s3 = new S3();
 
-export const handler = (ev: any, _: any, cb: any) => new Organizations(ev, cb).handleRequest();
+export const handler = (ev: any) => new Organizations(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -48,14 +48,14 @@ class Organizations extends ResourceController {
   user: User;
   organization: Organization;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'organizationId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'organizationId' });
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -65,7 +65,7 @@ class Organizations extends ResourceController {
       this.organization = new Organization(
         await ddb.get({ TableName: DDB_TABLES.organizations, Key: { organizationId: this.resourceId } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Organization not found');
     }
   }
@@ -101,7 +101,7 @@ class Organizations extends ResourceController {
       await ddb.put(putParams);
 
       return this.organization;
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }
@@ -150,7 +150,7 @@ class Organizations extends ResourceController {
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.organizations, Key: { organizationId: this.resourceId } });
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Delete failed');
     }
   }
@@ -169,7 +169,7 @@ class Organizations extends ResourceController {
       return (await ddb.scan({ TableName: DDB_TABLES.organizations }))
         .map((x: Organization) => new Organization(x))
         .sort((a, b) => a.name.localeCompare(b.name));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }

@@ -22,7 +22,7 @@ const ddb = new DynamoDB();
 
 const ssm = new SystemsManager();
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new GalaxyRC(ev, cb).handleRequest();
+export const handler = (ev: any) => new GalaxyRC(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -32,9 +32,8 @@ class GalaxyRC extends ResourceController {
   host: string;
   stage: string;
 
-  constructor(event: any, callback: any) {
-    super(event, callback);
-    this.callback = callback;
+  constructor(event: any) {
+    super(event);
     this.host = event.headers?.host ?? null;
     this.stage = process.env.STAGE ?? null;
   }
@@ -73,7 +72,7 @@ class GalaxyRC extends ResourceController {
         user.sectionName = attributes['cas:section'][0];
         user.birthDate = new Date(`${year}-${month}-${day}`).toISOString();
         user.isESNInternational = isESNInternational;
-      } catch (error) {
+      } catch (_) {
         firstAccess = true;
         user = new User({
           userId,
@@ -104,7 +103,8 @@ class GalaxyRC extends ResourceController {
 
       // redirect to the front-end with the fresh new token (instead of resolving)
       const appURL = this.queryParams.localhost ? `http://localhost:${this.queryParams.localhost}` : APP_URL;
-      this.callback(null, { statusCode: 302, headers: { Location: `${appURL}/auth?token=${token}` } });
+      this.returnStatusCode = 302;
+      this.returnHeaders = { Location: `${appURL}/auth?token=${token}` };
     } catch (err) {
       this.logger.error('ESN Accounts sign-in failed', err);
       throw new HandledError('ESN Accounts sign-in failed');
