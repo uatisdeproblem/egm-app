@@ -19,7 +19,7 @@ const DDB_TABLES = {
 };
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new MealsRC(ev, cb).handleRequest();
+export const handler = (ev: any) => new MealsRC(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -29,14 +29,14 @@ class MealsRC extends ResourceController {
   user: User;
   meal: Meal;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'mealId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'mealId' });
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -44,7 +44,7 @@ class MealsRC extends ResourceController {
 
     try {
       this.meal = new Meal(await ddb.get({ TableName: DDB_TABLES.meals, Key: { mealId: this.resourceId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Meal not found');
     }
   }
@@ -123,7 +123,7 @@ class MealsRC extends ResourceController {
       await ddb.put(putParams);
 
       return this.meal;
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }
@@ -133,7 +133,7 @@ class MealsRC extends ResourceController {
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.meals, Key: { mealId: this.resourceId } });
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Delete failed');
     }
   }

@@ -1,4 +1,4 @@
-import { CustomBlockMeta, Languages, Resource } from 'idea-toolbox';
+import { Languages, Resource } from 'idea-toolbox';
 import { User } from '../models/user.model';
 import { ServiceLanguages } from './serviceLanguages.enum';
 import { WrapperCustomBlockMeta } from './wrappedCustomBlock.model';
@@ -159,7 +159,8 @@ export enum EmailTemplates {
   SPOT_ASSIGNED = 'spot-assigned',
   REGISTRATION_CONFIRMED = 'registration-confirmed',
   SPOT_TRANSFERRED = 'spot-transferred',
-  SPOT_RELEASED = 'spot-released'
+  SPOT_RELEASED = 'spot-released',
+  INVITATION_LETTER = 'invitation-letter'
 }
 
 /**

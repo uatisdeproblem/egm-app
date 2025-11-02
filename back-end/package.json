@@ -2,7 +2,7 @@
   "version": "3.5.0",
   "name": "back-end",
   "scripts": {
-    "lint": "eslint --ext .ts",
+    "lint": "eslint 'src/**/*.{ts,tsx}'",
     "compile": "tsc --build",
     "deploy": "cdk deploy",
     "cdk": "cdk",
@@ -12,27 +12,27 @@
   "dependencies": {
     "axios": "^1.6.7",
     "date-fns": "^3.3.1",
-    "idea-aws": "^4.4.7",
-    "idea-html2pdf": "^2.2.9",
-    "idea-toolbox": "^7.0.5",
+    "idea-aws": "^4.5.1",
+    "idea-html2pdf": "^2.2.13",
+    "idea-toolbox": "^7.1.14",
     "jsonwebtoken": "^9.0.2",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "@apidevtools/swagger-parser": "^10.1.0",
+    "@apidevtools/swagger-parser": "^12.0.0",
     "@iter-idea/ses-verify-identities": "^1.0.2",
-    "@tsconfig/node18": "^18.2.0",
-    "@types/aws-lambda": "^8.10.119",
+    "@tsconfig/node22": "^22.0.0",
+    "@types/aws-lambda": "^8.10.157",
     "@types/jsonwebtoken": "^9.0.3",
-    "@types/node": "^18.17.4",
+    "@types/node": "^22.16.5",
     "@types/xml2js": "^0.4.12",
-    "@typescript-eslint/eslint-plugin": "^5.47.0",
-    "@typescript-eslint/parser": "^5.47.0",
-    "aws-cdk": "^2.118.0",
-    "aws-cdk-lib": "^2.118.0",
-    "constructs": "^10.3.0",
-    "esbuild": "^0.19.0",
-    "eslint": "^8.46.0",
-    "typescript": "^5.1.6"
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "aws-cdk": "^2.1022.0",
+    "aws-cdk-lib": "^2.207.0",
+    "constructs": "^10.4.2",
+    "esbuild": "^0.25.8",
+    "eslint": "^9.32.0",
+    "typescript": "^5.8.3"
   }
 }

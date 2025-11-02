@@ -24,7 +24,7 @@ const DDB_TABLES = {
 };
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new SessionsRC(ev, cb).handleRequest();
+export const handler = (ev: any) => new SessionsRC(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -34,14 +34,14 @@ class SessionsRC extends ResourceController {
   user: User;
   session: Session;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'sessionId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'sessionId' });
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -51,7 +51,7 @@ class SessionsRC extends ResourceController {
       this.session = new Session(
         await ddb.get({ TableName: DDB_TABLES.sessions, Key: { sessionId: this.resourceId } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Session not found');
     }
   }
@@ -102,7 +102,7 @@ class SessionsRC extends ResourceController {
       await ddb.put(putParams);
 
       return this.session;
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }
@@ -125,7 +125,7 @@ class SessionsRC extends ResourceController {
           Key: { sessionId: this.session.sessionId, userId: this.user.userId }
         })
       );
-    } catch (error) {
+    } catch (_) {
       throw new HandledError("Can't rate a session without being registered");
     }
 

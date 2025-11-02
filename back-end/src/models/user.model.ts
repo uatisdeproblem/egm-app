@@ -164,12 +164,14 @@ export class User extends Resource {
     this.mealType = safeData.mealType;
   }
 
-  validate(): string[] {
+  validate(checkBirth = true): string[] {
     const e = super.validate();
     if (this.iE(this.firstName)) e.push('firstName');
     if (this.iE(this.lastName)) e.push('lastName');
     if (this.iE(this.email, 'email')) e.push('email');
-    if (new Date().getFullYear() - new Date(this.birthDate).getFullYear() < 18) e.push('birthDate');
+    if (checkBirth &&
+        new Date().getFullYear() - new Date(this.birthDate).getFullYear() < 18)
+      e.push('birthDate');
 
     return e;
   }

@@ -15,7 +15,7 @@ const PROJECT = process.env.PROJECT;
 const DDB_TABLES = { users: process.env.DDB_TABLE_users, usefulLinks: process.env.DDB_TABLE_usefulLinks };
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new UsefulLinksRC(ev, cb).handleRequest();
+export const handler = (ev: any) => new UsefulLinksRC(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -25,14 +25,14 @@ class UsefulLinksRC extends ResourceController {
   user: User;
   usefulLink: UsefulLink;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'linkId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'linkId' });
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -42,7 +42,7 @@ class UsefulLinksRC extends ResourceController {
       this.usefulLink = new UsefulLink(
         await ddb.get({ TableName: DDB_TABLES.usefulLinks, Key: { linkId: this.resourceId } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Link not found');
     }
   }

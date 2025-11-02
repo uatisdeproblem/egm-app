@@ -3,11 +3,11 @@
 ///
 
 import { addWeeks } from 'date-fns';
-
-import { DynamoDB, HandledError, ResourceController } from 'idea-aws';
+import { HTML2PDF } from 'idea-html2pdf';
+import { DynamoDB, HandledError, ResourceController, S3 } from 'idea-aws';
 import { toISODate } from 'idea-toolbox';
 
-import { sendEmail } from '../utils/notifications.utils';
+import { sendEmail, sendEmailWithAttachment } from '../utils/notifications.utils';
 
 import { EventSpot, EventSpotAttached } from '../models/eventSpot.model';
 import { User } from '../models/user.model';
@@ -26,7 +26,11 @@ const DDB_TABLES = {
 };
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new EventSpotsRC(ev, cb).handleRequest();
+const S3_BUCKET_MEDIA = process.env.S3_BUCKET_MEDIA;
+const S3_ASSETS_FOLDER = process.env.S3_ASSETS_FOLDER;
+const s3 = new S3();
+
+export const handler = (ev: any) => new EventSpotsRC(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -37,8 +41,8 @@ class EventSpotsRC extends ResourceController {
   user: User;
   spot: EventSpot;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'spotId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'spotId' });
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
@@ -46,13 +50,13 @@ class EventSpotsRC extends ResourceController {
       this.configurations = new Configurations(
         await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Configuration not found');
     }
 
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -67,7 +71,7 @@ class EventSpotsRC extends ResourceController {
 
     try {
       this.spot = new EventSpot(await ddb.get({ TableName: DDB_TABLES.eventSpots, Key: { spotId: this.resourceId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Spot not found');
     }
 
@@ -106,7 +110,7 @@ class EventSpotsRC extends ResourceController {
     let user: User;
     try {
       user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
-    } catch (error) {
+    } catch (_) {
       throw new HandledError("User doesn't exist");
     }
 
@@ -153,14 +157,14 @@ class EventSpotsRC extends ResourceController {
     let sourceUser: User;
     try {
       sourceUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.spot.userId } }));
-    } catch (error) {
+    } catch (_) {
       throw new HandledError("Source user doesn't exist");
     }
 
     let targetUser: User;
     try {
       targetUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: targetUserId } }));
-    } catch (error) {
+    } catch (_) {
       throw new HandledError("Target user doesn't exist");
     }
 
@@ -241,7 +245,7 @@ class EventSpotsRC extends ResourceController {
     if (this.spot.userId) {
       try {
         user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.spot.userId } }));
-      } catch (error) {
+      } catch (_) {
         throw new HandledError("User doesn't exist");
       }
 
@@ -269,8 +273,34 @@ class EventSpotsRC extends ResourceController {
       } catch (error) {
         this.logger.warn('Error sending email', error, { template });
       }
+
+      if (user.registrationForm.financial.needsInvitationLetter) {
+        try {
+          const pdfBuffer: Buffer = await this.generateInvitationLetterPDF(user);
+
+          const htmlBody = `
+            <p>Dear ${user.getName()},</p>
+            <p>Please find the invitation letter for the Erasmus Generation Meeting 2026 in Split, Croatia attached. <p>
+            <p>See you there!</p>
+          `;
+
+          await sendEmailWithAttachment(
+            toAddresses,
+            '[Invitation Letter] EGM 2026',
+            htmlBody,
+            [{
+              filename: `invitation-letter-${user.userId}.pdf`,
+              content: pdfBuffer,
+              contentType: 'application/pdf',
+            }]
+          );
+        } catch (error) {
+          this.logger.warn('Error sending invitation letter', error);
+        }
+      }
     }
   }
+
   private async assignToCountry(sectionCountry: string): Promise<void> {
     if (!this.user.permissions.isAdmin) throw new HandledError('Unauthorized');
 
@@ -298,7 +328,7 @@ class EventSpotsRC extends ResourceController {
     if (this.spot.userId) {
       try {
         user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.spot.userId } }));
-      } catch (error) {
+      } catch (_) {
         throw new HandledError("User doesn't exist");
       }
 
@@ -380,4 +410,37 @@ class EventSpotsRC extends ResourceController {
     await ddb.batchPut(DDB_TABLES.eventSpots, spotsToAdd);
     return spotsToAdd;
   }
+
+  private async generateInvitationLetterPDF(user: User): Promise<Buffer> {
+    const htmlBody = await s3.getObjectAsText({
+      bucket: S3_BUCKET_MEDIA,
+      key: S3_ASSETS_FOLDER.concat('/invitation-letter.hbs')
+    });
+
+    const pdfVariables = {
+      issueDate: toISODate(new Date()),
+      firstName: user.firstName,
+      lastName: user.lastName,
+      dateOfBirth: user.birthDate,
+      placeOfBirth: user.registrationForm.PlaceofBirth,
+      passportNumber: user.registrationForm.IDPassportNumber,
+      passportIssueDate: user.registrationForm.IDPassportIssueDate,
+      passportExpiryDate: user.registrationForm.IDPassportExpiryDate,
+    };
+
+    try {
+      const html2pdf = new HTML2PDF();
+
+      const body = await html2pdf.create({
+        body: html2pdf.handlebarsCompile(htmlBody)(pdfVariables),
+        pdfOptions: { margin: { top: '0cm', right: '0cm', bottom: '0cm', left: '0cm' } }
+      });
+
+      return body;
+    } catch (err) {
+      this.logger.warn('Invitation letter PDF creation failed', err);
+      throw new HandledError('Invitation letter PDF creation failed');
+    }
+  }
 }
+

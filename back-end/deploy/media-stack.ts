@@ -95,7 +95,7 @@ const createThumbnailer = (scope: Construct, s3BucketIDEALambdaFn: S3.Bucket | c
   const thumbnailerFn = new Lambda.Function(scope, THUMBNAILER_KEY, {
     description: 'Convert an S3 uploaded media into a thumbnail',
     architecture: Lambda.Architecture.X86_64,
-    runtime: Lambda.Runtime.NODEJS_18_X,
+    runtime: Lambda.Runtime.NODEJS_22_X,
     memorySize: 1536,
     timeout: Duration.seconds(10),
     code: Lambda.Code.fromBucket(s3BucketIDEALambdaFn, 'fn-thumbnailer.zip'),
@@ -134,9 +134,9 @@ const createHTMLToPDFLambdaFunctions = (
 
   const lambdaFnOptions = {
     architecture: Lambda.Architecture.X86_64,
-    runtime: Lambda.Runtime.NODEJS_18_X,
-    memorySize: 1536,
-    timeout: Duration.seconds(20),
+    runtime: Lambda.Runtime.NODEJS_22_X,
+    memorySize: 2048,
+    timeout: Duration.seconds(50),
     handler: 'index.handler',
     layers: [chromiumPuppetteerLayer],
     logRetention: RetentionDays.TWO_WEEKS

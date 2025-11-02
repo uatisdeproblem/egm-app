@@ -41,7 +41,7 @@ const cognito = new Cognito();
 const ESNCARD_API_URL = 'https://api.esncard.org/api/v1/esncards';
 const ESNCARD_TIMEOUT = 5000;
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new UsersRC(ev, cb).handleRequest();
+export const handler = (ev: any) => new UsersRC(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -52,8 +52,8 @@ class UsersRC extends ResourceController {
   reqUser: User;
   targetUser: User;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'userId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'userId' });
   }
 
   protected async validateESNcard(cardCode: string): Promise<boolean> {
@@ -66,7 +66,7 @@ class UsersRC extends ResourceController {
       const timeoutId = setTimeout(() => controller.abort(), ESNCARD_TIMEOUT);
 
       const response = await fetch(
-        `${ESNCARD_API_URL}/${trimmedCode}?firstName=${encodeURIComponent(this.targetUser.firstName)}&lastName=${encodeURIComponent(this.reqUser.lastName)}&esnSection=${encodeURIComponent(this.targetUser.sectionName)}`,
+        `${ESNCARD_API_URL}/${trimmedCode}?firstName=${encodeURIComponent(this.targetUser.firstName)}&lastName=${encodeURIComponent(this.targetUser.lastName)}&esnSection=${encodeURIComponent(this.targetUser.sectionName)}`,
         {
           signal: controller.signal,
           headers: {
@@ -87,7 +87,7 @@ class UsersRC extends ResourceController {
       return !cardData.cardExpired && cardData.firstNameIsValidated &&
               cardData.lastNameIsValidated && cardData.esnSectionIsValidated;
 
-    } catch (error) {
+    } catch (_) {
       return false;
     }
   }
@@ -97,13 +97,13 @@ class UsersRC extends ResourceController {
       this.configurations = new Configurations(
         await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Configuration not found');
     }
 
     try {
       this.reqUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Requesting user not found');
     }
 
@@ -118,7 +118,7 @@ class UsersRC extends ResourceController {
 
     try {
       this.targetUser = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.resourceId } }));
-    } catch (error) {
+    } catch (_) {
       throw new HandledError('Target user not found');
     }
 
@@ -308,7 +308,7 @@ class UsersRC extends ResourceController {
       spot = new EventSpot(
         await ddb.get({ TableName: DDB_TABLES.eventSpots, Key: { spotId: this.targetUser.spot.spotId } })
       );
-    } catch (error) {
+    } catch (_) {
       throw new HandledError("Spot doesn't exist");
     }
 

@@ -22,7 +22,7 @@ const DDB_TABLES = {
 
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any) => new Speakers(ev, cb).handleRequest();
+export const handler = (ev: any) => new Speakers(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -32,14 +32,14 @@ class Speakers extends ResourceController {
   user: User;
   speaker: Speaker;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'speakerId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'speakerId' });
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -49,7 +49,7 @@ class Speakers extends ResourceController {
       this.speaker = new Speaker(
         await ddb.get({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.resourceId } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Speaker not found');
     }
   }
@@ -92,7 +92,7 @@ class Speakers extends ResourceController {
       await ddb.put(putParams);
 
       return this.speaker;
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }
@@ -102,7 +102,7 @@ class Speakers extends ResourceController {
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.speakers, Key: { speakerId: this.resourceId } });
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Delete failed');
     }
   }
@@ -127,7 +127,7 @@ class Speakers extends ResourceController {
       const sortedSpeakers = filteredSpeakers.sort((a, b) => a.name.localeCompare(b.name));
 
       return sortedSpeakers;
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }

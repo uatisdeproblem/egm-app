@@ -17,7 +17,7 @@ const DDB_TABLES = { users: process.env.DDB_TABLE_users, venues: process.env.DDB
 
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any) => new Venues(ev, cb).handleRequest();
+export const handler = (ev: any) => new Venues(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -27,14 +27,14 @@ class Venues extends ResourceController {
   user: User;
   venue: Venue;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'venueId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'venueId' });
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -42,7 +42,7 @@ class Venues extends ResourceController {
 
     try {
       this.venue = new Venue(await ddb.get({ TableName: DDB_TABLES.venues, Key: { venueId: this.resourceId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Venue not found');
     }
   }
@@ -78,7 +78,7 @@ class Venues extends ResourceController {
       await ddb.put(putParams);
 
       return this.venue;
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }
@@ -88,7 +88,7 @@ class Venues extends ResourceController {
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.venues, Key: { venueId: this.resourceId } });
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Delete failed');
     }
   }
@@ -107,7 +107,7 @@ class Venues extends ResourceController {
       return (await ddb.scan({ TableName: DDB_TABLES.venues }))
         .map((x: Venue) => new Venue(x))
         .sort((a, b) => a.name.localeCompare(b.name));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }

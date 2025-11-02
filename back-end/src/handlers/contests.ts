@@ -16,7 +16,7 @@ const STAGE = process.env.STAGE;
 const DDB_TABLES = { users: process.env.DDB_TABLE_users, contests: process.env.DDB_TABLE_contests };
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new ContestsRC(ev, cb).handleRequest();
+export const handler = (ev: any) => new ContestsRC(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -26,15 +26,15 @@ class ContestsRC extends ResourceController {
   user: User;
   contest: Contest;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'contestId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'contestId' });
     if (STAGE === 'prod') this.silentLambdaLogs(); // to make the vote anonymous
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -44,7 +44,7 @@ class ContestsRC extends ResourceController {
       this.contest = new Contest(
         await ddb.get({ TableName: DDB_TABLES.contests, Key: { contestId: this.resourceId } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Contest not found');
     }
   }

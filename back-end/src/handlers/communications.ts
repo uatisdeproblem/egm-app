@@ -21,7 +21,7 @@ const DDB_TABLES = {
 
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any) => new Communications(ev, cb).handleRequest();
+export const handler = (ev: any) => new Communications(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -31,14 +31,14 @@ class Communications extends ResourceController {
   user: User;
   communication: Communication;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'communicationId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'communicationId' });
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId: this.principalId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -48,7 +48,7 @@ class Communications extends ResourceController {
       this.communication = new Communication(
         await ddb.get({ TableName: DDB_TABLES.communications, Key: { communicationId: this.resourceId } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Communication not found');
     }
   }
@@ -63,7 +63,7 @@ class Communications extends ResourceController {
       });
       communication.hasBeenReadByUser = true;
       return communication;
-    } catch (unread) {
+    } catch (_) {
       return communication;
     }
   }
@@ -86,7 +86,7 @@ class Communications extends ResourceController {
       await ddb.put(putParams);
 
       return this.communication;
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }
@@ -113,7 +113,7 @@ class Communications extends ResourceController {
 
     try {
       await ddb.delete({ TableName: DDB_TABLES.communications, Key: { communicationId: this.resourceId } });
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Delete failed');
     }
   }
@@ -150,7 +150,7 @@ class Communications extends ResourceController {
       const sortedCommunications = communications.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 
       return sortedCommunications;
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Operation failed');
     }
   }

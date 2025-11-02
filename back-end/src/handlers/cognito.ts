@@ -21,15 +21,15 @@ const ddb = new DynamoDB();
 
 const ssm = new SystemsManager();
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new CognitoRC(ev, cb).handleRequest();
+export const handler = (ev: any) => new CognitoRC(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
 ///
 
 class CognitoRC extends ResourceController {
-  constructor(event: any, callback: any) {
-    super(event, callback);
+  constructor(event: any) {
+    super(event);
   }
 
   protected async postResources(): Promise<any> {
@@ -60,7 +60,7 @@ class CognitoRC extends ResourceController {
     let user: User;
     try {
       user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
-    } catch (error) {
+    } catch (_) {
       user = new User({ userId, authService: AuthServices.COGNITO, email });
     }
     await ddb.put({ TableName: DDB_TABLES.users, Item: user });
@@ -76,7 +76,7 @@ class CognitoRC extends ResourceController {
   ): Promise<{ token: string }> {
     const user = new User({ authService: AuthServices.COGNITO, firstName, lastName, email });
 
-    const errors = user.validate();
+    const errors = user.validate(false);
     if (errors.length) throw new HandledError(`Invalid fields: ${errors.join(', ')}`);
 
     try {

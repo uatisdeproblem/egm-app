@@ -13,6 +13,7 @@
     "node_modules": true,
     "npm-debug.log": true,
     "back-end/**/node_modules": true,
+    "back-end/**/tsconfig.tsbuildinfo": true,
     "back-end/src/**/*.js": true,
     "back-end/cdk.out": true,
     "front-end/**/node_modules": true,

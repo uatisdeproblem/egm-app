@@ -70,7 +70,7 @@ export class Meal extends Resource {
       )
         .toISOString()
         .slice(0, 16);
-    } catch (error) {
+    } catch (_) {
       // force null on invalid dates that might come from import
       return null;
     }

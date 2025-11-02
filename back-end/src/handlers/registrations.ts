@@ -23,7 +23,7 @@ const DDB_TABLES = {
 
 const ddb = new DynamoDB();
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new SessionRegistrationsRC(ev, cb).handleRequest();
+export const handler = (ev: any) => new SessionRegistrationsRC(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -34,8 +34,8 @@ class SessionRegistrationsRC extends ResourceController {
   configurations: Configurations;
   registration: SessionRegistration;
 
-  constructor(event: any, callback: any) {
-    super(event, callback, { resourceId: 'sessionId' });
+  constructor(event: any) {
+    super(event, { resourceId: 'sessionId' });
   }
 
   protected async checkAuthBeforeRequest(): Promise<void> {
@@ -44,7 +44,7 @@ class SessionRegistrationsRC extends ResourceController {
 
     try {
       this.user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('User not found');
     }
 
@@ -52,7 +52,7 @@ class SessionRegistrationsRC extends ResourceController {
       this.configurations = new Configurations(
         await ddb.get({ TableName: DDB_TABLES.configurations, Key: { PK: Configurations.PK } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Configuration not found');
     }
 
@@ -62,7 +62,7 @@ class SessionRegistrationsRC extends ResourceController {
       this.registration = new SessionRegistration(
         await ddb.get({ TableName: DDB_TABLES.registrations, Key: { sessionId, userId } })
       );
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Registration not found');
     }
   }
@@ -126,7 +126,7 @@ class SessionRegistrationsRC extends ResourceController {
       };
 
       await ddb.update(updateParams);
-    } catch (error) {
+    } catch (_) {
       throw new HandledError('Could not confirm session participation for this user');
     }
   }
@@ -238,7 +238,7 @@ class SessionRegistrationsRC extends ResourceController {
         ExpressionAttributeValues: { ':userId': userId }
       });
       return registrationsOfUser.map(s => new SessionRegistration(s));
-    } catch (error) {
+    } catch (_) {
       throw new HandledError('Could not load registrations for this user');
     }
   }
@@ -250,14 +250,14 @@ class SessionRegistrationsRC extends ResourceController {
         ExpressionAttributeValues: { ':sessionId': sessionId }
       });
       return registrationsOfSession.map(s => new SessionRegistration(s));
-    } catch (error) {
+    } catch (_) {
       throw new HandledError('Could not load registrations for this session');
     }
   }
   private async getSessionById(sessionId: string): Promise<Session> {
     try {
       return new Session(await ddb.get({ TableName: DDB_TABLES.sessions, Key: { sessionId } }));
-    } catch (err) {
+    } catch (_) {
       throw new HandledError('Session not found');
     }
   }

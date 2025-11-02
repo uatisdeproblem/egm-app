@@ -18,7 +18,7 @@ interface EmailInBlockList {
   expiresAt: number;
 }
 
-export const handler = (ev: any, _: any, cb: any): Promise<void> => new HandleSESNotifications(ev, cb).handleRequest();
+export const handler = (ev: any) => new HandleSESNotifications(ev).handleRequest();
 
 ///
 /// RESOURCE CONTROLLER
@@ -82,7 +82,7 @@ export const isEmailInBlockList = async (email: string): Promise<boolean> => {
   try {
     await ddb.get({ TableName: DDB_TABLE_BLOCK_LIST, Key: { email } });
     return true;
-  } catch (error) {
+  } catch (_) {
     return false;
   }
 };
