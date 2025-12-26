@@ -14,6 +14,8 @@ import { IDEAEnvironment, IDEATranslationsModule, IDEAActionSheetModule } from '
 import { environment } from '@env';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
+import { provideHttpClient } from '@angular/common/http';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -27,7 +29,8 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: IDEAEnvironment, useValue: environment }
+    { provide: IDEAEnvironment, useValue: environment },
+    provideHttpClient(),
   ],
   bootstrap: [AppComponent]
 })
