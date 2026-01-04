@@ -4,7 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { IDEATranslationsModule } from '@idea-ionic/common';
 
-import { OrganizationsRoutingModule } from './organizations-routing.module';
+import { OrganizationsRoutingModule } from './organizations.routes';
 import { OrganizationPage } from './organization.page';
 import { OrganizationsPage } from './organizations.page';
 import { OrganizationCardStandaloneComponent } from './organizationCard.component';

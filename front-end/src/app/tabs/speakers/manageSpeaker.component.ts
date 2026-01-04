@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   AlertController,
   IonButton,
@@ -176,17 +176,17 @@ export class ManageSpeakerComponent implements OnInit {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _media: MediaService,
-    private _organizations: OrganizationsService,
-    private _speakers: SpeakersService,
-    public app: AppService
-  ) {}
+  private readonly modalCtrl = inject(ModalController);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly t = inject(IDEATranslationsService);
+  private readonly loading = inject(IDEALoadingService);
+  private readonly message = inject(IDEAMessageService);
+  private readonly _media = inject(MediaService);
+  private readonly _organizations = inject(OrganizationsService);
+  private readonly _speakers = inject(SpeakersService);
+  public readonly app = inject(AppService);
+
+  constructor() {}
 
   async ngOnInit() {
     this.entityBeforeChange = new Speaker(this.speaker);

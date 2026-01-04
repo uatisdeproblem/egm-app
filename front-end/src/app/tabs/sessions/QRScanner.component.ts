@@ -1,9 +1,36 @@
-import { Component, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { IDEATranslationsService } from '@idea-ionic/common';
+import { CommonModule } from '@angular/common';
+import { Component, Input, inject } from '@angular/core';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { IDEATranslatePipe, IDEATranslationsService } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-qr-scanner-modal',
+  imports: [
+    // Angular
+    CommonModule,
+    //External
+    ZXingScannerModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonTitle,
+    IonToolbar
+  ],
   template: `
     <ion-header>
       <ion-toolbar color="primary">
@@ -30,7 +57,8 @@ export class QrScannerModalComponent {
   currentDevice: MediaDeviceInfo = null;
   availableDevices: MediaDeviceInfo[];
 
-  constructor(private modalCtrl: ModalController, public t: IDEATranslationsService) {}
+  private modalCtrl = inject(ModalController);
+  public t = inject(IDEATranslationsService);
 
   async onScanSuccess(result: string): Promise<void> {
     this.modalCtrl.dismiss(result);

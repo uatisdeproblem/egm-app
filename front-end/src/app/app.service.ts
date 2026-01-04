@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Params } from '@angular/router';
 import { AlertController, NavController, Platform } from '@ionic/angular/standalone';
 import { Browser } from '@capacitor/browser';
@@ -27,6 +27,13 @@ const APP_ICON_WHITE_PATH = './assets/icons/star-white.svg';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
+  private platform = inject(Platform);
+  private navCtrl = inject(NavController);
+  private alertCtrl = inject(AlertController);
+  private message = inject(IDEAMessageService);
+  private t = inject(IDEATranslationsService);
+  private api = inject(IDEAApiService);
+
   initReady = false;
   authReady = false;
 
@@ -37,14 +44,7 @@ export class AppService {
 
   linkToOpenViaFab: string;
 
-  constructor(
-    private platform: Platform,
-    private navCtrl: NavController,
-    private alertCtrl: AlertController,
-    private message: IDEAMessageService,
-    private t: IDEATranslationsService,
-    private api: IDEAApiService
-  ) {
+  constructor() {
     this.darkMode = this.respondToColorSchemePreferenceChanges();
   }
   private respondToColorSchemePreferenceChanges(): boolean {

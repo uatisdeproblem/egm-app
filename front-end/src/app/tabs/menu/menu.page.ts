@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { AppService } from 'src/app/app.service';
 
@@ -8,5 +8,5 @@ import { AppService } from 'src/app/app.service';
   styleUrls: ['./menu.page.scss']
 })
 export class MenuPage {
-  constructor(public app: AppService) {}
+  public readonly app = inject(AppService);
 }

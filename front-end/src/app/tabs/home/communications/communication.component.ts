@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { IDEALocalizedDatePipe } from '@idea-ionic/common';
 import {
   IonCard,
@@ -95,5 +95,5 @@ export class CommunicationComponent {
    */
   @Output() select = new EventEmitter<void>();
 
-  constructor(public app: AppService) {}
+  public readonly app = inject(AppService);
 }

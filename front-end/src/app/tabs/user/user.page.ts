@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AlertController, IonAvatar, IonBadge, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonListHeader, IonText, IonTitle, IonToolbar, ModalController } from '@ionic/angular/standalone';
 import { Browser } from '@capacitor/browser';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEADateTimeComponent } from '@idea-ionic/uncommon';
 
 import { AppService } from '@app/app.service';
 import { AuthService } from '@app/auth/auth.service';
@@ -13,6 +16,31 @@ import { StripeWarningStandaloneComponent } from '../payments/stripeWarning.comp
 
 @Component({
   selector: 'user',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    IDEADateTimeComponent,
+    // Ionic
+    IonAvatar,
+    IonBadge,
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonImg,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: 'user.page.html',
   styleUrls: ['user.page.scss']
 })
@@ -25,16 +53,14 @@ export class UserPage {
   errors = new Set<string>();
   entityBeforeChange: User;
 
-  constructor(
-    private alertCtrl: AlertController,
-    private modalCtrl: ModalController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private t: IDEATranslationsService,
-    private auth: AuthService,
-    private _user: UserService,
-    public app: AppService
-  ) {}
+  private alertCtrl = inject(AlertController);
+  private modalCtrl = inject(ModalController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private t = inject(IDEATranslationsService);
+  private auth = inject(AuthService);
+  private _user = inject(UserService);
+  public app = inject(AppService);
 
   async changeAvatar({ target }): Promise<void> {
     const file = target.files[0];

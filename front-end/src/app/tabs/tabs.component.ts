@@ -1,18 +1,33 @@
-import { Component, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, ViewChild, inject } from '@angular/core';
+import { IDEATranslatePipe } from '@idea-ionic/common';
+import { IonIcon, IonImg, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
-import { IonTabs } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-tabs',
+  imports: [
+    // Angular
+    CommonModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonIcon,
+    IonImg,
+    IonLabel,
+    IonTabBar,
+    IonTabButton,
+    IonTabs
+  ],
   templateUrl: 'tabs.component.html',
   styleUrls: ['tabs.component.scss']
 })
 export class TabsComponent {
-  @ViewChild('mobileTabs', { static: false }) tabs: IonTabs;
-  selectedTab: string;
+  public readonly app = inject(AppService);
 
-  constructor(public app: AppService) {}
+  @ViewChild('mobileTabs', { static: false }) tabs: IonTabs;
+  selectedTab = '';
 
   setCurrentTab(): void {
     this.selectedTab = this.tabs.getSelected();

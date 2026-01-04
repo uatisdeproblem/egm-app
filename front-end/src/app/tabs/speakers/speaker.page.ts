@@ -1,20 +1,66 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ModalController } from '@ionic/angular/standalone';
-
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonSearchbar,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { ManageSpeakerComponent } from './manageSpeaker.component';
+import { SpeakerCardStandaloneComponent } from './speakerCard.component';
 
 import { AppService } from 'src/app/app.service';
 import { SpeakersService } from './speakers.service';
 import { SessionsService } from '../sessions/sessions.service';
+import { SessionCardStandaloneComponent } from '../sessions/sessionCard.component';
 
 import { Speaker } from '@models/speaker.model';
 import { Session } from '@models/session.model';
 
 @Component({
   selector: 'app-speaker',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    SpeakerCardStandaloneComponent,
+    SessionCardStandaloneComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonGrid,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonSearchbar,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: './speaker.page.html',
   styleUrls: ['./speaker.page.scss']
 })
@@ -22,15 +68,13 @@ export class SpeakerPage implements OnInit {
   speaker: Speaker;
   sessions: Session[];
 
-  constructor(
-    private route: ActivatedRoute,
-    private modalCtrl: ModalController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _speakers: SpeakersService,
-    private _sessions: SessionsService,
-    public app: AppService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private modalCtrl = inject(ModalController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _speakers = inject(SpeakersService);
+  private _sessions = inject(SessionsService);
+  public app = inject(AppService);
 
   async ngOnInit() {
     await this.loadData();

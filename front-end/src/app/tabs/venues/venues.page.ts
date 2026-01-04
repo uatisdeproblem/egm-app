@@ -1,7 +1,21 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Map } from 'maplibre-gl';
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonContent,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
+  IonSkeletonText,
+  IonToolbar
+} from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
 import { MapService } from '@common/map.service';
@@ -11,6 +25,24 @@ import { Venue } from '@models/venue.model';
 
 @Component({
   selector: 'app-venues',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonContent,
+    IonHeader,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonSearchbar,
+    IonSegment,
+    IonSegmentButton,
+    IonSkeletonText,
+    IonToolbar
+  ],
   templateUrl: 'venues.page.html',
   styleUrls: ['venues.page.scss']
 })

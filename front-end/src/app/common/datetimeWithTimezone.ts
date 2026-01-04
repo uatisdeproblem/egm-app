@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnInit,
@@ -70,7 +71,7 @@ export class DatetimeWithTimezoneStandaloneComponent implements OnInit, OnChange
 
   @ViewChild('dateTime') dateTime: ElementRef;
 
-  constructor(public app: AppService) {}
+  public readonly app = inject(AppService);
   async ngOnInit(): Promise<void> {
     this.timezone = this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
     this.initialValue = this.utcToZonedTimeString(this.date);

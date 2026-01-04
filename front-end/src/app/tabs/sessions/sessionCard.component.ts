@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonBadge,
@@ -111,5 +111,5 @@ export class SessionCardStandaloneComponent {
   @Input() session: Session;
   @Input() preview: boolean;
 
-  constructor(public app: AppService) {}
+  public readonly app = inject(AppService);
 }

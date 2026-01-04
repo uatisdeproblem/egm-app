@@ -129,7 +129,7 @@ export class MealCardStandaloneComponent {
 
   @Input() meal: Meal;
 
-  constructor(public app: AppService) {}
+  public readonly app = inject(AppService);
 
   async generateQrCode(): Promise<void> {
     if (!this.meal.needsScan) return;

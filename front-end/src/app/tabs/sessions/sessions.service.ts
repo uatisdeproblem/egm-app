@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { Session, SessionType } from '@models/session.model';
@@ -6,6 +6,8 @@ import { SessionRegistration } from '@models/sessionRegistration.model';
 
 @Injectable({ providedIn: 'root' })
 export class SessionsService {
+  private readonly api = inject(IDEAApiService);
+
   private sessions: Session[];
   // It's the IDs only
   private userFavoriteSessions: string[];
@@ -15,8 +17,6 @@ export class SessionsService {
    * The number of sessions to consider for the pagination, when active.
    */
   MAX_PAGE_SIZE = 24;
-
-  constructor(private api: IDEAApiService) {}
 
   private async loadList(): Promise<void> {
     this.sessions = (await this.api.getResource(['sessions'])).map(s => new Session(s));

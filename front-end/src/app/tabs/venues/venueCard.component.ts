@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonCard,
@@ -18,7 +18,6 @@ import { AppService } from 'src/app/app.service';
 import { Venue } from '@models/venue.model';
 
 @Component({
-  standalone: true,
   imports: [
     // Angular
     CommonModule,
@@ -75,7 +74,7 @@ import { Venue } from '@models/venue.model';
 export class VenueCardStandaloneComponent {
   @Input() venue: Venue;
 
-  constructor(public app: AppService) {}
+  public readonly app = inject(AppService);
 
   openMap(latitude: number, longitude: number): void {
     return; // @todo add map #61
