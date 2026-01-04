@@ -30,7 +30,7 @@
                 "output": "./assets/fonts/"
               }
             ],
-            "styles": ["src/theme/variables.scss", "src/global.scss"],
+            "styles": ["src/global.scss", "src/theme/variables.scss"],
             "scripts": [],
             "aot": true,
             "vendorChunk": true,
@@ -90,8 +90,11 @@
     "analytics": false
   },
   "schematics": {
-    "@ionic/angular-toolkit:component": { "styleext": "scss" },
-    "@ionic/angular-toolkit:page": { "styleext": "scss" },
+    "@ionic/angular-toolkit:component": { "styleext": "scss", "standalone": true },
+    "@ionic/angular-toolkit:page": { "styleext": "scss", "standalone": true },
+    "@schematics/angular:component": { "standalone": true },
+    "@schematics/angular:directive": { "standalone": true },
+    "@schematics/angular:pipe": { "standalone": true },
     "@angular-eslint/schematics:application": { "setParserOptionsProject": true },
     "@angular-eslint/schematics:library": { "setParserOptionsProject": true }
   }

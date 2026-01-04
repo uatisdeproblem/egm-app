@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonContent, IonInfiniteScroll } from '@ionic/angular';
+import { AlertController, IonContent, IonInfiniteScroll } from '@ionic/angular/standalone';
 import { read, utils, WorkBook, writeFile } from 'xlsx';
 
 import { IDEAApiService, IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';

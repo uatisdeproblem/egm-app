@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
-import { IDEATranslationsModule } from '@idea-ionic/common';
-
 import { AppService } from 'src/app/app.service';
 
 import { Room } from '@models/room.model';
@@ -12,7 +10,7 @@ import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+  imports: [CommonModule, FormsModule, IonicModule, HTMLEditorComponent],
   selector: 'app-room-card',
   template: `
     <ng-container *ngIf="room; else skeletonTemplate">

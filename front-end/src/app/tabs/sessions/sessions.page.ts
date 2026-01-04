@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonContent, IonSearchbar, ModalController } from '@ionic/angular';
+import { IonContent, IonSearchbar, ModalController } from '@ionic/angular/standalone';
 
 import { AppService } from 'src/app/app.service';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';

@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
-import { IDEATranslationsModule } from '@idea-ionic/common';
-
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
 import { AppService } from 'src/app/app.service';
@@ -13,7 +11,7 @@ import { Speaker } from '@models/speaker.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+  imports: [CommonModule, FormsModule, IonicModule, HTMLEditorComponent],
   selector: 'app-speaker-card',
   template: `
     <ng-container *ngIf="speaker; else skeletonTemplate">

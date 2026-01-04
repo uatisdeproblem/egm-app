@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonContent } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/standalone';
 
 import { Organization } from '@models/organization.model';
 import { OrganizationsService } from './organizations.service';

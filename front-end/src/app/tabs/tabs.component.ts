@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 
 import { AppService } from '@app/app.service';
-import { IonTabs } from '@ionic/angular';
+import { IonTabs } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-tabs',

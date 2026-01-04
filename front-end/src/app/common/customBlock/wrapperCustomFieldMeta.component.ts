@@ -1,10 +1,43 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { ModalController } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonBadge, IonText, IonItem, IonInput, IonSelect, IonSelectOption, IonToggle, IonReorderGroup, IonReorder, IonRow, IonCol, IonCheckbox } from '@ionic/angular/standalone';
 import { Label } from 'idea-toolbox';
 import { WrapperCustomFieldMeta } from '@models/wrappedCustomBlock.model';
+import { IDEATranslatePipe, IDEALocalizedLabelPipe } from '@idea-ionic/common';
 
 @Component({
   selector: 'wrapper-custom-field-meta',
+  imports: [
+    // Angular
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    IDEALocalizedLabelPipe,
+    // Ionic
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonListHeader,
+    IonLabel,
+    IonBadge,
+    IonText,
+    IonItem,
+    IonInput,
+    IonSelect,
+    IonSelectOption,
+    IonToggle,
+    IonReorderGroup,
+    IonReorder,
+    IonRow,
+    IonCol,
+    IonCheckbox
+  ],
   template: `
     <ion-header>
       <ion-toolbar color="ideaToolbar">

@@ -1,11 +1,26 @@
 import { Component, Input, inject } from '@angular/core';
-import { ModalController, AlertController } from '@ionic/angular';
-import { Label, Languages } from 'idea-toolbox';
+import { ModalController, AlertController, IonItem, IonLabel, IonButton, IonIcon, IonReorderGroup, IonReorder, IonCol, IonRow } from '@ionic/angular/standalone';
+import { IDEATranslatePipe, IDEALocalizedLabelPipe } from '@idea-ionic/common';
+import { Languages } from 'idea-toolbox';
 import { WrapperCustomBlockMeta, WrapperCustomSectionMeta } from '@models/wrappedCustomBlock.model';
 import { WrapperCustomSectionMetaComponent } from './wrapperCustomSectionMeta.component';
 
 @Component({
   selector: 'wrapper-custom-block-meta',
+  imports: [
+    // IDEA
+    IDEATranslatePipe,
+    IDEALocalizedLabelPipe,
+    // Ionic
+    IonButton,
+    IonCol,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonReorder,
+    IonReorderGroup,
+    IonRow
+  ],
   template: `
     @if (!block.sectionsLegend.length) {
       <ion-item lines="none">

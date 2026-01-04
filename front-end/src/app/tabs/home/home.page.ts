@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
 
 import { ManageUsefulLinkStandaloneComponent } from 'src/app/common/usefulLinks/manageUsefulLink.component';

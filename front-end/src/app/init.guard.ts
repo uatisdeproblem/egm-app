@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { IDEAAppStatusService, IDEAStorageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { AppService } from './app.service';

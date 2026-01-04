@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
-import { AppService } from 'src/app/app.service';
+import { ModalController } from '@ionic/angular/standalone';
+import { IDEATranslationsService } from '@idea-ionic/common';
 
 @Component({
   selector: 'app-qr-scanner-modal',

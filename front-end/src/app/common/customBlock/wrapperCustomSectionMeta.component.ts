@@ -1,11 +1,38 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController, AlertController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular/standalone';
 import { CustomFieldTypes, Label, Languages } from 'idea-toolbox';
+import { IDEATranslatePipe, IDEALocalizedLabelPipe } from '@idea-ionic/common';
 import { WrapperCustomFieldMeta, WrapperCustomSectionMeta } from '@models/wrappedCustomBlock.model';
 import { WrapperCustomFieldMetaComponent } from './wrapperCustomFieldMeta.component';
+import { IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonText, IonItem, IonInput, IonBadge, IonReorderGroup, IonReorder, IonRow, IonCol, IonItemDivider } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'wrapper-custom-section-meta',
+  imports: [
+    // IDEA
+    IDEATranslatePipe,
+    IDEALocalizedLabelPipe,
+    // Ionic
+    IonBadge,
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonItemDivider,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonReorder,
+    IonReorderGroup,
+    IonRow,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   template: `
     <ion-header>
       <ion-toolbar color="ideaToolbar">

@@ -1,5 +1,5 @@
 {
   "name": "egm-app",
   "integrations": {},
-  "type": "angular"
+  "type": "angular-standalone"
 }

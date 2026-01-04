@@ -1,10 +1,14 @@
 import { Component, Input, OnInit, inject, EventEmitter, Output, DoCheck } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { AppService } from '@app/app.service';
 import { WrapperCustomFieldMeta, WrapperCustomBlockMeta, VisibilityOptions } from '@models/wrappedCustomBlock.model';
-import { AlertController } from '@ionic/angular';
+import { AlertController, IonList, IonItem, IonListHeader, IonLabel, IonInput, IonButton, IonIcon, IonCheckbox, IonSelect, IonText, IonTextarea, IonSelectOption } from '@ionic/angular/standalone';
+import { IDEATranslatePipe, IDEASelectComponent, IDEALocalizedLabelPipe } from '@idea-ionic/common';
+import { IDEADateTimeComponent } from '@idea-ionic/uncommon';
 
 @Component({
   selector: 'wrapper-custom-block',
+  imports: [FormsModule, IonList, IonItem, IonListHeader, IonLabel, IonInput, IonButton, IonIcon, IonCheckbox, IonSelect, IonSelectOption, IonText, IonTextarea, IDEATranslatePipe, IDEASelectComponent, IDEALocalizedLabelPipe, IDEADateTimeComponent],
   template: `
     @for (s of filteredBlockMeta?.sectionsLegend; track s) {
       <ion-list class="aList customBlockList">

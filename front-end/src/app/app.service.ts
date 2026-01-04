@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
-import { AlertController, NavController, Platform } from '@ionic/angular';
+import { AlertController, NavController, Platform } from '@ionic/angular/standalone';
 import { Browser } from '@capacitor/browser';
 import { IDEAApiService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 

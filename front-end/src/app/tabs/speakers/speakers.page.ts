@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonContent } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/standalone';
 
 import { Speaker } from '@models/speaker.model';
 import { SpeakersService } from './speakers.service';
