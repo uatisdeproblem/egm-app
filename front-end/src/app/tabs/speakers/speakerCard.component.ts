@@ -1,7 +1,20 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonIcon,
+  IonImg,
+  IonInput,
+  IonItem,
+  IonList,
+  IonSkeletonText
+} from '@ionic/angular/standalone';
 
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
@@ -11,7 +24,26 @@ import { Speaker } from '@models/speaker.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonIcon,
+    IonImg,
+    IonInput,
+    IonItem,
+    IonList,
+    IonSkeletonText
+  ],
   selector: 'app-speaker-card',
   template: `
     <ng-container *ngIf="speaker; else skeletonTemplate">

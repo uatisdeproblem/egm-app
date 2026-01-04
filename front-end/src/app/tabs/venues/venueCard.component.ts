@@ -1,7 +1,15 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonImg,
+  IonSkeletonText
+} from '@ionic/angular/standalone';
 
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
@@ -11,7 +19,21 @@ import { Venue } from '@models/venue.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonImg,
+    IonSkeletonText
+  ],
   selector: 'app-venue-card',
   template: `
     <ion-card *ngIf="venue" color="white">

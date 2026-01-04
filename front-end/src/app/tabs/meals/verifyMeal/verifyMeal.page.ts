@@ -1,8 +1,26 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import {
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonText,
+  IonToolbar
+} from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
+  IDEATranslatePipe,
+  IDEALocalizedDatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -10,13 +28,30 @@ import { AppService } from '@app/app.service';
 import { MealsService } from '../meals.service';
 
 import { ApprovedType, Meal } from '@models/meal.model';
-import { ActivatedRoute } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, IonicModule, IDEATranslationsModule],
+  imports: [
+    // Angular
+    CommonModule,
+    // IDEA
+    IDEATranslatePipe,
+    IDEALocalizedDatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonText,
+    IonToolbar
+  ],
   selector: 'app-verify-meal',
   template: `
     <ion-header class="ion-no-border">

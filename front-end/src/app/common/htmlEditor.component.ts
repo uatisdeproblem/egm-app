@@ -17,8 +17,7 @@ import { AngularEditorConfig, AngularEditorModule } from '@kolkov/angular-editor
 import { docsSoap } from 'docs-soap';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, AngularEditorModule],
+    imports: [CommonModule, FormsModule, IonicModule, AngularEditorModule],
   selector: 'app-html-editor',
   template: `
     @if(editMode){

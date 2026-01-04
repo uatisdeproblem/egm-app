@@ -1,10 +1,26 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Browser } from '@capacitor/browser';
-
-import { Platform, IonicModule, ModalController } from '@ionic/angular';
-import { IDEAMessageService, IDEATranslationsModule, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEAMessageService, IDEATranslatePipe, IDEATranslationsService } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonRow,
+  IonTitle,
+  IonToolbar,
+  ModalController,
+  Platform
+} from '@ionic/angular/standalone';
 
 import { AppService } from '../../app.service';
 
@@ -12,8 +28,28 @@ import { AppService } from '../../app.service';
  * A warning message before proceeding to Stripe informing the user of the procedure.
  */
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCheckbox,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonRow,
+    IonTitle,
+    IonToolbar
+  ],
   selector: 'fhe-header-bar',
   template: `
     <ion-header>

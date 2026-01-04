@@ -1,9 +1,21 @@
-import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
-
-import { IDEATranslationsModule } from '@idea-ionic/common';
+import { IDEATranslatePipe, IDEALocalizedDatePipe } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonSkeletonText,
+  IonText,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
@@ -15,8 +27,28 @@ import { ManageMealComponent } from './manageMeal.component';
 import { MealQrCodeComponent } from './verifyMeal/mealQrCode.component';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    IDEALocalizedDatePipe,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonSkeletonText,
+    IonText
+  ],
   selector: 'app-meal-card',
   template: `
     <!-- @todo should validity be without timezone?? -->

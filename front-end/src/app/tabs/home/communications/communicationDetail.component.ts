@@ -1,8 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { IonicModule, ModalController } from '@ionic/angular';
-import { IDEATranslationsModule } from '@idea-ionic/common';
-
+import { IDEALocalizedDatePipe, IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonImg,
+  IonText,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
@@ -11,8 +24,28 @@ import { AppService } from 'src/app/app.service';
 import { Communication } from '@models/communication.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    // IDEA
+    IDEALocalizedDatePipe,
+    IDEATranslatePipe,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonImg,
+    IonText,
+    IonToolbar
+  ],
   selector: 'app-communication-detail',
   template: `
     <ion-header class="ion-no-border">

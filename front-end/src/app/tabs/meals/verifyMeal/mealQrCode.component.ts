@@ -1,19 +1,50 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Input, inject } from '@angular/core';
 import QRCode from 'qrcode';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsModule } from '@idea-ionic/common';
+import { IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
 import { MealsService } from '../meals.service';
 
 import { Meal } from '@models/meal.model';
-import { ActivatedRoute } from '@angular/router';
-import { IonicModule, ModalController } from '@ionic/angular';
 
 import { environment as env } from '@env';
 
 @Component({
-  standalone: true,
-  imports: [IonicModule, IDEATranslationsModule],
+  imports: [
+    // Angular
+    CommonModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonToolbar
+  ],
   selector: 'app-meal-qr-code',
   template: `
     <ion-header class="ion-no-border">

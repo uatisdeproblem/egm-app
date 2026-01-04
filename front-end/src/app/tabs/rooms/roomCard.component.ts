@@ -1,16 +1,45 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonIcon,
+  IonImg,
+  IonLabel,
+  IonSkeletonText
+} from '@ionic/angular/standalone';
+
+import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
 import { AppService } from 'src/app/app.service';
 
 import { Room } from '@models/room.model';
-import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonIcon,
+    IonImg,
+    IonLabel,
+    IonSkeletonText
+  ],
   selector: 'app-room-card',
   template: `
     <ng-container *ngIf="room; else skeletonTemplate">

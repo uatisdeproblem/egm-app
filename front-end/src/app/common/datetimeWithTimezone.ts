@@ -18,8 +18,7 @@ import { epochISOString } from 'idea-toolbox';
 import { AppService } from '@app/app.service';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule],
+    imports: [CommonModule, FormsModule, IonicModule],
   selector: 'app-datetime-timezone',
   template: `
     <ion-item [lines]="lines" [color]="color">

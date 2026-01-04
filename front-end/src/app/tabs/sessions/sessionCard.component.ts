@@ -1,7 +1,19 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {
+  IonBadge,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonSkeletonText
+} from '@ionic/angular/standalone';
 
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
@@ -11,7 +23,25 @@ import { Session } from '@models/session.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonBadge,
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonSkeletonText
+  ],
   selector: 'app-session-card',
   template: `
     <ng-container *ngIf="session; else skeletonTemplate">

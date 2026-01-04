@@ -14,8 +14,7 @@ import { UsefulLink } from '@models/usefulLink.model';
 import { AuthServices } from '@models/user.model';
 
 @Component({
-  standalone: true,
-  imports: [
+    imports: [
     // Angular
     CommonModule,
     FormsModule,

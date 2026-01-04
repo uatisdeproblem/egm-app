@@ -1,21 +1,52 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import {
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonText,
+  IonToolbar
+} from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
+  IDEATranslatePipe,
+  IDEALocalizedDatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
+
 import { AppService } from '@app/app.service';
-import { ActivatedRoute } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
 import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
 import { Session } from '@models/session.model';
 import { SessionsService } from './sessions.service';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, IonicModule, IDEATranslationsModule],
+    imports: [
+    // Angular
+    CommonModule,
+    // IDEA
+    IDEATranslatePipe,
+    IDEALocalizedDatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonText,
+    IonToolbar
+  ],
   selector: 'app-confirm-session',
   template: `
     <ion-header class="ion-no-border">

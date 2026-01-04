@@ -1,15 +1,37 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
-import { IDEATranslationsModule } from '@idea-ionic/common';
+import { IDEALocalizedDatePipe } from '@idea-ionic/common';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonImg,
+  IonSkeletonText,
+  IonText
+} from '@ionic/angular/standalone';
 
 import { AppService } from 'src/app/app.service';
 
 import { Communication } from '@models/communication.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, IonicModule, IDEATranslationsModule],
+  imports: [
+    // Angular
+    CommonModule,
+    // IDEA
+    IDEALocalizedDatePipe,
+    // Ionic
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonImg,
+    IonSkeletonText,
+    IonText
+  ],
   selector: 'app-communication',
   template: `
     <ion-card [color]="color" *ngIf="!communication">
