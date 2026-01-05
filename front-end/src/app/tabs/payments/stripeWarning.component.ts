@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Browser } from '@capacitor/browser';
 import { IDEAMessageService, IDEATranslatePipe, IDEATranslationsService } from '@idea-ionic/common';
@@ -117,13 +117,11 @@ export class StripeWarningStandaloneComponent {
 
   userHasRead = false;
 
-  constructor(
-    private modalCtrl: ModalController,
-    private message: IDEAMessageService,
-    public platform: Platform,
-    public t: IDEATranslationsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private message = inject(IDEAMessageService);
+  platform = inject(Platform);
+  t = inject(IDEATranslationsService);
+  app = inject(AppService);
 
   async openLink(): Promise<void> {
     await Browser.open({ url: this.url });

@@ -1,8 +1,24 @@
-import { Component } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonImg,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
+import { IDEALoadingService, IDEAMessageService, IDEATranslationsService, IDEATranslatePipe } from '@idea-ionic/common';
 
 import { EmailTemplateComponent } from './configurations/emailTemplate/emailTemplate.component';
+import { UsefulLinkStandaloneComponent } from '@app/common/usefulLinks/usefulLink.component';
 import { ManageUsefulLinkStandaloneComponent } from '@app/common/usefulLinks/manageUsefulLink.component';
 import { ManageOrganizationComponent } from '../organizations/manageOrganization.component';
 import { ManageSpeakerComponent } from '../speakers/manageSpeaker.component';
@@ -29,7 +45,24 @@ import { Meal } from '@models/meal.model';
 @Component({
   selector: 'manage',
   templateUrl: 'manage.page.html',
-  styleUrls: ['manage.page.scss']
+  styleUrls: ['manage.page.scss'],
+  imports: [
+    CommonModule,
+    IDEATranslatePipe,
+    UsefulLinkStandaloneComponent,
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonImg,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonTitle,
+    IonToolbar
+  ]
 })
 export class ManagePage {
   EmailTemplates = EmailTemplates;
@@ -37,15 +70,13 @@ export class ManagePage {
 
   usefulLinks: UsefulLink[];
 
-  constructor(
-    private modalCtrl: ModalController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private t: IDEATranslationsService,
-    private _usefulLinks: UsefulLinksService,
-    private _sessionRegistrations: SessionRegistrationsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private t = inject(IDEATranslationsService);
+  private _usefulLinks = inject(UsefulLinksService);
+  private _sessionRegistrations = inject(SessionRegistrationsService);
+  public app = inject(AppService);
   async ionViewWillEnter(): Promise<void> {
     if (!this.app.userCanManageSomething()) this.app.closePage('COMMON.UNAUTHORIZED');
 

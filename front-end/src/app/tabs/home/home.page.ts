@@ -1,6 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonButton, IonButtons, IonCol, IonContent, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonImg, IonItem, IonLabel, IonList, IonListHeader, IonRow, IonSegment, IonSegmentButton, IonTitle, IonToolbar, ModalController } from '@ionic/angular/standalone';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
 
 import { ManageUsefulLinkStandaloneComponent } from 'src/app/common/usefulLinks/manageUsefulLink.component';
 import { ManageCommunicationComponent } from './communications/manageCommunication.component';
@@ -12,11 +14,40 @@ import { UsefulLinksService } from 'src/app/common/usefulLinks/usefulLinks.servi
 
 import { Communication } from '@models/communication.model';
 import { UsefulLink } from '@models/usefulLink.model';
+import { UsefulLinkStandaloneComponent } from '@app/common/usefulLinks/usefulLink.component';
+import { CommunicationComponent } from './communications/communication.component';
 
 @Component({
   selector: 'home',
   templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss']
+  styleUrls: ['home.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    UsefulLinkStandaloneComponent,
+    CommunicationComponent,
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonFab,
+    IonFabButton,
+    IonGrid,
+    IonHeader,
+    IonIcon,
+    IonImg,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonSegment,
+    IonSegmentButton,
+    IonTitle,
+    IonToolbar,
+    IDEATranslatePipe
+  ]
 })
 export class HomePage implements OnInit {
   communications: Communication[];
@@ -34,7 +65,6 @@ export class HomePage implements OnInit {
   private _usefulLinks = inject(UsefulLinksService);
   app = inject(AppService);
 
-  constructor() {}
   async ngOnInit(): Promise<void> {
     [this.communications, this.usefulLinks] = await Promise.all([
       this._communications.getList({ force: true }),

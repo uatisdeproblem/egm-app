@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { UserPage } from './user.page';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', component: UserPage },
   {
     path: 'registration',

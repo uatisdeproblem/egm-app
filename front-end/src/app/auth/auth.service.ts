@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { IDEAApiService, IDEAStorageService } from '@idea-ionic/common';
 
 import { User } from '@models/user.model';
@@ -9,7 +9,8 @@ import { environment as env } from '@env';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor(private storage: IDEAStorageService, private api: IDEAApiService) {}
+  private storage = inject(IDEAStorageService);
+  private api = inject(IDEAApiService);
 
   /**
    * Save the authentication token in the storage.

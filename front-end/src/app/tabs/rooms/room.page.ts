@@ -1,10 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ModalController } from '@ionic/angular/standalone';
-
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonSearchbar,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
 
 import { ManageRoomComponent } from './manageRooms.component';
+import { RoomCardStandaloneComponent } from './roomCard.component';
+import { SessionCardStandaloneComponent } from '../sessions/sessionCard.component';
 
 import { AppService } from 'src/app/app.service';
 import { RoomsService } from './rooms.service';
@@ -16,21 +35,40 @@ import { Session } from '@models/session.model';
 @Component({
   selector: 'app-room',
   templateUrl: './room.page.html',
-  styleUrls: ['./room.page.scss']
+  styleUrls: ['./room.page.scss'],
+  imports: [
+    CommonModule,
+    IDEATranslatePipe,
+    RoomCardStandaloneComponent,
+    SessionCardStandaloneComponent,
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonGrid,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonSearchbar,
+    IonTitle,
+    IonToolbar
+  ]
 })
 export class RoomPage implements OnInit {
   room: Room;
   sessions: Session[];
 
-  constructor(
-    private route: ActivatedRoute,
-    private modalCtrl: ModalController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _sessions: SessionsService,
-    private _rooms: RoomsService,
-    public app: AppService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private modalCtrl = inject(ModalController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _sessions = inject(SessionsService);
+  private _rooms = inject(RoomsService);
+  public app = inject(AppService);
 
   async ngOnInit() {
     await this.loadData();

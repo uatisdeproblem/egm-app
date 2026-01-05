@@ -9,10 +9,11 @@ import {
 import { AppService } from './app.service';
 import { addIcons } from 'ionicons';
 import * as icons from 'ionicons/icons';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [IonApp, IonIcon, IonFab, IonFabButton, IonRouterOutlet],
+  imports: [CommonModule, IonApp, IonIcon, IonFab, IonFabButton, IonRouterOutlet],
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss']
 })

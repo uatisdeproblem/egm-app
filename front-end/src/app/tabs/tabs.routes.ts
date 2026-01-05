@@ -13,56 +13,67 @@ export const tabsRoutes: Routes = [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       {
         path: 'user',
-        loadChildren: (): Promise<any> => import('./user/user.page').then(m => m.UserPage)
+        outlet: 'user',
+        loadChildren: (): Promise<any> => import('./user/user.routes').then(m => m.routes)
       },
       {
         path: 'manage',
-        loadChildren: (): Promise<any> => import('./manage/manage.page').then(m => m.ManagePage),
+        outlet: 'manage',
+        loadChildren: (): Promise<any> => import('./manage/manage.routes').then(m => m.routes),
         canActivate: [manageGuard]
       },
       {
         path: 'home',
-        loadChildren: (): Promise<any> => import('./home/home.page').then(m => m.HomePage)
+        outlet: 'home',
+        loadChildren: (): Promise<any> => import('./home/home.routes').then(m => m.routes)
       },
       {
         path: 'menu',
-        loadChildren: (): Promise<any> => import('./menu/menu.page').then(m => m.MenuPage),
+        outlet: 'menu',
+        loadChildren: (): Promise<any> => import('./menu/menu.routes').then(m => m.routes),
         canActivate: [spotGuard]
       },
       {
         path: 'venues',
-        loadChildren: (): Promise<any> => import('./venues/venues.routes').then(m => m.venuesRoutes),
+        outlet: 'venues',
+        loadChildren: (): Promise<any> => import('./venues/venues.routes').then(m => m.routes),
         canActivate: [spotGuard]
       },
       {
         path: 'rooms',
-        loadChildren: (): Promise<any> => import('./rooms/room.page').then(m => m.RoomPage),
+        outlet: 'rooms',
+        loadChildren: (): Promise<any> => import('./rooms/rooms.routes').then(m => m.routes),
         canActivate: [spotGuard]
       },
       {
         path: 'organizations',
+        outlet: 'organizations',
         loadChildren: (): Promise<any> =>
-          import('./organizations/organizations.page').then(m => m.OrganizationsPage),
+          import('./organizations/organizations.routes').then(m => m.routes),
         canActivate: [spotGuard]
       },
       {
         path: 'speakers',
-        loadChildren: (): Promise<any> => import('./speakers/speakers.page').then(m => m.SpeakersPage),
+        outlet: 'speakers',
+        loadChildren: (): Promise<any> => import('./speakers/speakers.routes').then(m => m.routes),
         canActivate: [spotGuard]
       },
       {
         path: 'agenda',
-        loadChildren: (): Promise<any> => import('./sessions/sessions.page').then(m => m.SessionsPage),
+        outlet: 'agenda',
+        loadChildren: (): Promise<any> => import('./sessions/sessions.routes').then(m => m.routes),
         canActivate: [spotGuard]
       },
       {
         path: 'contests',
-        loadChildren: (): Promise<any> => import('./contests/contests.page').then(m => m.ContestsPage),
+        outlet: 'contests',
+        loadChildren: (): Promise<any> => import('./contests/contests.routes').then(m => m.routes),
         canActivate: [spotGuard]
       },
       {
         path: 'meals',
-        loadChildren: (): Promise<any> => import('./meals/meals.page').then(m => m.MealsPage),
+        outlet: 'meals',
+        loadChildren: (): Promise<any> => import('./meals/meals.routes').then(m => m.routes),
         canActivate: [spotGuard]
       }
     ]

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   AlertController,
   IonButton,
@@ -203,17 +203,15 @@ export class ManageSessionComponent implements OnInit {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _rooms: RoomsService,
-    private _speakers: SpeakersService,
-    private _sessions: SessionsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private t = inject(IDEATranslationsService);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _rooms = inject(RoomsService);
+  private _speakers = inject(SpeakersService);
+  private _sessions = inject(SessionsService);
+  public app = inject(AppService);
 
   async ngOnInit() {
     this.entityBeforeChange = new Session(this.session);
