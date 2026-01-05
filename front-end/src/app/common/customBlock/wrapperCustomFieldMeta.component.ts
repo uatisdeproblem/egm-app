@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ModalController } from '@ionic/angular/standalone';
 import { IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonBadge, IonText, IonItem, IonInput, IonSelect, IonSelectOption, IonToggle, IonReorderGroup, IonReorder, IonRow, IonCol, IonCheckbox } from '@ionic/angular/standalone';
@@ -375,7 +375,7 @@ export class WrapperCustomFieldMetaComponent implements OnInit {
   CFT = { STRING: 'STRING', NUMBER: 'NUMBER', BOOLEAN: 'BOOLEAN',
           DATE: 'DATE', ENUM: 'ENUM' };
   multiSelectDefaults: string[] = [];
-  constructor(private _modal: ModalController) {}
+  private _modal = inject(ModalController);
 
   ngOnInit() {
     const opts = this.field?.visibilityOptions;

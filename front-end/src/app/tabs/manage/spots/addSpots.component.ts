@@ -1,6 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonList,
+  IonSelectOption,
+  IonSelect,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
 import { SpotsService } from './spots.service';
@@ -9,6 +25,26 @@ import { EventSpot } from '@models/eventSpot.model';
 
 @Component({
   selector: 'app-event-spots',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonList,
+    IonSelect,
+    IonSelectOption,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: 'addSpots.component.html',
   styleUrls: ['addSpots.component.scss']
 })
@@ -18,13 +54,11 @@ export class AddSpotsComponent implements OnInit {
   numOfSpots = 1;
   spot = new EventSpot();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _spots: SpotsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _spots = inject(SpotsService);
+  public app = inject(AppService);
   ngOnInit(): void {
     this.spot.type = this.app.configurations.spotTypes[0];
   }

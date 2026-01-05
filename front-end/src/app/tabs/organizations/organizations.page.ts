@@ -1,13 +1,42 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonContent } from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonContent,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonSearchbar,
+  IonSkeletonText,
+  IonTitle,
+  IonToolbar
+} from '@ionic/angular/standalone';
 
 import { Organization } from '@models/organization.model';
 import { OrganizationsService } from './organizations.service';
 import { AppService } from 'src/app/app.service';
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
 
 @Component({
   selector: 'app-organizations',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonContent,
+    IonHeader,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonSearchbar,
+    IonSkeletonText,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: './organizations.page.html',
   styleUrls: ['./organizations.page.scss']
 })
@@ -17,12 +46,10 @@ export class OrganizationsPage implements OnInit {
   organizations: Organization[];
   filteredOrganizations: Organization[];
 
-  constructor(
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _organizations: OrganizationsService,
-    public app: AppService
-  ) {}
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _organizations = inject(OrganizationsService);
+  public app = inject(AppService);
 
   ngOnInit() {
     this.loadData();

@@ -1,10 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ModalController } from '@ionic/angular/standalone';
-
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonSearchbar,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { ManageOrganizationComponent } from './manageOrganization.component';
+import { OrganizationCardStandaloneComponent } from './organizationCard.component';
+import { SpeakerCardStandaloneComponent } from '../speakers/speakerCard.component';
 
 import { AppService } from 'src/app/app.service';
 import { OrganizationsService } from './organizations.service';
@@ -15,6 +35,32 @@ import { Organization } from '@models/organization.model';
 
 @Component({
   selector: 'app-organization',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    OrganizationCardStandaloneComponent,
+    SpeakerCardStandaloneComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonGrid,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonSearchbar,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: './organization.page.html',
   styleUrls: ['./organization.page.scss']
 })
@@ -22,15 +68,13 @@ export class OrganizationPage implements OnInit {
   organization: Organization;
   speakers: Speaker[];
 
-  constructor(
-    private route: ActivatedRoute,
-    private modalCtrl: ModalController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _organizations: OrganizationsService,
-    private _speakers: SpeakersService,
-    public app: AppService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private modalCtrl = inject(ModalController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _organizations = inject(OrganizationsService);
+  private _speakers = inject(SpeakersService);
+  public app = inject(AppService);
 
   async ngOnInit() {
     await this.loadData();

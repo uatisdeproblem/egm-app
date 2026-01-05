@@ -6,7 +6,7 @@ import { authGuard } from './auth.guard';
 export const routes: Routes = [
   { path: '', redirectTo: 't', pathMatch: 'full' },
   { path: 'documents',
-    loadChildren: (): Promise<any> => import('./privacy/privacy.module').then(m => m.PrivacyModule),
+    loadChildren: (): Promise<any> => import('./privacy/privacy.routes').then(m => m.routes),
     canActivate: [initGuard]
   },
   {
@@ -16,7 +16,7 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
-    loadChildren: (): Promise<any> => import('./auth/auth.page').then(m => m.AuthPage),
+    loadChildren: (): Promise<any> => import('./auth/auth.routes').then(m => m.routes),
     canActivate: [initGuard]
   },
   {

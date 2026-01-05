@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
 
@@ -27,14 +27,14 @@ export class HomePage implements OnInit {
 
   editMode = false;
 
-  constructor(
-    private modalCtrl: ModalController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _communications: CommunicationsService,
-    private _usefulLinks: UsefulLinksService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _communications = inject(CommunicationsService);
+  private _usefulLinks = inject(UsefulLinksService);
+  app = inject(AppService);
+
+  constructor() {}
   async ngOnInit(): Promise<void> {
     [this.communications, this.usefulLinks] = await Promise.all([
       this._communications.getList({ force: true }),

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import {
   AlertController,
   IonButton,
@@ -128,16 +128,14 @@ export class ManageCommunicationComponent {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _media: MediaService,
-    private _communications: CommunicationsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private t = inject(IDEATranslationsService);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _media = inject(MediaService);
+  private _communications = inject(CommunicationsService);
+  public app = inject(AppService);
 
   hasFieldAnError(field: string): boolean {
     return this.errors.has(field);

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { Configurations, DocumentTemplates, EmailTemplates } from '@models/configurations.model';
@@ -6,7 +6,7 @@ import { SignedURL } from 'idea-toolbox';
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationsService {
-  constructor(private api: IDEAApiService) {}
+  private readonly api = inject(IDEAApiService);
 
   /**
    * Update the app's configurations.

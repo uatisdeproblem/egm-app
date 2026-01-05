@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { EventSpot } from '@models/eventSpot.model';
@@ -6,7 +6,7 @@ import { User } from '@models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class SpotsService {
-  constructor(private api: IDEAApiService) {}
+  private readonly api = inject(IDEAApiService);
 
   /**
    * Get the list of the event's spots.

@@ -1,5 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonCheckbox,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonTitle,
+  IonToolbar
+} from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
 import { ConfigurationsService } from '../configurations/configurations.service';
@@ -8,6 +25,27 @@ import { Configurations } from '@models/configurations.model';
 
 @Component({
   selector: 'app-sessions-management',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCheckbox,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: 'sessionsManagement.page.html'
 })
 export class SessionsManagementPage implements OnInit {
@@ -18,12 +56,10 @@ export class SessionsManagementPage implements OnInit {
 
   errors = new Set<string>();
 
-  constructor(
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _configurations: ConfigurationsService,
-    public app: AppService
-  ) {}
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _configurations = inject(ConfigurationsService);
+  public app = inject(AppService);
   ngOnInit(): void {
     this.configurations = new Configurations(this.app.configurations);
   }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
@@ -104,14 +104,12 @@ export class ManageUsefulLinkStandaloneComponent {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _usefulLinks: UsefulLinksService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private t = inject(IDEATranslationsService);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _usefulLinks = inject(UsefulLinksService);
 
   hasFieldAnError(field: string): boolean {
     return this.errors.has(field);

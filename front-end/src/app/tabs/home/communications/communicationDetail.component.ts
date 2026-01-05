@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { IDEALocalizedDatePipe, IDEATranslatePipe } from '@idea-ionic/common';
 import {
   IonButton,
@@ -110,7 +110,8 @@ export class CommunicationDetailComponent {
    */
   @Input() communication: Communication;
 
-  constructor(private modalCtrl: ModalController, public app: AppService) {}
+  private modalCtrl = inject(ModalController);
+  public app = inject(AppService);
 
   close(): void {
     this.modalCtrl.dismiss();

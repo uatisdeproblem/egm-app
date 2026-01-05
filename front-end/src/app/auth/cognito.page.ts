@@ -1,14 +1,54 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AlertController } from '@ionic/angular/standalone';
 import { isEmpty } from 'idea-toolbox';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe, IDEATranslationsService } from '@idea-ionic/common';
+import {
+  AlertController,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonContent,
+  IonIcon,
+  IonImg,
+  IonInput,
+  IonItem,
+  IonItemDivider,
+  IonLabel,
+  IonList
+} from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
 import { AuthService } from './auth.service';
 
 @Component({
   selector: 'auth-cognito',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonContent,
+    IonIcon,
+    IonImg,
+    IonInput,
+    IonItem,
+    IonItemDivider,
+    IonLabel,
+    IonList
+  ],
   templateUrl: 'cognito.page.html',
   styleUrls: ['cognito.page.scss']
 })
@@ -25,15 +65,13 @@ export class AuthCognitoPage implements OnInit {
 
   errors = new Set<string>();
 
-  constructor(
-    private route: ActivatedRoute,
-    private alertCtrl: AlertController,
-    private message: IDEAMessageService,
-    private loading: IDEALoadingService,
-    private t: IDEATranslationsService,
-    private auth: AuthService,
-    public app: AppService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private alertCtrl = inject(AlertController);
+  private message = inject(IDEAMessageService);
+  private loading = inject(IDEALoadingService);
+  private t = inject(IDEATranslationsService);
+  private auth = inject(AuthService);
+  public app = inject(AppService);
   ngOnInit(): void {
     const email = this.route.snapshot.queryParamMap.get('email');
     if (email) this.email = email;

@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 @Injectable({ providedIn: 'root' })
 export class MediaService {
-  constructor(private api: IDEAApiService) {}
+  private readonly api = inject(IDEAApiService);
 
   /**
    * Upload a new image and get its URI.
