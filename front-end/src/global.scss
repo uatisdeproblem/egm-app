@@ -10,27 +10,27 @@
  */
 
 /* Core CSS required for Ionic components to work properly */
-@use '~@ionic/angular/css/core.css';
+@use '@ionic/angular/css/core.css';
 
 /* Basic CSS for apps built with Ionic */
-@use '~@ionic/angular/css/normalize.css';
-@use '~@ionic/angular/css/structure.css';
-@use '~@ionic/angular/css/typography.css';
-@use '~@ionic/angular/css/display.css';
+@use '@ionic/angular/css/normalize.css';
+@use '@ionic/angular/css/structure.css';
+@use '@ionic/angular/css/typography.css';
+@use '@ionic/angular/css/display.css';
 
 /* Optional CSS utils that can be commented out */
-@use '~@ionic/angular/css/padding.css';
-@use '~@ionic/angular/css/float-elements.css';
-@use '~@ionic/angular/css/text-alignment.css';
-@use '~@ionic/angular/css/text-transformation.css';
-@use '~@ionic/angular/css/flex-utils.css';
+@use '@ionic/angular/css/padding.css';
+@use '@ionic/angular/css/float-elements.css';
+@use '@ionic/angular/css/text-alignment.css';
+@use '@ionic/angular/css/text-transformation.css';
+@use '@ionic/angular/css/flex-utils.css';
 
 //
 // IDEA
 //
 
-// @use '../node_modules/@idea-ionic/common/css/global.scss';
-@use '@idea-ionic/common/css/global.scss' as idea-ionic-common;
+@use '../node_modules/@idea-ionic/common/css/global.scss';
+// @use '@idea-ionic/common/css/global.scss' as idea-ionic-common;
 
 @use '../node_modules/@swimlane/ngx-datatable/index.css';
 @use '../node_modules/@swimlane/ngx-datatable/themes/material.scss';

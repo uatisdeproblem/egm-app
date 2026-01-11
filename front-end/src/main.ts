@@ -5,7 +5,7 @@ import '@angular/compiler';
 import { registerLocaleData } from '@angular/common';
 import localeIt from '@angular/common/locales/it';
 import { RouteReuseStrategy, provideRouter } from '@angular/router';
-import { IonicRouteStrategy } from '@ionic/angular/standalone';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { IDEAEnvironment } from '@idea-ionic/common';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -24,6 +24,7 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: IDEAEnvironment, useValue: environment },
+    provideIonicAngular(),
     provideHttpClient(),
     importProvidersFrom(
       IonicStorageModule.forRoot({ name: 'egm-app' }),

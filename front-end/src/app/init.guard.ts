@@ -21,7 +21,7 @@ export const initGuard: CanActivateFn = async (): Promise<boolean> => {
 
   await t.init(Object.values(ServiceLanguages), ServiceLanguages.English);
 
-  await appStatus.check();
+  await appStatus.check({viaApi: true});
 
   app.initReady = true;
 
