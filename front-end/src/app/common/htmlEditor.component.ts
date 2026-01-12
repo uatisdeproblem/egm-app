@@ -15,11 +15,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { IonicModule } from '@ionic/angular';
 import { AngularEditorConfig, AngularEditorModule } from '@kolkov/angular-editor';
 import { docsSoap } from 'docs-soap';
-import { HttpClientModule } from '@angular/common/http';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, HttpClientModule, AngularEditorModule],
+    imports: [CommonModule, FormsModule, IonicModule, AngularEditorModule],
   selector: 'app-html-editor',
   template: `
     @if(editMode){

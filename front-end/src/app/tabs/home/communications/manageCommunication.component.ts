@@ -1,11 +1,29 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input } from '@angular/core';
-import { AlertController, IonicModule, ModalController } from '@ionic/angular';
+import { Component, Input, inject } from '@angular/core';
+import {
+  AlertController,
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonText,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
+  IDEATranslatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -18,8 +36,31 @@ import { Communication } from '@models/communication.model';
 import { MediaService } from 'src/app/common/media.service';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   selector: 'app-manage-communication',
   template: `
     <ion-header class="ion-no-border">
@@ -87,16 +128,14 @@ export class ManageCommunicationComponent {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _media: MediaService,
-    private _communications: CommunicationsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private t = inject(IDEATranslationsService);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _media = inject(MediaService);
+  private _communications = inject(CommunicationsService);
+  public app = inject(AppService);
 
   hasFieldAnError(field: string): boolean {
     return this.errors.has(field);

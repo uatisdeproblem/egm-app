@@ -1,10 +1,37 @@
-import { Component, ViewChild } from '@angular/core';
-import { IonContent, IonSearchbar, ModalController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { Component, ViewChild, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonBadge,
+  IonButton,
+  IonButtons,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonNote,
+  IonRow,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
+  IonSkeletonText,
+  IonText,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { AppService } from 'src/app/app.service';
 import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { ManageSessionComponent } from './manageSession.component';
+import { SessionDetailComponent } from './sessionDetail.component';
 
 import { SessionsService } from './sessions.service';
 import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
@@ -17,12 +44,52 @@ import { SessionRegistration } from '@models/sessionRegistration.model';
 
 @Component({
   selector: 'app-sessions',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    SessionDetailComponent,
+    // Ionic
+    IonBadge,
+    IonButton,
+    IonButtons,
+    IonChip,
+    IonCol,
+    IonContent,
+    IonGrid,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonNote,
+    IonRow,
+    IonSearchbar,
+    IonSegment,
+    IonSegmentButton,
+    IonSkeletonText,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: './sessions.page.html',
   styleUrls: ['./sessions.page.scss']
 })
 export class SessionsPage {
   @ViewChild(IonContent) content: IonContent;
-  @ViewChild(IonContent) searchbar: IonSearchbar;
+  @ViewChild(IonSearchbar) searchbar: IonSearchbar;
+
+  private readonly modalCtrl = inject(ModalController);
+  private readonly loading = inject(IDEALoadingService);
+  private readonly message = inject(IDEAMessageService);
+  public readonly _sessions = inject(SessionsService);
+  public readonly _speakers = inject(SpeakersService);
+  private readonly _sessionRegistrations = inject(SessionRegistrationsService);
+  public readonly t = inject(IDEATranslationsService);
+  public readonly app = inject(AppService);
 
   days: string[];
   sessions: Session[];
@@ -35,17 +102,6 @@ export class SessionsPage {
   sessionCountByDate: Record<string, number> = {};
   registration: SessionRegistration;
   segment = '';
-
-  constructor(
-    private modalCtrl: ModalController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    public _sessions: SessionsService,
-    public _speakers: SpeakersService,
-    private _sessionRegistrations: SessionRegistrationsService,
-    public t: IDEATranslationsService,
-    public app: AppService
-  ) {}
 
   async ionViewDidEnter(): Promise<void> {
     await this.loadData();

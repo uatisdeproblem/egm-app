@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnInit,
@@ -18,8 +19,7 @@ import { epochISOString } from 'idea-toolbox';
 import { AppService } from '@app/app.service';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule],
+    imports: [CommonModule, FormsModule, IonicModule],
   selector: 'app-datetime-timezone',
   template: `
     <ion-item [lines]="lines" [color]="color">
@@ -71,7 +71,7 @@ export class DatetimeWithTimezoneStandaloneComponent implements OnInit, OnChange
 
   @ViewChild('dateTime') dateTime: ElementRef;
 
-  constructor(public app: AppService) {}
+  public readonly app = inject(AppService);
   async ngOnInit(): Promise<void> {
     this.timezone = this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
     this.initialValue = this.utcToZonedTimeString(this.date);

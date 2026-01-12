@@ -1,10 +1,27 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonSearchbar, ModalController } from '@ionic/angular';
-import { ColumnMode, SelectionType, TableColumn, DatatableComponent } from '@swimlane/ngx-datatable';
+import { CommonModule } from '@angular/common';
+import { Component, HostListener, OnInit, ViewChild, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ColumnMode, SelectionType, TableColumn, DatatableComponent, NgxDatatableModule } from '@swimlane/ngx-datatable';
+import {
+  AlertController,
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonSearchbar,
+  IonSelect,
+  IonSelectOption,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 import {
   IDEAActionSheetController,
   IDEALoadingService,
   IDEAMessageService,
+  IDEATranslatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -18,7 +35,28 @@ import { MealsService } from '@app/tabs/meals/meals.service';
 @Component({
   selector: 'mealsInfo',
   templateUrl: 'mealsInfo.page.html',
-  styleUrls: ['mealsInfo.page.scss']
+  styleUrls: ['mealsInfo.page.scss'],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // External
+    NgxDatatableModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonSearchbar,
+    IonSelect,
+    IonSelectOption,
+    IonTitle,
+    IonToolbar
+  ]
 })
 export class MealsInfoPage implements OnInit {
   @ViewChild(IonSearchbar) searchbar: IonSearchbar;
@@ -46,15 +84,13 @@ export class MealsInfoPage implements OnInit {
 
   mealCounters: { [mealId: string]: number } = {};
 
-  constructor(
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private t: IDEATranslationsService,
-    private actionsCtrl: IDEAActionSheetController,
-    private _users: UsersService,
-    private _meals: MealsService,
-    public app: AppService
-  ) {}
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private t = inject(IDEATranslationsService);
+  private actionsCtrl = inject(IDEAActionSheetController);
+  private _users = inject(UsersService);
+  private _meals = inject(MealsService);
+  public app = inject(AppService);
   async ngOnInit(): Promise<void> {
     try {
       await this.loading.show();

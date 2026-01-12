@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { Injectable, inject } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { Map, LngLatLike, LngLatBounds } from 'maplibre-gl';
 
 import { environment as env } from '@env';

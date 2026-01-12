@@ -1,8 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
-import { IDEAMessageService, IDEATranslationsModule } from '@idea-ionic/common';
+import { IDEALocalizedDatePipe, IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonNote,
+  IonSkeletonText,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { ManageCommunicationComponent } from './manageCommunication.component';
 import { CommunicationDetailComponent } from './communicationDetail.component';
@@ -13,13 +27,26 @@ import { CommunicationsService } from './communications.service';
 import { Communication } from '@models/communication.model';
 
 @Component({
-  standalone: true,
   imports: [
+    // Angular
     CommonModule,
     FormsModule,
-    IonicModule,
-    IDEATranslationsModule,
-    ManageCommunicationComponent
+    // IDEA
+    IDEALocalizedDatePipe,
+    IDEATranslatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonNote,
+    IonSkeletonText,
+    IonToolbar
   ],
   selector: 'app-communications',
   template: `
@@ -77,12 +104,10 @@ import { Communication } from '@models/communication.model';
 export class CommunicationsComponent implements OnInit {
   communications: Communication[];
 
-  constructor(
-    private modalCtrl: ModalController,
-    private message: IDEAMessageService,
-    private _communications: CommunicationsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private message = inject(IDEAMessageService);
+  private _communications = inject(CommunicationsService);
+  public app = inject(AppService);
   async ngOnInit(): Promise<void> {
     await this.loadList();
   }

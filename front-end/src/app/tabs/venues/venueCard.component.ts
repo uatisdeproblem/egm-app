@@ -1,9 +1,15 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
-
-import { IDEATranslationsModule } from '@idea-ionic/common';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonImg,
+  IonSkeletonText
+} from '@ionic/angular/standalone';
 
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
@@ -12,8 +18,21 @@ import { AppService } from 'src/app/app.service';
 import { Venue } from '@models/venue.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonImg,
+    IonSkeletonText
+  ],
   selector: 'app-venue-card',
   template: `
     <ion-card *ngIf="venue" color="white">
@@ -55,7 +74,7 @@ import { Venue } from '@models/venue.model';
 export class VenueCardStandaloneComponent {
   @Input() venue: Venue;
 
-  constructor(public app: AppService) {}
+  public readonly app = inject(AppService);
 
   openMap(latitude: number, longitude: number): void {
     return; // @todo add map #61

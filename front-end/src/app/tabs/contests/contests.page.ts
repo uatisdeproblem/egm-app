@@ -1,7 +1,20 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonInfiniteScroll, IonicModule } from '@ionic/angular';
-import { IDEAMessageService, IDEATranslationsModule } from '@idea-ionic/common';
+import { IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonBadge,
+  IonContent,
+  IonHeader,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonSearchbar,
+  IonSkeletonText,
+  IonTitle,
+  IonToolbar
+} from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
 import { ContestsService } from './contests.service';
@@ -9,8 +22,25 @@ import { ContestsService } from './contests.service';
 import { Contest } from '@models/contest.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, IonicModule, IDEATranslationsModule],
+  imports: [
+    // Angular
+    CommonModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonBadge,
+    IonContent,
+    IonHeader,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonSearchbar,
+    IonSkeletonText,
+    IonTitle,
+    IonToolbar
+  ],
   selector: 'app-contests',
   template: `
     <ion-header>

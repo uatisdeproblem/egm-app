@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { WorkBook, utils, writeFile } from 'xlsx';
 import { IDEAApiService } from '@idea-ionic/common';
 
@@ -7,7 +7,7 @@ import { SessionRegistration, SessionRegistrationExportable } from '@models/sess
 
 @Injectable({ providedIn: 'root' })
 export class SessionRegistrationsService {
-  constructor(private api: IDEAApiService) {}
+  private readonly api = inject(IDEAApiService);
 
   /**
    * Get the list of registrations for the user or session.

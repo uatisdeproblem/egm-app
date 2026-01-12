@@ -1,14 +1,67 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEADateTimeComponent } from '@idea-ionic/uncommon';
+import {
+  IonAvatar,
+  IonButton,
+  IonButtons,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonImg,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonText,
+  IonTitle,
+  IonToolbar
+} from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
 import { UsersService } from '@tabs/manage/users/users.service';
+import { WrapperCustomBlockComponent } from 'src/app/common/customBlock/wrapperCustomBlock.component';
 
 import { User } from '@models/user.model';
 
 @Component({
   selector: 'event-registration',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    IDEADateTimeComponent,
+    // App
+    WrapperCustomBlockComponent,
+    // Ionic
+    IonAvatar,
+    IonButton,
+    IonButtons,
+    IonCheckbox,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonImg,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: 'registration.page.html',
   styleUrls: ['registration.page.scss']
 })
@@ -21,14 +74,13 @@ export class RegistrationPage {
   acceptCOC = false;
   acceptTC = false;
 
-  constructor(
-    private route: ActivatedRoute,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private t: IDEATranslationsService,
-    private _users: UsersService,
-    public app: AppService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private t = inject(IDEATranslationsService);
+  private _users = inject(UsersService);
+  public app = inject(AppService);
+
   async ionViewWillEnter(): Promise<void> {
     let userId = this.route.snapshot.paramMap.get('userId');
     if (userId === 'me') userId = this.app.user.userId;

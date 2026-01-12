@@ -1,5 +1,18 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonContent } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonContent,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonSearchbar,
+  IonSkeletonText,
+  IonTitle,
+  IonToolbar
+} from '@ionic/angular/standalone';
 
 import { Speaker } from '@models/speaker.model';
 import { SpeakersService } from './speakers.service';
@@ -8,6 +21,23 @@ import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
 
 @Component({
   selector: 'app-speakers',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonContent,
+    IonHeader,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonSearchbar,
+    IonSkeletonText,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: './speakers.page.html',
   styleUrls: ['./speakers.page.scss']
 })
@@ -17,12 +47,10 @@ export class SpeakersPage implements OnInit {
   speakers: Speaker[];
   filteredSpeakers: Speaker[];
 
-  constructor(
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _speakers: SpeakersService,
-    public app: AppService
-  ) {}
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _speakers = inject(SpeakersService);
+  public app = inject(AppService);
 
   ngOnInit() {
     this.loadData();

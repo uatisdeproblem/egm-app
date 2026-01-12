@@ -1,22 +1,42 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input } from '@angular/core';
-import { AlertController, IonicModule, ModalController } from '@ionic/angular';
+import { Component, Input, inject } from '@angular/core';
+import { AlertController, ModalController } from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
+  IDEATranslatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
-
+import { IonButton, IonButtons, IonCheckbox, IonCol, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonRow, IonText, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { UsefulLinksService } from './usefulLinks.service';
-
 import { UsefulLink } from '@models/usefulLink.model';
 import { AuthServices } from '@models/user.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule],
+    imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCheckbox,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonRow,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   selector: 'app-manage-useful-link',
   template: `
     <ion-header class="ion-no-border">
@@ -84,14 +104,12 @@ export class ManageUsefulLinkStandaloneComponent {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _usefulLinks: UsefulLinksService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private t = inject(IDEATranslationsService);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _usefulLinks = inject(UsefulLinksService);
 
   hasFieldAnError(field: string): boolean {
     return this.errors.has(field);

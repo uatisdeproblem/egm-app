@@ -2,25 +2,79 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AlertController, IonicModule, ModalController } from '@ionic/angular';
+import {
+  AlertController,
+  IonBadge,
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonImg,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRadio,
+  IonRadioGroup,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
-  IDEATranslationsService
+  IDEATranslatePipe,
+  IDEATranslationsService,
+  IDEALocalizedDatePipe
 } from '@idea-ionic/common';
 
 import { HTMLEditorComponent } from '@common/htmlEditor.component';
-import { ManageContestComponent } from './manageContest.component';
 
 import { AppService } from '@app/app.service';
 import { ContestsService } from './contests.service';
 
 import { Contest } from '@models/contest.model';
+import { ManageContestComponent } from './manageContest.component';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    IDEALocalizedDatePipe,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonBadge,
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonImg,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRadio,
+    IonRadioGroup,
+    IonTitle,
+    IonToolbar
+
+  ],
   selector: 'app-contest',
   template: `
     <ion-header>

@@ -1,8 +1,33 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonContent, IonInfiniteScroll } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import {
+  AlertController,
+  IonBreadcrumb,
+  IonBreadcrumbs,
+  IonButton,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonIcon,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonNote,
+  IonProgressBar,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  IonSpinner,
+  IonText
+} from '@ionic/angular/standalone';
 import { read, utils, WorkBook, writeFile } from 'xlsx';
 
-import { IDEAApiService, IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEAApiService, IDEALoadingService, IDEAMessageService, IDEATranslationsService, IDEATranslatePipe, IDEASelectComponent } from '@idea-ionic/common';
 import { Suggestion } from 'idea-toolbox';
 
 import { AppService } from '@app/app.service';
@@ -30,6 +55,36 @@ const IMPORT_STATUS_KEY = '__IMPORT_STATUS__';
 @Component({
   selector: 'app-import',
   templateUrl: './import.page.html',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    IDEASelectComponent,
+    // Ionic
+    IonBreadcrumb,
+    IonBreadcrumbs,
+    IonButton,
+    IonCheckbox,
+    IonCol,
+    IonContent,
+    IonGrid,
+    IonIcon,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonNote,
+    IonProgressBar,
+    IonRadio,
+    IonRadioGroup,
+    IonRow,
+    IonSpinner,
+    IonText
+  ],
   styles: [
     `
       ion-breadcrumb {

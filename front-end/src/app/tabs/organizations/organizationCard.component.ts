@@ -1,9 +1,15 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
-
-import { IDEATranslationsModule } from '@idea-ionic/common';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonImg,
+  IonSkeletonText
+} from '@ionic/angular/standalone';
 
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
@@ -13,7 +19,21 @@ import { Organization } from '@models/organization.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonImg,
+    IonSkeletonText
+  ],
   selector: 'app-organization-card',
   template: `
     <ion-card *ngIf="organization" color="white">
@@ -54,5 +74,5 @@ export class OrganizationCardStandaloneComponent {
   @Input() organization: Organization;
   @Input() preview: boolean;
 
-  constructor(public app: AppService) {}
+  public readonly app = inject(AppService);
 }

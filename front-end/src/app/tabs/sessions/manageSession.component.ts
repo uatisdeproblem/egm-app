@@ -1,11 +1,31 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, IonicModule, ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import {
+  AlertController,
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonSelect,
+  IonSelectOption,
+  IonText,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
+  IDEATranslatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -21,8 +41,33 @@ import { Session, SessionType } from '@models/session.model';
 import { RoomLinked } from '@models/room.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+    imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonSelect,
+    IonSelectOption,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   selector: 'app-manage-session',
   template: `
     <ion-header class="ion-no-border">
@@ -158,17 +203,15 @@ export class ManageSessionComponent implements OnInit {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _rooms: RoomsService,
-    private _speakers: SpeakersService,
-    private _sessions: SessionsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private t = inject(IDEATranslationsService);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _rooms = inject(RoomsService);
+  private _speakers = inject(SpeakersService);
+  private _sessions = inject(SessionsService);
+  public app = inject(AppService);
 
   async ngOnInit() {
     this.entityBeforeChange = new Session(this.session);

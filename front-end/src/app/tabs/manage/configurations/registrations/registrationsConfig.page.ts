@@ -1,14 +1,65 @@
-import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IDEAListComponent, IDEALoadingService, IDEAMessageService, IDEATranslatePipe, IDEATranslationsService } from '@idea-ionic/common';
+import {
+  AlertController,
+  IonBadge,
+  IonButton,
+  IonButtons,
+  IonCheckbox,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonNote,
+  IonReorder,
+  IonReorderGroup,
+  IonText,
+  IonTitle,
+  IonToolbar
+} from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
+import { WrapperCustomBlockMetaComponent } from '@app/common/customBlock/wrapperCustomBlockMeta.component';
 import { ConfigurationsService } from '../configurations.service';
 
 import { Configurations } from '@models/configurations.model';
 
 @Component({
   selector: 'registrations-configurations',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    IDEAListComponent,
+    // App
+    WrapperCustomBlockMetaComponent,
+    // Ionic
+    IonBadge,
+    IonButton,
+    IonButtons,
+    IonCheckbox,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonNote,
+    IonReorder,
+    IonReorderGroup,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: 'registrationsConfig.page.html',
   styleUrls: ['registrationsConfig.page.scss']
 })
@@ -19,14 +70,12 @@ export class RegistrationsConfigurationsPage implements OnInit {
   entityBeforeChange: Configurations;
   errors = new Set<string>();
 
-  constructor(
-    private alertCtrl: AlertController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private t: IDEATranslationsService,
-    private _configurations: ConfigurationsService,
-    public app: AppService
-  ) {}
+  private alertCtrl = inject(AlertController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private t = inject(IDEATranslationsService);
+  private _configurations = inject(ConfigurationsService);
+  public app = inject(AppService);
   ngOnInit(): void {
     this.configurations = new Configurations(this.app.configurations);
   }

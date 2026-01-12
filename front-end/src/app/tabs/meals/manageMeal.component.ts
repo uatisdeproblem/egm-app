@@ -1,11 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonicModule, ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
+import {
+  AlertController,
+  IonButton,
+  IonButtons,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonText,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
+  IDEATranslatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -18,8 +37,32 @@ import { MealsService } from './meals.service';
 import { Meal, MealTypes } from '@models/meal.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCheckbox,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   selector: 'app-manage-meal',
   template: `
     <ion-header class="ion-no-border">
@@ -109,15 +152,13 @@ export class ManageMealComponent implements OnInit {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _meals: MealsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private t = inject(IDEATranslationsService);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _meals = inject(MealsService);
+  public app = inject(AppService);
 
   async ngOnInit(): Promise<void> {
     this.entityBeforeChange = new Meal(this.meal);

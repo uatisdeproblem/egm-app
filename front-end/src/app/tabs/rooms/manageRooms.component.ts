@@ -1,11 +1,31 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, IonicModule, ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import {
+  AlertController,
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonSelect,
+  IonSelectOption,
+  IonText,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
+  IDEATranslatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -20,8 +40,33 @@ import { Room } from '@models/room.model';
 import { VenueLinked } from '@models/venue.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+    imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonSelect,
+    IonSelectOption,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   selector: 'app-manage-room',
   template: `
     <ion-header class="ion-no-border">
@@ -104,17 +149,15 @@ export class ManageRoomComponent implements OnInit {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _media: MediaService,
-    private _venues: VenuesService,
-    private _rooms: RoomsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private t = inject(IDEATranslationsService);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _media = inject(MediaService);
+  private _venues = inject(VenuesService);
+  private _rooms = inject(RoomsService);
+  public app = inject(AppService);
 
   async ngOnInit() {
     this.entityBeforeChange = new Room(this.room);

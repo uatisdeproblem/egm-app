@@ -1,11 +1,29 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, IonicModule, ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import {
+  AlertController,
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonText,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
+  IDEATranslatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -18,8 +36,31 @@ import { VenuesService } from './venues.service';
 import { Venue } from '@models/venue.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   selector: 'app-manage-venue',
   template: `
     <ion-header class="ion-no-border">
@@ -102,16 +143,14 @@ export class ManageVenueComponent implements OnInit {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _media: MediaService,
-    private _venues: VenuesService,
-    public app: AppService
-  ) {}
+  private readonly modalCtrl = inject(ModalController);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly t = inject(IDEATranslationsService);
+  private readonly loading = inject(IDEALoadingService);
+  private readonly message = inject(IDEAMessageService);
+  private readonly _media = inject(MediaService);
+  private readonly _venues = inject(VenuesService);
+  public readonly app = inject(AppService);
 
   async ngOnInit() {
     this.entityBeforeChange = new Venue(this.venue);

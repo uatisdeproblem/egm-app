@@ -1,30 +1,43 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
-import { IDEATranslationsModule } from '@idea-ionic/common';
+import { IonIcon, IonItem, IonLabel, IonSkeletonText, IonText } from '@ionic/angular/standalone';
+import { IDEATranslatePipe } from '@idea-ionic/common';
 
 import { UsefulLink } from '@models/usefulLink.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, IonicModule, IDEATranslationsModule],
+  imports: [
+    // Angular
+    CommonModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonSkeletonText,
+    IonText
+  ],
   selector: 'app-useful-link',
   template: `
-    <ion-item [color]="color" *ngIf="!link">
-      <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
-    </ion-item>
-    <ion-item [color]="color" *ngIf="link" [button]="button" (click)="select.emit()">
-      <ion-icon slot="start" icon="link" color="primary" size="small"></ion-icon>
-      <ion-label class="ion-text-wrap">
-        {{ link.name }}
-        <p>
-          <ion-text color="medium" style="font-weight: 600">
-            {{ link.audience ?? ('USEFUL_LINKS.GENERAL' | translate) }}
-          </ion-text>
-        </p>
-      </ion-label>
-      <ng-content></ng-content>
-    </ion-item>
+    @if (!link) {
+      <ion-item [color]="color">
+        <ion-label><ion-skeleton-text animated></ion-skeleton-text></ion-label>
+      </ion-item>
+    } @else {
+      <ion-item [color]="color" [button]="button" (click)="select.emit()">
+        <ion-icon slot="start" icon="link" color="primary" size="small"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          {{ link.name }}
+          <p>
+            <ion-text color="medium" style="font-weight: 600">
+              {{ link.audience ?? ('USEFUL_LINKS.GENERAL' | translate) }}
+            </ion-text>
+          </p>
+        </ion-label>
+        <ng-content></ng-content>
+      </ion-item>
+    }
   `,
   styles: [
     `

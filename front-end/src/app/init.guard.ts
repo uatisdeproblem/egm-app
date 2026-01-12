@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { IDEAAppStatusService, IDEAStorageService, IDEATranslationsService } from '@idea-ionic/common';
 
 import { AppService } from './app.service';
@@ -21,7 +21,7 @@ export const initGuard: CanActivateFn = async (): Promise<boolean> => {
 
   await t.init(Object.values(ServiceLanguages), ServiceLanguages.English);
 
-  await appStatus.check();
+  await appStatus.check({viaApi: true});
 
   app.initReady = true;
 

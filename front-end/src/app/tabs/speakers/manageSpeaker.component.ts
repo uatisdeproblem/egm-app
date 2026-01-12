@@ -1,11 +1,31 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, IonicModule, ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import {
+  AlertController,
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonSelect,
+  IonSelectOption,
+  IonText,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
+  IDEATranslatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -20,8 +40,33 @@ import { OrganizationLinked } from '@models/organization.model';
 import { Speaker } from '@models/speaker.model';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, IDEATranslationsModule, HTMLEditorComponent],
+    imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    HTMLEditorComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonSelect,
+    IonSelectOption,
+    IonText,
+    IonTitle,
+    IonToolbar
+  ],
   selector: 'app-manage-speaker',
   template: `
     <ion-header class="ion-no-border">
@@ -131,17 +176,17 @@ export class ManageSpeakerComponent implements OnInit {
 
   errors = new Set<string>();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private t: IDEATranslationsService,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _media: MediaService,
-    private _organizations: OrganizationsService,
-    private _speakers: SpeakersService,
-    public app: AppService
-  ) {}
+  private readonly modalCtrl = inject(ModalController);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly t = inject(IDEATranslationsService);
+  private readonly loading = inject(IDEALoadingService);
+  private readonly message = inject(IDEAMessageService);
+  private readonly _media = inject(MediaService);
+  private readonly _organizations = inject(OrganizationsService);
+  private readonly _speakers = inject(SpeakersService);
+  public readonly app = inject(AppService);
+
+  constructor() {}
 
   async ngOnInit() {
     this.entityBeforeChange = new Speaker(this.speaker);

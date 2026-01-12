@@ -1,8 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonIcon,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { AppService } from 'src/app/app.service';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslationsService, IDEATranslatePipe } from '@idea-ionic/common';
+import { SessionDetailComponent } from './sessionDetail.component';
 
 import { ManageSessionComponent } from './manageSession.component';
 
@@ -16,6 +24,19 @@ import { SessionRegistration } from '@models/sessionRegistration.model';
 
 @Component({
   selector: 'app-session',
+  imports: [
+    // Angular
+    CommonModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    SessionDetailComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonIcon
+  ],
   templateUrl: './session.page.html',
   styleUrls: ['./session.page.scss']
 })
@@ -27,16 +48,14 @@ export class SessionPage implements OnInit {
   ratedSessionsIds: string[] = [];
   selectedSession: Session;
 
-  constructor(
-    private route: ActivatedRoute,
-    private modalCtrl: ModalController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    public _sessions: SessionsService,
-    private _sessionRegistrations: SessionRegistrationsService,
-    public t: IDEATranslationsService,
-    public app: AppService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private modalCtrl = inject(ModalController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  public _sessions = inject(SessionsService);
+  private _sessionRegistrations = inject(SessionRegistrationsService);
+  public t = inject(IDEATranslationsService);
+  public app = inject(AppService);
 
   ngOnInit() {
     this.loadData();

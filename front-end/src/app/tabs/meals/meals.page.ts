@@ -1,15 +1,51 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import {
+  IonAccordion,
+  IonAccordionGroup,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonSearchbar,
+  IonSkeletonText,
+  IonTitle,
+  IonToolbar
+} from '@ionic/angular/standalone';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe, IDEALocalizedDatePipe } from '@idea-ionic/common';
 
 import { AppService } from '@app/app.service';
 import { MealsService } from './meals.service';
 
 import { ApprovedType, Meal } from '@models/meal.model';
+import { MealCardStandaloneComponent } from './mealCard.component';
 
 @Component({
   selector: 'app-meals',
   templateUrl: 'meals.page.html',
-  styleUrls: ['meals.page.scss']
+  styleUrls: ['meals.page.scss'],
+  imports: [
+    CommonModule,
+    ZXingScannerModule,
+    IDEATranslatePipe,
+    IDEALocalizedDatePipe,
+    MealCardStandaloneComponent,
+    IonAccordion,
+    IonAccordionGroup,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonSearchbar,
+    IonSkeletonText,
+    IonTitle,
+    IonToolbar
+  ]
 })
 export class MealsPage implements OnInit {
   private _loading = inject(IDEALoadingService);

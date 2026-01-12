@@ -1,20 +1,64 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ModalController } from '@ionic/angular';
-
-import { IDEALoadingService, IDEAMessageService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe } from '@idea-ionic/common';
+import {
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonSearchbar,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { ManageVenueComponent } from './manageVenue.component';
+import { VenueCardStandaloneComponent } from './venueCard.component';
 
 import { AppService } from 'src/app/app.service';
 import { VenuesService } from './venues.service';
 import { RoomsService } from '../rooms/rooms.service';
+import { RoomCardStandaloneComponent } from '../rooms/roomCard.component';
 
 import { Room } from '@models/room.model';
 import { Venue } from '@models/venue.model';
 
 @Component({
   selector: 'app-venue',
+  imports: [
+    // Angular
+    CommonModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
+    VenueCardStandaloneComponent,
+    RoomCardStandaloneComponent,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonGrid,
+    IonHeader,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonSearchbar,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: './venue.page.html',
   styleUrls: ['./venue.page.scss']
 })
@@ -22,15 +66,13 @@ export class VenuePage implements OnInit {
   venue: Venue;
   rooms: Room[];
 
-  constructor(
-    private route: ActivatedRoute,
-    private modalCtrl: ModalController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private _venues: VenuesService,
-    private _rooms: RoomsService,
-    public app: AppService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private modalCtrl = inject(ModalController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private _venues = inject(VenuesService);
+  private _rooms = inject(RoomsService);
+  public app = inject(AppService);
 
   async ngOnInit() {
     await this.loadData();
@@ -54,7 +96,7 @@ export class VenuePage implements OnInit {
   }
 
   async manageVenue(venue: Venue): Promise<void> {
-    if (!this.app.user.permissions.canManageContents) return
+    if (!this.app.user.permissions.canManageContents) return;
 
     const modal = await this.modalCtrl.create({
       component: ManageVenueComponent,

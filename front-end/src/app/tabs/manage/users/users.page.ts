@@ -1,6 +1,8 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonSearchbar, ModalController } from '@ionic/angular';
-import { ColumnMode, SelectionType, TableColumn, DatatableComponent } from '@swimlane/ngx-datatable';
+import { CommonModule } from '@angular/common';
+import { Component, HostListener, OnInit, ViewChild, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AlertController, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonLabel, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToolbar, IonItem, ModalController } from '@ionic/angular/standalone';
+import { ColumnMode, SelectionType, TableColumn, DatatableComponent, NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { WorkBook, utils, writeFile } from 'xlsx';
 import { Suggestion } from 'idea-toolbox';
 import {
@@ -8,6 +10,7 @@ import {
   IDEALoadingService,
   IDEAMessageService,
   IDEASuggestionsComponent,
+  IDEATranslatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -22,7 +25,25 @@ import { EventSpot, EventSpotAttached } from '@models/eventSpot.model';
 @Component({
   selector: 'users',
   templateUrl: 'users.page.html',
-  styleUrls: ['users.page.scss']
+  styleUrls: ['users.page.scss'],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgxDatatableModule,
+    IDEATranslatePipe,
+    IonItem,
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonLabel,
+    IonSearchbar,
+    IonSelect,
+    IonSelectOption,
+    IonTitle,
+    IonToolbar
+  ]
 })
 export class UsersPage implements OnInit {
   @ViewChild(IonSearchbar) searchbar: IonSearchbar;
@@ -58,17 +79,15 @@ export class UsersPage implements OnInit {
   spots: EventSpot[];
   numCountrySpotsAvailable = 0;
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private t: IDEATranslationsService,
-    private actionsCtrl: IDEAActionSheetController,
-    private _users: UsersService,
-    private _spots: SpotsService,
-    public app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private t = inject(IDEATranslationsService);
+  private actionsCtrl = inject(IDEAActionSheetController);
+  private _users = inject(UsersService);
+  private _spots = inject(SpotsService);
+  public app = inject(AppService);
   async ngOnInit(): Promise<void> {
     this.col = [
       { prop: 'firstName', name: this.t._('USER.FIRST_NAME') },

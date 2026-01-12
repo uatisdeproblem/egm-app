@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { UsefulLink } from '@models/usefulLink.model';
@@ -6,14 +6,15 @@ import { AppService } from 'src/app/app.service';
 
 @Injectable({ providedIn: 'root' })
 export class UsefulLinksService {
+  private readonly api = inject(IDEAApiService);
+  private readonly app = inject(AppService);
+
   private usefulLinks: UsefulLink[];
 
   /**
    * The number of useful links to consider for the pagination, when active.
    */
   MAX_PAGE_SIZE = 24;
-
-  constructor(private api: IDEAApiService, private app: AppService) {}
 
   /**
    * Load the useful links from the back-end.

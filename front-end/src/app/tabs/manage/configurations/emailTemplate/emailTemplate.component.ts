@@ -1,7 +1,27 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { isEmpty } from 'idea-toolbox';
-import { IDEALoadingService, IDEAMessageService, IDEATranslationsService } from '@idea-ionic/common';
+import { IDEALoadingService, IDEAMessageService, IDEATranslatePipe, IDEATranslationsService } from '@idea-ionic/common';
+import {
+  AlertController,
+  IonButton,
+  IonButtons,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonTextarea,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
 import { ConfigurationsService } from '../configurations.service';
@@ -10,6 +30,29 @@ import { EmailTemplates } from '@models/configurations.model';
 
 @Component({
   selector: 'app-email-template',
+  imports: [
+    // Angular
+    CommonModule,
+    FormsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // Ionic
+    IonButton,
+    IonButtons,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonTextarea,
+    IonTitle,
+    IonToolbar
+  ],
   templateUrl: 'emailTemplate.component.html',
   styleUrls: ['emailTemplate.component.scss']
 })
@@ -26,15 +69,13 @@ export class EmailTemplateComponent implements OnInit {
 
   errors: Set<string> = new Set();
 
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private loading: IDEALoadingService,
-    private message: IDEAMessageService,
-    private t: IDEATranslationsService,
-    private _configurations: ConfigurationsService,
-    private app: AppService
-  ) {}
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
+  private loading = inject(IDEALoadingService);
+  private message = inject(IDEAMessageService);
+  private t = inject(IDEATranslationsService);
+  private _configurations = inject(ConfigurationsService);
+  private app = inject(AppService);
   async ngOnInit(): Promise<void> {
     try {
       const { subject, content } = await this.getTemplate();

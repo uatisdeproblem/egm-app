@@ -16,12 +16,14 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "useDefineForClassFields": false,
     "allowSyntheticDefaultImports": true,
     "target": "es2022",
     "module": "es2020",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
     "lib": ["es2018", "dom"]
   },
   "angularCompilerOptions": {

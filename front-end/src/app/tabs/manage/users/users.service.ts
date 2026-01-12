@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { User, UserPermissions } from '@models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
-  constructor(private api: IDEAApiService) {}
+  private readonly api = inject(IDEAApiService);
 
   /**
    * Get a user's data by its id.

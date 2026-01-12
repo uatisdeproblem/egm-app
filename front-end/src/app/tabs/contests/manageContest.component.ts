@@ -1,11 +1,33 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { AlertController, IonicModule, ModalController } from '@ionic/angular';
+import {
+  AlertController,
+  IonBadge,
+  IonButton,
+  IonButtons,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  IonSelect,
+  IonSelectOption,
+  IonText,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
 import {
   IDEALoadingService,
   IDEAMessageService,
-  IDEATranslationsModule,
+  IDEATranslatePipe,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -19,14 +41,35 @@ import { ContestsService } from './contests.service';
 import { Contest, ContestCandidate } from '@models/contest.model';
 
 @Component({
-  standalone: true,
   imports: [
+    // Angular
     CommonModule,
     FormsModule,
-    IonicModule,
-    IDEATranslationsModule,
+    // IDEA
+    IDEATranslatePipe,
+    // App
     HTMLEditorComponent,
-    DatetimeWithTimezoneStandaloneComponent
+    DatetimeWithTimezoneStandaloneComponent,
+    // Ionic
+    IonBadge,
+    IonButton,
+    IonButtons,
+    IonCheckbox,
+    IonCol,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonListHeader,
+    IonRow,
+    IonSelect,
+    IonSelectOption,
+    IonText,
+    IonTitle,
+    IonToolbar
   ],
   selector: 'app-manage-contest',
   template: `

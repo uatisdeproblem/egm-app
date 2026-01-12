@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
 import { Speaker } from '@models/speaker.model';
@@ -12,7 +12,7 @@ export class SpeakersService {
    */
   MAX_PAGE_SIZE = 24;
 
-  constructor(private api: IDEAApiService) {}
+  private readonly api = inject(IDEAApiService);
 
   private async loadList(organization?: string): Promise<void> {
     const params: any = {};
