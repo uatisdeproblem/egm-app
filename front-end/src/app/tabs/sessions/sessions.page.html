@@ -26,7 +26,17 @@
             </ion-label>
           </ion-item>
           }
-          <ion-searchbar #searchbar color="light" (ionInput)="filterSessions($event.target.value)"></ion-searchbar>
+          <div class="searchRow">
+            <ion-searchbar #searchbar color="light" (ionInput)="filterSessions($event.target.value)"></ion-searchbar>
+            <ion-button
+              class="filterButton"
+              fill="clear"
+              [color]="selectedTypes.length ? 'primary' : 'medium'"
+              (click)="openFiltersModal()"
+            >
+              <ion-icon name="options-outline" slot="icon-only" />
+            </ion-button>
+          </div>
           <ion-item color="white" class="noElements" *ngIf="sessions && !sessions.length">
             <ion-label>{{ 'COMMON.NO_ELEMENT_FOUND' | translate }}</ion-label>
           </ion-item>

@@ -36,11 +36,12 @@ import { SessionDetailComponent } from './sessionDetail.component';
 import { SessionsService } from './sessions.service';
 import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
 
-import { Session } from '@models/session.model';
+import { Session, SessionType } from '@models/session.model';
 import { Speaker } from '@models/speaker.model';
 import { SpeakersService } from '../speakers/speakers.service';
 import { QrScannerModalComponent } from './QRScanner.component';
 import { SessionRegistration } from '@models/sessionRegistration.model';
+import { SessionFiltersModalComponent } from './sessionFiltersModal.component';
 
 @Component({
   selector: 'app-sessions',
@@ -73,7 +74,7 @@ import { SessionRegistration } from '@models/sessionRegistration.model';
     IonSkeletonText,
     IonText,
     IonTitle,
-    IonToolbar
+    IonToolbar,
   ],
   templateUrl: './sessions.page.html',
   styleUrls: ['./sessions.page.scss']
@@ -102,6 +103,7 @@ export class SessionsPage {
   sessionCountByDate: Record<string, number> = {};
   registration: SessionRegistration;
   segment = '';
+  selectedTypes: SessionType[] = [];
 
   async ionViewDidEnter(): Promise<void> {
     await this.loadData();
@@ -126,6 +128,7 @@ export class SessionsPage {
       this.registeredSessionsIds = userRegisteredSessions.map(ur => ur.sessionId);
       this.ratedSessionsIds = userRegisteredSessions.filter(ur => ur.hasUserRated).map(ur => ur.sessionId);
       this.days = await this._sessions.getSessionDays();
+      this.sessions = this.applyTypeFilters(this.sessions);
       this.checkMinSessionsLimit();
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
@@ -140,7 +143,30 @@ export class SessionsPage {
     this.checkMinSessionsLimit();
   }
   async filterSessions(search = ''): Promise<void> {
-    this.sessions = await this._sessions.getList({ search, segment: this.segment });
+    const sessions = await this._sessions.getList({ search, segment: this.segment });
+    this.sessions = this.applyTypeFilters(sessions);
+  }
+
+  private applyTypeFilters(sessions: Session[]): Session[] {
+    if (!this.selectedTypes?.length) return sessions;
+    return sessions.filter(session => this.selectedTypes.includes(session.type));
+  }
+
+  async openFiltersModal(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: SessionFiltersModalComponent,
+      componentProps: {
+        selectedTypes: this.selectedTypes
+      },
+      backdropDismiss: true
+    });
+
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (!data || !('types' in data)) return;
+
+    this.selectedTypes = data.types || [];
+    await this.filterSessions(this.searchbar?.value || '');
   }
 
   isSessionInFavorites(session: Session): boolean {
