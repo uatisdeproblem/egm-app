@@ -28,6 +28,41 @@
       <ion-item [color]="_sessions.getColourBySessionType(session)">
         <ion-icon slot="start" name="pricetag" />
         <ion-label>{{ 'SESSIONS.TYPES.' + session.type | translate }}</ion-label>
+        <ion-button
+          fill="clear"
+          size="small"
+          color="primary"
+          slot="end"
+          id="sessionTypeInfoTrigger"
+          aria-label="Session type info"
+          style="--padding-start: 6px; --padding-end: 6px"
+        >
+          <ion-icon
+            name="information-circle"
+            slot="icon-only"
+            size="large"
+            style="color: #fff"
+          />
+        </ion-button>
+        <ion-modal #sessionTypeModal trigger="sessionTypeInfoTrigger" class="session-type-modal">
+          <ng-template>
+            <ion-header>
+              <ion-toolbar>
+                <ion-title>{{ 'SESSIONS.SESSION_TYPE_INFO' | translate }}</ion-title>
+                <ion-buttons slot="end">
+                  <ion-button (click)="sessionTypeModal.dismiss()">{{ 'COMMON.CLOSE' | translate }}</ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+              <ion-text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea commodo consequat.
+              </ion-text>
+            </ion-content>
+          </ng-template>
+        </ion-modal>
       </ion-item>
       <ion-item
         *ngIf="hasSessionEnded && isUserRegisteredInSession && !hasUserRatedSession"

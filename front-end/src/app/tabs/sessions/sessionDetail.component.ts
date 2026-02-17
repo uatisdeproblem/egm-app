@@ -1,24 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { IDEATranslatePipe, IDEATranslationsService } from '@idea-ionic/common';
-import {
-  IonBadge,
-  IonButton,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
-  IonCol,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonRow,
-  IonText,
-  IonTextarea,
-  IonToolbar
-} from '@ionic/angular/standalone';
+import { IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonModal, IonRow, IonText, IonTextarea, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
 import { AppService } from '@app/app.service';
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
@@ -38,21 +21,26 @@ import { SessionsService } from './sessions.service';
     // Ionic
     IonBadge,
     IonButton,
+    IonButtons,
     IonCard,
     IonCardContent,
     IonCardHeader,
     IonCardSubtitle,
     IonCardTitle,
     IonCol,
+    IonContent,
+    IonHeader,
     IonIcon,
     IonItem,
     IonLabel,
     IonList,
+    IonModal,
     IonRow,
     IonText,
     IonTextarea,
-    IonToolbar
-  ],
+    IonTitle,
+    IonToolbar,
+],
   templateUrl: 'sessionDetail.component.html',
   styleUrls: ['sessionDetail.component.scss']
 })
