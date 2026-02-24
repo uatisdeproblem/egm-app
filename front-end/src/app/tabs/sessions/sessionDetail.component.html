@@ -15,6 +15,12 @@
             </ion-text>
           </ion-badge>
         }
+
+        @if (isUserRegisteredInSession) {
+          <ion-badge color="success" slot="end">
+            {{ 'SESSIONS.ENROLLED' | translate }}
+          </ion-badge>
+        }
       </ion-item>
     </ion-card-subtitle>
     <ion-card-title>
