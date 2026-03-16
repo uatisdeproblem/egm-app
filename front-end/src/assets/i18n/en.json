@@ -494,6 +494,8 @@
     "DESCRIPTION": "Description",
     "TYPE": "Session type",
     "STARTS_AT": "Session starts at",
+    "STARTS_IN_BETWEEN": "Session starts in between",
+    "ENDS_IN_BETWEEN": "Session ends in between",
     "DURATION_MINUTES": "Session duration (minutes)",
     "PARTICIPANT_LIMIT": "Participant limit",
     "SPEAKERS": "Speakers",
