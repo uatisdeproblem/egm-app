@@ -1,13 +1,14 @@
 ///
 /// IMPORTS
 ///
+import { webcrypto } from 'node:crypto';
+(globalThis as any).crypto = webcrypto;
 
 import { default as Axios } from 'axios';
 import { DynamoDB, HandledError, ResourceController, SystemsManager } from 'idea-aws';
-import * as crypto from 'crypto';
+import * as arctic from 'arctic';
 
 import { createAuthTokenWithUserId } from '../utils/auth.utils';
-
 import { AuthServices, User } from '../models/user.model';
 
 ///
@@ -18,27 +19,13 @@ const OAUTH_CLIENT_ID = process.env.OAUTH_CLIENT_ID;
 const OAUTH_AUTHORIZE_URL = 'https://accounts.esn.org/oauth/authorize';
 const OAUTH_TOKEN_URL = 'https://accounts.esn.org/oauth/token';
 const OAUTH_USERINFO_URL = 'https://accounts.esn.org/oauth/v1/userinfo';
-const OAUTH_REDIRECT_URI = `https://${APP_URL}/openid-connect/esn_accounts`;
 const OAUTH_SCOPE = 'oauth2_access_to_profile_information';
 
 const DDB_TABLES = { users: process.env.DDB_TABLE_users };
 const ddb = new DynamoDB();
-
 const ssm = new SystemsManager();
 
 export const handler = (ev: any, _: any, cb: any): Promise<void> => new GalaxyRC(ev, cb).handleRequest();
-
-///
-/// HELPER FUNCTIONS FOR PKCE
-///
-
-function generateCodeVerifier(): string {
-  return crypto.randomBytes(32).toString('base64url');
-}
-
-function generateCodeChallenge(verifier: string): string {
-  return crypto.createHash('sha256').update(verifier).digest('base64url');
-}
 
 ///
 /// RESOURCE CONTROLLER
@@ -47,12 +34,18 @@ function generateCodeChallenge(verifier: string): string {
 class GalaxyRC extends ResourceController {
   host: string;
   stage: string;
+  redirectUri: string;
 
   constructor(event: any, callback: any) {
     super(event, callback);
     this.callback = callback;
     this.host = event.headers?.host ?? null;
     this.stage = process.env.STAGE ?? null;
+    this.redirectUri = `https://${this.host}/${this.stage}/galaxy`;
+  }
+
+  private getOAuthClient(): arctic.OAuth2Client {
+    return new arctic.OAuth2Client(OAUTH_CLIENT_ID, process.env.OAUTH_CLIENT_SECRET, this.redirectUri);
   }
 
   protected async getResources(): Promise<any> {
@@ -74,72 +67,55 @@ class GalaxyRC extends ResourceController {
       // Step 5: Generate auth token and redirect
       await this.redirectWithToken(user.userId);
     } catch (err) {
-      this.logger.error('ESN Accounts OAuth sign-in failed', err);
+      this.logger.error('ESN Accounts OAuth sign-in failed', {
+        details: JSON.stringify(err)
+      });
       throw new HandledError('ESN Accounts sign-in failed');
     }
   }
 
   private initiateOAuthFlow(): void {
-    // Generate PKCE parameters
-    const codeVerifier = generateCodeVerifier();
-    const codeChallenge = generateCodeChallenge(codeVerifier);
+    const state = arctic.generateState();
 
-    // Store code_verifier in a way that can be retrieved later
-    // For now, we'll use a state parameter to encode it (in production, use a secure session store)
-    const state = Buffer.from(JSON.stringify({
-      codeVerifier,
+    const statePayload = Buffer.from(JSON.stringify({
+      state,
       localhost: this.queryParams.localhost || null
     })).toString('base64url');
 
-    // Build authorization URL
-    const authParams = new URLSearchParams({
-      response_type: 'code',
-      client_id: OAUTH_CLIENT_ID,
-      redirect_uri: OAUTH_REDIRECT_URI,
-      scope: OAUTH_SCOPE,
-      state: state,
-      code_challenge: codeChallenge,
-      code_challenge_method: 'S256'
-    });
+    // Senza PKCE
+    const url = this.getOAuthClient().createAuthorizationURL(
+      OAUTH_AUTHORIZE_URL,
+      state,
+      [OAUTH_SCOPE]
+    );
 
-    const authorizationURL = `${OAUTH_AUTHORIZE_URL}?${authParams.toString()}`;
+    url.searchParams.set('state', statePayload);
 
-    this.logger.info('Initiating OAuth flow', { authorizationURL });
+    this.logger.info('Initiating OAuth flow', { url: url.toString() });
 
-    // Redirect user to OAuth authorization endpoint
     this.callback(null, {
       statusCode: 302,
-      headers: { Location: authorizationURL }
+      headers: { Location: url.toString() }
     });
   }
 
   private async exchangeCodeForToken(): Promise<string> {
-    // Decode state to get code_verifier
-    const stateData = JSON.parse(Buffer.from(this.queryParams.state, 'base64url').toString());
-    const codeVerifier = stateData.codeVerifier;
-
-    // Exchange authorization code for access token
-    const tokenParams = new URLSearchParams({
-      grant_type: 'authorization_code',
-      code: this.queryParams.code,
-      redirect_uri: OAUTH_REDIRECT_URI,
-      client_id: OAUTH_CLIENT_ID,
-      code_verifier: codeVerifier
-    });
-
-    this.logger.debug('Exchanging code for token');
-
-    const tokenResponse = await Axios.post(OAUTH_TOKEN_URL, tokenParams.toString(), {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+    try {
+      // Senza codeVerifier
+      const tokens = await this.getOAuthClient().validateAuthorizationCode(
+        OAUTH_TOKEN_URL,
+        this.queryParams.code,
+        null
+      );
+      return tokens.accessToken();
+    } catch (e) {
+      if (e instanceof arctic.OAuth2RequestError) {
+        this.logger.error('OAuth2RequestError', { code: e.code, message: e.message, details: JSON.stringify(e) });
+        throw new Error(`OAuth error: ${e.code}`);
       }
-    });
-
-    if (!tokenResponse.data.access_token) {
-      throw new Error('No access token received');
+      this.logger.error('Unknown token exchange error', { details: JSON.stringify(e) });
+      throw e;
     }
-
-    return tokenResponse.data.access_token;
   }
 
   private async getUserInfo(accessToken: string): Promise<any> {
@@ -157,24 +133,19 @@ class GalaxyRC extends ResourceController {
   }
 
   private async createOrUpdateUser(userInfo: any): Promise<User> {
-    // Map OAuth userInfo to your User model
-    // Note: You'll need to adjust these field mappings based on the actual response structure
     const userId = AuthServices.ESN_ACCOUNTS.concat('_', userInfo.id || userInfo.sub || userInfo.user_id);
 
     let user: User;
     let firstAccess = false;
 
-    // Parse birthdate (adjust format based on actual response)
     let birthDate: string;
     if (userInfo.birthdate) {
       const [day, month, year] = userInfo.birthdate.split('/');
       birthDate = new Date(`${year}-${month}-${day}`).toISOString();
     }
 
-
     try {
       user = new User(await ddb.get({ TableName: DDB_TABLES.users, Key: { userId } }));
-      // Update existing user
       user.firstName = userInfo.first_name || userInfo.given_name;
       user.lastName = userInfo.last_name || userInfo.family_name;
       user.email = userInfo.email;
@@ -183,7 +154,6 @@ class GalaxyRC extends ResourceController {
       user.sectionName = userInfo.section_name || userInfo.section;
       if (birthDate) user.birthDate = birthDate;
     } catch (error) {
-      // Create new user
       firstAccess = true;
       user = new User({
         userId,
@@ -201,7 +171,6 @@ class GalaxyRC extends ResourceController {
 
     this.logger.info('ESN Accounts OAuth sign-in', user);
 
-    // Save user to database
     const putParams: any = {
       TableName: DDB_TABLES.users,
       Item: user,
@@ -216,7 +185,6 @@ class GalaxyRC extends ResourceController {
   private async redirectWithToken(userId: string): Promise<void> {
     const token = await createAuthTokenWithUserId(ssm, userId);
 
-    // Get localhost from state if present
     const stateData = this.queryParams.state
       ? JSON.parse(Buffer.from(this.queryParams.state, 'base64url').toString())
       : {};

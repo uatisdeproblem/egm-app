@@ -10,6 +10,7 @@
     "deploy-quick": "npm run compile && cdk --profile egm deploy egm-dev-api --context stage=dev --exclusively --hotswap"
   },
   "dependencies": {
+    "arctic": "^3.7.0",
     "axios": "^1.6.7",
     "date-fns": "^3.3.1",
     "idea-aws": "^4.4.7",
