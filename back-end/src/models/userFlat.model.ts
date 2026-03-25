@@ -16,6 +16,7 @@ export class UserFlat {
   'Section Country': string;
   'Section Name': string;
   'Registered at': string;
+  'Spot Number': string;
   'Spot type': string;
   'Spot paid': boolean;
   'Spot confirmed': boolean;
@@ -35,6 +36,7 @@ export class UserFlat {
     this['Section Country'] = x.sectionCountry ?? '';
     this['Section Name'] = x.sectionName ?? '';
     this['Registered at'] = x.registrationAt ?? '';
+    this['Spot Number'] = x.spot?.spotId ?? '';
     this['Spot type'] = x.spot?.type ?? '';
     this['Spot paid'] = !!x.spot?.proofOfPaymentURI;
     this['Spot confirmed'] = !!x.spot?.paymentConfirmedAt;

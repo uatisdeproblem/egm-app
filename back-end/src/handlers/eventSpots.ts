@@ -136,13 +136,14 @@ class EventSpotsRC extends ResourceController {
     const toAddresses = [user.email];
     const template = `${EmailTemplates.SPOT_ASSIGNED}-${STAGE}`;
     const aWeekFromNow = addWeeks(new Date(), 1);
+    const externalDeadline = addWeeks(new Date(), 2);
     const templateData = {
       name: user.getName(),
       spotType: this.spot.type,
       price: this.configurations.pricePerSpotTypes[this.spot.type],
       show_payment: this.configurations.pricePerSpotTypes[this.spot.type] > 0 ? '' : 'display: none;',
       reference: this.spot.spotId,
-      deadline: toISODate(aWeekFromNow)
+      deadline: toISODate(user.isExternal() ? externalDeadline : aWeekFromNow)
     };
 
     try {
@@ -220,6 +221,31 @@ class EventSpotsRC extends ResourceController {
       };
 
       await sendEmail(toAddresses, template, templateData);
+
+      if (targetUser.registrationForm.financial.needsInvitationLetter) {
+        try {
+          const pdfBuffer: Buffer = await this.generateInvitationLetterPDF(targetUser);
+
+          const htmlBody = `
+            <p>Dear ${targetUser.getName()},</p>
+            <p>Please find the invitation letter for the Erasmus Generation Meeting 2026 in Split, Croatia attached. <p>
+            <p>See you there!</p>
+          `;
+
+          await sendEmailWithAttachment(
+            toAddresses,
+            '[Invitation Letter] EGM 2026',
+            htmlBody,
+            [{
+              filename: `invitation-letter-${targetUser.userId}.pdf`,
+              content: pdfBuffer,
+              contentType: 'application/pdf',
+            }]
+          );
+        } catch (error) {
+          this.logger.warn('Error sending invitation letter', error);
+        }
+      }
     } catch (error) {
       this.logger.warn('Error sending email', error, { temlate: EmailTemplates.SPOT_TRANSFERRED });
     }
@@ -421,11 +447,11 @@ class EventSpotsRC extends ResourceController {
       issueDate: toISODate(new Date()),
       firstName: user.firstName,
       lastName: user.lastName,
-      dateOfBirth: user.birthDate,
-      placeOfBirth: user.registrationForm.PlaceofBirth,
-      passportNumber: user.registrationForm.IDPassportNumber,
-      passportIssueDate: user.registrationForm.IDPassportIssueDate,
-      passportExpiryDate: user.registrationForm.IDPassportExpiryDate,
+      dateOfBirth: toISODate(user.birthDate),
+      placeOfBirth: user.registrationForm.financial.PlaceofBirth,
+      passportNumber: user.registrationForm.financial.IDPassportNumber,
+      passportIssueDate: toISODate(user.registrationForm.financial.IDPassportIssueDate),
+      passportExpiryDate: toISODate(user.registrationForm.financial.DPassportExpiryDate),
     };
 
     try {

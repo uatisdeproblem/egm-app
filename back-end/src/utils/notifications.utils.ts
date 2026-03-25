@@ -1,4 +1,4 @@
-import { SES } from 'idea-aws';
+import { EmailAttachment, SES } from 'idea-aws';
 
 const SES_CONFIG = {
   sourceName: 'EGM App',
@@ -16,4 +16,14 @@ export const sendEmail = async (toAddresses: string[], template: string, templat
 export const sendSimpleEmail = async (toAddresses: string[], subject: string, text: string): Promise<void> => {
   SES_CONFIG.sourceName = 'EGM App';
   await ses.sendEmail({ toAddresses, subject, text }, SES_CONFIG);
+};
+
+export const sendEmailWithAttachment = async (
+  toAddresses: string[],
+  subject: string,
+  html: string,
+  attachments: EmailAttachment[]
+): Promise<void> => {
+  SES_CONFIG.sourceName = 'EGM App';
+  await ses.sendEmail({ toAddresses, subject, html, attachments }, SES_CONFIG);
 };
