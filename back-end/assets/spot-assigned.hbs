@@ -4,34 +4,35 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body style="font-family: Arial, sans-serif; font-size: 11pt; color: #000000; padding: 20px;">
-    <p>Hello {{name}},</p>
+    <p>Dear {{name}},</p>
 
-    <p>Your spot for EGM Split 2026 has been successfully assigned as <i>{{spotType}}</i>.</p>
+    <p>We are pleased to inform you that your spot for <b>EGM Split 2026</b> has been successfully assigned as <b>{{spotType}}</b>.</p>
 
     <div style="{{show_payment}}">
-        <p>You need to pay <i>{{price}}</i>€.</p>
+        <p>To complete your registration, a payment of <b>{{price}}</b>€ is required.</p>
 
-        <p>Your reference number is <i>{{reference}}</i>. You can also consult it in the EGM App.</p>
+        <p>Your personal reference number is <b>{{reference}}</b>, which can also be consulted it in the EGM App.</p>
 
-        <p>In order to proceed with the registration process, we need you to pay the spot until the {{deadline}}, following one of these steps:</p>
+        <p>Please ensure that the payment is completed by <b>{{deadline}}</b>. Below you will find the available payment methods and the necessary instructions.</p>
 
         <p><strong>1. Payment by card</strong></p>
+
         <div style="margin-left: 20px;">
-            <p>To pay by card you will need to go to the EGM App and select the 'Pay with Stripe' option on your user page. <strong>You'll be charged a percentage because of the commissions of the platform if using this method.</strong></p>
-            <p>If you're paying for yourself...</p>
+            <p>To pay by card, please log in to the EGM App and select the 'Pay with Stripe' option on your user page. <strong>Please note that this payment method includes commission fees, in accordance with the platform’s policy.</strong></p>
+            <p>When proceeding with the payment:</p>
             <ul>
-                <li>Add your the Reference Number* and Name + Surname + National Organisation. For example, Marco Natali ESN Italy</li>
-                <li>Add the TAX DATA of the ENTITY/SECTION that will receive the legal invoice after the event - to do so, select the option 'buying as a company' in the bottom of the Stripe payment form.</li>
+                <li>Please include {{name}} - {{reference}} to ensure correct identification of your payment</li>
+                <li>If an invoice is required for an entity or section, please provide the relevant tax data by selecting the option “Buying as a company” at the bottom of the Stripe payment form.</li>
             </ul>
         </div>
 
         <p><strong>2. Payment by bank transfer</strong></p>
         <div style="margin-left: 20px;">
-            <p>To pay by bank transfer, these are the fields you must fill when processing your transfer:</p>
-            <ul>
-                <li>Concept of the payment: <u>NAME SURNAME - REFERENCE NUMBER - EGM SPLIT 2026</u> (<i>ex: Marco Natali - 123456789 - EGM Split 2026</i>)</li>
-                <li>If you are paying for multiple people, send an email to <a href="mailto:egm-oc@esn.org">egm-oc@esn.org</a> with the proof of payment and the <u>NAME SURNAME - REFERENCE NUMBER</u> for EACH one paid on that transfer</li>
-            </ul>
+            <p>If you prefer to pay by bank transfer, please use the following details:</p>
+            <p>
+              <b>Payment reference:</b><br>
+              {{name}} - {{reference}} - EGM Split 2026
+            </p>
 
             <p style="margin-left: 20px;">ESN Split bank details:</p>
             <ul>
@@ -43,10 +44,22 @@
               <li><strong>SWIFT CODE:</strong> OTPVHR2X</li>
             </ul>
 
-            <p>Remember to upload your proof of payment using the dedicated button on the user's page on the app. This should be a bank statement with the relevant data to match with your payment (name and surname and reference number).</p>
+            <p>
+              If you are making a single transfer for multiple participants, please send an email to <a href="mailto:egm-oc@esn.org">egm-oc@esn.org </a>with:
+              <ul>
+                <li>The proof of payment, and</li>
+                <li>The <b>name, surname</b>and <b>reference number</b> of each participant included in the transfer.</li>
+              </ul>
+            </p>
+
+            <p>
+              <b>Proof of Payment</b><br>
+              After completing the payment (by card or bank transfer), please upload your proof of payment using the dedicated button on your user page in the EGM App. The document must clearly display the payer’s name, surname, and reference number to allow verification.
+            </p>
         </div>
     </div>
 
     <p>If you have any questions regarding the registration or payment process please write to <a href="mailto:egm-oc@esn.org">egm-oc@esn.org</a>.</p>
+    <p>Kind regards,</p>
 </body>
 </html>

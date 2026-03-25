@@ -2,8 +2,7 @@
 /// IMPORTS
 ///
 
-import { addDays } from 'date-fns';
-import { SignedURL, toISODate } from 'idea-toolbox';
+import { SignedURL, toISODate} from 'idea-toolbox';
 import { Cognito, DynamoDB, HandledError, ResourceController, S3 } from 'idea-aws';
 import { HTML2PDF } from 'idea-html2pdf';
 
@@ -11,6 +10,7 @@ import { AuthServices, User, UserPermissions } from '../models/user.model';
 import { Configurations } from '../models/configurations.model';
 import { EventSpot, EventSpotAttached } from '../models/eventSpot.model';
 import { sendSimpleEmail } from '../utils/notifications.utils';
+import { addDays } from 'date-fns';
 
 ///
 /// CONSTANTS, ENVIRONMENT VARIABLES, HANDLER
@@ -248,11 +248,14 @@ class UsersRC extends ResourceController {
       key: S3_ASSETS_FOLDER.concat('/payment-invoice.hbs')
     });
 
+    const deadline = this.reqUser.isExternal() ? addDays(new Date(), 14) : new Date("2025-12-28");
     const pdfVariables = {
       reference: this.reqUser.spot.spotId,
       issueDate: toISODate(new Date()),
-      dueDate: toISODate(addDays(new Date(), 7)),
+      dueDate: toISODate(deadline),
       invoiceAddress: this.reqUser.registrationForm.financial.invoiceAddress,
+      vatNumber: this.reqUser.registrationForm.financial.VATNumber ?? '',
+      legalName: this.reqUser.registrationForm.financial.LegalNameofInstitution ?? '',
       name: `${this.reqUser.firstName} ${this.reqUser.lastName}`,
       spotType: this.reqUser.spot.type,
       spotPrice: `${this.configurations.pricePerSpotTypes[this.reqUser.spot.type]}.00€`
