@@ -6,7 +6,7 @@ import { IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader
 import { AppService } from '@app/app.service';
 import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
-import { Session } from '@models/session.model';
+import { Session, SessionType } from '@models/session.model';
 import { SessionsService } from './sessions.service';
 
 @Component({
@@ -61,4 +61,19 @@ export class SessionDetailComponent {
   public app = inject(AppService);
 
   selectedRating = 0;
+
+  getSessionTypeInfoTranslationKey(): string {
+    switch (this.session?.type) {
+      case SessionType.DISCUSSION:
+      case SessionType.TALK:
+      case SessionType.IGNITE:
+      case SessionType.CAMPFIRE:
+      case SessionType.INCUBATOR:
+      case SessionType.HUB:
+      case SessionType.COMMON:
+        return `SESSIONS.TYPE_INFO.${this.session.type}`;
+      default:
+        return 'SESSIONS.TYPE_INFO.DEFAULT';
+    }
+  }
 }

@@ -479,6 +479,16 @@
       "HUB": "Knowledge Hub",
       "COMMON": "Common"
     },
+    "TYPE_INFO": {
+      "DISCUSSION": "A discussion is a conversation between multiple people, preferably with different experiences and points of view, with the aim to exchange opinions and ideas.",
+      "TALK": "A TED-style talk about the activities, events, initiatives, projects, experiences and ideas on any topic of importance to the Erasmus Generation.",
+      "IGNITE": "A fast-paced and dynamic session intended to provoke awareness and stimulate discussion. Speakers have five minutes to talk about a topic accompanied by 1-2 slides. The presentation is followed by an interactive discussion or Q&A.",
+      "CAMPFIRE": "Campfire sessions are intended to stimulate discussion. The topic should be introduced within the first 10 minutes of the session. The facilitator helps to reveal common issues and encourages participants to share their own stories and experiences around the topic with the others around the campfire. The aim of the session is to create an open forum that allows for new solutions and ideas.",
+      "INCUBATOR": "This session allows you to introduce your project idea to the participants and invite them to join you for a session where you can collaboratively design and plan a project.",
+      "HUB": "The Knowledge Hub is there to exchange knowledge, share best practices and utilise the human library of knowledge hidden within the Erasmus Generation.",
+      "COMMON": "This is a common session shared across the agenda, like morning activities.",
+      "DEFAULT": "More information about this session type will be available soon."
+    },
     "CONFIRM_ERRORS": {
       "UNAUTHORIZED": "Not Authorized",
       "INVALID_TIME": "Confirm period for this session is expired",
