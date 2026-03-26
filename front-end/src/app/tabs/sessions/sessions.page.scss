@@ -6,7 +6,7 @@ ion-list {
 ion-item.sessionItem {
   box-shadow: '0 0 5px 3px rgba(0, 0, 0, 0.05)';
   border-radius: 12px;
-  margin: 8;
+  margin: 8px;
 
   ion-label {
     margin-top: 0px;
@@ -15,7 +15,7 @@ ion-item.sessionItem {
 }
 
 .registeredSession.favoritedSession {
-  border-color: var(--ion-color-primary);
+  border-color: var(--ion-color-success);
   border-style: solid;
 }
 
@@ -60,4 +60,16 @@ ion-searchbar {
   margin-right: 0;
   padding-left: 0;
   padding-right: 0;
+}
+
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filterButton {
+  margin: 0;
+  min-width: 44px;
+  height: 44px;
 }

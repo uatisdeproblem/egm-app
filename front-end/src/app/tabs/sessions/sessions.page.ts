@@ -36,11 +36,12 @@ import { SessionDetailComponent } from './sessionDetail.component';
 import { SessionsService } from './sessions.service';
 import { SessionRegistrationsService } from '../sessionRegistrations/sessionRegistrations.service';
 
-import { Session } from '@models/session.model';
+import { Session, SessionType } from '@models/session.model';
 import { Speaker } from '@models/speaker.model';
 import { SpeakersService } from '../speakers/speakers.service';
 import { QrScannerModalComponent } from './QRScanner.component';
 import { SessionRegistration } from '@models/sessionRegistration.model';
+import { SessionFiltersModalComponent } from './sessionFiltersModal.component';
 
 @Component({
   selector: 'app-sessions',
@@ -73,7 +74,7 @@ import { SessionRegistration } from '@models/sessionRegistration.model';
     IonSkeletonText,
     IonText,
     IonTitle,
-    IonToolbar
+    IonToolbar,
   ],
   templateUrl: './sessions.page.html',
   styleUrls: ['./sessions.page.scss']
@@ -102,6 +103,9 @@ export class SessionsPage {
   sessionCountByDate: Record<string, number> = {};
   registration: SessionRegistration;
   segment = '';
+  selectedTypes: SessionType[] = [];
+  selectedTimeRange: [number, number] = [420, 1200];
+  selectedEndTimeRange: [number, number] = [420, 1200];
 
   async ionViewDidEnter(): Promise<void> {
     await this.loadData();
@@ -126,6 +130,7 @@ export class SessionsPage {
       this.registeredSessionsIds = userRegisteredSessions.map(ur => ur.sessionId);
       this.ratedSessionsIds = userRegisteredSessions.filter(ur => ur.hasUserRated).map(ur => ur.sessionId);
       this.days = await this._sessions.getSessionDays();
+      this.sessions = this.applyFilters(this.sessions);
       this.checkMinSessionsLimit();
     } catch (error) {
       this.message.error('COMMON.OPERATION_FAILED');
@@ -140,7 +145,57 @@ export class SessionsPage {
     this.checkMinSessionsLimit();
   }
   async filterSessions(search = ''): Promise<void> {
-    this.sessions = await this._sessions.getList({ search, segment: this.segment });
+    const sessions = await this._sessions.getList({ search, segment: this.segment });
+    this.sessions = this.applyFilters(sessions);
+  }
+
+  private applyFilters(sessions: Session[]): Session[] {
+    return this.applyTimeFilters(this.applyTypeFilters(sessions));
+  }
+
+  private applyTypeFilters(sessions: Session[]): Session[] {
+    if (!this.selectedTypes?.length) return sessions;
+    return sessions.filter(session => this.selectedTypes.includes(session.type));
+  }
+
+  private applyTimeFilters(sessions: Session[]): Session[] {
+    const [minStartMinutes, maxStartMinutes] = this.selectedTimeRange || [420, 1200];
+    const [minEndMinutes, maxEndMinutes] = this.selectedEndTimeRange || [420, 1200];
+    const timeFilterActive = minStartMinutes > 0 || maxStartMinutes < 1439 || minEndMinutes > 0 || maxEndMinutes < 1439;
+    if (!timeFilterActive) return sessions;
+    return sessions.filter(session => {
+      const startMinutesOfDay = this.getMinutesOfDay(session.startsAt);
+      const endMinutesOfDay = this.getMinutesOfDay(session.endsAt);
+      const startInRange = startMinutesOfDay >= minStartMinutes && startMinutesOfDay <= maxStartMinutes;
+      const endInRange = endMinutesOfDay >= minEndMinutes && endMinutesOfDay <= maxEndMinutes;
+      return startInRange && endInRange;
+    });
+  }
+
+  private getMinutesOfDay(dateTime: string): number {
+    const date = new Date(dateTime);
+    return date.getHours() * 60 + date.getMinutes();
+  }
+
+  async openFiltersModal(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: SessionFiltersModalComponent,
+      componentProps: {
+        selectedTypes: this.selectedTypes,
+        selectedTimeRange: this.selectedTimeRange,
+        selectedEndTimeRange: this.selectedEndTimeRange
+      },
+      backdropDismiss: true
+    });
+
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (!data) return;
+
+    this.selectedTypes = data.types || [];
+    this.selectedTimeRange = data.timeRange || [420, 1200];
+    this.selectedEndTimeRange = data.endTimeRange || [420, 1200];
+    await this.filterSessions(this.searchbar?.value || '');
   }
 
   isSessionInFavorites(session: Session): boolean {
