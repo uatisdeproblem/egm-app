@@ -21,6 +21,10 @@ export const routes: Routes = [
     loadChildren: (): Promise<any> => import('./meals/mealsInfo.routes').then(m => m.routes)
   },
   {
+    path: 'check-in',
+    loadChildren: (): Promise<any> => import('./checkIn/checkIn.module').then(m => m.CheckInModule)
+  },
+  {
     path: 'registrations',
     loadChildren: (): Promise<any> => import('./registration/registration.routes').then(m => m.routes)
   },

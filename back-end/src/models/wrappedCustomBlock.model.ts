@@ -117,8 +117,8 @@ export class WrapperCustomBlockMeta extends CustomBlockMeta {
 
 
     originalSection.fieldsLegend.forEach(fieldKey => {
-      const field = originalSection.fields![fieldKey];
-      const fieldIsInData = sectionData.hasOwnProperty.call(fieldKey);
+      const field = originalSection.fields[fieldKey];
+      const fieldIsInData = Object.prototype.hasOwnProperty.call(sectionData, fieldKey);
       const fieldShouldBeVisible = this.shouldFieldBeVisible(field, allData, user);
 
 

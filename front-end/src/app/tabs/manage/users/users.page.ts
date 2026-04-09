@@ -108,6 +108,7 @@ export class UsersPage implements OnInit {
         pipe: { transform: (value: string, row?: User) => this.formatMealMenuSummary(row, value) }
       },
       { prop: 'additionalAllergensSummary', name: this.t._('MEALS.ADDITIONAL_ALLERGENS') },
+      { prop: 'registrationForm.main.tshirt', name: this.t._('USERS.TSHIRT') },
       { prop: 'registrationAt', name: this.t._('USERS.REGISTERED'), pipe: { transform: x => this.t.formatDate(x) } },
       { prop: 'spot.type', name: this.t._('USERS.WITH_SPOT') },
       {
@@ -186,7 +187,8 @@ export class UsersPage implements OnInit {
         x.spot?.spotId,
         x.mealCategorySummaryOrType,
         x.mealMenuSummary,
-        x.additionalAllergensSummary
+        x.additionalAllergensSummary,
+        x.registrationForm?.main?.tshirt
       ]
         .filter(f => f)
         .some(f => String(f).toLowerCase().includes(searchText))
@@ -216,7 +218,7 @@ export class UsersPage implements OnInit {
     this.calcFooterTotals();
 
     // whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+    if (this.table) this.table.offset = 0;
   }
 
   async actionsOnSelectedUser(user: User): Promise<void> {

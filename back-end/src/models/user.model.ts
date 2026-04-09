@@ -78,6 +78,26 @@ export class User extends Resource {
    */
   ESNcard?: string;
   /**
+   * Timestamp of when the user's ESNcard was manually validated at check-in.
+   */
+  ESNcardValidatedAt?: epochISOString;
+  /**
+   * User ID of the staff member who validated the ESNcard at check-in.
+   */
+  ESNcardValidatedBy?: string;
+  /**
+   * How the ESNcard was validated at check-in.
+   */
+  ESNcardValidationMethod?: ESNcardValidationMethod;
+  /**
+   * Timestamp of when the user was checked in by the OC.
+   */
+  checkedInAt?: epochISOString;
+  /**
+   * User ID of the staff member who checked the user in.
+   */
+  checkedInBy?: string;
+  /**
    * The permissions of the user on the app.
    */
   permissions: UserPermissions;
@@ -133,8 +153,15 @@ export class User extends Resource {
       this.sectionCountry = this.clean(x.sectionCountry, String);
       this.sectionName = this.clean(x.sectionName, String);
       this.ESNcard = this.clean(x.ESNcard, String);
+      if (x.ESNcardValidatedAt)
+        this.ESNcardValidatedAt = this.clean(x.ESNcardValidatedAt, t => new Date(t).toISOString());
+      if (x.ESNcardValidatedBy) this.ESNcardValidatedBy = this.clean(x.ESNcardValidatedBy, String);
+      if (x.ESNcardValidationMethod)
+        this.ESNcardValidationMethod = this.clean(x.ESNcardValidationMethod, String);
       this.isESNInternational = this.clean(x.isESNInternational, Boolean, false);
     }
+    if (x.checkedInAt) this.checkedInAt = this.clean(x.checkedInAt, t => new Date(t).toISOString());
+    if (x.checkedInBy) this.checkedInBy = this.clean(x.checkedInBy, String);
 
     this.permissions = new UserPermissions(x.permissions);
 
@@ -166,8 +193,13 @@ export class User extends Resource {
       this.sectionCountry = safeData.sectionCountry;
       this.sectionName = safeData.sectionName;
       this.birthDate = safeData.birthDate;
+      this.ESNcardValidatedAt = safeData.ESNcardValidatedAt;
+      this.ESNcardValidatedBy = safeData.ESNcardValidatedBy;
+      this.ESNcardValidationMethod = safeData.ESNcardValidationMethod;
       this.isESNInternational = safeData.isESNInternational;
     }
+    this.checkedInAt = safeData.checkedInAt;
+    this.checkedInBy = safeData.checkedInBy;
 
     this.permissions = safeData.permissions;
 
@@ -395,6 +427,18 @@ export class User extends Resource {
         return '';
     }
   }
+
+  hasConfirmedSpot(): boolean {
+    return !!this.registrationAt && !!this.spot?.paymentConfirmedAt;
+  }
+
+  hasValidatedESNcard(): boolean {
+    return !!this.ESNcardValidatedAt;
+  }
+
+  hasCheckedIn(): boolean {
+    return !!this.checkedInAt;
+  }
 }
 
 /**
@@ -403,6 +447,11 @@ export class User extends Resource {
 export enum AuthServices {
   ESN_ACCOUNTS = 'EA', // aka Galaxy
   COGNITO = 'CO'
+}
+
+export enum ESNcardValidationMethod {
+  SCAN = 'scan',
+  MANUAL = 'manual'
 }
 
 /**

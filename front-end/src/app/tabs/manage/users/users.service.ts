@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { IDEAApiService } from '@idea-ionic/common';
 
-import { User, UserPermissions } from '@models/user.model';
+import { ESNcardValidationMethod, User, UserPermissions } from '@models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
@@ -28,6 +28,22 @@ export class UsersService {
    */
   async changePermissions(user: User, permissions: UserPermissions): Promise<User> {
     const body = { action: 'CHANGE_PERMISSIONS', permissions };
+    return new User(await this.api.patchResource(['users', user.userId], { body }));
+  }
+
+  async verifyESNcard(user: User, cardCode: string, method: ESNcardValidationMethod): Promise<{
+    valid: boolean;
+    cardCode: string;
+    ESNcardValidatedAt?: string;
+    ESNcardValidatedBy?: string;
+    ESNcardValidationMethod?: ESNcardValidationMethod;
+  }> {
+    const body = { action: 'VERIFY_ESNCARD', cardCode, method };
+    return this.api.patchResource(['users', user.userId], { body });
+  }
+
+  async checkInUser(user: User): Promise<User> {
+    const body = { action: 'CHECK_IN_USER' };
     return new User(await this.api.patchResource(['users', user.userId], { body }));
   }
 
