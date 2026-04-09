@@ -1,4 +1,4 @@
-import { CustomBlockMeta, Languages, Resource } from 'idea-toolbox';
+import { Languages, Resource } from 'idea-toolbox';
 import { User } from '../models/user.model';
 import { ServiceLanguages } from './serviceLanguages.enum';
 import { WrapperCustomBlockMeta } from './wrappedCustomBlock.model';

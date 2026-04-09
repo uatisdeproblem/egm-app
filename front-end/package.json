@@ -34,6 +34,7 @@
     "@zxing/ngx-scanner": "^19.0.0",
     "date-fns-tz": "^2.0.1",
     "docs-soap": "^1.2.1",
+    "html5-qrcode": "^2.3.8",
     "idea-toolbox": "^7.0.5",
     "ionicons": "^7.2.2",
     "maplibre-gl": "^4.1.0",

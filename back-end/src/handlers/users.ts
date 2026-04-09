@@ -7,7 +7,7 @@ import { SignedURL, toISODate } from 'idea-toolbox';
 import { Cognito, DynamoDB, HandledError, ResourceController, S3 } from 'idea-aws';
 import { HTML2PDF } from 'idea-html2pdf';
 
-import { AuthServices, User, UserPermissions } from '../models/user.model';
+import { AuthServices, ESNcardValidationMethod, User, UserPermissions } from '../models/user.model';
 import { Configurations } from '../models/configurations.model';
 import { EventSpot, EventSpotAttached } from '../models/eventSpot.model';
 import { sendSimpleEmail } from '../utils/notifications.utils';
@@ -56,17 +56,21 @@ class UsersRC extends ResourceController {
     super(event, callback, { resourceId: 'userId' });
   }
 
-  protected async validateESNcard(cardCode: string): Promise<boolean> {
-    if (!cardCode || cardCode.trim() === '') return false;
+  protected normalizeESNcardCode(cardCode: string): string {
+    const groupSeparator = String.fromCharCode(29);
+    return (cardCode ?? '').split(groupSeparator).join('').replace(/[^\x20-\x7E]/g, '').trim();
+  }
 
-    const trimmedCode = cardCode.trim();
+  protected async validateESNcard(cardCode: string): Promise<boolean> {
+    const trimmedCode = this.normalizeESNcardCode(cardCode);
+    if (!trimmedCode) return false;
 
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), ESNCARD_TIMEOUT);
 
       const response = await fetch(
-        `${ESNCARD_API_URL}/${trimmedCode}?firstName=${encodeURIComponent(this.targetUser.firstName)}&lastName=${encodeURIComponent(this.reqUser.lastName)}&esnSection=${encodeURIComponent(this.targetUser.sectionName)}`,
+        `${ESNCARD_API_URL}/${trimmedCode}?firstName=${encodeURIComponent(this.targetUser.firstName)}&lastName=${encodeURIComponent(this.targetUser.lastName)}&esnSection=${encodeURIComponent(this.targetUser.sectionName)}`,
         {
           signal: controller.signal,
           headers: {
@@ -126,10 +130,16 @@ class UsersRC extends ResourceController {
       this.reqUser.permissions.isCountryLeader &&
       this.reqUser.sectionCountry === this.targetUser.sectionCountry &&
       this.httpMethod === 'GET';
+    const isStaffVerifyingESNcard =
+      this.reqUser.permissions.isStaff &&
+      this.httpMethod === 'PATCH' &&
+      this.body?.action === 'VERIFY_ESNCARD';
+
     if (
       this.principalId !== this.resourceId &&
       !this.reqUser.permissions.canManageRegistrations &&
-      !isCountryLeaderThatWantToReadCountryUser
+      !isCountryLeaderThatWantToReadCountryUser &&
+      !isStaffVerifyingESNcard
     )
       throw new HandledError('Unauthorized');
   }
@@ -153,7 +163,19 @@ class UsersRC extends ResourceController {
     return this.targetUser;
   }
 
-  protected async patchResource(): Promise<User | SignedURL | void | string[]> {
+  protected async patchResource(): Promise<
+    | User
+    | SignedURL
+    | void
+    | string[]
+    | {
+        valid: boolean;
+        cardCode: string;
+        ESNcardValidatedAt?: string;
+        ESNcardValidatedBy?: string;
+        ESNcardValidationMethod?: ESNcardValidationMethod;
+      }
+  > {
     switch (this.body.action) {
       case 'GET_AVATAR_UPLOAD_URL':
         return await this.getSignedURLToUploadAvatar();
@@ -175,6 +197,10 @@ class UsersRC extends ResourceController {
         return await this.setFavoriteSession(this.body.sessionId, false);
       case 'GET_FAVORITE_SESSIONS':
         return await this.getFavoriteSessions();
+      case 'VERIFY_ESNCARD':
+        return await this.verifyESNcard(this.body.cardCode, this.body.method);
+      case 'CHECK_IN_USER':
+        return await this.checkInUser();
       default:
         throw new HandledError('Unsupported action');
     }
@@ -356,11 +382,12 @@ class UsersRC extends ResourceController {
   }
 
   protected async getResources(): Promise<User[]> {
-    if (!(this.reqUser.permissions.canManageRegistrations || this.reqUser.permissions.isCountryLeader))
+    if (!(this.reqUser.permissions.canManageRegistrations || this.reqUser.permissions.isCountryLeader ||
+          this.reqUser.permissions.isStaff))
       throw new HandledError('Unauthorized');
 
     let users = (await ddb.scan({ TableName: DDB_TABLES.users })).map(x => new User(x));
-    if (!this.reqUser.permissions.canManageRegistrations)
+    if (!this.reqUser.permissions.canManageRegistrations && !this.reqUser.permissions.isStaff)
       users = users.filter(x =>
        (!this.reqUser.permissions.isESNInternationalLeader && x.sectionCountry === this.reqUser.sectionCountry) ||
        (this.reqUser.permissions.isESNInternationalLeader && x.isESNInternational));
@@ -407,5 +434,79 @@ class UsersRC extends ResourceController {
         ExpressionAttributeValues: { ':userId': this.principalId }
       })
     ).map((x: { sessionId: string }) => x.sessionId);
+  }
+
+  private async verifyESNcard(cardCode: string, method?: ESNcardValidationMethod | string): Promise<{
+    valid: boolean;
+    cardCode: string;
+    ESNcardValidatedAt?: string;
+    ESNcardValidatedBy?: string;
+    ESNcardValidationMethod?: ESNcardValidationMethod;
+  }> {
+    if (!(this.reqUser.permissions.canManageRegistrations || this.reqUser.permissions.isStaff))
+      throw new HandledError('Unauthorized');
+    if (this.targetUser.isExternal()) throw new HandledError('External users do not need ESNcard validation');
+    if (!this.targetUser.registrationAt) throw new HandledError('User has not registered to the event');
+    if (!this.targetUser.spot?.paymentConfirmedAt) throw new HandledError('User does not have a confirmed spot');
+    if (this.targetUser.ESNcardValidatedAt) throw new HandledError('ESNcard already validated');
+
+    const normalizedCardCode = this.normalizeESNcardCode(cardCode);
+    const valid = await this.validateESNcard(normalizedCardCode);
+    if (!valid) return { valid: false, cardCode: normalizedCardCode };
+
+    const validatedAt = new Date().toISOString();
+    const validatedBy = this.reqUser.userId;
+    const validationMethod =
+      method === ESNcardValidationMethod.MANUAL ? ESNcardValidationMethod.MANUAL : ESNcardValidationMethod.SCAN;
+
+    await ddb.update({
+      TableName: DDB_TABLES.users,
+      Key: { userId: this.targetUser.userId },
+      UpdateExpression:
+        'SET ESNcardValidatedAt = :validatedAt, ESNcardValidatedBy = :validatedBy, ESNcardValidationMethod = :validationMethod',
+      ExpressionAttributeValues: {
+        ':validatedAt': validatedAt,
+        ':validatedBy': validatedBy,
+        ':validationMethod': validationMethod
+      }
+    });
+
+    this.targetUser.ESNcardValidatedAt = validatedAt;
+    this.targetUser.ESNcardValidatedBy = validatedBy;
+    this.targetUser.ESNcardValidationMethod = validationMethod;
+
+    return {
+      valid: true,
+      cardCode: normalizedCardCode,
+      ESNcardValidatedAt: validatedAt,
+      ESNcardValidatedBy: validatedBy,
+      ESNcardValidationMethod: validationMethod
+    };
+  }
+
+  private async checkInUser(): Promise<User> {
+    if (!(this.reqUser.permissions.canManageRegistrations || this.reqUser.permissions.isStaff))
+      throw new HandledError('Unauthorized');
+    if (!this.targetUser.registrationAt) throw new HandledError('User has not registered to the event');
+    if (!this.targetUser.spot?.paymentConfirmedAt) throw new HandledError('User does not have a confirmed spot');
+    if (this.targetUser.checkedInAt) throw new HandledError('User already checked in');
+
+    const checkedInAt = new Date().toISOString();
+    const checkedInBy = this.reqUser.userId;
+
+    await ddb.update({
+      TableName: DDB_TABLES.users,
+      Key: { userId: this.targetUser.userId },
+      UpdateExpression: 'SET checkedInAt = :checkedInAt, checkedInBy = :checkedInBy',
+      ExpressionAttributeValues: {
+        ':checkedInAt': checkedInAt,
+        ':checkedInBy': checkedInBy
+      }
+    });
+
+    this.targetUser.checkedInAt = checkedInAt;
+    this.targetUser.checkedInBy = checkedInBy;
+
+    return this.targetUser;
   }
 }

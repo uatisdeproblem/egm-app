@@ -1,0 +1,77 @@
+div.filters {
+  padding-left: 3px;
+  background-color: var(--ion-color-ideaToolbar);
+
+  white-space: nowrap;
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  > ion-item,
+  > app-barcode-scanner {
+    margin: 0 6px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  ion-searchbar {
+    padding: 0;
+    --box-shadow: none;
+    --border-radius: 16px;
+  }
+
+  ion-select {
+    min-height: 40px;
+    &::part(text) {
+      font-weight: 500;
+    }
+  }
+}
+
+div.footerTotals {
+  padding: 8px 0 8px 12px;
+  span {
+    padding-right: 16px;
+    display: inline-block;
+    break-inside: avoid;
+  }
+}
+
+div.statusCell {
+  display: flex;
+  justify-content: center;
+}
+
+span.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ion-color-success);
+  font-weight: 600;
+}
+
+span.negativeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ion-color-danger);
+  font-weight: 600;
+}
+
+ion-checkbox.statusCheckbox {
+  pointer-events: none;
+  --size: 20px;
+  --border-radius: 6px;
+  --checkbox-background-checked: var(--ion-color-success);
+  --border-color-checked: var(--ion-color-success);
+  --checkmark-color: #fff;
+}
+
+span.naLabel {
+  color: var(--ion-color-medium);
+  font-size: 12px;
+  font-weight: 600;
+}

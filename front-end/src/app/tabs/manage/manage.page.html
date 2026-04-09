@@ -25,6 +25,11 @@
       <ion-icon slot="start" icon="restaurant-outline"></ion-icon>
       <ion-label>{{ 'MANAGE.MEALS_MANAGEMENT' | translate }}</ion-label>
     </ion-item>
+    } @if(app.user.permissions.isStaff || app.user.permissions.canManageRegistrations) {
+    <ion-item button detail (click)="app.goToInTabs(['manage', 'check-in'])">
+      <ion-icon slot="start" icon="scan-outline"></ion-icon>
+      <ion-label>{{ 'MANAGE.CHECKIN_DASHBOARD' | translate }}</ion-label>
+    </ion-item>
     } @if(app.user.permissions.isAdmin) {
     <ion-item button detail (click)="app.goToInTabs(['manage', 'spots'])">
       <ion-icon slot="start" icon="ticket-outline"></ion-icon>

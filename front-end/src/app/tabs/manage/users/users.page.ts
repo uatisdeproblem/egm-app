@@ -75,6 +75,7 @@ export class UsersPage implements OnInit {
       { prop: 'lastName', name: this.t._('USER.LAST_NAME') },
       { prop: 'sectionCountry', name: this.t._('USER.ESN_COUNTRY') },
       { prop: 'sectionName', name: this.t._('USER.ESN_SECTION') },
+      { prop: 'registrationForm.main.TShirt', name: this.t._('USERS.TSHIRT') },
       { prop: 'registrationAt', name: this.t._('USERS.REGISTERED'), pipe: { transform: x => this.t.formatDate(x) } },
       { prop: 'spot.type', name: this.t._('USERS.WITH_SPOT') },
       {
@@ -143,7 +144,7 @@ export class UsersPage implements OnInit {
     this.filteredUsers = this.users.slice();
 
     this.filteredUsers = this.filteredUsers.filter(x =>
-      [x.userId, x.firstName, x.lastName, x.email, x.sectionCountry, x.sectionName, x.spot?.spotId]
+      [x.userId, x.firstName, x.lastName, x.email, x.sectionCountry, x.sectionName, x.spot?.spotId, x.registrationForm?.main?.TShirt]
         .filter(f => f)
         .some(f => String(f).toLowerCase().includes(searchText))
     );
@@ -172,7 +173,7 @@ export class UsersPage implements OnInit {
     this.calcFooterTotals();
 
     // whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+    if (this.table) this.table.offset = 0;
   }
 
   async actionsOnSelectedUser(user: User): Promise<void> {
