@@ -86,10 +86,11 @@
                   [color]="isUserRegisteredInSession(session) ? 'danger' : 'success'"
                   (click)="toggleRegister($event, session)"
                 >
-                  <ion-icon
-                    [name]="isUserRegisteredInSession(session) ? 'close-circle' : 'checkmark-circle'"
-                    slot="icon-only"
-                  />
+                  @if (isUserRegisteredInSession(session)) {
+                    <ion-icon name="close-circle" slot="icon-only" />
+                  } @else {
+                    {{ 'SESSIONS.REGISTER' | translate }}
+                  }
                 </ion-button>
                 <ion-button
                   *ngIf="!session.requiresRegistration || !app.configurations.areSessionRegistrationsOpen"

@@ -426,6 +426,7 @@ export class ImportPage implements OnInit {
       });
       return rows;
     } catch (err) {
+      console.log("ERR: " ,err);
       return [];
     }
   }

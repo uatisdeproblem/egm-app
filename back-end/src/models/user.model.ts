@@ -2,7 +2,21 @@ import { Resource, Suggestion, epochISOString } from 'idea-toolbox';
 
 import { EventSpotAttached } from './eventSpot.model';
 import { Speaker } from './speaker.model';
-import { ApprovedType, MealTypes } from './meal.model';
+import { ApprovedType, MealTypes, MEAL_CATEGORY_ASSIGNMENTS } from './meal.model';
+
+const MEAL_TYPE_PRIORITY: Record<MealTypes, number> = {
+  [MealTypes.OTHER]: 500,
+  [MealTypes.NUT_FREE]: 450,
+  [MealTypes.VEGAN]: 400,
+  [MealTypes.VEGETARIAN]: 390,
+  [MealTypes.GLUTEN_FREE]: 350,
+  [MealTypes.LACTOSE_FREE]: 340,
+  [MealTypes.HALAL]: 320,
+  [MealTypes.NO_PORK]: 310,
+  [MealTypes.PESCATARIAN]: 200,
+  [MealTypes.NO_FISH]: 190,
+  [MealTypes.NO_PREFERENCE]: 100
+};
 
 export class User extends Resource {
   /**
@@ -135,6 +149,7 @@ export class User extends Resource {
     this.votedInContests = this.cleanArray(x.votedInContests, String);
 
     this.mealType = x.mealType;
+    this.refreshMealData();
     if (!x.mealTickets) this.mealTickets = {};
     else this.mealTickets = x.mealTickets;
   }
@@ -162,6 +177,7 @@ export class User extends Resource {
 
     this.votedInContests = safeData.votedInContests;
     this.mealType = safeData.mealType;
+    this.refreshMealData();
   }
 
   validate(checkBirth = true): string[] {
@@ -228,6 +244,156 @@ export class User extends Resource {
 
   isMealTicketApproved(mealId: string): boolean {
     return !!this.mealTickets?.[mealId]?.approvedAt;
+  }
+
+  get mealPreferenceLabels(): string[] {
+    const dietaryRequirements = this.getRegistrationFormStrings('additional', 'DietaryRequirements');
+
+    const cleanedRequirements =
+      dietaryRequirements.length > 1 ? dietaryRequirements.filter(x => x !== 'No Preference') : dietaryRequirements;
+    return Array.from(new Set(cleanedRequirements.length ? cleanedRequirements.slice() : dietaryRequirements.slice()));
+  }
+
+  get mealTypes(): MealTypes[] {
+    const dietaryRequirements = this.getRegistrationFormStrings('additional', 'DietaryRequirements');
+    const mappedMealTypes = dietaryRequirements
+      .map(requirement => this.mapDietaryRequirementToMealType(requirement))
+      .filter((mealType): mealType is MealTypes => Boolean(mealType));
+
+    const normalizedMealTypes =
+      mappedMealTypes.length > 1
+        ? mappedMealTypes.filter(mealType => mealType !== MealTypes.NO_PREFERENCE)
+        : mappedMealTypes;
+
+    return Array.from(new Set(normalizedMealTypes)).sort(
+      (a, b) => (MEAL_TYPE_PRIORITY[b] ?? 0) - (MEAL_TYPE_PRIORITY[a] ?? 0)
+    );
+  }
+
+  get mealCategorySummary(): string {
+    return this.mealPreferenceLabels.join(', ');
+  }
+
+  get mealCategorySummaryOrType(): string {
+    return this.mealCategorySummary || this.mealType || '';
+  }
+
+  get additionalAllergenLabels(): string[] {
+    const allergies = this.getRegistrationFormStrings('additional', 'Allergy')
+      .filter(allergy => allergy !== 'None of Above');
+    const additionalRestrictions = this.getRegistrationFormString('additional', 'foodRestrictions');
+    const labels = allergies.slice();
+
+    if (additionalRestrictions) labels.push(additionalRestrictions);
+
+    return Array.from(new Set(labels));
+  }
+
+  get additionalAllergensSummary(): string {
+    return this.additionalAllergenLabels.join(', ');
+  }
+
+  get mealMenuSummary(): string {
+    return this.mealType ? MEAL_CATEGORY_ASSIGNMENTS[this.mealType]?.menu ?? '' : '';
+  }
+
+  get mealColorSummary(): string {
+    return this.mealType ? MEAL_CATEGORY_ASSIGNMENTS[this.mealType]?.color ?? '' : '';
+  }
+
+  refreshMealData(): void {
+    this.mealType = this.mealTypes[0] ?? this.mealType;
+  }
+
+  private getRegistrationFormStrings(sectionId: string, fieldId: string): string[] {
+    const value = this.registrationForm?.[sectionId]?.[fieldId];
+
+    if (!value) return [];
+    if (Array.isArray(value)) return value.map(v => String(v).trim()).filter(Boolean);
+    if (typeof value === 'string') return [value.trim()].filter(Boolean);
+    if (typeof value === 'object')
+      return Object.entries(value)
+        .filter(([, selected]) => selected === true || selected === 'true' || selected === 1)
+        .map(([option]) => option.trim())
+        .filter(Boolean);
+
+    return [];
+  }
+
+  private getRegistrationFormString(sectionId: string, fieldId: string): string {
+    const value = this.registrationForm?.[sectionId]?.[fieldId];
+    if (typeof value !== 'string') return '';
+    return value.trim();
+  }
+
+  private mapDietaryRequirementToMealType(requirement: string): MealTypes | undefined {
+    switch (this.normalizeDietaryRequirement(requirement)) {
+      case 'No Preference':
+        return MealTypes.NO_PREFERENCE;
+      case 'Vegan':
+        return MealTypes.VEGAN;
+      case 'Vegetarian':
+        return MealTypes.VEGETARIAN;
+      case 'Pescatarian':
+        return MealTypes.PESCATARIAN;
+      case 'No Pork':
+        return MealTypes.NO_PORK;
+      case 'No Fish':
+        return MealTypes.NO_FISH;
+      case 'Halal':
+        return MealTypes.HALAL;
+      case 'Gluten-free':
+        return MealTypes.GLUTEN_FREE;
+      case 'Lactose-free':
+        return MealTypes.LACTOSE_FREE;
+      case 'Nut-free':
+        return MealTypes.NUT_FREE;
+      case 'Other':
+        return MealTypes.OTHER;
+      default:
+        return undefined;
+    }
+  }
+
+  private normalizeDietaryRequirement(requirement: string): string {
+    const normalizedRequirement = requirement
+      ?.trim()
+      .toLowerCase()
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ');
+
+    switch (normalizedRequirement) {
+      case 'no preference':
+      case 'regular':
+        return 'No Preference';
+      case 'vegan':
+        return 'Vegan';
+      case 'vegetarian':
+        return 'Vegetarian';
+      case 'pescatarian':
+        return 'Pescatarian';
+      case 'no pork':
+      case 'without pork':
+        return 'No Pork';
+      case 'no fish':
+      case 'without fish':
+        return 'No Fish';
+      case 'halal':
+        return 'Halal';
+      case 'gluten free':
+      case 'gluten-free':
+        return 'Gluten-free';
+      case 'lactose free':
+      case 'lactose-free':
+        return 'Lactose-free';
+      case 'nut free':
+      case 'nut-free':
+        return 'Nut-free';
+      case 'other':
+        return 'Other';
+      default:
+        return '';
+    }
   }
 }
 

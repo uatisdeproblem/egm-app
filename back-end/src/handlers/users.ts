@@ -195,6 +195,7 @@ class UsersRC extends ResourceController {
       throw new HandledError("Can't edit a submitted registration");
 
     this.targetUser.registrationForm = registrationForm;
+    this.targetUser.refreshMealData();
     if (isDraft) this.targetUser.registrationAt = null;
     else {
       const errors = this.configurations.registrationFormDef

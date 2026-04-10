@@ -145,7 +145,7 @@ export class ManageMealComponent implements OnInit {
 
   @ViewChild(HTMLEditorComponent) editor: HTMLEditorComponent;
 
-  currentMealType = MealTypes.REGULAR;
+  currentMealType = MealTypes.NO_PREFERENCE;
   MealTypes = MealTypes;
 
   entityBeforeChange: Meal;

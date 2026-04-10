@@ -163,13 +163,32 @@ export class SessionsPage {
     const [minEndMinutes, maxEndMinutes] = this.selectedEndTimeRange || [420, 1200];
     const timeFilterActive = minStartMinutes > 0 || maxStartMinutes < 1439 || minEndMinutes > 0 || maxEndMinutes < 1439;
     if (!timeFilterActive) return sessions;
-    return sessions.filter(session => {
+    const filteredSessions = sessions.filter(session => {
       const startMinutesOfDay = this.getMinutesOfDay(session.startsAt);
       const endMinutesOfDay = this.getMinutesOfDay(session.endsAt);
       const startInRange = startMinutesOfDay >= minStartMinutes && startMinutesOfDay <= maxStartMinutes;
       const endInRange = endMinutesOfDay >= minEndMinutes && endMinutesOfDay <= maxEndMinutes;
       return startInRange && endInRange;
     });
+    console.log('[SessionsPage] applyTimeFilters', {
+      selectedTimeRange: this.selectedTimeRange,
+      selectedEndTimeRange: this.selectedEndTimeRange,
+      inputSessions: sessions.map(session => ({
+        sessionId: session.sessionId,
+        name: session.name,
+        startsAt: session.startsAt,
+        endsAt: session.endsAt,
+        startMinutesOfDay: this.getMinutesOfDay(session.startsAt),
+        endMinutesOfDay: this.getMinutesOfDay(session.endsAt)
+      })),
+      outputSessions: filteredSessions.map(session => ({
+        sessionId: session.sessionId,
+        name: session.name,
+        startsAt: session.startsAt,
+        endsAt: session.endsAt
+      }))
+    });
+    return filteredSessions;
   }
 
   private getMinutesOfDay(dateTime: string): number {

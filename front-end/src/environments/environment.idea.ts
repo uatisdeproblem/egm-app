@@ -14,7 +14,7 @@ export const environment = {
     },
     api: {
       url: 'api.egm-app.click',
-      stage: 'dev'
+      stage: 'prod'
     },
     auth: {
       title: 'EGM app',

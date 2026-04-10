@@ -102,7 +102,17 @@ export class SessionsService {
   async getSessionDays(): Promise<string[]> {
     if (!this.sessions) await this.loadList();
 
-    return Array.from(new Set(this.sessions.map(s => s.startsAt.slice(0, 10)))).sort();
+    const days = Array.from(new Set(this.sessions.map(s => s.startsAt.slice(0, 10)))).sort();
+    console.log('[SessionsService] getSessionDays', {
+      days,
+      sessions: this.sessions.map(s => ({
+        sessionId: s.sessionId,
+        name: s.name,
+        startsAt: s.startsAt,
+        endsAt: s.endsAt
+      }))
+    });
+    return days;
   }
 
   /**

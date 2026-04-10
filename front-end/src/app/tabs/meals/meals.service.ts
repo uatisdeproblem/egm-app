@@ -92,25 +92,24 @@ export class MealsService {
 
   getColourByMealType(mealType: MealTypes): string {
     switch (mealType) {
-      case MealTypes.GLUTEN_FREE:
-      case MealTypes.GLUTEN_LACTOSE_FREE:
-      case MealTypes.GLUTEN_LACTOSE_VEGETARIAN_FREE:
-        return 'ESNcyan';
-      case MealTypes.LACTOSE_FREE:
-      case MealTypes.VEGETARIAN_VEGAN:
+      case MealTypes.NO_PREFERENCE:
+        return 'ESNpink';
+      case MealTypes.VEGAN:
+      case MealTypes.VEGETARIAN:
         return 'ESNgreen';
+      case MealTypes.PESCATARIAN:
       case MealTypes.NO_FISH:
-      case MealTypes.NO_FISH_AND_MUSHROOMS:
-      case MealTypes.NO_MUSHROOMS:
-      case MealTypes.NO_PORK_AND_FISH:
         return 'ESNdarkBlue';
       case MealTypes.NO_PORK:
-      case MealTypes.REGULAR:
-        return 'ESNpink';
-      case MealTypes.SPECIAL:
-      case MealTypes.NO_BEEF:
-      case MealTypes.SPECIAL_OLIVE:
+      case MealTypes.HALAL:
         return 'ESNorange';
+      case MealTypes.GLUTEN_FREE:
+        return 'ESNcyan';
+      case MealTypes.LACTOSE_FREE:
+      case MealTypes.NUT_FREE:
+        return 'ESNcyan';
+      case MealTypes.OTHER:
+        return 'medium';
       default:
         return 'medium';
     }

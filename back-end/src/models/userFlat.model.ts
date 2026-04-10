@@ -20,6 +20,9 @@ export class UserFlat {
   'Spot type': string;
   'Spot paid': boolean;
   'Spot confirmed': boolean;
+  'Meal Type': string;
+  'Assigned Menus': string;
+  'Additional Allergens': string;
 
   [__registrationForm: string]: any;
 
@@ -40,6 +43,9 @@ export class UserFlat {
     this['Spot type'] = x.spot?.type ?? '';
     this['Spot paid'] = !!x.spot?.proofOfPaymentURI;
     this['Spot confirmed'] = !!x.spot?.paymentConfirmedAt;
+    this['Meal Type'] = x.mealCategorySummaryOrType ?? '';
+    this['Assigned Menus'] = x.mealMenuSummary ?? '';
+    this['Additional Allergens'] = x.additionalAllergensSummary ?? '';
   }
 }
 
@@ -60,7 +66,8 @@ export class UserFlatWithRegistration extends UserFlat {
           const fieldName = section.fields[fieldId].name[language];
 
           try {
-            this[`Form > ${sectionName} > ${fieldName}`] = fields[sectionId][fieldId] ?? '';
+            const value = fields[sectionId][fieldId];
+            this[`Form > ${sectionName} > ${fieldName}`] = Array.isArray(value) ? value.join(', ') : value ?? '';
           } catch {
             this[`Form > ${sectionName} > ${fieldName}`] = '';
           }

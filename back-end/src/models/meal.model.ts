@@ -95,18 +95,34 @@ export enum ApprovedType {
 }
 
 export enum MealTypes {
-  GLUTEN_FREE = 'GLUTEN_FREE',
-  GLUTEN_LACTOSE_FREE = 'GLUTEN_LACTOSE_FREE',
-  GLUTEN_LACTOSE_VEGETARIAN_FREE = 'GLUTEN_LACTOSE_VEGETARIAN_FREE',
-  LACTOSE_FREE = 'LACTOSE_FREE',
-  VEGETARIAN_VEGAN = 'VEGETARIAN_VEGAN',
-  NO_BEEF = 'NO_BEEF',
+  NO_PREFERENCE = 'NO_PREFERENCE',
+  VEGAN = 'VEGAN',
+  VEGETARIAN = 'VEGETARIAN',
+  PESCATARIAN = 'PESCATARIAN',
   NO_FISH = 'NO_FISH',
-  NO_PORK_AND_FISH = 'NO_PORK_AND_FISH',
-  NO_FISH_AND_MUSHROOMS = 'NO_FISH_AND_MUSHROOMS',
-  NO_MUSHROOMS = 'NO_MUSHROOMS',
   NO_PORK = 'NO_PORK',
-  REGULAR = 'REGULAR',
-  SPECIAL = 'SPECIAL',
-  SPECIAL_OLIVE = 'SPECIAL_OLIVE'
+  HALAL = 'HALAL',
+  GLUTEN_FREE = 'GLUTEN_FREE',
+  LACTOSE_FREE = 'LACTOSE_FREE',
+  NUT_FREE = 'NUT_FREE',
+  OTHER = 'OTHER'
 }
+
+export interface MealCategoryAssignment {
+  menu: 'MENU_1' | 'MENU_2' | 'MENU_3' | 'SPECIAL_MENU';
+  color: string;
+}
+
+export const MEAL_CATEGORY_ASSIGNMENTS: Record<MealTypes, MealCategoryAssignment> = {
+  [MealTypes.NO_PREFERENCE]: { menu: 'MENU_1', color: 'ESNdarkBlue' },
+  [MealTypes.VEGAN]: { menu: 'MENU_3', color: 'ESNgreen' },
+  [MealTypes.VEGETARIAN]: { menu: 'MENU_3', color: 'ESNgreen' },
+  [MealTypes.PESCATARIAN]: { menu: 'MENU_1', color: 'ESNdarkBlue' },
+  [MealTypes.NO_FISH]: { menu: 'MENU_1', color: 'ESNdarkBlue' },
+  [MealTypes.NO_PORK]: { menu: 'MENU_2', color: 'ESNpink' },
+  [MealTypes.HALAL]: { menu: 'MENU_2', color: 'ESNpink' },
+  [MealTypes.GLUTEN_FREE]: { menu: 'MENU_2', color: 'ESNpink' },
+  [MealTypes.LACTOSE_FREE]: { menu: 'MENU_2', color: 'ESNpink' },
+  [MealTypes.NUT_FREE]: { menu: 'SPECIAL_MENU', color: 'ESNcyan' },
+  [MealTypes.OTHER]: { menu: 'SPECIAL_MENU', color: 'ESNcyan' }
+};

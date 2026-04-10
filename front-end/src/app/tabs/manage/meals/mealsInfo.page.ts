@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ColumnMode, SelectionType, TableColumn, DatatableComponent, NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { WorkBook, utils, writeFile } from 'xlsx';
 import {
   AlertController,
   IonButton,
@@ -29,7 +30,7 @@ import { AppService } from '@app/app.service';
 import { UsersService } from '../users/users.service';
 
 import { User } from '@models/user.model';
-import { ApprovedType, Meal, MealTypes } from '@models/meal.model';
+import { ApprovedType, Meal, MealTypes, MEAL_CATEGORY_ASSIGNMENTS } from '@models/meal.model';
 import { MealsService } from '@app/tabs/meals/meals.service';
 
 @Component({
@@ -70,7 +71,8 @@ export class MealsInfoPage implements OnInit {
 
   pageHeaderHeightPx = 56;
   actionBarHeight = 56;
-  rowHeight = 42;
+  rowHeight: number | 'auto' = 'auto';
+  rowHeightForCalc = 42;
   headerHeight = 56;
   footerHeight = 80;
 
@@ -78,8 +80,10 @@ export class MealsInfoPage implements OnInit {
   filteredMeals: Meal[];
   users: User[];
   filteredUsers: User[];
+  availableMealTypes = Object.values(MealTypes);
   filters: RowsFilters = {
-    sectionCountry: null
+    sectionCountry: null,
+    mealTypes: []
   };
 
   mealCounters: { [mealId: string]: number } = {};
@@ -113,9 +117,21 @@ export class MealsInfoPage implements OnInit {
       { prop: 'lastName', name: this.t._('USER.LAST_NAME') },
       { prop: 'sectionCountry', name: this.t._('USER.ESN_COUNTRY') },
       { prop: 'sectionName', name: this.t._('USER.ESN_SECTION') },
-      { prop: 'mealType',
+      { prop: 'mealCategorySummaryOrType',
         name: this.t._('MEALS.TYPE'),
-        pipe: { transform: x => this.t._('MEALS.TYPES.' + MealTypes[x]) }
+        comparator: (_a: string, _b: string, rowA: User, rowB: User): number =>
+          this.formatMealTypeSummary(rowA).localeCompare(this.formatMealTypeSummary(rowB)),
+        pipe: { transform: (value: string, row?: User) => this.formatMealTypeSummary(row, value) }
+      },
+      {
+        prop: 'mealMenuSummary',
+        name: this.t._('MEALS.ASSIGNED_MENU'),
+        cellClass: data => this.getAssignedMenuCellClass(data?.row ?? data),
+        pipe: { transform: (value: string, row?: User) => this.formatMealMenuSummary(row, value) }
+      },
+      {
+        prop: 'additionalAllergensSummary',
+        name: this.t._('MEALS.ADDITIONAL_ALLERGENS')
       }
     ];
 
@@ -139,7 +155,7 @@ export class MealsInfoPage implements OnInit {
     const currentPageHeight = event?.target ? (event.target as Window).innerHeight : window.innerHeight;
     const heightAvailableInPx =
       currentPageHeight - this.pageHeaderHeightPx - this.actionBarHeight - this.headerHeight - this.footerHeight;
-    this.limit = Math.floor(heightAvailableInPx / this.rowHeight);
+    this.limit = Math.floor(heightAvailableInPx / this.rowHeightForCalc);
   }
 
   rowIdentity(row: User): string {
@@ -152,7 +168,17 @@ export class MealsInfoPage implements OnInit {
     this.filteredUsers = this.users.slice();
 
     this.filteredUsers = this.filteredUsers.filter(x =>
-      [x.userId, x.firstName, x.lastName, x.email, x.sectionCountry, x.sectionName]
+      [
+        x.userId,
+        x.firstName,
+        x.lastName,
+        x.email,
+        x.sectionCountry,
+        x.sectionName,
+        x.mealCategorySummaryOrType,
+        x.mealMenuSummary,
+        x.additionalAllergensSummary
+      ]
         .filter(f => f)
         .some(f => String(f).toLowerCase().includes(searchText))
     );
@@ -161,6 +187,10 @@ export class MealsInfoPage implements OnInit {
     if (this.filters.sectionCountry)
       this.filteredUsers = this.filteredUsers.filter(x =>
         this.filters.sectionCountry === 'no' ? !x.sectionCountry : this.filters.sectionCountry === x.sectionCountry
+      );
+    if (this.filters.mealTypes?.length)
+      this.filteredUsers = this.filteredUsers.filter(x =>
+        x.mealTypes?.some(mealType => this.filters.mealTypes.includes(mealType))
       );
 
     this.calcFooterTotals();
@@ -220,8 +250,81 @@ export class MealsInfoPage implements OnInit {
       }
     });
   }
+
+  downloadFilteredMealsInfoAsExcelFile(): void {
+    if (!(this.app.user.permissions.canManageRegistrations || this.app.user.permissions.isCountryLeader)) return;
+
+    const title = this.t._('MEALS.LIST');
+    const data = this.filteredUsers.map(user => {
+      const row: Record<string, string | boolean> = {
+        'User ID': user.userId,
+        'First name': user.firstName,
+        'Last name': user.lastName,
+        'Section Country': user.sectionCountry ?? '',
+        'Section Name': user.sectionName ?? '',
+        'Meal Type': this.formatMealTypeSummary(user),
+        'Assigned Menus': this.formatMealMenuSummary(user),
+        'Additional Allergens': user.additionalAllergensSummary ?? ''
+      };
+
+      for (const meal of this.filteredMeals)
+        row[meal.name] = user.mealTickets?.[meal.mealId]?.approvedAt ? true : false;
+
+      return row;
+    });
+
+    const workbook: WorkBook = { SheetNames: [], Sheets: {}, Props: { Title: title } };
+    utils.book_append_sheet(workbook, utils.json_to_sheet(data), '1');
+    writeFile(workbook, title.concat('.xlsx'));
+  }
+
+  private formatMealTypeSummary(user?: User, fallback = ''): string {
+    if (!user) return fallback ?? '';
+    return (user.mealTypes ?? [])
+      .map(mealType => this.t._('MEALS.TYPES.' + mealType))
+      .join(', ');
+  }
+
+  private formatMealMenuSummary(user?: User, fallback = ''): string {
+    if (!user) return this.formatAssignedMenusFromSummary(fallback);
+    const assignedMenus = Array.from(
+      new Set((user.mealTypes ?? []).map(mealType => MEAL_CATEGORY_ASSIGNMENTS[mealType]?.menu).filter(Boolean))
+    );
+
+    return this.formatAssignedMenus(assignedMenus);
+  }
+
+  private formatAssignedMenusFromSummary(summary = ''): string {
+    const menus = summary
+      .split(',')
+      .map(menu => menu.trim())
+      .filter(Boolean);
+    return this.formatAssignedMenus(menus);
+  }
+
+  private formatAssignedMenus(menus: string[]): string {
+    return menus.map(menu => this.t._('MEALS.' + menu)).join(', ');
+  }
+
+  private getAssignedMenuCellClass(user?: User): string {
+    const assignedMenu = user?.mealMenuSummary;
+
+    switch (assignedMenu) {
+      case 'MENU_1':
+        return 'assigned-menu-1';
+      case 'MENU_2':
+        return 'assigned-menu-2';
+      case 'MENU_3':
+        return 'assigned-menu-3';
+      case 'SPECIAL_MENU':
+        return 'assigned-menu-other';
+      default:
+        return '';
+    }
+  }
 }
 
 interface RowsFilters {
   sectionCountry: string | 'no' | null;
+  mealTypes: MealTypes[];
 }

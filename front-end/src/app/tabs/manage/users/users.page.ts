@@ -21,6 +21,7 @@ import { SpotsService } from '../spots/spots.service';
 import { User, UserPermissions } from '@models/user.model';
 import { UserFlat, UserFlatWithRegistration } from '@models/userFlat.model';
 import { EventSpot, EventSpotAttached } from '@models/eventSpot.model';
+import { MealTypes, MEAL_CATEGORY_ASSIGNMENTS } from '@models/meal.model';
 
 @Component({
   selector: 'users',
@@ -57,7 +58,8 @@ export class UsersPage implements OnInit {
 
   pageHeaderHeightPx = 56;
   actionBarHeight = 56;
-  rowHeight = 42;
+  rowHeight: number | 'auto' = 'auto';
+  rowHeightForCalc = 42;
   headerHeight = 56;
   footerHeight = 80;
 
@@ -94,6 +96,18 @@ export class UsersPage implements OnInit {
       { prop: 'lastName', name: this.t._('USER.LAST_NAME') },
       { prop: 'sectionCountry', name: this.t._('USER.ESN_COUNTRY') },
       { prop: 'sectionName', name: this.t._('USER.ESN_SECTION') },
+      {
+        prop: 'mealCategorySummaryOrType',
+        name: this.t._('MEALS.TYPE'),
+        pipe: { transform: (value: string, row?: User) => this.formatMealTypeSummary(row, value) }
+      },
+      {
+        prop: 'mealMenuSummary',
+        name: this.t._('MEALS.ASSIGNED_MENU'),
+        cellClass: data => this.getAssignedMenuCellClass(data?.row ?? data),
+        pipe: { transform: (value: string, row?: User) => this.formatMealMenuSummary(row, value) }
+      },
+      { prop: 'additionalAllergensSummary', name: this.t._('MEALS.ADDITIONAL_ALLERGENS') },
       { prop: 'registrationAt', name: this.t._('USERS.REGISTERED'), pipe: { transform: x => this.t.formatDate(x) } },
       { prop: 'spot.type', name: this.t._('USERS.WITH_SPOT') },
       {
@@ -149,7 +163,7 @@ export class UsersPage implements OnInit {
     const currentPageHeight = event?.target ? (event.target as Window).innerHeight : window.innerHeight;
     const heightAvailableInPx =
       currentPageHeight - this.pageHeaderHeightPx - this.actionBarHeight - this.headerHeight - this.footerHeight;
-    this.limit = Math.floor(heightAvailableInPx / this.rowHeight);
+    this.limit = Math.floor(heightAvailableInPx / this.rowHeightForCalc);
   }
 
   rowIdentity(row: User): string {
@@ -162,7 +176,18 @@ export class UsersPage implements OnInit {
     this.filteredUsers = this.users.slice();
 
     this.filteredUsers = this.filteredUsers.filter(x =>
-      [x.userId, x.firstName, x.lastName, x.email, x.sectionCountry, x.sectionName, x.spot?.spotId]
+      [
+        x.userId,
+        x.firstName,
+        x.lastName,
+        x.email,
+        x.sectionCountry,
+        x.sectionName,
+        x.spot?.spotId,
+        x.mealCategorySummaryOrType,
+        x.mealMenuSummary,
+        x.additionalAllergensSummary
+      ]
         .filter(f => f)
         .some(f => String(f).toLowerCase().includes(searchText))
     );
@@ -513,11 +538,16 @@ export class UsersPage implements OnInit {
     if (!(this.app.user.permissions.canManageRegistrations || this.app.user.permissions.isCountryLeader)) return;
 
     const title = this.t._('USERS.USERS');
-    const data = this.filteredUsers.map(x =>
-      this.app.user.permissions.canManageRegistrations
-        ? new UserFlatWithRegistration(x, this.app.configurations, this.t.getCurrentLang())
-        : new UserFlat(x)
-    );
+    const data = this.filteredUsers.map(x => {
+      const row =
+        this.app.user.permissions.canManageRegistrations
+          ? new UserFlatWithRegistration(x, this.app.configurations, this.t.getCurrentLang())
+          : new UserFlat(x);
+      row['Meal Type'] = this.formatMealTypeSummary(x);
+      row['Assigned Menus'] = this.formatMealMenuSummary(x);
+      row['Additional Allergens'] = x.additionalAllergensSummary ?? '';
+      return row;
+    });
     const workbook: WorkBook = { SheetNames: [], Sheets: {}, Props: { Title: title } };
     utils.book_append_sheet(workbook, utils.json_to_sheet(data), '1');
     writeFile(workbook, title.concat('.xlsx'));
@@ -525,6 +555,51 @@ export class UsersPage implements OnInit {
 
   canAssignSpotAsCountryLeader(): boolean {
     return this.app.user.permissions.isCountryLeader && this.app.configurations.canCountryLeadersAssignSpots;
+  }
+
+  private formatMealTypeSummary(user?: User, fallback = ''): string {
+    if (!user) return fallback ?? '';
+    return (user.mealTypes ?? [])
+      .map(mealType => this.t._('MEALS.TYPES.' + mealType))
+      .join(', ');
+  }
+
+  private formatMealMenuSummary(user?: User, fallback = ''): string {
+    if (!user) return this.formatAssignedMenusFromSummary(fallback);
+    const assignedMenus = Array.from(
+      new Set((user.mealTypes ?? []).map(mealType => MEAL_CATEGORY_ASSIGNMENTS[mealType]?.menu).filter(Boolean))
+    );
+
+    return this.formatAssignedMenus(assignedMenus);
+  }
+
+  private formatAssignedMenusFromSummary(summary = ''): string {
+    const menus = summary
+      .split(',')
+      .map(menu => menu.trim())
+      .filter(Boolean);
+    return this.formatAssignedMenus(menus);
+  }
+
+  private formatAssignedMenus(menus: string[]): string {
+    return menus.map(menu => this.t._('MEALS.' + menu)).join(', ');
+  }
+
+  private getAssignedMenuCellClass(user?: User): string {
+    const assignedMenu = user?.mealMenuSummary;
+
+    switch (assignedMenu) {
+      case 'MENU_1':
+        return 'assigned-menu-1';
+      case 'MENU_2':
+        return 'assigned-menu-2';
+      case 'MENU_3':
+        return 'assigned-menu-3';
+      case 'SPECIAL_MENU':
+        return 'assigned-menu-other';
+      default:
+        return '';
+    }
   }
 }
 

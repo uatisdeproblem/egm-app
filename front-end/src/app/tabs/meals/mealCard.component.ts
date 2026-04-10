@@ -21,7 +21,7 @@ import { HTMLEditorComponent } from 'src/app/common/htmlEditor.component';
 
 import { AppService } from 'src/app/app.service';
 
-import { Meal } from '@models/meal.model';
+import { Meal, MealTypes } from '@models/meal.model';
 import { MealsService } from './meals.service';
 import { ManageMealComponent } from './manageMeal.component';
 import { MealQrCodeComponent } from './verifyMeal/mealQrCode.component';
@@ -76,14 +76,33 @@ import { MealQrCodeComponent } from './verifyMeal/mealQrCode.component';
         }
       </ion-card-header>
       <ion-card-content>
-        <app-html-editor [content]="meal.dishDescription[app.user.mealType]" [editMode]="false"></app-html-editor>
+        @for (mealType of getDisplayedMealTypes(); track mealType) {
+        <ion-item lines="none">
+          <ion-label>
+            <strong>{{ 'MEALS.TYPES.' + mealType | translate }}</strong>
+          </ion-label>
+        </ion-item>
+        <app-html-editor [content]="meal.dishDescription[mealType]" [editMode]="false"></app-html-editor>
+        }
       </ion-card-content>
 
-      <ion-item lines="none" [color]="_meals.getColourByMealType(app.user.mealType)">
+      <ion-item lines="none" [color]="_meals.getColourByMealType(getPrimaryMealType())">
         <ion-label>
+          @if (app.user.mealCategorySummary) {
+          {{ app.user.mealCategorySummary }}
+          } @else {
           {{ 'MEALS.TYPES.' + app.user.mealType | translate }}
+          }
         </ion-label>
       </ion-item>
+      @if (app.user.additionalAllergensSummary) {
+      <ion-item lines="none">
+        <ion-label>
+          <strong>{{ 'MEALS.ADDITIONAL_ALLERGENS' | translate }}:</strong>
+          {{ app.user.additionalAllergensSummary }}
+        </ion-label>
+      </ion-item>
+      }
       @if(meal.needsScan || app.user.permissions.isStaff) {
       <ion-item>
         @if(meal.needsScan) {
@@ -130,6 +149,14 @@ export class MealCardStandaloneComponent {
   @Input() meal: Meal;
 
   public readonly app = inject(AppService);
+
+  getDisplayedMealTypes(): MealTypes[] {
+    return this.app.user.mealTypes?.length ? this.app.user.mealTypes : [this.app.user.mealType].filter(Boolean);
+  }
+
+  getPrimaryMealType(): MealTypes {
+    return this.getDisplayedMealTypes()[0] ?? MealTypes.NO_PREFERENCE;
+  }
 
   async generateQrCode(): Promise<void> {
     if (!this.meal.needsScan) return;

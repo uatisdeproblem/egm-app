@@ -68,9 +68,21 @@ import { environment as env } from '@env';
 
           <ion-item lines="none" [color]="_meals.getColourByMealType(_app.user.mealType)">
             <ion-label>
+              @if (_app.user.mealCategorySummary) {
+              {{ _app.user.mealCategorySummary }}
+              } @else {
               {{ 'MEALS.TYPES.' + _app.user.mealType | translate }}
+              }
             </ion-label>
           </ion-item>
+          @if (_app.user.additionalAllergensSummary) {
+          <ion-item lines="none">
+            <ion-label>
+              <strong>{{ 'MEALS.ADDITIONAL_ALLERGENS' | translate }}:</strong>
+              {{ _app.user.additionalAllergensSummary }}
+            </ion-label>
+          </ion-item>
+          }
         </ion-card>
       </div>
     </ion-content>

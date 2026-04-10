@@ -37,3 +37,39 @@ div.footerTotals {
     break-inside: avoid;
   }
 }
+
+:host ::ng-deep {
+  .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell,
+  .ngx-datatable.dark .datatable-body .datatable-body-row .datatable-body-cell {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .ngx-datatable .datatable-body-cell-label {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.25;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .assigned-menu-1 .datatable-body-cell-label {
+    color: var(--ion-color-ESNdarkBlue) !important;
+    font-weight: 700;
+  }
+
+  .assigned-menu-2 .datatable-body-cell-label {
+    color: var(--ion-color-ESNpink) !important;
+    font-weight: 700;
+  }
+
+  .assigned-menu-3 .datatable-body-cell-label {
+    color: var(--ion-color-ESNgreen) !important;
+    font-weight: 700;
+  }
+
+  .assigned-menu-other .datatable-body-cell-label {
+    color: var(--ion-color-ESNcyan) !important;
+    font-weight: 700;
+  }
+}
