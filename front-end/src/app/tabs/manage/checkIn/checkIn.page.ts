@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { AlertController, IonSearchbar, ModalController } from '@ionic/angular';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
+import { WorkBook, utils, writeFile } from 'xlsx';
 import {
   IDEAActionSheetController,
   IDEALoadingService,
@@ -188,6 +189,32 @@ export class CheckInPage implements OnInit {
 
   formatPercentage(value: number): string {
     return `${value.toFixed(1)}%`;
+  }
+
+  downloadFilteredUsersAsExcelFile(): void {
+    if (!(this.app.user.permissions.canManageRegistrations || this.app.user.permissions.isStaff)) return;
+
+    const title = this.t._('MANAGE.CHECKIN_DASHBOARD');
+    const data = this.filteredUsers.map(user => ({
+      [this.t._('AUTH.FIRST_NAME')]: user.firstName,
+      [this.t._('AUTH.LAST_NAME')]: user.lastName,
+      [this.t._('AUTH.EMAIL')]: user.email,
+      [this.t._('USERS.CATEGORY')]: this.getCategoryLabel(user),
+      [this.t._('USERS.SECTION_COUNTRY')]: user.sectionCountry ?? '',
+      [this.t._('USER.ESN_SECTION')]: user.sectionName ?? '',
+      [this.t._('SPOTS.TYPE')]: user.spot?.type ?? '',
+      [this.t._('USERS.TSHIRT')]: user.registrationForm?.main?.tshirt ?? '',
+      [this.t._('USERS.ESNCARD_VALIDATED')]: user.isExternal()
+        ? '-'
+        : user.hasValidatedESNcard()
+        ? this.getESNcardStatusLabel(user)
+        : this.t._('COMMON.NO'),
+      [this.t._('USERS.OC_CHECKIN')]: user.hasCheckedIn() ? this.t._('MANAGE.VERIFIED') : this.t._('COMMON.NO')
+    }));
+
+    const workbook: WorkBook = { SheetNames: [], Sheets: {}, Props: { Title: title } };
+    utils.book_append_sheet(workbook, utils.json_to_sheet(data), '1');
+    writeFile(workbook, `${title}.xlsx`);
   }
 
   private normalizeESNcard(rawValue: string): string {
