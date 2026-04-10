@@ -70,6 +70,18 @@
         <ion-select-option *ngFor="let meal of meals" [value]="meal"> {{ meal.name }} </ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-item color="ideaToolbar" lines="none">
+      <ion-select
+        interface="popover"
+        [label]="('MEALS.ADDITIONAL_ALLERGENS' | translate) + ':'"
+        [(ngModel)]="filters.additionalAllergens"
+        (ionChange)="filter()"
+      >
+        <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
+        <ion-select-option value="yes">{{ 'COMMON.YES' | translate }}</ion-select-option>
+        <ion-select-option value="no">{{ 'COMMON.NO' | translate }}</ion-select-option>
+      </ion-select>
+    </ion-item>
   </div>
 </ion-header>
 <ion-content>
@@ -87,6 +99,7 @@
     [scrollbarH]="true"
     [columnMode]="columnMode"
     [reorderable]="false"
+    [rowClass]="getAdditionalAllergensRowClass"
     [rowIdentity]="rowIdentity"
     [trackByProp]="trackByProp"
     [selectionType]="selectionType"
@@ -105,6 +118,7 @@
         <div class="footerTotals" *ngIf="!app.isInMobileMode()">
           <ng-container>
             <span><strong>{{ 'USERS.USERS' | translate }}</strong>: {{ filteredUsers?.length ?? 0 }}</span>
+            <span><strong>{{ 'MEALS.ADDITIONAL_ALLERGENS' | translate }}</strong>: {{ numWithAdditionalAllergens }}</span>
             <span *ngFor="let meal of filteredMeals">
               <strong>{{ meal.name }}</strong>: {{ mealCounters[meal.mealId] ?? 0 }}
             </span>

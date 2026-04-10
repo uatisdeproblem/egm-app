@@ -33,6 +33,15 @@ import { User } from '@models/user.model';
 import { ApprovedType, Meal, MealTypes, MEAL_CATEGORY_ASSIGNMENTS } from '@models/meal.model';
 import { MealsService } from '@app/tabs/meals/meals.service';
 
+const EXPORT_ALERT_ROW_FILL = 'FFFF0000';
+const EXPORT_ALERT_ROW_TEXT = 'FFFFFFFF';
+const MEAL_ASSIGNMENT_COLOR_HEX: Record<string, string> = {
+  ESNdarkBlue: '#2E3192',
+  ESNpink: '#EC008C',
+  ESNgreen: '#7AC143',
+  ESNcyan: '#00AEEF'
+};
+
 @Component({
   selector: 'mealsInfo',
   templateUrl: 'mealsInfo.page.html',
@@ -83,10 +92,12 @@ export class MealsInfoPage implements OnInit {
   availableMealTypes = Object.values(MealTypes);
   filters: RowsFilters = {
     sectionCountry: null,
-    mealTypes: []
+    mealTypes: [],
+    additionalAllergens: null
   };
 
   mealCounters: { [mealId: string]: number } = {};
+  numWithAdditionalAllergens = 0;
 
   private loading = inject(IDEALoadingService);
   private message = inject(IDEAMessageService);
@@ -162,6 +173,9 @@ export class MealsInfoPage implements OnInit {
     return row.userId;
   }
 
+  getAdditionalAllergensRowClass = (row: User): string =>
+    row?.additionalAllergensSummary?.trim() ? 'has-additional-allergens' : '';
+
   filter(searchText?: string): void {
     searchText = (searchText ?? '').toLowerCase();
 
@@ -191,6 +205,10 @@ export class MealsInfoPage implements OnInit {
     if (this.filters.mealTypes?.length)
       this.filteredUsers = this.filteredUsers.filter(x =>
         x.mealTypes?.some(mealType => this.filters.mealTypes.includes(mealType))
+      );
+    if (this.filters.additionalAllergens)
+      this.filteredUsers = this.filteredUsers.filter(x =>
+        this.filters.additionalAllergens === 'yes' ? this.hasAdditionalAllergens(x) : !this.hasAdditionalAllergens(x)
       );
 
     this.calcFooterTotals();
@@ -244,7 +262,9 @@ export class MealsInfoPage implements OnInit {
 
   calcFooterTotals(): void {
     for (const meal of this.meals) this.mealCounters[meal.mealId] = 0;
+    this.numWithAdditionalAllergens = 0;
     this.filteredUsers.forEach(user => {
+      if (this.hasAdditionalAllergens(user)) this.numWithAdditionalAllergens++;
       for (const mealId of Object.keys(user.mealTickets)) {
         if (user.mealTickets[mealId]?.approvedAt) this.mealCounters[mealId]++;
       }
@@ -264,7 +284,9 @@ export class MealsInfoPage implements OnInit {
         'Section Name': user.sectionName ?? '',
         'Meal Type': this.formatMealTypeSummary(user),
         'Assigned Menus': this.formatMealMenuSummary(user),
-        'Additional Allergens': user.additionalAllergensSummary ?? ''
+        'Additional Allergens': user.additionalAllergensSummary ?? '',
+        'Meal Type -> Menu': this.formatMealTypeMenuAssignments(user),
+        'Meal Type -> Color': this.formatMealTypeColorAssignments(user)
       };
 
       for (const meal of this.filteredMeals)
@@ -274,8 +296,11 @@ export class MealsInfoPage implements OnInit {
     });
 
     const workbook: WorkBook = { SheetNames: [], Sheets: {}, Props: { Title: title } };
-    utils.book_append_sheet(workbook, utils.json_to_sheet(data), '1');
-    writeFile(workbook, title.concat('.xlsx'));
+    const sheet = utils.json_to_sheet(data);
+    this.applyAdditionalAllergenRowHighlight(sheet, data, row => String(row['Additional Allergens'] ?? '').trim().length > 0);
+    utils.book_append_sheet(workbook, sheet, '1');
+    this.appendMealAssignmentsSheet(workbook);
+    writeFile(workbook, title.concat('.xlsx'), { cellStyles: true });
   }
 
   private formatMealTypeSummary(user?: User, fallback = ''): string {
@@ -306,6 +331,76 @@ export class MealsInfoPage implements OnInit {
     return menus.map(menu => this.t._('MEALS.' + menu)).join(', ');
   }
 
+  private formatMealTypeMenuAssignments(user?: User): string {
+    if (!user) return '';
+    return (user.mealTypes ?? [])
+      .map(mealType => {
+        const assignment = MEAL_CATEGORY_ASSIGNMENTS[mealType];
+        if (!assignment) return '';
+        return `${this.t._('MEALS.TYPES.' + mealType)} -> ${this.t._('MEALS.' + assignment.menu)}`;
+      })
+      .filter(Boolean)
+      .join('; ');
+  }
+
+  private formatMealTypeColorAssignments(user?: User): string {
+    if (!user) return '';
+    return (user.mealTypes ?? [])
+      .map(mealType => {
+        const assignment = MEAL_CATEGORY_ASSIGNMENTS[mealType];
+        if (!assignment) return '';
+        const colorHex = MEAL_ASSIGNMENT_COLOR_HEX[assignment.color] ?? assignment.color;
+        return `${this.t._('MEALS.TYPES.' + mealType)} -> ${assignment.color} (${colorHex})`;
+      })
+      .filter(Boolean)
+      .join('; ');
+  }
+
+  private applyAdditionalAllergenRowHighlight(
+    sheet: any,
+    rows: Record<string, string | boolean>[],
+    shouldHighlight: (row: Record<string, string | boolean>) => boolean
+  ): void {
+    const ref = sheet['!ref'];
+    if (!ref) return;
+
+    const range = utils.decode_range(ref);
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+      if (!shouldHighlight(rows[rowIndex])) continue;
+
+      for (let columnIndex = range.s.c; columnIndex <= range.e.c; columnIndex++) {
+        const cellAddress = utils.encode_cell({ r: rowIndex + 1, c: columnIndex });
+        if (!sheet[cellAddress]) sheet[cellAddress] = { t: 's', v: '' };
+        sheet[cellAddress].s = {
+          fill: { patternType: 'solid', fgColor: { rgb: EXPORT_ALERT_ROW_FILL } },
+          font: { color: { rgb: EXPORT_ALERT_ROW_TEXT }, bold: true }
+        };
+      }
+    }
+  }
+
+  private appendMealAssignmentsSheet(workbook: WorkBook): void {
+    const data = Object.values(MealTypes).map(mealType => {
+      const assignment = MEAL_CATEGORY_ASSIGNMENTS[mealType];
+      return {
+        'Meal Type': this.t._('MEALS.TYPES.' + mealType),
+        'Assigned Menu': this.t._('MEALS.' + assignment.menu)
+      };
+    });
+
+    const sheet = utils.json_to_sheet(data);
+    for (let rowIndex = 0; rowIndex < data.length; rowIndex++) {
+      const mealType = Object.values(MealTypes)[rowIndex];
+      const assignment = MEAL_CATEGORY_ASSIGNMENTS[mealType];
+      const colorHex = (MEAL_ASSIGNMENT_COLOR_HEX[assignment.color] ?? assignment.color).replace('#', '');
+      const menuCellAddress = utils.encode_cell({ r: rowIndex + 1, c: 1 });
+      if (!sheet[menuCellAddress]) continue;
+      sheet[menuCellAddress].s = { font: { color: { rgb: `FF${colorHex}` }, bold: true } };
+    }
+
+    utils.book_append_sheet(workbook, sheet, 'Meal assignments');
+  }
+
   private getAssignedMenuCellClass(user?: User): string {
     const assignedMenu = user?.mealMenuSummary;
 
@@ -322,9 +417,14 @@ export class MealsInfoPage implements OnInit {
         return '';
     }
   }
+
+  private hasAdditionalAllergens(user?: User): boolean {
+    return !!user?.additionalAllergensSummary?.trim();
+  }
 }
 
 interface RowsFilters {
   sectionCountry: string | 'no' | null;
   mealTypes: MealTypes[];
+  additionalAllergens: null | 'yes' | 'no';
 }

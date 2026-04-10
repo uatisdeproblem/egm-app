@@ -11,7 +11,6 @@ import { CheckInRoutingModule } from './checkIn-routing.module';
 import { CheckInPage } from './checkIn.page';
 
 @NgModule({
-  declarations: [CheckInPage],
   imports: [
     CommonModule,
     FormsModule,
@@ -19,6 +18,7 @@ import { CheckInPage } from './checkIn.page';
     NgxDatatableModule,
     IDEATranslationsModule,
     BarcodeScannerComponent,
+    CheckInPage,
     CheckInRoutingModule
   ]
 })

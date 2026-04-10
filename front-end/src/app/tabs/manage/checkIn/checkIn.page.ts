@@ -1,10 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonSearchbar, ModalController } from '@ionic/angular';
-import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
+import { FormsModule } from '@angular/forms';
+import { AlertController, IonSearchbar, IonicModule, ModalController } from '@ionic/angular';
+import { ColumnMode, DatatableComponent, NgxDatatableModule, SelectionType } from '@swimlane/ngx-datatable';
 import {
   IDEAActionSheetController,
   IDEALoadingService,
   IDEAMessageService,
+  IDEATranslationsModule,
   IDEATranslationsService
 } from '@idea-ionic/common';
 
@@ -15,9 +18,11 @@ import { AuthServices, ESNcardValidationMethod, User } from '@models/user.model'
 import { BarcodeScannerComponent } from '@app/common/barcode/barcodeScanner.component';
 
 @Component({
+  standalone: true,
   selector: 'check-in',
   templateUrl: 'checkIn.page.html',
-  styleUrls: ['checkIn.page.scss']
+  styleUrls: ['checkIn.page.scss'],
+  imports: [CommonModule, FormsModule, IonicModule, NgxDatatableModule, IDEATranslationsModule]
 })
 export class CheckInPage implements OnInit {
   @ViewChild(IonSearchbar) searchbar: IonSearchbar;
@@ -36,8 +41,10 @@ export class CheckInPage implements OnInit {
 
   users: User[];
   filteredUsers: User[];
+  tshirtSizes: string[] = [];
   filters: RowsFilters = {
     sectionCountry: null,
+    tshirt: null,
     ESNcardValidated: null,
     checkedIn: null
   };
@@ -59,6 +66,7 @@ export class CheckInPage implements OnInit {
     try {
       await this.loading.show();
       this.users = await this._users.getList();
+      this.tshirtSizes = this.getAvailableTshirtSizes(this.users);
       this.filter(this.searchbar?.value);
     } catch (error) {
       this.message.error('COMMON.COULDNT_LOAD_LIST');
@@ -100,6 +108,9 @@ export class CheckInPage implements OnInit {
         if (this.filters.sectionCountry === 'international') return x.isESNInternational;
         return this.filters.sectionCountry === 'no' ? !x.sectionCountry : this.filters.sectionCountry === x.sectionCountry;
       });
+
+    if (this.filters.tshirt)
+      this.filteredUsers = this.filteredUsers.filter(x => x.registrationForm?.main?.tshirt === this.filters.tshirt);
 
     if (this.filters.ESNcardValidated)
       this.filteredUsers = this.filteredUsers.filter(x => {
@@ -155,7 +166,7 @@ export class CheckInPage implements OnInit {
   }
 
   getESNcardStatusLabel(user: User): string {
-    if (user.isExternal()) return '-';
+    if (user.isExternal()) return '';
     if (!user.hasValidatedESNcard()) return this.t._('COMMON.NO');
     if (user.ESNcardValidationMethod === ESNcardValidationMethod.MANUAL)
       return this.t._('MANAGE.VERIFIED_MANUAL');
@@ -188,6 +199,11 @@ export class CheckInPage implements OnInit {
 
   formatPercentage(value: number): string {
     return `${value.toFixed(1)}%`;
+  }
+
+  private getAvailableTshirtSizes(users: User[]): string[] {
+    return [...new Set(users.map(user => user.registrationForm?.main?.tshirt).filter((size): size is string => !!size))]
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
   }
 
   private normalizeESNcard(rawValue: string): string {
@@ -290,6 +306,7 @@ export class CheckInPage implements OnInit {
 
 interface RowsFilters {
   sectionCountry: string | 'no' | 'international' | null;
+  tshirt: string | null;
   ESNcardValidated: 'yes' | 'no' | null;
   checkedIn: 'yes' | 'no' | null;
 }

@@ -36,6 +36,14 @@
       </ion-select>
     </ion-item>
     <ion-item color="ideaToolbar" lines="none">
+      <ion-select interface="popover" [label]="('USERS.TSHIRT' | translate) + ':'" [(ngModel)]="filters.tshirt" (ionChange)="filter()">
+        <ion-select-option [value]="null">{{ 'COMMON.ALL' | translate }}</ion-select-option>
+        <ion-select-option *ngFor="let tshirtSize of tshirtSizes" [value]="tshirtSize">
+          {{ tshirtSize }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item color="ideaToolbar" lines="none">
       <ion-select
         interface="popover"
         [label]="('USERS.ESNCARD_VALIDATED' | translate) + ':'"
@@ -110,9 +118,7 @@
             </span>
           </ng-template>
         </div>
-        <ng-template #externalStatus>
-          <span class="naLabel">-</span>
-        </ng-template>
+        <ng-template #externalStatus></ng-template>
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column [name]="'USERS.OC_CHECKIN' | translate" [resizeable]="false">

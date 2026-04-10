@@ -117,7 +117,7 @@ export const MEAL_CATEGORY_ASSIGNMENTS: Record<MealTypes, MealCategoryAssignment
   [MealTypes.NO_PREFERENCE]: { menu: 'MENU_1', color: 'ESNdarkBlue' },
   [MealTypes.VEGAN]: { menu: 'MENU_3', color: 'ESNgreen' },
   [MealTypes.VEGETARIAN]: { menu: 'MENU_3', color: 'ESNgreen' },
-  [MealTypes.PESCATARIAN]: { menu: 'MENU_1', color: 'ESNdarkBlue' },
+  [MealTypes.PESCATARIAN]: { menu: 'MENU_3', color: 'ESNgreen' },
   [MealTypes.NO_FISH]: { menu: 'MENU_1', color: 'ESNdarkBlue' },
   [MealTypes.NO_PORK]: { menu: 'MENU_2', color: 'ESNpink' },
   [MealTypes.HALAL]: { menu: 'MENU_2', color: 'ESNpink' },

@@ -72,4 +72,9 @@ div.footerTotals {
     color: var(--ion-color-ESNcyan) !important;
     font-weight: 700;
   }
+
+  .ngx-datatable.material .datatable-body .datatable-body-row.has-additional-allergens .datatable-body-cell,
+  .ngx-datatable.dark .datatable-body .datatable-body-row.has-additional-allergens .datatable-body-cell {
+    background-color: rgba(255, 0, 0, 0.14) !important;
+  }
 }
